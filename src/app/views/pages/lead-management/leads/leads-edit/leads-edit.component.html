@@ -1,0 +1,356 @@
+<kt-portlet>
+	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
+		<ng-container ktPortletTools>
+			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the products list">
+				<i class="la la-arrow-left"></i>
+				<span class="kt-hidden-mobile">Back</span>
+			</a>
+			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()" [disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
+				<i class="la la-cog"></i>
+				<span class="kt-hidden-mobile">Reset</span>
+			</a>
+			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
+				<span class="kt-hidden-mobile">Save</span>
+			</a>
+			<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+				<mat-icon>more_vert</mat-icon>
+			</button>
+			<mat-menu #menu="matMenu">
+				<button mat-menu-item color="primary" (click)="onSumbit(true)">Save & Exit</button>
+				<!--<button mat-menu-item color="primary">Save & Duplicate</button>-->
+				<button mat-menu-item color="primary" (click)="onSumbit(false)">Save & Continue</button>
+			</mat-menu>
+		</ng-container>
+	</kt-portlet-header>
+	<kt-portlet-body class="pt-3">
+		<div *ngIf="lead">
+
+			<form [formGroup]="leadForm" class="kt-form kt-form--group-seperator-dashed">
+
+				<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+					Oh snap! Change a few things up and try submitting again.
+				</kt-alert>
+
+				<div class="kt-form__section kt-form__section--first">
+					<div class="kt-form__group pt-1">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="title-wrapper">
+									<h4>Personal Information</h4>
+								</div>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick title" aria-label="Number" matInput [matAutocomplete]="titleAuto" [formControlName]="'titleId'">
+									<mat-autocomplete autoActiveFirstOption #titleAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredTitles | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Title </strong>
+									</mat-hint>
+									<mat-error>
+										Title is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter surname" formControlName="surName">
+									<mat-error>
+										Surname is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Surname</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter name" formControlName="name">
+									<mat-error>
+										Name is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Name</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick language" aria-label="Number" matInput [matAutocomplete]="languageAuto" [formControlName]="'languageId'">
+									<mat-autocomplete autoActiveFirstOption #languageAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredLanguages | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Language </strong>
+									</mat-hint>
+									<mat-error>
+										Language is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter main phone" formControlName="mainPhone">
+									<mat-error>
+										Main phone is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Main Phone</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter main phone owner" formControlName="mainPhoneOwner">
+									<mat-error>
+										Main phone owner is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Main Phone Owner</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter contact phone" formControlName="contactPhone">
+									<mat-error>
+										Contact phone
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Contact Phone</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter phone 2" formControlName="phone2">
+									<mat-error>
+										Phone 2
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Phone 2</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter phone 2 owner" formControlName="phone2Owner">
+									<mat-error>
+										Phone 2 owner
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Phone 2 owner</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter phone 3" formControlName="phone3">
+									<mat-error>
+										Phone 3
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Phone 3</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter phone 2 owner" formControlName="phone3Owner">
+									<mat-error>
+										Phone 3 owner
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Phone 3 owner</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter email" formControlName="email">
+									<mat-error>
+										Email
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Email</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter fax" formControlName="fax">
+									<mat-error>
+										Fax
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Fax</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput [matDatepicker]="dateOfBirthPicker" placeholder="Choose a date" [formControlName]="'dateOfBirth'">
+									<mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
+									<mat-datepicker #dateOfBirthPicker></mat-datepicker>
+									<mat-error>
+										Date of birth
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Date of Birth</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick country" aria-label="Number" matInput [matAutocomplete]="countryOfBirthAuto" [formControlName]="'countryOfBirthId'">
+									<mat-autocomplete autoActiveFirstOption #countryOfBirthAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredCountriesForCountryOfBirth | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Country of Birth </strong>
+									</mat-hint>
+									<mat-error>
+										Country of Birth is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter Name of person requesting visit" formControlName="visitRequestingPerson">
+									<mat-error>
+										Name of person requesting visit is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Name of person requesting visit</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick Requesting Person Relationship" aria-label="Number" matInput [matAutocomplete]="relationshipAuto" [formControlName]="'visitRequestingPersonRelationId'">
+									<mat-autocomplete autoActiveFirstOption #relationshipAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredRelationships | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Requesting Person Relationship </strong>
+									</mat-hint>
+									<mat-error>
+										Requesting person Relationship is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter GP" formControlName="gpCode">
+									<mat-error>
+										GP is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>GP</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+
+
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="title-wrapper">
+									<h4>Services Requested</h4>
+								</div>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick Requesting Person Relationship" aria-label="Number" matInput [matAutocomplete]="relationshipAuto" [formControlName]="'visitRequestingPersonRelationId'">
+									<mat-autocomplete autoActiveFirstOption #relationshipAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredRelationships | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Requesting Person Relationship </strong>
+									</mat-hint>
+									<mat-error>
+										Requesting person Relationship is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+
+						</div>
+
+
+
+
+					</div>
+
+
+
+					<div class="kt-form__group">
+						<div class="row">
+							<div class="col-md-6 kt-margin-bottom-10-mobile">
+								<!--<mat-form-field class="mat-form-field-fluid">
+									<textarea matInput rows="7" placeholder="Enter Description" formControlName="description"></textarea>
+								</mat-form-field>-->
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+
+
+
+	</kt-portlet-body>
+</kt-portlet>

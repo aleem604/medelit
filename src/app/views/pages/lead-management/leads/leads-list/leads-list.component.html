@@ -1,0 +1,218 @@
+<kt-portlet>
+
+	<kt-portlet-header [sticky]="true" [title]="'Leads list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+		<ng-container ktPortletTools>
+			<button (click)="createLead()" mat-raised-button color="primary" matTooltip="Create new lead">New lead</button>
+		</ng-container>
+	</kt-portlet-header>
+	<!-- end::Header -->
+
+	<kt-portlet-body>
+		<!-- start::FILTERS & GROUP ACTIONS -->
+		<div class="kt-form kt-margin-b-30">
+			<!-- start::FILTERS -->
+			<div class="kt-form__filtration">
+				<div class="row align-items-center">
+					<div class="col-md-2 kt-margin-bottom-10-mobile">
+						<mat-form-field class="example-full-width">
+							<input type="text" placeholder="Pick status" aria-label="Number" matInput [matAutocomplete]="status" [formControl]="statusControl">
+							<mat-autocomplete autoActiveFirstOption #status="matAutocomplete"
+											  (optionSelected)="loadLeadsList()"
+											  (closed)="statusDrpClosed()"
+											  [displayWith]="displayFn">
+								<mat-option *ngFor="let c of filteredStatuses | async" [value]="c">
+									{{c.name}}
+								</mat-option>
+							</mat-autocomplete>
+							<mat-hint align="start">
+								Select a
+								<strong>Status</strong>
+							</mat-hint>
+						</mat-form-field>
+					</div>
+					<div class="col-md-2 kt-margin-bottom-10-mobile">
+						<div class="kt-form__control">
+							<mat-form-field>
+								<mat-select [(value)]="filterCondition" (selectionChange)="loadLeadsList()" class="mat-form-field mat-form-field-fluid">
+									<mat-option value="">All</mat-option>
+									<mat-option value="0">New</mat-option>
+									<mat-option value="1">Used</mat-option>
+								</mat-select>
+								<mat-hint align="start">
+									<strong>Filter by Contidion</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>
+						<div class="d-md-none kt-margin-bottom-10"></div>
+					</div>
+					<div class="col-md-4 kt-margin-bottom-10-mobile">
+						<mat-form-field>
+							<input matInput placeholder="Search lead" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
+							<mat-hint align="start">
+								<strong>Search in all fields</strong>
+							</mat-hint>
+						</mat-form-field>
+					</div>
+				</div>
+			</div>
+			<!-- end::FILTERS -->
+
+			<!-- start::GROUP ACTIONS -->
+			<!-- Group actions list: 'Delete selected' | 'Fetch selected' | 'Update status for selected' -->
+			<!-- Group actions are shared for all LISTS | See '../../_shared' folder -->
+			<div class="row align-items-center collapse kt-form__group-actions kt-margin-top-20 kt-margin-bottom-20" [ngClass]="{'show' : selection.selected.length > 0}">
+				<div class="col-xl-12">
+					<div class="kt-form__group kt-form__group--inline">
+						<div class="kt-form__label kt-form__label-no-wrap">
+							<label class="kt--font-bold kt-font-danger-">Selected records count: {{ selection.selected.length }}</label>
+						</div>
+						<div class="kt-form__control kt-form__group--inline">
+							<button mat-raised-button color="accent" (click)="deleteLeads()" matTooltip="Delete selected leads"  class="mat-button-mt-4">
+								<mat-icon>delete</mat-icon>
+								Delete All
+							</button>&nbsp;<!-- Call 'delete-entity-dialog' from _shared folder -->
+							<button mat-raised-button (click)="fetchLeads()" matTooltip="Fetch selected leads"  class="mat-button-mt-4">
+								<mat-icon>clear_all</mat-icon>
+								Fetch Selected Records
+							</button>&nbsp;<!-- Call 'fetch-entity-dialog' from _shared folder -->
+							<button mat-raised-button (click)="updateStatusForLeads()" matTooltip="Update status for selected leads"  class="mat-button-mt-4">
+								<mat-icon>update</mat-icon>
+								Update status
+							</button><!-- Call 'update-stated-dialog' from _shared folder -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- end::GROUP ACTIONS -->
+		</div>
+		<!-- end::FILTERS & GROUP ACTIONS -->
+
+		<!-- MATERIAL TABLE | Binded to datasources -->
+		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
+		<div class="mat-table__wrapper">
+			<!-- Checkbox Column -->
+			<!-- Table with selection -->
+			<!-- https://run.stackblitz.com/api/angular/v1?file=app%2Ftable-selection-example.ts -->
+			<mat-table class="lmat-elevation-z8"
+					   #table
+					   [dataSource]="dataSource"
+					   matSort
+					   #sort1="matSort"
+					   matSortActive="id"
+					   matSortDirection="asc"
+					   matSortDisableClear>
+				<!-- Checkbox Column -->
+				<ng-container matColumnDef="select">
+					<mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
+						<mat-checkbox (change)="$event ? masterToggle() : null"
+									  [checked]="selection.hasValue() && isAllSelected()"
+									  [indeterminate]="selection.hasValue() && !isAllSelected()"
+									  [color]="'primary'">
+						</mat-checkbox>
+					</mat-header-cell>
+					<mat-cell *matCellDef="let row" class="mat-column-checkbox">
+						<mat-checkbox (click)="$event.stopPropagation()"
+									  (change)="$event ? selection.toggle(row) : null"
+									  [checked]="selection.isSelected(row)"
+									  [color]="'primary'">
+						</mat-checkbox>
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="id">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-vinCode">ID</mat-header-cell>
+					<mat-cell *matCellDef="let lead" class="mat-column-vinCode">{{lead.id}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="title">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Title</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.title}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="surName">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Surname</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.surName}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="name">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.name}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="language">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Language</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.language}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="phone">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Phone</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.mainPhone}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="services">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Services</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.services}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="professionals">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Professionals</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.professionals}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="updateDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Last Change</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.updateDate}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="status">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+					<mat-cell *matCellDef="let lead">
+						<span class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{ getItemCssClassByStatus(lead.status) }} kt-badge--wide">{{ getItemStatusString(lead.status) }}</span>
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="condition">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Condition</mat-header-cell>
+					<mat-cell *matCellDef="let lead">
+						<span class="kt-badge kt-badge--{{ getItemCssClassByCondition(lead.condition) }} kt-badge--dot"></span>&nbsp;
+						<span class="kt--font-bold kt-font-{{ getItemCssClassByCondition(lead.condition) }}">{{ getItemConditionString(lead.condition) }}</span>
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>
+						Actions
+					</mat-header-cell>
+					<mat-cell *matCellDef="let lead">
+						
+						<button type="button" (click)="editLead(lead.id)" mat-icon-button color="primary" matTooltip="Edit lead">
+							<mat-icon>create</mat-icon>
+						</button>&nbsp;
+						<button mat-icon-button color="warn" type="button" (click)="deleteLead(lead)" matTooltip="Delete lead">
+							<mat-icon>delete</mat-icon>
+						</button>&nbsp;
+						<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
+							<mat-icon>more_vert</mat-icon>
+						</button>
+						<mat-menu #menu="matMenu">
+							<button mat-menu-item type="button" (click)="convertToBooking">
+								<mat-icon>subject</mat-icon>
+								<span>Convert to Booking</span>
+							</button>
+							
+						</mat-menu>
+					</mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">No records found</div>
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">Please wait....</div>
+		</div>
+
+		<!-- start: BOTTOM -->
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+		<!-- end: BOTTOM -->
+	</kt-portlet-body>
+	<!-- end::Body -->
+</kt-portlet>
