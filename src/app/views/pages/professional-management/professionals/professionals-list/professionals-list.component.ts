@@ -22,7 +22,8 @@ import {
 	OneProfessionalDeleted,
 	ManyProfessionalsDeleted,
 	ProfessionalsStatusUpdated,
-	selectProfessionalsPageLastQuery,
+	selectProfessionalsPageLastQuery,
+
 	FilterModel
 } from '../../../../../core/medelit';
 import { FormControl } from '@angular/forms';
@@ -88,7 +89,7 @@ export class ProfessionalsListComponent implements OnInit, OnDestroy {
 		this.subscriptions.push(searchSubscription);
 
 		// Set title to page breadCrumbs
-		this.subheaderService.setTitle('Leads');
+		this.subheaderService.setTitle('Professionals');
 
 		// Init DataSource
 		this.dataSource = new ProfessionalDataSource(this.store);
@@ -228,7 +229,7 @@ export class ProfessionalsListComponent implements OnInit, OnDestroy {
 	updateStatusForProfessionals() {
 		const _title = 'Update status for selected professionals';
 		const _updateMessage = 'Status has been updated for selected professionals';
-		const _statuses = [{ value: 0, text: 'Selling' }, { value: 1, text: 'Sold' }];
+		const _statuses = [{ value: 0, text: 'Pending' }, { value: 1, text: 'Active' }, { value: 2, text: 'Suspended' }];
 		const _messages = [];
 
 		this.selection.selected.forEach(elem => {

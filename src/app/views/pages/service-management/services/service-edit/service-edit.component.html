@@ -1,7 +1,7 @@
 <kt-portlet>
 	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
 		<ng-container ktPortletTools>
-			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10"  mat-raised-button matTooltip="Back to the products list">
+			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10"  mat-raised-button matTooltip="Back to the services list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
@@ -12,9 +12,9 @@
 			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
-			<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+			<!--<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
 				<mat-icon>more_vert</mat-icon>
-			</button>
+			</button>-->
 			<mat-menu #menu="matMenu">
 				<button mat-menu-item color="primary" (click)="onSumbit(true)">Save & Exit</button>
 				<button mat-menu-item color="primary">Save & Duplicate</button>
@@ -23,172 +23,326 @@
 		</ng-container>
 	</kt-portlet-header>
 	<kt-portlet-body>
-		<mat-tab-group [(selectedIndex)]="selectedTab" *ngIf="product">
-			<mat-tab label="Basic info">
-				<ng-template matTabContent>
-					<div *ngIf="product">
-						<!--begin::Form-->
-						<form [formGroup]="productForm" class="kt-form kt-form--group-seperator-dashed">
+		<div *ngIf="service">
+			<!--begin::Form-->
+			<form [formGroup]="serviceForm" class="kt-form kt-form--group-seperator-dashed">
 
-							<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
-								Oh snap! Change a few things up and try submitting again.
-							</kt-alert>
+				<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+					Oh snap! Change a few things up and try submitting again.
+				</kt-alert>
 
-							<div class="kt-form__section kt-form__section--first">
-								<div class="kt-form__group">
-									<div class="row">
+				<div class="kt-form__section kt-form__section--first">
+					<div class="kt-form__group pt-0">
+						<div class="row">
 
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Model" formControlName="model">
-												<mat-error>
-													Model is
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Model</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Manufacture" formControlName="manufacture" [matAutocomplete]="manuf">
-												<mat-autocomplete #manuf="matAutocomplete">
-													<mat-option *ngFor="let manufacture of filteredManufactures | async" [value]="manufacture">
-														{{ manufacture }}
-													</mat-option>
-												</mat-autocomplete>
-												<mat-error>
-													Manufacture is
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Manufacture</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<mat-select placeholder="Enter Model year" formControlName="modelYear">
-													<mat-option value="{{year}}" *ngFor="let year of availableYears;">{{year}}</mat-option>
-												</mat-select>
-												<mat-error>
-													Model year
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Model year</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter Name" formControlName="name">
+									<mat-error>
+										Name is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Model</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Cycle:</div>
+								<mat-radio-group class="example-radio-group" formControlName="cycleId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Active Service:</div>
+								<mat-radio-group class="example-radio-group" formControlName="activeServiceId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Timed Service:</div>
+								<mat-radio-group class="example-radio-group" formControlName="timedServiceId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Contract Service:</div>
+								<mat-radio-group class="example-radio-group" formControlName="contractedServiceId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Informed Consent:</div>
+								<mat-radio-group class="example-radio-group" formControlName="informedConsentId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick field" aria-label="Number" matInput [matAutocomplete]="fieldAuto" [formControlName]="'fieldId'">
+									<mat-autocomplete autoActiveFirstOption #fieldAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let f of filteredFields | async" [value]="f">
+											{{f.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Field </strong>
+									</mat-hint>
+									<mat-error>
+										Field is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick subcategory" aria-label="Number" matInput [matAutocomplete]="catAuto" [formControlName]="'subcategoryId'">
+									<mat-autocomplete autoActiveFirstOption #catAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let cat of filteredCategories | async" [value]="cat">
+											{{cat.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Subcategory </strong>
+									</mat-hint>
+									<mat-error>
+										Subcategory is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-chip-list">
+									<mat-chip-list #chipList aria-label="Fruit selection">
+										<mat-chip *ngFor="let tag of tagsArray" [selectable]="selectable"
+												  [removable]="removable" (removed)="remove(tag)">
+											{{tag}}
+											<mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+										</mat-chip>
+										<input placeholder="Insert tags"
+											   [formControlName]="'tags'"
+											   [matChipInputFor]="chipList"
+											   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+											   [matChipInputAddOnBlur]="addOnBlur"
+											   (matChipInputTokenEnd)="add($event)">
+									</mat-chip-list>
+									<mat-hint align="start">
+										Create <strong>Tags </strong> by hitting enter or separated by comma
+									</mat-hint>
+									<mat-error>
+										Tag(s) are
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+
+
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick a duration" aria-label="Number" matInput [matAutocomplete]="dAuto" [formControlName]="'durationId'">
+									<mat-autocomplete autoActiveFirstOption #dAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let elem of filteredDurations | async" [value]="elem">
+											{{elem.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Duration </strong>
+									</mat-hint>
+									<mat-error>
+										Duration is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick vat" aria-label="Number" matInput [matAutocomplete]="vatAuto" [formControlName]="'vatId'">
+									<mat-autocomplete autoActiveFirstOption #vatAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let elem of filteredVats | async" [value]="elem">
+											{{elem.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Vat </strong>
+									</mat-hint>
+									<mat-error>
+										Vat is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter covermap link" formControlName="covermap" #covermap maxlength="4000">
+									<button mat-button *ngIf="covermap.value" matSuffix mat-icon-button aria-label="Clear" (click)="serviceForm.get('covermap').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Covermap is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Covermap link</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+
+
+						</div>
+						<div class="row">
+							<hr />
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field>
+									<mat-select placeholder="Professionals" [multiple]="true" #multiSelect [formControlName]="'professionals'">
+										<ngx-mat-select-search [formControl]="profMultiFilterCtrl"></ngx-mat-select-search>
+										<mat-option *ngFor="let prof of filteredProfessionals | async" [value]="prof">
+											{{prof.value}}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select <strong>Professionals </strong>
+									</mat-hint>
+									<mat-error>
+										Professional(s) are
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+
+
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick PT Fee" aria-label="Number" matInput [matAutocomplete]="ptAuto" #ptFeeId [formControlName]="'ptFeeId'">
+									<button mat-button *ngIf="ptFeeId.value" matSuffix mat-icon-button aria-label="Clear" (click)="serviceForm.get('ptFeeId').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-autocomplete autoActiveFirstOption #ptAuto="matAutocomplete"
+													  (closed)="ptFeeDrpClosed()"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let elem of filteredPTFees | async" [value]="elem">
+											{{elem.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>PT Fee </strong>
+									</mat-hint>
+									<mat-error>
+										PT Fee is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+								<div class="row">
+									<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+										<mat-form-field class="mat-form-field-fluid">
+											<input matInput placeholder="PT Fee A1" formControlName="ptFeeA1" readonly="readonly">
+											<mat-hint align="start">
+												PT Fee
+												<strong>A1</strong>
+											</mat-hint>
+										</mat-form-field>
+									</div>
+									<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
+										<mat-form-field class="mat-form-field-fluid">
+											<input matInput placeholder="PT Fee A2" formControlName="ptFeeA2" readonly="readonly">
+											<mat-hint align="start">
+												PT Fee
+												<strong>A1</strong>
+											</mat-hint>
+										</mat-form-field>
 									</div>
 								</div>
 
-								<div class="kt-form__group">
-									<div class="row">
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Mileage" formControlName="mileage">
-												<mat-error>
-													Mileage is
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Mileage</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Color" formControlName="color" [matAutocomplete]="col">
-												<mat-autocomplete #col="matAutocomplete">
-													<mat-option *ngFor="let col of filteredColors | async" [value]="col">
-														{{ col }}
-													</mat-option>
-												</mat-autocomplete>
-												<mat-error>
-													Color
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Color</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Price" formControlName="price">
-												<span matPrefix>$&nbsp;</span>
-												<mat-error>
-													Price is
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Price</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick PRO Fee" aria-label="Number" matInput [matAutocomplete]="proAuto" #proFeeId [formControlName]="'proFeeId'">
+									<button mat-button *ngIf="proFeeId.value" matSuffix mat-icon-button aria-label="Clear" (click)="serviceForm.get('proFeeId').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-autocomplete autoActiveFirstOption #proAuto="matAutocomplete"
+													  (closed)="proFeeDrpClosed()"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let elem of filteredPROFees | async" [value]="elem">
+											{{elem.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>PRO Fee </strong>
+									</mat-hint>
+									<mat-error>
+										PRO Fee is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+								<div class="row">
+									<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
+										<mat-form-field class="mat-form-field-fluid">
+											<input matInput placeholder="PRO Fee A1" formControlName="proFeeA1" readonly="readonly">
+											<mat-hint align="start">
+												PRO Fee
+												<strong>A1</strong>
+											</mat-hint>
+										</mat-form-field>
 									</div>
-
-								</div>
-
-								<div class="kt-form__group">
-									<div class="row">
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter VIN code" formControlName="VINCode">
-												<mat-error>
-													VIN Code is
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>VIN Code</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<div>Condition:</div>
-											<mat-radio-group formControlName="condition" class="example-radio-group">
-												<mat-radio-button class="example-radio-button" value="0">New</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Used</mat-radio-button>
-											</mat-radio-group>
-										</div>
-										<div class="col-md-4">
-											<div>Status:</div>
-											<mat-radio-group formControlName="status" class="example-radio-group">
-												<mat-radio-button class="example-radio-button" value="0">Selling</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Sold</mat-radio-button>
-											</mat-radio-group>
-										</div>
-									</div>
-								</div>
-
-								<div class="kt-form__group">
-									<div class="row">
-										<div class="col-md-12 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="7" placeholder="Enter Description" formControlName="description"></textarea>
-											</mat-form-field>
-										</div>
+									<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
+										<mat-form-field class="mat-form-field-fluid">
+											<input matInput placeholder="PRO Fee A2" formControlName="proFeeA2" readonly="readonly">
+											<mat-hint align="start">
+												PRO Fee
+												<strong>A1</strong>
+											</mat-hint>
+										</mat-form-field>
 									</div>
 								</div>
 							</div>
-						</form>
-					</div>
+						</div>
 
-					<!--end::Form-->
-				</ng-template>
-			</mat-tab>
-			<mat-tab label="Product remarks" [disabled]="!product || !product.id">
-				<ng-template matTabContent>
-					<!--<kt-remarks-list [productId$]="productId$"></kt-remarks-list>-->
-				</ng-template>
-			</mat-tab>
-			<mat-tab label="Product specifications" [disabled]="!product || !product.id">
-				<ng-template matTabContent>
-					<!--<kt-specifications-list [productId$]="productId$"></kt-specifications-list>-->
-				</ng-template>
-			</mat-tab>
-		</mat-tab-group>
+						<div class="row">
+							
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea matInput rows="7" placeholder="Enter Invoicing Notes" formControlName="invoicingNotes"></textarea>
+									<mat-error>
+										Invoicing Notes is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Invoicing Notes</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea matInput rows="7" placeholder="Enter Refund Notes" formControlName="refundNotes"></textarea>
+									<mat-error>
+										Refund Notes is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Refund Notes</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
 	</kt-portlet-body>
 </kt-portlet>

@@ -50,6 +50,7 @@
         "ngx-clipboard": "^12.2.0",
         "ngx-daterangepicker-material": "^2.1.7",
         "ngx-highlightjs": "^3.0.3",
+        "ngx-mat-select-search": "^2.0.0",
         "ngx-perfect-scrollbar": "^8.0.0",
         "ngx-permissions": "^7.0.3",
         "object-path": "^0.11.4",

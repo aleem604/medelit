@@ -20,7 +20,7 @@ export class ServicesService {
 	createService(service: ServiceModel): Observable<ServiceModel> {
 		// Note: Add headers if needed (tokens/bearer)
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
-		return this.http.post<ServiceModel>(API_LEADS_URL, service, { headers: httpHeaders});
+		return this.http.post<ServiceModel>(API_LEADS_URL, service, { headers: httpHeaders });
 	}
 
 	// READ
@@ -55,8 +55,8 @@ export class ServicesService {
 			servicesForUpdate: services,
 			newStatus: status
 		};
-		const url = API_LEADS_URL + '/update-status';
-		return this.http.put(url, body, { headers: httpHeaders });
+		const url = API_LEADS_URL + '/update-status/' + status;
+		return this.http.put(url, services, { headers: httpHeaders });
 	}
 
 	// DELETE => delete the service from the server
@@ -69,6 +69,6 @@ export class ServicesService {
 		const url = API_LEADS_URL + '/delete-services';
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		const body = { serviceIdsForDelete: ids };
-		return this.http.put<QueryResultsModel>(url, body, { headers: httpHeaders} );
+		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders });
 	}
 }

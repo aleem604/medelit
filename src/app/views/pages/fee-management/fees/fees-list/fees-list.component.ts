@@ -1,75 +1,72 @@
 // Angular
-import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 // Material
-import { MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
+import { MatPaginator, MatSort, MatSnackBar, MatDialog } from '@angular/material';
 // RXJS
-import { debounceTime, distinctUntilChanged, tap, skip, delay, startWith, map } from 'rxjs/operators';
-import { fromEvent, merge, Observable, of, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap, skip, delay, take } from 'rxjs/operators';
+import { fromEvent, merge, Subscription, of } from 'rxjs';
+// Translate Module
+import { TranslateService } from '@ngx-translate/core';
 // NGRX
-import { Store, select } from '@ngrx/store';
+import { Store, ActionsSubject } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
-// UI
-import { SubheaderService } from '../../../../../core/_base/layout';
 // CRUD
 import { LayoutUtilsService, MessageType, QueryParamsModel } from '../../../../../core/_base/crud';
 // Services and Models
-import {
-	FeeModel,
-	FeeDataSource,
-	FeesPageRequested,
-	OneFeeDeleted,
-	ManyFeesDeleted,
-	FeesStatusUpdated,
-	selectFeesPageLastQuery,
-
-	FilterModel
-} from '../../../../../core/medelit';
-import { FormControl } from '@angular/forms';
-import { StaticDataService } from '../../../../../core/medelit/_services';
+import { FeeModel, FeesDataSource, FeesPageRequested, OneFeeDeleted, ManyFeesDeleted, FeesStatusUpdated } from '../../../../../core/medelit';
+import { FeeEditDialogComponent } from '../fee-edit/fee-edit.dialog.component';
+import { Subheader1Component } from '../../../../partials/layout';
+import { SubheaderService } from '../../../../../core/_base/layout';
 
 @Component({
 	// tslint:disable-next-line:component-selector
 	selector: 'kt-fees-list',
 	templateUrl: './fees-list.component.html',
-	changeDetection: ChangeDetectionStrategy.OnPush
+	changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class FeesListComponent implements OnInit, OnDestroy {
 	// Table fields
-	dataSource: FeeDataSource;
-	displayedColumns = ['select', 'id', 'feeCode', 'feeName', 'fields', 'subCategories', 'a1','a2', 'status', 'actions'];
+	dataSource: FeesDataSource;
+	displayedColumns = ['select', 'feeCode', 'feeType', 'feeName', 'fields', 'subCategories', 'a1', 'a2', 'status', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields
 	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
-	statusesForFilter: FilterModel[] = [];
-	statusControl = new FormControl({ id: -1 }, []);
-	filteredStatuses: Observable<FilterModel[]>;
-
-	lastQuery: QueryParamsModel;
+	filterStatus = '';
+	feeType = '';
 	// Selection
 	selection = new SelectionModel<FeeModel>(true, []);
 	feesResult: FeeModel[] = [];
+	// Subscriptions
 	private subscriptions: Subscription[] = [];
 
-
-	constructor(public dialog: MatDialog,
-		private activatedRoute: ActivatedRoute,
-		private router: Router,
-		private subheaderService: SubheaderService,
+	constructor(
+		public dialog: MatDialog,
+		public snackBar: MatSnackBar,
 		private layoutUtilsService: LayoutUtilsService,
-		private staticService: StaticDataService,
-		private cdr: ChangeDetectorRef,
-		private store: Store<AppState>) { }
+		private translate: TranslateService,
+		private subheaderService: SubheaderService,
+		private store: Store<AppState>
+	) { }
 
+	/**
+	 * @ Lifecycle sequences => https://angular.io/guide/lifecycle-hooks
+	 */
 
+	/**
+	 * On init
+	 */
 	ngOnInit() {
-		this.loadStatusesForFilter();
 		// If the user changes the sort order, reset back to the first page.
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		this.subscriptions.push(sortSubscription);
 
+		/* Data load will be triggered in two cases:
+		- when a pagination event occurs => this.paginator.page
+		- when a sort event occurs => this.sort.sortChange
+		**/
 		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page).pipe(
 			tap(() => this.loadFeesList())
 		)
@@ -78,8 +75,9 @@ export class FeesListComponent implements OnInit, OnDestroy {
 
 		// Filtration, bind to searchInput
 		const searchSubscription = fromEvent(this.searchInput.nativeElement, 'keyup').pipe(
-			debounceTime(150),
-			distinctUntilChanged(),
+			// tslint:disable-next-line:max-line-length
+			debounceTime(50), // The user can type quite quickly in the input box, and that could trigger a lot of server requests. With this operator, we are limiting the amount of server requests emitted to a maximum of one every 150ms
+			distinctUntilChanged(), // This operator will eliminate duplicate values
 			tap(() => {
 				this.paginator.pageIndex = 0;
 				this.loadFeesList();
@@ -88,11 +86,10 @@ export class FeesListComponent implements OnInit, OnDestroy {
 			.subscribe();
 		this.subscriptions.push(searchSubscription);
 
-		// Set title to page breadCrumbs
-		this.subheaderService.setTitle('Fees');
+		this.subheaderService.setTitle(this.translate.instant('MEDELIT.FEES.FEES'));
 
 		// Init DataSource
-		this.dataSource = new FeeDataSource(this.store);
+		this.dataSource = new FeesDataSource(this.store);
 		const entitiesSubscription = this.dataSource.entitySubject.pipe(
 			skip(1),
 			distinctUntilChanged()
@@ -100,34 +97,16 @@ export class FeesListComponent implements OnInit, OnDestroy {
 			this.feesResult = res;
 		});
 		this.subscriptions.push(entitiesSubscription);
-		const lastQuerySubscription = this.store.pipe(select(selectFeesPageLastQuery)).subscribe(res => this.lastQuery = res);
-		// Load last query from store
-		this.subscriptions.push(lastQuerySubscription);
-
-		// Read from URL itemId, for restore previous state
-		const routeSubscription = this.activatedRoute.queryParams.subscribe(params => {
-			if (params.id) {
-				this.restoreState(this.lastQuery, +params.id);
-			}
-
-			// First load
-			of(undefined).pipe(delay(1000)).subscribe(() => { // Remove this line, just loading imitation
-				this.loadFeesList();
-			}); // Remove this line, just loading imitation
-		});
-		this.subscriptions.push(routeSubscription);
+		// First load
+		of(undefined).pipe(take(1), delay(1000)).subscribe(() => { // Remove this line, just loading imitation
+			this.loadFeesList();
+		}); // Remove this line, just loading imitation
 	}
 
-	/**
-	 * On Destroy
-	 */
 	ngOnDestroy() {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
 
-	/**
-	 * Load Fees List
-	 */
 	loadFeesList() {
 		this.selection.clear();
 		const queryParams = new QueryParamsModel(
@@ -142,33 +121,34 @@ export class FeesListComponent implements OnInit, OnDestroy {
 		this.selection.clear();
 	}
 
-	/**
-	 * Returns object for filter
-	 */
 	filterConfiguration(): any {
 		const filter: any = {};
-		try {
-			const searchText = this.searchInput.nativeElement.value;
-			const status = this.statusControl.value;
+		const searchText: string = this.searchInput.nativeElement.value;
 
-			if (status) {
-				filter.status = status.id;
-			}
-
-			if (searchText)
-				filter.search = searchText;
-		} catch{
-
+		if (this.filterStatus && this.filterStatus.length > 0) {
+			filter.status = +this.filterStatus;
 		}
+
+		if (this.feeType && this.feeType.length > 0) {
+			filter.feeType = +this.feeType;
+		}
+
+		filter.lastName = searchText;
+		if (!searchText) {
+			return filter;
+		}
+
+		filter.firstName = searchText;
+		filter.email = searchText;
+		filter.ipAddress = searchText;
 		return filter;
 	}
 
-
 	deleteFee(_item: FeeModel) {
-		const _title = 'Fee Delete';
-		const _description = 'Are you sure to permanently delete this fee?';
-		const _waitDesciption = 'Fee is deleting...';
-		const _deleteMessage = `Fee has been deleted`;
+		const _title: string = this.translate.instant('MEDELIT.FEES.DELETE_FEE_SIMPLE.TITLE');
+		const _description: string = this.translate.instant('MEDELIT.FEES.DELETE_FEE_SIMPLE.DESCRIPTION');
+		const _waitDesciption: string = this.translate.instant('MEDELIT.FEES.DELETE_FEE_SIMPLE.WAIT_DESCRIPTION');
+		const _deleteMessage = this.translate.instant('MEDELIT.FEES.DELETE_FEE_SIMPLE.MESSAGE');
 
 		const dialogRef = this.layoutUtilsService.deleteElement(_title, _description, _waitDesciption);
 		dialogRef.afterClosed().subscribe(res => {
@@ -181,14 +161,11 @@ export class FeesListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	/**
-	 * Delete fees
-	 */
 	deleteFees() {
-		const _title = 'Fees Delete';
-		const _description = 'Are you sure to permanently delete selected fees?';
-		const _waitDesciption = 'Fees are deleting...';
-		const _deleteMessage = 'Selected fees have been deleted';
+		const _title: string = this.translate.instant('MEDELIT.FEES.DELETE_FEE_MULTY.TITLE');
+		const _description: string = this.translate.instant('MEDELIT.FEES.DELETE_FEE_MULTY.DESCRIPTION');
+		const _waitDesciption: string = this.translate.instant('MEDELIT.FEES.DELETE_FEE_MULTY.WAIT_DESCRIPTION');
+		const _deleteMessage = this.translate.instant('MEDELIT.FEES.DELETE_FEE_MULTY.MESSAGE');
 
 		const dialogRef = this.layoutUtilsService.deleteElement(_title, _description, _waitDesciption);
 		dialogRef.afterClosed().subscribe(res => {
@@ -197,7 +174,6 @@ export class FeesListComponent implements OnInit, OnDestroy {
 			}
 
 			const idsForDeletion: number[] = [];
-			// tslint:disable-next-line:prefer-for-of
 			for (let i = 0; i < this.selection.selected.length; i++) {
 				idsForDeletion.push(this.selection.selected[i].id);
 			}
@@ -207,35 +183,28 @@ export class FeesListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	/**
-	 * Fetch selected fees
-	 */
 	fetchFees() {
-		// tslint:disable-next-line:prefer-const
-		let messages = [];
+		const messages = [];
 		this.selection.selected.forEach(elem => {
 			messages.push({
-				text: `${elem.feeCode} ${elem.feeName}`,
-				id: elem.id,
+				text: `${elem.feeCode}, ${elem.feeName}`,
+				id: elem.id.toString(),
 				status: elem.status
 			});
 		});
 		this.layoutUtilsService.fetchElements(messages);
 	}
 
-	/**
-	 * Update status dialog
-	 */
 	updateStatusForFees() {
-		const _title = 'Update status for selected fees';
-		const _updateMessage = 'Status has been updated for selected fees';
-		const _statuses = [{ value: 0, text: 'Pending' }, { value: 1, text: 'Active' }, { value: 2, text: 'Suspended' }];
+		const _title = this.translate.instant('MEDELIT.FEES.UPDATE_STATUS.TITLE');
+		const _updateMessage = this.translate.instant('MEDELIT.FEES.UPDATE_STATUS.MESSAGE');
+		const _statuses = [{ value: 0, text: 'Suspended' }, { value: 1, text: 'Active' }, { value: 2, text: 'Pending' }];
 		const _messages = [];
 
 		this.selection.selected.forEach(elem => {
 			_messages.push({
-				text: `${elem.feeCode} ${elem.feeName}`,
-				id: elem.id,
+				text: `${elem.feeCode}, ${elem.feeName}`,
+				id: elem.id.toString(),
 				status: elem.status,
 				statusTitle: this.getItemStatusString(elem.status),
 				statusCssClass: this.getItemCssClassByStatus(elem.status)
@@ -254,151 +223,90 @@ export class FeesListComponent implements OnInit, OnDestroy {
 				fees: this.selection.selected
 			}));
 
-			this.layoutUtilsService.showActionNotification(_updateMessage, MessageType.Update);
+			this.layoutUtilsService.showActionNotification(_updateMessage, MessageType.Update, 10000, true, true);
 			this.selection.clear();
 		});
 	}
 
-	/**
-	 * Redirect to edit page
-	 *
-	 * @param id: any
-	 */
-	editFee(id) {
-		this.router.navigate(['../fees/edit', id], { relativeTo: this.activatedRoute });
+	addFee() {
+		const newFee = new FeeModel();
+		newFee.clear(); // Set all defaults fields
+		this.editFee(newFee);
 	}
 
-	createFee() {
-		this.router.navigateByUrl('/fee-management/fees/add');
+	editFee(fee: FeeModel) {
+		let saveMessageTranslateParam = 'MEDELIT.FEES.EDIT.';
+		saveMessageTranslateParam += fee.id > 0 ? 'UPDATE_MESSAGE' : 'ADD_MESSAGE';
+		const _saveMessage = this.translate.instant(saveMessageTranslateParam);
+		const _messageType = fee.id > 0 ? MessageType.Update : MessageType.Create;
+		const dialogRef = this.dialog.open(FeeEditDialogComponent, { data: { fee } });
+		dialogRef.afterClosed().subscribe(res => {
+			if (!res) {
+				return;
+			}
+
+			this.layoutUtilsService.showActionNotification(_saveMessage, _messageType);
+			this.loadFeesList();
+		});
 	}
 
-	restoreState(queryParams: QueryParamsModel, id: number) {
-
-		if (!queryParams.filter) {
-			return;
-		}
-
-		if ('status' in queryParams.filter) {
-			this.statusControl = queryParams.filter.status.toString();
-		}
-
-		if (queryParams.filter.model) {
-			this.searchInput.nativeElement.value = queryParams.filter.model;
-		}
-	}
-	/**
-	 * Check all rows are selected
-	 */
-	isAllSelected() {
+	isAllSelected(): boolean {
 		const numSelected = this.selection.selected.length;
 		const numRows = this.feesResult.length;
 		return numSelected === numRows;
 	}
 
-	/**
-	 * Selects all rows if they are not all selected; otherwise clear selection
-	 */
 	masterToggle() {
-		if (this.isAllSelected()) {
+		if (this.selection.selected.length === this.feesResult.length) {
 			this.selection.clear();
 		} else {
 			this.feesResult.forEach(row => this.selection.select(row));
 		}
 	}
 
-	getItemStatusString(status: number = 0): string {
-		switch (status) {
-			case 0:
-				return 'Pending';
-			case 1:
-				return 'Active';
-			case 2:
-				return 'Suspended';
-		}
-		return '';
-	}
-
 	getItemCssClassByStatus(status: number = 0): string {
 		switch (status) {
 			case 0:
-				return 'metal';
+				return 'danger';
 			case 1:
 				return 'success';
 			case 2:
-				return 'danger';
+				return 'metal';
 		}
 		return '';
 	}
 
-	getItemConditionString(condition: number = 0): string {
-		switch (condition) {
+	getItemStatusString(status: number = 0): string {
+		switch (status) {
 			case 0:
-				return 'New';
+				return 'Suspended';
 			case 1:
-				return 'Used';
+				return 'Active';
+			case 2:
+				return 'Pending';
 		}
 		return '';
 	}
 
-	getItemCssClassByCondition(condition: number = 0): string {
-		switch (condition) {
+	getItemCssClassByType(status: number = 0): string {
+		switch (status) {
 			case 0:
 				return 'accent';
 			case 1:
 				return 'primary';
+			case 2:
+				return '';
 		}
 		return '';
 	}
 
-	/* Top Filters */
-
-	loadStatusesForFilter() {
-		this.staticService.getStatuses().subscribe(res => {
-			this.statusesForFilter = res.data;
-			this.filteredStatuses = this.statusControl.valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterStatuses(value))
-				);
-		},
-			(error) => { console.log(error); },
-			() => {
-				this.statusControl.setValue({ id: -1, name: 'All' });
-				this.detectChanges();
-			});
-	}
-
-
-	private _filterStatuses(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.statusesForFilter.filter(status => this._normalizeValue(status.name).includes(filterValue));
-	}
-
-
-	private _normalizeValue(value: string): string {
-		if (value && value.length > 0)
-			return value.toLowerCase().replace(/\s/g, '');
-		return value;
-	}
-
-	displayFn(option: FilterModel): string {
-		if (option)
-			return option.name;
-		return '';
-	}
-
-	statusDrpClosed() {
-		this.loadFeesList();
-	}
-
-
-	/*End top Fitlers*/
-
-	detectChanges() {
-		try {
-			this.cdr.detectChanges();
-		} catch (e) {
-
+	getItemTypeString(status: number = 0): string {
+		switch (status) {
+			case 0:
+				return 'Business';
+			case 1:
+				return 'Individual';
 		}
+		return '';
 	}
 }

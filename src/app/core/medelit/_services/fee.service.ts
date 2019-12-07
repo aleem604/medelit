@@ -55,8 +55,8 @@ export class FeesService {
 			feesForUpdate: fees,
 			newStatus: status
 		};
-		const url = API_LEADS_URL + '/update-status';
-		return this.http.put(url, body, { headers: httpHeaders });
+		const url = API_LEADS_URL + '/update-status/'+status;
+		return this.http.put(url, fees, { headers: httpHeaders });
 	}
 
 	// DELETE => delete the fee from the server
@@ -66,9 +66,9 @@ export class FeesService {
 	}
 
 	deleteFees(ids: number[] = []): Observable<any> {
-		const url = API_LEADS_URL + '/delete-fees';
+		const url = API_LEADS_URL + '/delete';
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		const body = { feeIdsForDelete: ids };
-		return this.http.put<QueryResultsModel>(url, body, { headers: httpHeaders} );
+		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders} );
 	}
 }

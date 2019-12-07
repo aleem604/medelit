@@ -9,7 +9,7 @@ import { BaseDataSource, QueryResultsModel } from '../../_base/crud';
 import { AppState } from '../../reducers';
 import { selectFeesInStore, selectFeesPageLoading, selectFeesInitWaitingMessage } from '../_selectors/fee.selectors';
 
-export class FeeDataSource extends BaseDataSource {
+export class FeesDataSource extends BaseDataSource {
 	constructor(private store: Store<AppState>) {
 		super();
 

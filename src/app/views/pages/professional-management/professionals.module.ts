@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 // Fake API Angular-in-memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 // Translate Module
@@ -19,8 +20,6 @@ import { FakeApiService } from '../../../core/_base/layout';
 import { ModuleGuard } from '../../../core/auth';
 // Core => Services
 import {
-	customersReducer,
-	CustomerEffects,
 	CustomersService,
 	professionalsReducer,
 	ProfessionalEffects,
@@ -65,10 +64,11 @@ import {
 	MatAutocompleteModule,
 	MAT_DIALOG_DEFAULT_OPTIONS,
 	MatSnackBarModule,
-	MatTooltipModule
+	MatTooltipModule,
+
+    MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
-import { CoreModule } from '../../../core/core.module';
 import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { ProfessionalsComponent } from './professionals.component';
@@ -129,6 +129,7 @@ const routes: Routes = [
 		MatProgressBarModule,
 		MatDatepickerModule,
 		MatCardModule,
+		MatChipsModule,
 		MatPaginatorModule,
 		MatSortModule,
 		MatCheckboxModule,
@@ -137,6 +138,7 @@ const routes: Routes = [
 		MatTabsModule,
 		MatTooltipModule,
 		NgbProgressbarModule,
+		NgxMatSelectSearchModule,
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false

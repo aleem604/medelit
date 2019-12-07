@@ -73,14 +73,7 @@ export class LeadModel extends BaseModel {
 
 
 	clear() {
-		this.titleId = 0;
-		this.name = '';
-		this.email = '';
-		this.mainPhone = '';
-		this.phone2 = '';
-		this.phone2Owner = '';
-		this.phone3 = '';
-		this.phone3Owner = '';
+
 	}
 }
 

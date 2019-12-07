@@ -100,6 +100,61 @@ export const locale = {
 					ADD_MESSAGE: 'Customer has been created'
 				}
 			}
+		},
+		MEDELIT: {
+			LEADS: {
+				LEADS: 'Leads',
+				LEADS_LIST: 'Leads list',
+				NEW_LEAD: 'New Lead',
+				DELETE_LEAD_SIMPLE: {
+					TITLE: 'Lead Delete',
+					DESCRIPTION: 'Are you sure to permanently delete this lead?',
+					WAIT_DESCRIPTION: 'Lead is deleting...',
+					MESSAGE: 'Lead has been deleted'
+				},
+				DELETE_LEAD_MULTY: {
+					TITLE: 'Leads Delete',
+					DESCRIPTION: 'Are you sure to permanently delete selected leads?',
+					WAIT_DESCRIPTION: 'Leads are deleting...',
+					MESSAGE: 'Selected leads have been deleted'
+				},
+				UPDATE_STATUS: {
+					TITLE: 'Status has been updated for selected leads',
+					MESSAGE: 'Selected leads status have successfully been updated'
+				},
+				EDIT: {
+					UPDATE_MESSAGE: 'Lead has been updated',
+					ADD_MESSAGE: 'Lead has been created'
+				}
+			},
+
+
+
+			FEES: {
+				FEES: 'Fees',
+				FEES_LIST: 'Fees list',
+				NEW_FEE: 'New Fee',
+				DELETE_FEE_SIMPLE: {
+					TITLE: 'Fee Delete',
+					DESCRIPTION: 'Are you sure to permanently delete this fee?',
+					WAIT_DESCRIPTION: 'Fee is deleting...',
+					MESSAGE: 'Fee has been deleted'
+				},
+				DELETE_FEE_MULTY: {
+					TITLE: 'Fees Delete',
+					DESCRIPTION: 'Are you sure to permanently delete selected fees?',
+					WAIT_DESCRIPTION: 'Fees are deleting...',
+					MESSAGE: 'Selected fees have been deleted'
+				},
+				UPDATE_STATUS: {
+					TITLE: 'Status has been updated for selected fees',
+					MESSAGE: 'Selected fees status have successfully been updated'
+				},
+				EDIT: {
+					UPDATE_MESSAGE: 'Fee has been updated',
+					ADD_MESSAGE: 'Fee has been created'
+				}
+			}
 		}
 	}
 };

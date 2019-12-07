@@ -55,8 +55,8 @@ export class ProfessionalsService {
 			professionalsForUpdate: professionals,
 			newStatus: status
 		};
-		const url = API_LEADS_URL + '/update-status';
-		return this.http.put(url, body, { headers: httpHeaders });
+		const url = API_LEADS_URL + '/update-status/' + status;
+		return this.http.put(url, professionals, { headers: httpHeaders });
 	}
 
 	// DELETE => delete the professional from the server
@@ -66,9 +66,9 @@ export class ProfessionalsService {
 	}
 
 	deleteProfessionals(ids: number[] = []): Observable<any> {
-		const url = API_LEADS_URL + '/delete-professionals';
+		const url = API_LEADS_URL + '/delete';
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		const body = { professionalIdsForDelete: ids };
-		return this.http.put<QueryResultsModel>(url, body, { headers: httpHeaders} );
+		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders} );
 	}
 }

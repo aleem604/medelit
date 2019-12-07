@@ -3,27 +3,37 @@ import { eRecordStatus } from '../_enums/e-record-status.enum';
 
 
 export class ServiceModel extends BaseModel {
+	serviceCode: string;
 	id: number;
 	name: string;
-	cycle: boolean;
-	active: boolean;
+	cycleId: number;
+	activeServiceId: number;
 	fieldId: number;
 	field: string;
-	subCategoryId: number;
+	subcategoryId: number;
 	subCategory: string;
-	durationId: never;
+	durationId?: number;
 	duration: string;
-	taxes: number;
-	coverMap: string;
-	contractedServices: boolean;
+	timedServiceId: number;
+	vatId?: number;
+	vat: string;
+	description: string;
+	covermap: string;
+	invoicingNotes: string;
+	contractedServiceId?: number;
 	refundNotes: string;
-	informedConsent: boolean;
-	ptFeeId: number;
-	ptFee: string;
-	proFeeId: number;
-	proFee: string;
-	pros: string;
+	informedConsentId?: number;
 	tags: string;
+	ptFeeId: number;
+	ptFeeA1: null;
+	ptFeeA2: null;
+
+	proFeeId: number;
+	proFeeA1: null;
+	proFeeA2: null;
+
+
+
 	status: eRecordStatus;
 	assignedToId: number;
 	assignedTo: string;
@@ -33,11 +43,22 @@ export class ServiceModel extends BaseModel {
 	deletedAt: Date;
 	deletedById: number;
 	deletedBy: string;
+	professionals: number[];
+
+
 
 	clear() {
-		this.id = 0;
-		this.name = '';
-		this.field = '';
-		this.subCategory = '';
+		this.cycleId = 0;
+		this.activeServiceId = 0;
+		this.timedServiceId = 0;
+		this.contractedServiceId = 0;
+		this.informedConsentId = 0;
+
 	}
+}
+
+export interface ServiceProfessionals {
+	id: number;
+	serviceId: number;
+	processionalId: number;
 }

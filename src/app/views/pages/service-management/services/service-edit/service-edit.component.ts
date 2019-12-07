@@ -1,12 +1,12 @@
 // Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 // Material
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatChipInputEvent, MatSelect } from '@angular/material';
 // RxJS
-import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
-import { map, startWith, delay, first } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
+import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
 // NGRX
 import { Store, select } from '@ngrx/store';
 import { Dictionary, Update } from '@ngrx/entity';
@@ -17,65 +17,102 @@ import { SubheaderService, LayoutConfigService } from '../../../../../core/_base
 import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Services and Models
 import {
-	selectLastCreatedProductId,
-	selectProductById,
+	selectLastCreatedServiceId,
+	selectServiceById,
 	SPECIFICATIONS_DICTIONARY,
-	ProductModel,
-	ProductOnServerCreated,
-	ProductUpdated,
-	ProductsService
+	ServiceModel,
+	ServiceOnServerCreated,
+	ServiceUpdated,
+	ServicesService,
+	FilterModel,
+	StaticDataService,
+	ApiResponse,
 } from '../../../../../core/medelit';
+import { ENTER, COMMA } from '@angular/cdk/keycodes';
 
-const AVAILABLE_COLORS: string[] =
-	['Red', 'CadetBlue', 'Gold', 'LightSlateGrey', 'RoyalBlue', 'Crimson', 'Blue', 'Sienna', 'Indigo', 'Green', 'Violet',
-		'GoldenRod', 'OrangeRed', 'Khaki', 'Teal', 'Purple', 'Orange', 'Pink', 'Black', 'DarkTurquoise'];
-
-const AVAILABLE_MANUFACTURES: string[] =
-	['Pontiac', 'Subaru', 'Mitsubishi', 'Oldsmobile', 'Chevrolet', 'Chrysler', 'Suzuki', 'GMC', 'Cadillac', 'Mercury', 'Dodge',
-		'Ram', 'Lexus', 'Lamborghini', 'Honda', 'Nissan', 'Ford', 'Hyundai', 'Saab', 'Toyota'];
+export interface Fruit {
+	name: string;
+}
 
 @Component({
 	// tslint:disable-next-line:component-selector
 	selector: 'kt-service-edit',
 	templateUrl: './service-edit.component.html',
+	styleUrls: ['./service-edit.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceEditComponent implements OnInit, OnDestroy {
+	// tags input
+	visible = true;
+	selectable = true;
+	removable = true;
+	addOnBlur = true;
+	readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+	fruits: Fruit[] = [
+		{ name: 'Lemon' },
+		{ name: 'Lime' },
+		{ name: 'Apple' },
+	];
+
+
 	// Public properties
-	product: ProductModel;
-	productId$: Observable<number>;
-	oldProduct: ProductModel;
+	service: ServiceModel;
+	serviceId$: Observable<number>;
+	oldService: ServiceModel;
 	selectedTab = 0;
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;
-	productForm: FormGroup;
+	serviceForm: FormGroup;
 	hasFormErrors = false;
-	availableYears: number[] = [];
-	filteredColors: Observable<string[]>;
-	filteredManufactures: Observable<string[]>;
-	// Private password
+
 	private componentSubscriptions: Subscription;
-	// sticky portlet header margin
 	private headerMargin: number;
+
+	fieldsForFilter: FilterModel[] = [];
+	filteredFields: Observable<FilterModel[]>;
+
+	categoriesForFilter: FilterModel[] = [];
+	filteredCategories: Observable<FilterModel[]>;
+
+	durationsForFilter: FilterModel[] = [];
+	filteredDurations: Observable<FilterModel[]>;
+
+	vatsForFilter: FilterModel[] = [];
+	filteredVats: Observable<FilterModel[]>;
+
+	ptFeesForFilter: FilterModel[] = [];
+	filteredPTFees: Observable<FilterModel[]>;
+
+	proFeesForFilter: FilterModel[] = [];
+	filteredPROFees: Observable<FilterModel[]>;
+
+	professionalsForFilter: FilterModel[] = [];
+	filteredProfessionals: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
+	public profMultiCtrl: FormControl = new FormControl();
+	public profMultiFilterCtrl: FormControl = new FormControl();
+	public filteredLangsMulti: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
+	@ViewChild('multiSelect', { static: true }) multiSelect: MatSelect;
+	protected _onDestroy = new Subject<void>();
+
+
+	tagsArray: string[];
 
 	constructor(
 		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
 		private typesUtilsService: TypesUtilsService,
-		private productFB: FormBuilder,
+		private serviceFB: FormBuilder,
 		public dialog: MatDialog,
 		private subheaderService: SubheaderService,
 		private layoutUtilsService: LayoutUtilsService,
 		private layoutConfigService: LayoutConfigService,
-		private productService: ProductsService,
+		private serviceService: ServicesService,
+		private staticService: StaticDataService,
 		private cdr: ChangeDetectorRef) {
 	}
 
 	ngOnInit() {
-		for (let i = 2019; i > 1945; i--) {
-			this.availableYears.push(i);
-		}
 		this.loading$ = this.loadingSubject.asObservable();
 		this.loadingSubject.next(true);
 		this.activatedRoute.params.subscribe(params => {
@@ -83,65 +120,65 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			if (id && id > 0) {
 
 				this.store.pipe(
-					select(selectProductById(id))
+					select(selectServiceById(id))
 				).subscribe(result => {
 					if (!result) {
-						this.loadProductFromService(id);
+						this.loadServiceFromService(id);
 						return;
 					}
 
-					this.loadProduct(result);
+					this.loadService(result);
 				});
 			} else {
-				const newProduct = new ProductModel();
-				newProduct.clear();
-				this.loadProduct(newProduct);
+				const newService = new ServiceModel();
+				newService.clear();
+				this.loadService(newService);
 			}
 		});
 
-		// sticky portlet header
 		window.onload = () => {
 			const style = getComputedStyle(document.getElementById('kt_header'));
 			this.headerMargin = parseInt(style.height, 0);
 		};
 	}
 
-	loadProduct(_product, fromService: boolean = false) {
-		if (!_product) {
+	loadService(_service, fromService: boolean = false) {
+		if (!_service) {
 			this.goBack('');
 		}
-		this.product = _product;
-		this.productId$ = of(_product.id);
-		this.oldProduct = Object.assign({}, _product);
-		this.initProduct();
+		this.service = _service;
+		this.serviceId$ = of(_service.id);
+		this.oldService = Object.assign({}, _service);
+		this.initService();
+		this.loadFieldsForFilter();
+		this.loadCategoriesForFilter();
+		this.loadDurationsForFilter();
+		this.loadVatsForFilter();
+		this.loadPTFeesForFilter();
+		this.loadPROFeesForFilter();
+		this.loadProfessionalsForFilter();
+
 		if (fromService) {
 			this.cdr.detectChanges();
 		}
 	}
 
-	// If product didn't find in store
-	loadProductFromService(productId) {
-		this.productService.getProductById(productId).subscribe(res => {
-			this.loadProduct(res, true);
+	loadServiceFromService(serviceId) {
+		this.serviceService.getServiceById(serviceId).subscribe(res => {
+			this.loadService((res as unknown as ApiResponse).data, true);
 		});
 	}
 
-	/**
-	 * On destroy
-	 */
 	ngOnDestroy() {
 		if (this.componentSubscriptions) {
 			this.componentSubscriptions.unsubscribe();
 		}
 	}
 
-	/**
-	 * Init product
-	 */
-	initProduct() {
+	initService() {
 		this.createForm();
 		this.loadingSubject.next(false);
-		if (!this.product.id) {
+		if (!this.service.id) {
 			this.subheaderService.setBreadcrumbs([
 				{ title: 'Service', page: `/service-management` },
 				{ title: 'Services', page: `/service-management/services` },
@@ -153,64 +190,49 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.subheaderService.setBreadcrumbs([
 			{ title: 'Service Management', page: `/service-management` },
 			{ title: 'Services', page: `/service-management/services` },
-			{ title: 'Edit service', page: `/service-management/servies/edit`, queryParams: { id: this.product.id } }
+			{ title: 'Edit service', page: `/service-management/servies/edit`, queryParams: { id: this.service.id } }
 		]);
 	}
 
-	/**
-	 * Create form
-	 */
 	createForm() {
-		this.productForm = this.productFB.group({
-			model: [this.product.model, Validators.required],
-			manufacture: [this.product.manufacture, Validators.required],
-			modelYear: [this.product.modelYear.toString(), Validators.required],
-			mileage: [this.product.mileage, [Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-			description: [this.product.description],
-			color: [this.product.color, Validators.required],
-			price: [this.product.price, [Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-			condition: [this.product.condition.toString(), [Validators.required, Validators.min(0), Validators.max(1)]],
-			status: [this.product.status.toString(), [Validators.required, Validators.min(0), Validators.max(1)]],
-			VINCode: [this.product.VINCode, Validators.required]
+
+		this.serviceForm = this.serviceFB.group({
+			name: [this.service.name, Validators.required],
+			cycleId: [this.service.cycleId.toString(), Validators.required],
+			activeServiceId: [this.service.activeServiceId.toString(), Validators.required],
+			timedServiceId: [this.service.timedServiceId.toString(), [Validators.required]],
+			contractedServiceId: [this.service.contractedServiceId.toString(), []],
+			informedConsentId: [this.service.informedConsentId.toString(), []],
+
+			fieldId: [this.service.fieldId, [Validators.required]],
+			subcategoryId: [this.service.subcategoryId, [Validators.required]],
+			tags: [this.service.tags, []],
+			description: [this.service.description, []],
+			durationId: [this.service.durationId, [Validators.required]],
+			vatId: [this.service.vatId, [Validators.required]],
+			ptFeeId: [this.service.ptFeeId, [Validators.required]],
+			ptFeeA1: [this.service.ptFeeA1],
+			ptFeeA2: [this.service.ptFeeA2],
+			proFeeId: [this.service.proFeeId, [Validators.required]],
+			proFeeA1: [this.service.proFeeA1],
+			proFeeA2: [this.service.proFeeA2],
+
+			covermap: [this.service.covermap, []],
+			invoicingNotes: [this.service.invoicingNotes, []],
+			refundNotes: [this.service.refundNotes, []],
+			professionals: [this.service.professionals, [Validators.required]]
 		});
+		if (this.service.tags) {
+			this.tagsArray = this.service.tags.split(',');
+			this.serviceForm.get('tags').setValue('');
+		}
+		else {
+			this.tagsArray = [];
+		}
 
-		this.filteredManufactures = this.productForm.controls.manufacture.valueChanges
-			.pipe(
-				startWith(''),
-				map(val => this.filterManufacture(val.toString()))
-			);
-		this.filteredColors = this.productForm.controls.color.valueChanges
-			.pipe(
-				startWith(''),
-				map(val => this.filterColor(val.toString()))
-			);
 	}
 
-	/**
-	 * Filter manufacture
-	 *
-	 * @param val: string
-	 */
-	filterManufacture(val: string): string[] {
-		return AVAILABLE_MANUFACTURES.filter(option =>
-			option.toLowerCase().includes(val.toLowerCase()));
-	}
 
-	/**
-	 * Filter color
-	 *
-	 * @param val: string
-	 */
-	filterColor(val: string): string[] {
-		return AVAILABLE_COLORS.filter(option =>
-			option.toLowerCase().includes(val.toLowerCase()));
-	}
-
-	/**
-	 * Go back to the list
-	 *
-	 * @param id: any
-	 */
 	goBack(id) {
 		this.loadingSubject.next(false);
 		const url = `/service-management/services?id=${id}`;
@@ -221,13 +243,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.router.navigateByUrl('/service-management/services', { relativeTo: this.activatedRoute });
 	}
 
-	/**
-	 * Refresh product
-	 *
-	 * @param isNew: boolean
-	 * @param id: number
-	 */
-	refreshProduct(isNew: boolean = false, id = 0) {
+	refreshService(isNew: boolean = false, id = 0) {
 		this.loadingSubject.next(false);
 		let url = this.router.url;
 		if (!isNew) {
@@ -239,28 +255,20 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 	}
 
-	/**
-	 * Reset
-	 */
 	reset() {
-		this.product = Object.assign({}, this.oldProduct);
+		this.service = Object.assign({}, this.oldService);
 		this.createForm();
 		this.hasFormErrors = false;
-		this.productForm.markAsPristine();
-		this.productForm.markAsUntouched();
-		this.productForm.updateValueAndValidity();
+		this.serviceForm.markAsPristine();
+		this.serviceForm.markAsUntouched();
+		this.serviceForm.updateValueAndValidity();
 	}
 
-	/**
-	 * Save data
-	 *
-	 * @param withBack: boolean
-	 */
 	onSumbit(withBack: boolean = false) {
 		this.hasFormErrors = false;
-		const controls = this.productForm.controls;
+		const controls = this.serviceForm.controls;
 		/** check form */
-		if (this.productForm.invalid) {
+		if (this.serviceForm.invalid) {
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
@@ -271,118 +279,415 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		}
 
 		// tslint:disable-next-line:prefer-const
-		let editedProduct = this.prepareProduct();
+		let editedService = this.prepareService();
 
-		if (editedProduct.id > 0) {
-			this.updateProduct(editedProduct, withBack);
+		if (editedService.id > 0) {
+			this.updateService(editedService, withBack);
 			return;
 		}
 
-		this.addProduct(editedProduct, withBack);
+		this.addService(editedService, withBack);
 	}
 
-	/**
-	 * Returns object for saving
-	 */
-	prepareProduct(): ProductModel {
-		const controls = this.productForm.controls;
-		const _product = new ProductModel();
-		_product.id = this.product.id;
-		_product.model = controls.model.value;
-		_product.manufacture = controls.manufacture.value;
-		_product.modelYear = +controls.modelYear.value;
-		_product.mileage = +controls.mileage.value;
-		_product.description = controls.description.value;
-		_product.color = controls.color.value;
-		_product.price = +controls.price.value;
-		_product.condition = +controls.condition.value;
-		_product.status = +controls.status.value;
-		_product.VINCode = controls.VINCode.value;
-		_product._userId = 1; // TODO: get version from userId
-		_product._createdDate = this.product._createdDate;
-		_product._updatedDate = this.product._updatedDate;
-		_product._updatedDate = this.typesUtilsService.getDateStringFromDate();
-		_product._createdDate = this.product.id > 0 ? _product._createdDate : _product._updatedDate;
-		return _product;
+	prepareService(): ServiceModel {
+		const controls = this.serviceForm.controls;
+		const _service = new ServiceModel();
+		_service.id = this.service.id;
+		_service.name = controls.name.value;
+		_service.cycleId = controls.cycleId.value;
+		_service.activeServiceId = controls.activeServiceId.value;
+		_service.timedServiceId = controls.timedServiceId.value;
+		_service.contractedServiceId = controls.contractedServiceId.value;
+		_service.informedConsentId = controls.informedConsentId.value;
+		if (controls.fieldId.value)
+			_service.fieldId = controls.fieldId.value.id;
+		if (controls.subcategoryId.value)
+			_service.subcategoryId = controls.subcategoryId.value.id;
+
+		if (this.tagsArray.length > 0)
+			_service.tags = this.tagsArray.join(',');
+		_service.description = controls.description.value;
+		if (controls.durationId.value)
+			_service.durationId = controls.durationId.value.id;
+
+		if (controls.vatId.value)
+			_service.vatId = controls.vatId.value.id;
+		if (controls.ptFeeId.value)
+			_service.ptFeeId = controls.ptFeeId.value.id;
+		if (controls.proFeeId.value)
+			_service.proFeeId = controls.proFeeId.value.id;
+		_service.covermap = controls.covermap.value;
+		_service.invoicingNotes = controls.invoicingNotes.value;
+		_service.refundNotes = controls.refundNotes.value;
+		_service.professionals = controls.professionals.value;
+
+		return _service;
 	}
 
-	/**
-	 * Add product
-	 *
-	 * @param _product: ProductModel
-	 * @param withBack: boolean
-	 */
-	addProduct(_product: ProductModel, withBack: boolean = false) {
+	addService(_service: ServiceModel, withBack: boolean = false) {
 		this.loadingSubject.next(true);
-		this.store.dispatch(new ProductOnServerCreated({ product: _product }));
-		this.componentSubscriptions = this.store.pipe(
-			delay(1000),
-			select(selectLastCreatedProductId)
-		).subscribe(newId => {
-			if (!newId) {
-				return;
-			}
-
+		this.serviceService.createService(_service).subscribe((res) => {
 			this.loadingSubject.next(false);
-			if (withBack) {
-				this.goBack(newId);
+			var resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
+				if (withBack)
+					this.goBack(resp.data.id);
+				else {
+					const message = `New service successfully has been added.`;
+					this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+					this.refreshService(true, resp.data.id);
+				}
 			} else {
-				const message = `New service successfully has been added.`;
-				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
-				this.refreshProduct(true, newId);
+				const message = `An error occured while processing your reques. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Read, 10000, true, true);
 			}
 		});
+
+
+
+
+
+		//this.loadingSubject.next(true);
+		//this.store.dispatch(new ServiceOnServerCreated({ service: _service }));
+		//this.componentSubscriptions = this.store.pipe(
+		//	delay(1000),
+		//	select(selectLastCreatedServiceId)
+		//).subscribe(newId => {
+		//	if (!newId) {
+		//		return;
+		//	}
+
+		//	this.loadingSubject.next(false);
+		//	if (withBack) {
+		//		this.goBack(newId);
+		//	} else {
+		//		const message = `New service successfully has been added.`;
+		//		this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+		//		this.refreshService(true, newId);
+		//	}
+		//});
 	}
 
-	/**
-	 * Update product
-	 *
-	 * @param _product: ProductModel
-	 * @param withBack: boolean
-	 */
-	updateProduct(_product: ProductModel, withBack: boolean = false) {
+	updateService(_service: ServiceModel, withBack: boolean = false) {
 		this.loadingSubject.next(true);
-
-		const updateProduct: Update<ProductModel> = {
-			id: _product.id,
-			changes: _product
-		};
-
-		this.store.dispatch(new ProductUpdated({
-			partialProduct: updateProduct,
-			product: _product
-		}));
-
-		of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
-			if (withBack) {
-				this.goBack(_product.id);
-			} else {
-				const message = `Service successfully has been saved.`;
+		this.serviceService.createService(_service).subscribe((res) => {
+			this.loadingSubject.next(false);
+			var resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
+				const message = `New service successfully has been added.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-				this.refreshProduct(false);
+				this.refreshService(false);
+			} else {
+				const message = `An error occured while processing your reques. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Read, 10000, true, true);
 			}
-		}); // Remove this line
+		});
+
+
+
+
+		//this.loadingSubject.next(true);
+
+		//const updateService: Update<ServiceModel> = {
+		//	id: _service.id,
+		//	changes: _service
+		//};
+
+		//this.store.dispatch(new ServiceUpdated({
+		//	partialService: updateService,
+		//	service: _service
+		//}));
+
+		//of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
+		//	if (withBack) {
+		//		this.goBack(_service.id);
+		//	} else {
+		//		const message = `Service successfully has been saved.`;
+		//		this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+		//		this.refreshService(false);
+		//	}
+		//});
 	}
 
-	/**
-	 * Returns component title
-	 */
 	getComponentTitle() {
 		let result = 'Create service';
-		if (!this.product || !this.product.id) {
+		if (!this.service || !this.service.id) {
 			return result;
 		}
 
-		result = `Edit service - ${this.product.manufacture} ${this.product.model}, ${this.product.modelYear}`;
+		result = `Edit service - ${this.service.serviceCode} ${this.service.name}`;
 		return result;
 	}
 
-	/**
-	 * Close alert
-	 *
-	 * @param $event
-	 */
 	onAlertClose($event) {
 		this.hasFormErrors = false;
 	}
+
+	/*fitlers aread*/
+	// Field Filter
+	loadFieldsForFilter() {
+		this.staticService.getFieldsForFilter().subscribe(res => {
+			this.fieldsForFilter = res.data;
+
+			this.filteredFields = this.serviceForm.get('fieldId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterTitles(value))
+				);
+			if (this.service.fieldId > 0) {
+				var title = this.fieldsForFilter.find(x => x.id == this.service.fieldId);
+				if (title) {
+					this.serviceForm.patchValue({ 'fieldId': { id: title.id, value: title.value } });
+				}
+			}
+		});
+
+	}
+	private _filterTitles(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.fieldsForFilter.filter(elem => this._normalizeValue(elem.value).includes(filterValue));
+	}
+	/// End Field Filter
+
+	// Categories Filter
+	loadCategoriesForFilter() {
+		this.staticService.getCategoriesForFilter().subscribe(res => {
+			this.categoriesForFilter = res.data;
+
+			this.filteredCategories = this.serviceForm.get('subcategoryId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterCategories(value))
+				);
+			if (this.service.subcategoryId > 0) {
+				var title = this.categoriesForFilter.find(x => x.id == this.service.subcategoryId);
+				if (title) {
+					this.serviceForm.patchValue({ 'subcategoryId': { id: title.id, value: title.value } });
+				}
+			}
+		});
+	}
+	private _filterCategories(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.categoriesForFilter.filter(elem => this._normalizeValue(elem.value).includes(filterValue));
+	}
+	/// End Categories Filter
+
+	// Tags
+
+	add(event: MatChipInputEvent): void {
+		const input = event.input;
+		const value = event.value;
+
+		// Add our fruit
+		if (this.tagsArray.length < 5 && (value || '').trim()) {
+			this.tagsArray.push(value.trim());
+		}
+
+		// Reset the input value
+		if (input) {
+			input.value = '';
+		}
+	}
+
+	remove(tag: string): void {
+		const index = this.tagsArray.indexOf(tag);
+
+		if (index >= 0) {
+			this.tagsArray.splice(index, 1);
+		}
+	}
+
+
+
+	// End Tags
+
+
+
+
+	// Categories Filter
+	loadDurationsForFilter() {
+		this.staticService.getDurationsForFilter().subscribe(res => {
+			this.durationsForFilter = res.data;
+
+			this.filteredDurations = this.serviceForm.get('durationId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterDurations(value))
+				);
+			if (this.service.durationId > 0) {
+				var title = this.durationsForFilter.find(x => x.id == this.service.durationId);
+				if (title) {
+					this.serviceForm.patchValue({ 'durationId': { id: title.id, value: title.value } });
+				}
+			}
+		});
+	}
+	private _filterDurations(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.durationsForFilter.filter(elem => this._normalizeValue(elem.value).includes(filterValue));
+	}
+	/// End Categories Filter
+
+	// Vat Filter
+	loadVatsForFilter() {
+		this.staticService.getVatsForFilter().subscribe(res => {
+			this.vatsForFilter = res.data;
+
+			this.filteredVats = this.serviceForm.get('vatId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterVats(value))
+				);
+			if (this.service.vatId > 0) {
+				var vat = this.vatsForFilter.find(x => x.id == this.service.vatId);
+				if (vat) {
+					this.serviceForm.patchValue({ 'vatId': { id: vat.id, value: vat.value } });
+				}
+			}
+		});
+	}
+	private _filterVats(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.vatsForFilter.filter(elem => this._normalizeValue(elem.value).includes(filterValue));
+	}
+	/// End vat Filter
+
+	// Professionals Filter
+	loadProfessionalsForFilter() {
+		this.staticService.getProfessionalsForFilter().subscribe(res => {
+			this.professionalsForFilter = res.data;
+			this.filteredProfessionals.next(this.professionalsForFilter.slice());
+
+			if (this.service.id) {
+				var profs = this.service.professionals as unknown as FilterModel[];
+				var select: FilterModel[] = [];
+				profs && profs.forEach((x) => {
+					var findIndex = this.professionalsForFilter.findIndex((el) => { return el.id == x.id });
+					if (findIndex > -1)
+						select.push(this.professionalsForFilter[findIndex]);
+
+				});
+				this.serviceForm.patchValue({ 'professionals': select });
+			}
+
+
+			this.profMultiFilterCtrl.valueChanges
+				.pipe(takeUntil(this._onDestroy))
+				.subscribe(() => {
+					this.filterLangsMulti();
+				});
+		});
+	}
+
+	private filterLangsMulti() {
+		if (!this.professionalsForFilter) {
+			return;
+		}
+		// get the search keyword
+		let search = this.profMultiFilterCtrl.value;
+		if (!search) {
+			this.filteredProfessionals.next(this.professionalsForFilter.slice());
+			return;
+		} else {
+			search = search.toLowerCase();
+		}
+		// filter the banks
+		this.filteredProfessionals.next(
+			this.professionalsForFilter.filter(bank => bank.value.toLowerCase().indexOf(search) > -1)
+		);
+	}
+	// end professionals fitler
+
+
+	// PT Fees Filter
+	loadPTFeesForFilter() {
+		this.staticService.getPTFeesForFilter().subscribe(res => {
+			this.ptFeesForFilter = res.data;
+
+			this.filteredPTFees = this.serviceForm.get('ptFeeId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterPTFees(value))
+				);
+			if (this.service.ptFeeId > 0) {
+				var vat = this.ptFeesForFilter.find(x => x.id == this.service.ptFeeId);
+				if (vat) {
+					this.serviceForm.patchValue({ 'ptFeeId': { id: vat.id, value: vat.value } });
+				}
+			}
+		});
+	}
+	private _filterPTFees(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.ptFeesForFilter.filter(elem => this._normalizeValue(elem.value).includes(filterValue));
+	}
+	ptFeeDrpClosed() {
+		var selected = this.serviceForm.get('ptFeeId').value;
+		if (selected) {
+			this.serviceForm.get('ptFeeA1').setValue(selected.a1);
+			this.serviceForm.get('ptFeeA2').setValue(selected.a2);
+		} else {
+			this.serviceForm.get('ptFeeA1').setValue('');
+			this.serviceForm.get('ptFeeA2').setValue('');
+		}
+
+	}
+
+	/// End PT Fees for filter
+
+	// PRO Fees Filter
+	loadPROFeesForFilter() {
+		this.staticService.getPROFeesForFilter().subscribe(res => {
+			this.proFeesForFilter = res.data;
+
+			this.filteredPROFees = this.serviceForm.get('proFeeId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterPROFees(value))
+				);
+			if (this.service.vatId > 0) {
+				var vat = this.proFeesForFilter.find(x => x.id == this.service.proFeeId);
+				if (vat) {
+					this.serviceForm.patchValue({ 'proFeeId': { id: vat.id, value: vat.value } });
+				}
+			}
+		});
+	}
+	private _filterPROFees(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.proFeesForFilter.filter(elem => this._normalizeValue(elem.value).includes(filterValue));
+	}
+
+	proFeeDrpClosed() {
+		var selected = this.serviceForm.get('proFeeId').value;
+		if (selected) {
+			this.serviceForm.get('proFeeA1').setValue(selected.a1);
+			this.serviceForm.get('proFeeA2').setValue(selected.a2);
+		} else {
+			this.serviceForm.get('proFeeA1').setValue('');
+			this.serviceForm.get('proFeeA2').setValue('');
+		}
+	}
+
+
+	/// End PT Fees for filter
+
+
+	displayFn(option: FilterModel): string {
+		if (option)
+			return option.value;
+		return '';
+	}
+
+	private _normalizeValue(value: string): string {
+		if (value && value.length > 0)
+			return value.toLowerCase().replace(/\s/g, '');
+		return value;
+	}
+
+
+
+	// End Fitler Section
+
 }

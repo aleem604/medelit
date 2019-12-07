@@ -24,10 +24,11 @@ import {
 	LeadOnServerCreated,
 	LeadUpdated,
 	LeadsService,
-    StaticDataModel,
-    StaticDataService,
-    FilterModel,
-    ApiResponse
+	StaticDataModel,
+
+	StaticDataService,
+	FilterModel,
+	ApiResponse
 } from '../../../../../core/medelit';
 
 
@@ -35,6 +36,7 @@ import {
 	// tslint:disable-next-line:component-selector
 	selector: 'kt-lead-edit',
 	templateUrl: './leads-edit.component.html',
+	styleUrls: ['./leads-edit.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeadEditComponent implements OnInit, OnDestroy {
@@ -84,7 +86,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		private layoutUtilsService: LayoutUtilsService,
 		private layoutConfigService: LayoutConfigService,
 		private leadService: LeadsService,
-		private staticService:StaticDataService,
+		private staticService: StaticDataService,
 		private cdr: ChangeDetectorRef) {
 	}
 
@@ -95,16 +97,17 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			const id = params.id;
 			if (id && id > 0) {
 
-				this.store.pipe(
-					select(selectLeadById(id))
-				).subscribe(result => {
-					if (!result) {
-						this.loadLeadFromService(id);
-						return;
-					}
+				//this.store.pipe(
+				//	select(selectLeadById(id))
+				//).subscribe(result => {
+				//	if (!result) {
+				//		this.loadLeadFromService(id);
+				//		return;
+				//	}
 
-					this.loadLead(result);
-				});
+				//	this.loadLead(result);
+				//});
+				this.loadLeadFromService(id);
 			} else {
 				const newLead = new LeadModel();
 				newLead.clear();
@@ -167,7 +170,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			{ title: 'Leads', page: `/lead-management/leads` },
 			{ title: 'Edit lead', page: `/lead-management/leads/edit`, queryParams: { id: this.lead.id } }
 		]);
-		
+
 	}
 
 	createForm() {
@@ -176,20 +179,25 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			surName: [this.lead.surName, [Validators.required, Validators.min(4), Validators.max(250)]],
 			name: [this.lead.name, Validators.required],
 			languageId: [this.lead.languageId, [Validators.required]],
-			mainPhone: [this.lead.mainPhone,[]],
+			mainPhone: [this.lead.mainPhone, []],
 			mainPhoneOwner: [this.lead.mainPhoneOwner],
-			contactPhone: [this.lead.contactPhone,[]],
+			contactPhone: [this.lead.contactPhone, []],
 			phone2: [this.lead.phone2, []],
 			phone2Owner: [this.lead.phone2Owner, [Validators.max(250)]],
 			phone3: [this.lead.phone3, []],
 			phone3Owner: [this.lead.phone3Owner, [Validators.max(250)]],
-			email: [this.lead.email, [Validators.email, Validators.max(250)]],
+			email: [this.lead.email, [Validators.required,  Validators.email, Validators.max(250)]],
 			fax: [this.lead.fax, [Validators.max(250)]],
 			dateOfBirth: [this.lead.dateOfBirth, [Validators.max(250)]],
 			countryOfBirthId: [this.lead.countryOfBirthId, [Validators.max(250)]],
 			visitRequestingPerson: [this.lead.visitRequestingPerson, [Validators.max(250)]],
-			visitRequestingPersonRelationId: [this.lead.visitRequestingPersonRelationId, []],		
+			visitRequestingPersonRelationId: [this.lead.visitRequestingPersonRelationId, []],
 			gpCode: [this.lead.gpCode, [Validators.max(250)]],
+
+
+
+
+
 		});
 
 	}
@@ -324,7 +332,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 
 
-/*Fitlers Section*/
+	/*Fitlers Section*/
 	loadTitlesForFilter() {
 		this.staticService.getTitlesForFilter().subscribe(res => {
 			this.titlesForFilter = res.data;

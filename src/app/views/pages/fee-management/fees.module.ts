@@ -68,7 +68,7 @@ import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-boo
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { FeesListComponent } from './fees/fees-list/fees-list.component';
 import { FeesComponent } from './fees.component';
-import { FeeEditComponent } from './fees/fee-edit/fee-edit.component';
+import { FeeEditDialogComponent } from './fees/fee-edit/fee-edit.dialog.component';
 
 
 
@@ -88,16 +88,7 @@ const routes: Routes = [
 			{
 				path: 'fees',
 				component: FeesListComponent
-			},
-			
-			{
-				path: 'fees/add',
-				component: FeeEditComponent
-			},
-			{
-				path: 'fees/edit/:id',
-				component: FeeEditComponent
-			},
+			}
 		]
 	}
 ];
@@ -169,12 +160,13 @@ const routes: Routes = [
 		ActionNotificationComponent,
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
-		UpdateStatusDialogComponent
+		UpdateStatusDialogComponent,
+		FeeEditDialogComponent
 	],
 	declarations: [
 		FeesComponent,
 		FeesListComponent,
-		FeeEditComponent
+		FeeEditDialogComponent
 	]
 })
 export class FeesModule { }

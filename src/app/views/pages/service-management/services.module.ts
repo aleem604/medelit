@@ -21,7 +21,8 @@ import { ModuleGuard } from '../../../core/auth';
 import {
     fieldsReducer,
     FieldEffects,
-    FieldsService,
+    FieldsService,
+
     servicesReducer,
     ServiceEffects
 } from '../../../core/medelit';
@@ -62,7 +63,9 @@ import {
 	MatAutocompleteModule,
 	MAT_DIALOG_DEFAULT_OPTIONS,
 	MatSnackBarModule,
-	MatTooltipModule
+	MatTooltipModule,
+
+    MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
 import { CoreModule } from '../../../core/core.module';
@@ -74,6 +77,7 @@ import { ServiceEditComponent } from './services/service-edit/service-edit.compo
 import { FieldsListComponent } from './fields/fields-list/fields-list.component';
 import { FieldEditComponent } from './fields/field-edit/field-edit.component';
 import { StaticDataService, ServicesService } from '../../../core/medelit/_services';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 
 
@@ -152,6 +156,8 @@ const routes: Routes = [
 		MatTabsModule,
 		MatTooltipModule,
 		NgbProgressbarModule,
+		MatChipsModule,
+		NgxMatSelectSearchModule,
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false

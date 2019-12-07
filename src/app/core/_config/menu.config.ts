@@ -669,14 +669,14 @@ export class MenuConfig {
 				},
 				{section: 'Applications'},
 				{
-					title: 'Leads',
+					title: 'Lead Management',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
 					permission: 'accessToECommerceModule',
 					submenu: [
 						{
-							title: 'List',
+							title: 'Leads',
 							page: '/lead-management/leads'
 						},
 						{
@@ -686,14 +686,14 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Customers',
+					title: 'Customer Management',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
 					permission: 'accessToECommerceModule',
 					submenu: [
 						{
-							title: 'List',
+							title: 'Customers',
 							page: '/customer-management/customers'
 						},
 						//{
@@ -703,14 +703,14 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Bookings',
+					title: 'Booking Management',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
 					permission: 'accessToECommerceModule',
 					submenu: [
 						{
-							title: 'List',
+							title: 'Bookings',
 							page: '/booking-management/bookings'
 						},
 						{
@@ -720,14 +720,14 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Invoices',
+					title: 'Invoice Management',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
 					permission: 'accessToECommerceModule',
 					submenu: [
 						{
-							title: 'List',
+							title: 'Invoices',
 							page: '/invoice-management/invoices'
 						},
 						//{
@@ -737,14 +737,14 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Invoice Entities',
+					title: 'Invoice Entity Management',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
 					permission: 'accessToECommerceModule',
 					submenu: [
 						{
-							title: 'List',
+							title: 'Invoice Entities',
 							page: '/invoice-entity-management/invoice-entities'
 						},
 						{
@@ -754,31 +754,31 @@ export class MenuConfig {
 					]
 				},				
 				{
-					title: 'Fees',
+					title: 'Fee Management',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
 					permission: 'accessToECommerceModule',
 					submenu: [
 						{
-							title: 'List',
+							title: 'Fees',
 							page: '/fee-management/fees'
 						},
-						{
-							title: 'Add Fees',
-							page: '/fee-management/fees/add'
-						},
+						//{
+						//	title: 'Add Fees',
+						//	page: '/fee-management/fees/add'
+						//},
 					]
 				},
 				{
-					title: 'Professionals',
+					title: 'Professional Management',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
 					permission: 'accessToECommerceModule',
 					submenu: [
 						{
-							title: 'List',
+							title: 'Professionals',
 							page: '/professional-management/professionals'
 						},
 						{
@@ -788,14 +788,14 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Services',
+					title: 'Service Management',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
 					permission: 'accessToECommerceModule',
 					submenu: [
 						{
-							title: 'List',
+							title: 'Services',
 							page: '/service-management/services'
 						},
 						{

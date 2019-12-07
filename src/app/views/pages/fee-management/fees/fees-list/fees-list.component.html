@@ -1,8 +1,15 @@
 <kt-portlet>
+	<kt-portlet-header [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+		<ng-container ktPortletTitle>
+			<h3 class="kt-portlet__head-title">
+				<span translate="MEDELIT.FEES.FEES_LIST">Fees list</span>
+			</h3>
+		</ng-container>
 
-	<kt-portlet-header [sticky]="true" [title]="'Fees list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
 		<ng-container ktPortletTools>
-			<button (click)="createFee()" mat-raised-button color="primary" matTooltip="Create new fee">New fee</button>
+			<button (click)="addFee()" mat-raised-button matTooltip="Create new fee" color="primary" type="button">
+				<span translate="MEDELIT.FEES.NEW_FEE">New Fee</span>
+			</button>
 		</ng-container>
 	</kt-portlet-header>
 	<!-- end::Header -->
@@ -13,30 +20,49 @@
 			<!-- start::FILTERS -->
 			<div class="kt-form__filtration">
 				<div class="row align-items-center">
-					<div class="col-md-3 kt-margin-bottom-10-mobile">
-						<mat-form-field class="example-full-width">
-							<input type="text" placeholder="Pick status" aria-label="Number" matInput [matAutocomplete]="status" [formControl]="statusControl">
-							<mat-autocomplete autoActiveFirstOption #status="matAutocomplete"
-											  (closed)="statusDrpClosed()"
-											  [displayWith]="displayFn">
-								<mat-option *ngFor="let c of filteredStatuses | async" [value]="c">
-									{{c.name}}
-								</mat-option>
-							</mat-autocomplete>
+
+					<div class="col-md-2 kt-margin-bottom-10-mobile">
+						<!-- 'm  margin-bottom-10-mobile' for adaptive make-up  -->
+						<div class="kt-form__control">
+							<mat-form-field class="mat-form-field-fluid">
+								<mat-select [(value)]="filterStatus" (selectionChange)="loadFeesList()">
+									<mat-option value="">All</mat-option>
+									<mat-option value="0">Suspended</mat-option>
+									<mat-option value="1">Active</mat-option>
+									<mat-option value="Pending">Pending</mat-option>
+								</mat-select>
+								<mat-hint align="start">
+									<strong>Filter</strong> by Status
+								</mat-hint>
+							</mat-form-field>
+						</div>
+					</div>
+
+					<div class="col-md-2 kt-margin-bottom-10-mobile">
+
+						<div class="kt-form__control">
+							<mat-form-field class="mat-form-field-fluid">
+								<mat-select [(value)]="feeType" (selectionChange)="loadFeesList()">
+									<mat-option value="">All</mat-option>
+									<mat-option value="0">PT Fee</mat-option>
+									<mat-option value="1">PRO Fee</mat-option>
+								</mat-select>
+								<mat-hint align="start">
+									<strong>Filter</strong> by Fee Type
+								</mat-hint>
+							</mat-form-field>
+						</div>
+					</div>
+
+					<div class="col-md-2 kt-margin-bottom-10-mobile">
+						<mat-form-field class="mat-form-field-fluid">
+							<input matInput placeholder="Search fee" #searchInput placeholder="Search">
 							<mat-hint align="start">
-								Select a
-								<strong>Status</strong>
+								<strong>Search</strong> in all fields
 							</mat-hint>
 						</mat-form-field>
 					</div>
-					<div class="col-md-4 kt-margin-bottom-10-mobile">
-						<mat-form-field>
-							<input matInput placeholder="Search fee" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
-							<mat-hint align="start">
-								<strong>Search in all fields</strong>
-							</mat-hint>
-						</mat-form-field>
-					</div>
+
 				</div>
 			</div>
 			<!-- end::FILTERS -->
@@ -44,22 +70,35 @@
 			<!-- start::GROUP ACTIONS -->
 			<!-- Group actions list: 'Delete selected' | 'Fetch selected' | 'Update status for selected' -->
 			<!-- Group actions are shared for all LISTS | See '../../_shared' folder -->
-			<div class="row align-items-center collapse kt-form__group-actions kt-margin-top-20 kt-margin-bottom-20" [ngClass]="{'show' : selection.selected.length > 0}">
+			<div class="row align-items-center collapse kt-form__group-actions kt-margin-top-20 kt-margin-bottom-20"
+				[ngClass]="{'show' : selection.selected.length > 0}"><!-- We show 'Group Actions' div if smth are selected -->
 				<div class="col-xl-12">
 					<div class="kt-form__group kt-form__group--inline">
 						<div class="kt-form__label kt-form__label-no-wrap">
-							<label class="kt--font-bold kt-font-danger-">Selected records count: {{ selection.selected.length }}</label>
+							<label class="kt--font-bold kt-font-danger-">
+								<span translate="MEDELIT.COMMON.SELECTED_RECORDS_COUNT"></span> {{ selection.selected.length }}
+							</label>
+							<!-- selectedCountsTitle => function from codeBehind (fee-list.component.ts file) -->
+							<!-- selectedCountsTitle => just returns title of selected items count -->
+							<!-- for example: Selected records count: 4 -->
 						</div>
 						<div class="kt-form__control kt-form__group--inline">
-							<button mat-raised-button color="accent" (click)="deleteFees()" matTooltip="Delete selected fees"  class="mat-button-mt-4">
-								<mat-icon>delete</mat-icon>
-								Delete All
-							</button>&nbsp;<!-- Call 'delete-entity-dialog' from _shared folder -->
-							<button mat-raised-button (click)="fetchFees()" matTooltip="Fetch selected fees"  class="mat-button-mt-4">
+							<ng-template ngxPermissionsOnly="canDeleteECommerceData">
+								<button (click)="deleteFees()"
+									mat-raised-button
+									color="accent"
+									matTooltip="Delete selected fees" 
+									class="mat-button-mt-4">
+									<mat-icon>delete</mat-icon>
+									Delete All
+								</button>&nbsp;<!-- Call 'delete-entity-dialog' from _shared folder -->
+							</ng-template>
+
+							<button (click)="fetchFees()" mat-raised-button matTooltip="Fetch selected fees" class="mat-button-mt-4">
 								<mat-icon>clear_all</mat-icon>
-								Fetch Selected Records
+								Fetch Selected
 							</button>&nbsp;<!-- Call 'fetch-entity-dialog' from _shared folder -->
-							<button mat-raised-button (click)="updateStatusForFees()" matTooltip="Update status for selected fees"  class="mat-button-mt-4">
+							<button (click)="updateStatusForFees()" mat-raised-button matTooltip="Update status for selected fees"  class="mat-button-mt-4">
 								<mat-icon>update</mat-icon>
 								Update status
 							</button><!-- Call 'update-stated-dialog' from _shared folder -->
@@ -74,18 +113,17 @@
 		<!-- MATERIAL TABLE | Binded to datasources -->
 		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
 		<div class="mat-table__wrapper">
-			<!-- Checkbox Column -->
-			<!-- Table with selection -->
-			<!-- https://run.stackblitz.com/api/angular/v1?file=app%2Ftable-selection-example.ts -->
 			<mat-table class="lmat-elevation-z8"
 					   #table
 					   [dataSource]="dataSource"
 					   matSort
 					   #sort1="matSort"
-					   matSortActive="id"
-					   matSortDirection="asc"
+					   matSortActive="feeCode"
+					   matSortDirection="desc"
 					   matSortDisableClear>
 				<!-- Checkbox Column -->
+				<!-- Table with selection -->
+				<!-- https://run.stackblitz.com/api/angular/v1?file=app%2Ftable-selection-example.ts -->
 				<ng-container matColumnDef="select">
 					<mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
 						<mat-checkbox (change)="$event ? masterToggle() : null"
@@ -104,13 +142,17 @@
 				</ng-container>
 
 				<ng-container matColumnDef="id">
-					<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-vinCode">Id</mat-header-cell>
-					<mat-cell *matCellDef="let fee" class="mat-column-vinCode">{{fee.id}}</mat-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+					<mat-cell *matCellDef="let fee">{{fee.id}}</mat-cell>
 				</ng-container>
-
 				<ng-container matColumnDef="feeCode">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Code</mat-header-cell>
 					<mat-cell *matCellDef="let fee">{{fee.feeCode}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="feeType">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
+					<mat-cell *matCellDef="let fee">{{fee.feeType}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="feeName">
@@ -118,81 +160,101 @@
 					<mat-cell *matCellDef="let fee">{{fee.feeName}}</mat-cell>
 				</ng-container>
 
+				<ng-container matColumnDef="tags">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Tags</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.tags}}</mat-cell>
+				</ng-container>
+
 				<ng-container matColumnDef="fields">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Fields</mat-header-cell>
 					<mat-cell *matCellDef="let fee">{{fee.fields}}</mat-cell>
 				</ng-container>
-
 				<ng-container matColumnDef="subCategories">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Subcategories</mat-header-cell>
 					<mat-cell *matCellDef="let fee">{{fee.subCategories}}</mat-cell>
 				</ng-container>
-
 				<ng-container matColumnDef="a1">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>A1</mat-header-cell>
 					<mat-cell *matCellDef="let fee">{{fee.a1}}</mat-cell>
 				</ng-container>
-
 				<ng-container matColumnDef="a2">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>A2</mat-header-cell>
-					<mat-cell *matCellDef="let fee">${{fee.a2}}</mat-cell>
+					<mat-cell *matCellDef="let fee">{{fee.a2}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="status">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
 					<mat-cell *matCellDef="let fee">
-						<span class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{ getItemCssClassByStatus(fee.status) }} kt-badge--wide">{{ getItemStatusString(fee.status) }}</span>
+						<span class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{ getItemCssClassByStatus(fee.status) }} kt-badge--wide">{{  getItemStatusString(fee.status) }}</span>
 					</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="condition">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Condition</mat-header-cell>
+				<ng-container matColumnDef="type">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
 					<mat-cell *matCellDef="let fee">
-						<span class="kt-badge kt-badge--{{ getItemCssClassByCondition(fee.condition) }} kt-badge--dot"></span>&nbsp;
-						<span class="kt--font-bold kt-font-{{ getItemCssClassByCondition(fee.condition) }}">{{ getItemConditionString(fee.condition) }}</span>
+						<span class="kt-badge kt-badge--{{ getItemCssClassByType(fee.type) }} kt-badge--dot"></span>&nbsp;
+						<span class="kt--font-bold kt-font-{{ getItemCssClassByType(fee.type) }}">{{ getItemTypeString(fee.type) }}</span>
 					</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="actions">
-					<mat-header-cell *matHeaderCellDef>
-						Actions
-					</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
 					<mat-cell *matCellDef="let fee">
-						<button type="button" (click)="editFee(fee.id)" mat-icon-button color="primary" matTooltip="Edit fee">
-							<mat-icon>create</mat-icon>
-						</button>&nbsp;
-						<button mat-icon-button color="warn" type="button" (click)="deleteFee(fee)" matTooltip="Delete fee">
-							<mat-icon>delete</mat-icon>
-						</button>&nbsp;
+						<ng-template ngxPermissionsOnly="canEditECommerceData">
+							<button mat-icon-button color="primary" matTooltip="Edit fee" (click)="editFee(fee)">
+								<mat-icon>create</mat-icon>
+							</button>&nbsp;
+						</ng-template>
+
+						<ng-template ngxPermissionsOnly="canDeleteECommerceData">
+							<button mat-icon-button
+									color="warn"
+									matTooltip="Delete fee"
+									type="button"
+									(click)="deleteFee(fee)">
+								<mat-icon>delete</mat-icon>
+							</button>&nbsp;
+						</ng-template>
+
 						<!--<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
-				<mat-icon>more_vert</mat-icon>
-			</button>-->
+							<mat-icon>more_vert</mat-icon>
+						</button>-->
 						<mat-menu #menu="matMenu">
-							<button mat-menu-item type="button">
-								<mat-icon>subject</mat-icon>
-								<span>Remarks</span>
+							<button mat-menu-item>
+								<mat-icon>dialpad</mat-icon>
+								<span>Redial</span>
 							</button>
-							<button mat-menu-item type="button">
-								<mat-icon>assignment</mat-icon>
-								<span>Specifications</span>
+							<button mat-menu-item disabled>
+								<mat-icon>voicemail</mat-icon>
+								<span>Check voicemail</span>
+							</button>
+							<button mat-menu-item>
+								<mat-icon>notifications_off</mat-icon>
+								<span>Disable alerts</span>
 							</button>
 						</mat-menu>
 					</mat-cell>
 				</ng-container>
 
 				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
 				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
 			</mat-table>
+			<!-- Message for empty data  -->
 			<div class="mat-table__message" *ngIf="!dataSource.hasItems">No records found</div>
 			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">Please wait....</div>
 		</div>
 
 		<!-- start: BOTTOM -->
 		<div class="mat-table__bottom">
+			<!-- MATERIAL SPINNER | Url: 'https://material.angular.io/components/progress-spinner/overview' -->
 			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<!-- MATERIAL PAGINATOR | Binded to dasources -->
+			<!-- See off.documentations 'https://material.angular.io/components/paginator/overview' -->
 			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
 		</div>
 		<!-- end: BOTTOM -->
 	</kt-portlet-body>
 	<!-- end::Body -->
+
 </kt-portlet>

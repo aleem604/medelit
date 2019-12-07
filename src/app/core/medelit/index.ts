@@ -1,6 +1,9 @@
 // Context
 export { ECommerceDataContext } from './_server/_e-commerce.data-context';
 
+/// Enumbs
+export { eFeeType } from './_enums/e-fee-type.enum';
+
 // Models and Consts
 export { FeeModel } from './_models/fee.model';
 export { InvoiceModel } from './_models/invoice.model';
@@ -21,7 +24,7 @@ export { SPECIFICATIONS_DICTIONARY } from './_consts/specification.dictionary';
 // DataSources
 export { InvoiceDataSource } from './_data-sources/invoice.datasource';
 export { InvoiceEntityDataSource } from './_data-sources/invoice-entity.datasource';
-export { FeeDataSource } from './_data-sources/fee.datasource';
+export { FeesDataSource } from './_data-sources/fee.datasource';
 export { ProfessionalDataSource } from './_data-sources/professional.datasource';
 export { LeadDataSource } from './_data-sources/lead.datasource';
 export { ServiceDataSource } from './_data-sources/service.datasource';
@@ -50,18 +53,18 @@ export {
 
 // Customer Actions =>
 export {
-    CustomerActionTypes,
-    CustomerActions,
-    CustomerOnServerCreated,
-    CustomerCreated,
-    CustomerUpdated,
-    CustomersStatusUpdated,
-    OneCustomerDeleted,
-    ManyCustomersDeleted,
-    CustomersPageRequested,
-    CustomersPageLoaded,
-    CustomersPageCancelled,
-    CustomersPageToggleLoading
+	CustomerActionTypes,
+	CustomerActions,
+	CustomerOnServerCreated,
+	CustomerCreated,
+	CustomerUpdated,
+	CustomersStatusUpdated,
+	OneCustomerDeleted,
+	ManyCustomersDeleted,
+	CustomersPageRequested,
+	CustomersPageLoaded,
+	CustomersPageCancelled,
+	CustomersPageToggleLoading
 } from './_actions/customer.actions';
 
 // Field Actions =>
@@ -163,48 +166,48 @@ export {
 
 // Product actions =>
 export {
-    ProductActionTypes,
-    ProductActions,
-    ProductOnServerCreated,
-    ProductCreated,
-    ProductUpdated,
-    ProductsStatusUpdated,
-    OneProductDeleted,
-    ManyProductsDeleted,
-    ProductsPageRequested,
-    ProductsPageLoaded,
-    ProductsPageCancelled,
-    ProductsPageToggleLoading,
-    ProductsActionToggleLoading
+	ProductActionTypes,
+	ProductActions,
+	ProductOnServerCreated,
+	ProductCreated,
+	ProductUpdated,
+	ProductsStatusUpdated,
+	OneProductDeleted,
+	ManyProductsDeleted,
+	ProductsPageRequested,
+	ProductsPageLoaded,
+	ProductsPageCancelled,
+	ProductsPageToggleLoading,
+	ProductsActionToggleLoading
 } from './_actions/product.actions';
 // ProductRemark Actions =>
 export {
-    ProductRemarkActionTypes,
-    ProductRemarkActions,
-    ProductRemarkCreated,
-    ProductRemarkUpdated,
-    ProductRemarkStoreUpdated,
-    OneProductRemarkDeleted,
-    ManyProductRemarksDeleted,
-    ProductRemarksPageRequested,
-    ProductRemarksPageLoaded,
-    ProductRemarksPageCancelled,
-    ProductRemarksPageToggleLoading,
-    ProductRemarkOnServerCreated
+	ProductRemarkActionTypes,
+	ProductRemarkActions,
+	ProductRemarkCreated,
+	ProductRemarkUpdated,
+	ProductRemarkStoreUpdated,
+	OneProductRemarkDeleted,
+	ManyProductRemarksDeleted,
+	ProductRemarksPageRequested,
+	ProductRemarksPageLoaded,
+	ProductRemarksPageCancelled,
+	ProductRemarksPageToggleLoading,
+	ProductRemarkOnServerCreated
 } from './_actions/product-remark.actions';
 // ProductSpecification Actions =>
 export {
-    ProductSpecificationActionTypes,
-    ProductSpecificationActions,
-    ProductSpecificationCreated,
-    ProductSpecificationUpdated,
-    OneProductSpecificationDeleted,
-    ManyProductSpecificationsDeleted,
-    ProductSpecificationsPageRequested,
-    ProductSpecificationsPageLoaded,
-    ProductSpecificationsPageCancelled,
-    ProductSpecificationsPageToggleLoading,
-    ProductSpecificationOnServerCreated
+	ProductSpecificationActionTypes,
+	ProductSpecificationActions,
+	ProductSpecificationCreated,
+	ProductSpecificationUpdated,
+	OneProductSpecificationDeleted,
+	ManyProductSpecificationsDeleted,
+	ProductSpecificationsPageRequested,
+	ProductSpecificationsPageLoaded,
+	ProductSpecificationsPageCancelled,
+	ProductSpecificationsPageToggleLoading,
+	ProductSpecificationOnServerCreated
 } from './_actions/product-specification.actions';
 
 // Effects
@@ -246,12 +249,12 @@ export {
 
 // Customer selectors =>
 export {
-    selectCustomerById,
-    selectCustomersInStore,
-    selectCustomersPageLoading,
-    selectLastCreatedCustomerId,
-    selectCustomersActionLoading,
-    selectCustomersShowInitWaitingMessage
+	selectCustomerById,
+	selectCustomersInStore,
+	selectCustomersPageLoading,
+	selectLastCreatedCustomerId,
+	selectCustomersActionLoading,
+	selectCustomersShowInitWaitingMessage
 } from './_selectors/customer.selectors';
 // Field selectors =>
 export {
@@ -260,7 +263,7 @@ export {
 	selectFieldsPageLoading,
 	selectLastCreatedFieldId,
 	selectFieldsActionLoading,
-	 selectFieldsPageLastQuery,
+	selectFieldsPageLastQuery,
 	selectFieldsShowInitWaitingMessage
 } from './_selectors/field.selectors';
 // Service selectors =>
@@ -324,33 +327,33 @@ export {
 
 // Product selectors
 export {
-    selectProductById,
-    selectProductsInStore,
-    selectProductsPageLoading,
-    selectProductsPageLastQuery,
-    selectLastCreatedProductId,
-    selectHasProductsInStore,
-    selectProductsActionLoading,
-    selectProductsInitWaitingMessage
+	selectProductById,
+	selectProductsInStore,
+	selectProductsPageLoading,
+	selectProductsPageLastQuery,
+	selectLastCreatedProductId,
+	selectHasProductsInStore,
+	selectProductsActionLoading,
+	selectProductsInitWaitingMessage
 } from './_selectors/product.selectors';
 // ProductRemark selectors =>
 export {
-    selectProductRemarkById,
-    selectProductRemarksInStore,
-    selectProductRemarksPageLoading,
-    selectCurrentProductIdInStoreForProductRemarks,
-    selectLastCreatedProductRemarkId,
-    selectPRShowInitWaitingMessage
+	selectProductRemarkById,
+	selectProductRemarksInStore,
+	selectProductRemarksPageLoading,
+	selectCurrentProductIdInStoreForProductRemarks,
+	selectLastCreatedProductRemarkId,
+	selectPRShowInitWaitingMessage
 } from './_selectors/product-remark.selectors';
 // ProductSpecification selectors =>
 export {
-    selectProductSpecificationById,
-    selectProductSpecificationsInStore,
-    selectProductSpecificationsPageLoading,
-    selectCurrentProductIdInStoreForProductSpecs,
-    selectProductSpecificationsState,
-    selectLastCreatedProductSpecificationId,
-    selectPSShowInitWaitingMessage
+	selectProductSpecificationById,
+	selectProductSpecificationsInStore,
+	selectProductSpecificationsPageLoading,
+	selectCurrentProductIdInStoreForProductSpecs,
+	selectProductSpecificationsState,
+	selectLastCreatedProductSpecificationId,
+	selectPSShowInitWaitingMessage
 } from './_selectors/product-specification.selectors';
 
 // Services

@@ -60,7 +60,8 @@ import {
 	MatAutocompleteModule,
 	MAT_DIALOG_DEFAULT_OPTIONS,
 	MatSnackBarModule,
-	MatTooltipModule
+	MatTooltipModule,
+    MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
 import { CoreModule } from '../../../core/core.module';
@@ -117,6 +118,7 @@ const routes: Routes = [
 		MatSelectModule,
         MatInputModule,
 		MatTableModule,
+		MatChipsModule,
 		MatAutocompleteModule,
 		MatRadioModule,
 		MatIconModule,

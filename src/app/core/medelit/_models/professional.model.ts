@@ -7,52 +7,51 @@ export class ProfessionalModel extends BaseModel {
 	titleId: number;
 	title: string;
 	name: string;
-	surname: string;
+	languages: string[];
 	email: string;
 	telephone: string;
 	accountingCodeId: number;
-	accountingCode: string;
 	website: string;
 	mobilePhone: string;
 	homePhone: string;
 	email2: string;
+	fax: string;
 	coverMap: string;
 	streetName: string;
 	cityId: number;
-	city: string;
 	postCode: string;
 	countryId: number;
-	country: string;
 	description: string;
 	clinicStreetName: string;
 	clinicPostCode: string;
-	clinicCityId: number;
-	clinicCity: string;
+	clinicCityId?: number;
 	clinicPhoneNumber: string;
 	dateOfBirth: Date;
 	companyName: string;
+	companyNumber: string;
 	invoicingNotes: string;
 	bank: string;
 	branch: string;
 	accountName: string;
+	accountNumber: string;
 	sortCode: string;
-	contractDate: Date;
-	contractEndDate: Date;
+	contractDate?: Date;
+	contractEndDate?: Date;
 	workPlace: string;
-	cleagueReferring: string;
+	colleagueReferring: string;
+	insuranceExpiryDate: Date;
 	activeCollaborationId: number;
-	activeCollaboration: string;
-	clinicAgreement: boolean;
+	clinicAgreement: number;
 	applicationMethodId: number;
-	applicationMethod: string;
+	applicationMeansId: number;
 	firstContactDate: Date;
-	lastContactDate: Date;
+	lastContactDate?: Date;
 	contractStatusId: number;
 	contractStatus: string;
 	documentListSentId: number;
-	calendarListSentId: number;
+	calendarActivation: number;
 	proOnlineCV: string;
-	proTaxCode: string;
+	protaxCode: string;
 
 	status: eRecordStatus;
 	createDate: Date;
@@ -69,7 +68,9 @@ export class ProfessionalModel extends BaseModel {
 
 
 	clear() {
-		this.titleId = 0;
+		this.clinicAgreement = 0;
+		this.applicationMethodId = 0;
+		this.calendarActivation = 0;
 		this.name = '';
 		this.email = '';
 

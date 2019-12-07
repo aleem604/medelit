@@ -22,7 +22,8 @@ import {
 	OneServiceDeleted,
 	ManyServicesDeleted,
 	ServicesStatusUpdated,
-	selectServicesPageLastQuery,
+	selectServicesPageLastQuery,
+
 	FilterModel
 } from '../../../../../core/medelit';
 import { FormControl } from '@angular/forms';
@@ -249,7 +250,7 @@ export class ServicesListComponent implements OnInit, OnDestroy {
 	updateStatusForServices() {
 		const _title = 'Update status for selected services';
 		const _updateMessage = 'Status has been updated for selected services';
-		const _statuses = [{ value: 0, text: 'Selling' }, { value: 1, text: 'Sold' }];
+		const _statuses = [{ value: 0, text: 'Pending' }, { value: 1, text: 'Active' }, { value: 2, text: 'Suspended' }];
 		const _messages = [];
 
 		this.selection.selected.forEach(elem => {

@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import {
 	MatAutocompleteModule,
 	MatButtonModule,
@@ -73,6 +74,7 @@ import {WidgetModule} from './content/widgets/widget.module';
 // SVG inline
 import {InlineSVGModule} from 'ng-inline-svg';
 import {CartComponent} from './layout/topbar/cart/cart.component';
+import { MultipleSelectioComponent } from './mat-select-search/mat-select-search.component';
 
 @NgModule({
 	declarations: [
@@ -107,6 +109,7 @@ import {CartComponent} from './layout/topbar/cart/cart.component';
 		UserProfile2Component,
 		UserProfile3Component,
 		CartComponent,
+		MultipleSelectioComponent,
 
 		ErrorComponent,
 	],
@@ -145,6 +148,7 @@ import {CartComponent} from './layout/topbar/cart/cart.component';
 		UserProfile2Component,
 		UserProfile3Component,
 		CartComponent,
+		MultipleSelectioComponent,
 
 		ErrorComponent,
 	],
@@ -185,6 +189,8 @@ import {CartComponent} from './layout/topbar/cart/cart.component';
 		NgbDropdownModule,
 		NgbTabsetModule,
 		NgbTooltipModule,
+		NgxMatSelectSearchModule,
+
 	],
 })
 export class PartialsModule {
