@@ -1,0 +1,52 @@
+.example-chip-list {
+	width: 100%;
+}
+
+.table-wrapper {
+	width: 100%;
+	position: relative;
+
+
+
+
+	table {
+		tr {
+			th:last-of-type, td:last-of-type {
+				width: 50px !important;
+				vertical-align: middle;
+				text-align: center;
+
+				i {
+					font-size: 18px;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+}
+
+.heading-wrapper {
+	border-top: solid 1px #ddd;
+	border-bottom: solid 1px #ddd;
+	margin-top: 2em;
+	background-color: #eee;
+
+	.title-wrapper {
+		padding-top: 1em;
+		padding-bottom: 1em;
+
+		.btn {
+			position: absolute;
+			bottom: 0.35rem;
+			right: 0.5em;
+		}
+	}
+
+	h5, h6 {
+		margin: 0;
+	}
+}
+
+.mat-form-field {
+	width: 100%;
+}

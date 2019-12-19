@@ -32,21 +32,26 @@ export class InvoiceEntityModel extends BaseModel {
 	mailingCity: string;
 	billingCountryId: number;
 	billingCountry: string;
+	mailingCountryId: number;
+	mailingCountry: string;
 	mailingPostCode: string;
 	description: string;
-	vatId: number;
+	vatNumber: number;
 	vat: string;
-	paymentConditionsId: number;
+	paymentMethodId: number;
 	paymentConditions: string;
 	bank: string;
 	accountNumber: string;
 	sortCode: string;
 	iban: string;
-	insuranceCover: boolean;
-	listedDiscountNetworkId: number;
+	insuranceCoverId: number;
+	invoicingNotes: string;
+	discountNetworkId: number;
 	listedDiscountNetwork: string;
 	personOfReference: string;
 	personOfReferenceEmail: string;
+	personOfReferencePhone: string;
+	blackListId: number;
 	discountPercent: number;
 
 	status: eRecordStatus;
@@ -63,7 +68,5 @@ export class InvoiceEntityModel extends BaseModel {
 	assignedTo: string;
 
 	clear() {
-		
-
 	}
 }

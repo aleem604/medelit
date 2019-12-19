@@ -19,6 +19,7 @@ import {
 	TimeElapsedPipe,
 	ToggleDirective
 } from './_base/layout';
+import { MyFilterPipe } from './medelit';
 
 @NgModule({
 	imports: [CommonModule],
@@ -39,6 +40,7 @@ import {
 		GetObjectPipe,
 		SafePipe,
 		FirstLetterPipe,
+		MyFilterPipe,
 	],
 	exports: [
 		// directives
@@ -57,6 +59,7 @@ import {
 		GetObjectPipe,
 		SafePipe,
 		FirstLetterPipe,
+		MyFilterPipe
 	],
 	providers: []
 })

@@ -17,7 +17,7 @@ export const selectCustomerById = (customerId: number) => createSelector(
 
 export const selectCustomersPageLoading = createSelector(
     selectCustomersState,
-    customersState => customersState.listLoading
+	customersState => customersState.listLoading
 );
 
 export const selectCustomersActionLoading = createSelector(
@@ -25,9 +25,14 @@ export const selectCustomersActionLoading = createSelector(
     customersState => customersState.actionsloading
 );
 
+export const selectCustomersPageLastQuery = createSelector(
+	selectCustomersState,
+	customersState => customersState.lastQuery
+);
+
 export const selectLastCreatedCustomerId = createSelector(
     selectCustomersState,
-    customersState => customersState.lastCreatedCustomerId
+	customersState => customersState.lastCreatedCustomerId
 );
 
 export const selectCustomersShowInitWaitingMessage = createSelector(
@@ -38,12 +43,12 @@ export const selectCustomersShowInitWaitingMessage = createSelector(
 export const selectCustomersInStore = createSelector(
     selectCustomersState,
     customersState => {
-        const items: CustomerModel[] = [];
+		const items: CustomerModel[] = [];
         each(customersState.entities, element => {
             items.push(element);
         });
         const httpExtension = new HttpExtenstionsModel();
-        const result: CustomerModel[] = httpExtension.sortArray(items, customersState.lastQuery.sortField, customersState.lastQuery.sortOrder);
-        return new QueryResultsModel(result, customersState.totalCount, '');
+		const result: CustomerModel[] = httpExtension.sortArray(items, customersState.lastQuery.sortField, customersState.lastQuery.sortOrder);
+		return new QueryResultsModel(result, customersState.totalCount, '');
     }
 );

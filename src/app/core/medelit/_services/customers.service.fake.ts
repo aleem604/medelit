@@ -16,7 +16,7 @@ const API_CUSTOMERS_URL = 'api/customers';
 // Fake REST API (Mock)
 // This code emulates server calls
 @Injectable()
-export class CustomersService {
+export class CustomersServiceApi {
 	constructor(private http: HttpClient, private httpUtils: HttpUtilsService) { }
 
 	// CREATE =>  POST: add a new customer to the server

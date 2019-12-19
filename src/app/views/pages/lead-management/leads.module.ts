@@ -60,7 +60,8 @@ import {
 	MatAutocompleteModule,
 	MAT_DIALOG_DEFAULT_OPTIONS,
 	MatSnackBarModule,
-	MatTooltipModule,
+	MatTooltipModule,
+
     MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
@@ -70,7 +71,9 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { LeadsComponent } from './leads.component';
 import { LeadsListComponent } from './leads/leads-list/leads-list.component';
 import { LeadEditComponent } from './leads/leads-edit/leads-edit.component';
-import { StaticDataService } from '../../../core/medelit/_services';
+import { StaticDataService, InvoiceEntitiesService } from '../../../core/medelit/_services';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { CreateInvoiceEntityDialogComponent } from './leads/create-invoice-entity/create-invoice-entity.dialog.component';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -134,6 +137,7 @@ const routes: Routes = [
 		MatTabsModule,
 		MatTooltipModule,
 		NgbProgressbarModule,
+		NgxMatSelectSearchModule,
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false
@@ -162,6 +166,7 @@ const routes: Routes = [
 		LayoutUtilsService,
 		HttpUtilsService,
 		LeadsService,
+		InvoiceEntitiesService,
 		StaticDataService,
 		TypesUtilsService,
 		LayoutUtilsService
@@ -170,9 +175,11 @@ const routes: Routes = [
 		ActionNotificationComponent,
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
-		UpdateStatusDialogComponent
+		UpdateStatusDialogComponent,
+		CreateInvoiceEntityDialogComponent
 	],
 	declarations: [
+		CreateInvoiceEntityDialogComponent,
 		LeadsComponent,
 		LeadsListComponent,
 		LeadEditComponent

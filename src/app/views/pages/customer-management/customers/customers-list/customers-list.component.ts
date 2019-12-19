@@ -1,11 +1,11 @@
 // Angular
-import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 // Material
 import { MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 // RXJS
-import { debounceTime, distinctUntilChanged, tap, skip, delay } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap, skip, delay, startWith, map } from 'rxjs/operators';
 import { fromEvent, merge, Observable, of, Subscription } from 'rxjs';
 // NGRX
 import { Store, select } from '@ngrx/store';
@@ -16,62 +16,72 @@ import { SubheaderService } from '../../../../../core/_base/layout';
 import { LayoutUtilsService, MessageType, QueryParamsModel } from '../../../../../core/_base/crud';
 // Services and Models
 import {
-	ProductModel,
-	ProductsDataSource,
-	ProductsPageRequested,
-	OneProductDeleted,
-	ManyProductsDeleted,
-	ProductsStatusUpdated,
-	selectProductsPageLastQuery
+	CustomerModel,
+	CustomersDataSource,
+	CustomersPageRequested,
+	OneCustomerDeleted,
+	ManyCustomersDeleted,
+	CustomersStatusUpdated,
+	FilterModel,
+    CustomerServicesModel,
 } from '../../../../../core/medelit';
 
-// Table with EDIT item in new page
-// ARTICLE for table with sort/filter/paginator
-// https://blog.angular-university.io/angular-material-data-table/
-// https://v5.material.angular.io/components/table/overview
-// https://v5.material.angular.io/components/sort/overview
-// https://v5.material.angular.io/components/table/overview#sorting
-// https://www.youtube.com/watch?v=NSt9CI3BXv4
+import { FormControl } from '@angular/forms';
+import { StaticDataService, CustomersService } from '../../../../../core/medelit/_services';
+import { selectCustomersPageLastQuery } from '../../../../../core/medelit/_selectors/customer.selectors';
+import { NgxSpinnerService } from 'ngx-spinner';
+
+
 @Component({
 	// tslint:disable-next-line:component-selector
 	selector: 'kt-customers-list',
 	templateUrl: './customers-list.component.html',
+	styleUrls: ['customers-list.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CustomersListComponent implements OnInit, OnDestroy {
 	// Table fields
-	dataSource: ProductsDataSource;
-	displayedColumns = ['select', 'VINCode', 'manufacture', 'model', 'modelYear', 'color', 'price', 'condition', 'status', 'actions'];
-	@ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-	@ViewChild('sort1', {static: true}) sort: MatSort;
+	dataSource: CustomersDataSource;
+	displayedColumns = ['select', 'id', 'title', 'surName', 'name', 'language', 'phone', 'services', 'professionals', 'updateDate','status', 'actions'];
+	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields
-	@ViewChild('searchInput', {static: true}) searchInput: ElementRef;
-	filterStatus = '';
-	filterCondition = '';
+	filterStatus: string = '';
+	filterCondition: string = '';
 	lastQuery: QueryParamsModel;
+	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
+
+	statusesForFilter: FilterModel[] = [];
+	statusControl = new FormControl({ id: -1 }, []);
+	filteredStatuses: Observable<FilterModel[]>;
+
 	// Selection
-	selection = new SelectionModel<ProductModel>(true, []);
-	productsResult: ProductModel[] = [];
+	selection = new SelectionModel<CustomerModel>(true, []);
+	customersResult: CustomerModel[] = [];
 	private subscriptions: Subscription[] = [];
 
-
 	constructor(public dialog: MatDialog,
-		           private activatedRoute: ActivatedRoute,
-		           private router: Router,
-		           private subheaderService: SubheaderService,
-		           private layoutUtilsService: LayoutUtilsService,
-		           private store: Store<AppState>) { }
+		private activatedRoute: ActivatedRoute,
+		private router: Router,
+		private subheaderService: SubheaderService,
+		private utilService: StaticDataService,
+		private layoutUtilsService: LayoutUtilsService,
+		private cdr: ChangeDetectorRef,
+		private customerService: CustomersService,
+		private spinner: NgxSpinnerService,
+		private store: Store<AppState>) { }
 
 
 	ngOnInit() {
+		this.loadStatusesForFilter();
 		// If the user changes the sort order, reset back to the first page.
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		this.subscriptions.push(sortSubscription);
 
 		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page).pipe(
-			tap(() => this.loadProductsList())
+			tap(() => this.loadCustomersList())
 		)
-		.subscribe();
+			.subscribe();
 		this.subscriptions.push(paginatorSubscriptions);
 
 		// Filtration, bind to searchInput
@@ -80,25 +90,25 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 			distinctUntilChanged(),
 			tap(() => {
 				this.paginator.pageIndex = 0;
-				this.loadProductsList();
+				this.loadCustomersList();
 			})
 		)
-		.subscribe();
+			.subscribe();
 		this.subscriptions.push(searchSubscription);
 
 		// Set title to page breadCrumbs
 		this.subheaderService.setTitle('Customers');
 
 		// Init DataSource
-		this.dataSource = new ProductsDataSource(this.store);
+		this.dataSource = new CustomersDataSource(this.store);
 		const entitiesSubscription = this.dataSource.entitySubject.pipe(
 			skip(1),
 			distinctUntilChanged()
 		).subscribe(res => {
-			this.productsResult = res;
+			this.customersResult = res;
 		});
 		this.subscriptions.push(entitiesSubscription);
-		const lastQuerySubscription = this.store.pipe(select(selectProductsPageLastQuery)).subscribe(res => this.lastQuery = res);
+		const lastQuerySubscription = this.store.pipe(select(selectCustomersPageLastQuery)).subscribe(res => this.lastQuery = res);
 		// Load last query from store
 		this.subscriptions.push(lastQuerySubscription);
 
@@ -110,7 +120,7 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 
 			// First load
 			of(undefined).pipe(delay(1000)).subscribe(() => { // Remove this line, just loading imitation
-				this.loadProductsList();
+				this.loadCustomersList();
 			}); // Remove this line, just loading imitation
 		});
 		this.subscriptions.push(routeSubscription);
@@ -123,10 +133,7 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
 
-	/**
-	 * Load Products List
-	 */
-	loadProductsList() {
+	loadCustomersList() {
 		this.selection.clear();
 		const queryParams = new QueryParamsModel(
 			this.filterConfiguration(),
@@ -135,40 +142,28 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 			this.paginator.pageIndex,
 			this.paginator.pageSize
 		);
-		// Call request from server
-		this.store.dispatch(new ProductsPageRequested({ page: queryParams }));
+		this.store.dispatch(new CustomersPageRequested({ page: queryParams }));
 		this.selection.clear();
 	}
 
-	/**
-	 * Returns object for filter
-	 */
 	filterConfiguration(): any {
 		const filter: any = {};
-		const searchText: string = this.searchInput.nativeElement.value;
+		try {
+			const searchText = this.searchInput.nativeElement.value;
+			const status = this.statusControl.value;
 
-		if (this.filterStatus && this.filterStatus.length > 0) {
-			filter.status = +this.filterStatus;
+			if (status) {
+				filter.status = status.id;
+			}
+
+			if (searchText)
+				filter.search = searchText;
+		} catch{
+
 		}
-
-		if (this.filterCondition && this.filterCondition.length > 0) {
-			filter.condition = +this.filterCondition;
-		}
-
-		filter.model = searchText;
-
-		filter.manufacture = searchText;
-		filter.color = searchText;
-		filter.VINCode = searchText;
 		return filter;
 	}
 
-	/**
-	 * Restore state
-	 *
-	 * @param queryParams: QueryParamsModel
-	 * @param id: number
-	 */
 	restoreState(queryParams: QueryParamsModel, id: number) {
 
 		if (!queryParams.filter) {
@@ -188,17 +183,11 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/** ACTIONS */
-	/**
-	 * Delete product
-	 *
-	 * @param _item: ProductModel
-	 */
-	deleteProduct(_item: ProductModel) {
+	deleteCustomer(_item: CustomerModel) {
 		const _title = 'Customer Delete';
-		const _description = 'Are you sure to permanently delete this product?';
-		const _waitDesciption = 'Product is deleting...';
-		const _deleteMessage = `Product has been deleted`;
+		const _description = 'Are you sure to permanently delete this customer?';
+		const _waitDesciption = 'Customer is deleting...';
+		const _deleteMessage = `Customer has been deleted`;
 
 		const dialogRef = this.layoutUtilsService.deleteElement(_title, _description, _waitDesciption);
 		dialogRef.afterClosed().subscribe(res => {
@@ -206,19 +195,16 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 				return;
 			}
 
-			this.store.dispatch(new OneProductDeleted({ id: _item.id }));
+			this.store.dispatch(new OneCustomerDeleted({ id: _item.id }));
 			this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
 		});
 	}
 
-	/**
-	 * Delete products
-	 */
-	deleteProducts() {
-		const _title = 'Products Delete';
-		const _description = 'Are you sure to permanently delete selected products?';
-		const _waitDesciption = 'Products are deleting...';
-		const _deleteMessage = 'Selected products have been deleted';
+	deleteCustomers() {
+		const _title = 'Customers Delete';
+		const _description = 'Are you sure to permanently delete selected customers?';
+		const _waitDesciption = 'Customers are deleting...';
+		const _deleteMessage = 'Selected customers have been deleted';
 
 		const dialogRef = this.layoutUtilsService.deleteElement(_title, _description, _waitDesciption);
 		dialogRef.afterClosed().subscribe(res => {
@@ -231,22 +217,22 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 			for (let i = 0; i < this.selection.selected.length; i++) {
 				idsForDeletion.push(this.selection.selected[i].id);
 			}
-			this.store.dispatch(new ManyProductsDeleted({ ids: idsForDeletion }));
+			this.store.dispatch(new ManyCustomersDeleted({ ids: idsForDeletion }));
 			this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
 			this.selection.clear();
 		});
 	}
 
 	/**
-	 * Fetch selected products
+	 * Fetch selected customers
 	 */
-	fetchProducts() {
+	fetchCustomers() {
 		// tslint:disable-next-line:prefer-const
 		let messages = [];
 		this.selection.selected.forEach(elem => {
 			messages.push({
-				text: `${elem.manufacture} ${elem.model} ${elem.modelYear}`,
-				id: elem.VINCode,
+				text: `${elem.title} ${elem.name} ${elem.mainPhone}`,
+				id: elem.id,
 				status: elem.status
 			});
 		});
@@ -256,16 +242,16 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 	/**
 	 * Update status dialog
 	 */
-	updateStatusForProducts() {
-		const _title = 'Update status for selected products';
-		const _updateMessage = 'Status has been updated for selected products';
-		const _statuses = [{ value: 0, text: 'Selling' }, { value: 1, text: 'Sold' }];
+	updateStatusForCustomers() {
+		const _title = 'Update status for selected customers';
+		const _updateMessage = 'Status has been updated for selected customers';
+		const _statuses = [{ value: 0, text: 'Pending' }, { value: 1, text: 'Active' }, { value: 2, text: 'Suspended' }];
 		const _messages = [];
 
 		this.selection.selected.forEach(elem => {
 			_messages.push({
-				text: `${elem.manufacture} ${elem.model} ${elem.modelYear}`,
-				id: elem.VINCode,
+				text: `${elem.title} ${elem.name} ${elem.mainPhone}`,
+				id: elem.id,
 				status: elem.status,
 				statusTitle: this.getItemStatusString(elem.status),
 				statusCssClass: this.getItemCssClassByStatus(elem.status)
@@ -279,9 +265,9 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 				return;
 			}
 
-			this.store.dispatch(new ProductsStatusUpdated({
+			this.store.dispatch(new CustomersStatusUpdated({
 				status: +res,
-				products: this.selection.selected
+				customers: this.selection.selected
 			}));
 
 			this.layoutUtilsService.showActionNotification(_updateMessage, MessageType.Update);
@@ -289,75 +275,77 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	/**
-	 * Redirect to edit page
-	 *
-	 * @param id: any
-	 */
-	editProduct(id) {
-		this.router.navigate(['../products/edit', id], { relativeTo: this.activatedRoute });
+	editCustomer(id) {
+		this.router.navigate(['../customers/edit', id], { relativeTo: this.activatedRoute });
 	}
 
-	createProduct() {
-		this.router.navigateByUrl('/ecommerce/products/add');
+	createCustomer() {
+		this.router.navigateByUrl('/customer-management/customers/add');
 	}
 
-	/**
-	 * Check all rows are selected
-	 */
+	convertToBooking(customer: CustomerModel) {
+		this.spinner.show();
+		this.customerService.convertToBooking(customer).toPromise().then((res) => {
+			this.spinner.hide();
+			if (res.success && res.data > 0) {
+				const message = `Booking created successfully.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+			}
+
+		}).catch((err) => {
+			this.spinner.hide();
+			const message = `An error occured. Please try again later.`;
+			this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+		})
+
+
+
+
+
+	}
+
+	createLead(customer: CustomerModel) {
+		this.router.navigateByUrl(`/lead-management/leads/add?fromCustomer=${customer.id}`);
+	}
+
 	isAllSelected() {
 		const numSelected = this.selection.selected.length;
-		const numRows = this.productsResult.length;
+		const numRows = this.customersResult.length;
 		return numSelected === numRows;
 	}
 
-	/**
-	 * Selects all rows if they are not all selected; otherwise clear selection
-	 */
 	masterToggle() {
 		if (this.isAllSelected()) {
 			this.selection.clear();
 		} else {
-			this.productsResult.forEach(row => this.selection.select(row));
+			this.customersResult.forEach(row => this.selection.select(row));
 		}
 	}
 
-	/* UI */
-	/**
-	 * Returns status string
-	 *
-	 * @param status: number
-	 */
 	getItemStatusString(status: number = 0): string {
 		switch (status) {
 			case 0:
-				return 'Selling';
+				return 'Pending';
 			case 1:
-				return 'Sold';
+				return 'Active';
+			case 2:
+				return 'Suspended';
 		}
 		return '';
 	}
 
-	/**
-	 * Returns CSS Class by status
-	 *
-	 * @param status: number
-	 */
 	getItemCssClassByStatus(status: number = 0): string {
 		switch (status) {
 			case 0:
-				return 'success';
-			case 1:
 				return 'metal';
+			case 1:
+				return 'success';
+			case 2:
+				return 'danger';
 		}
 		return '';
 	}
 
-	/**
-	 * Rerurns condition string
-	 *
-	 * @param condition: number
-	 */
 	getItemConditionString(condition: number = 0): string {
 		switch (condition) {
 			case 0:
@@ -368,11 +356,6 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 		return '';
 	}
 
-	/**
-	 * Returns CSS Class by condition
-	 *
-	 * @param condition: number
-	 */
 	getItemCssClassByCondition(condition: number = 0): string {
 		switch (condition) {
 			case 0:
@@ -381,5 +364,54 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 				return 'primary';
 		}
 		return '';
+	}
+
+	/* Top Filters */
+
+	loadStatusesForFilter() {
+		this.utilService.getStatuses().subscribe(res => {
+			this.statusesForFilter = res.data;
+			this.filteredStatuses = this.statusControl.valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterStatuses(value))
+				);
+		},
+			(error) => { console.log(error); },
+			() => {
+				this.statusControl.setValue({ id: -1, name: 'All' });
+				this.detectChanges();
+			});
+	}
+
+	
+
+	private _filterStatuses(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.statusesForFilter.filter(status => this._normalizeValue(status.value).includes(filterValue));
+	}
+
+	
+
+	private _normalizeValue(value: string): string {
+		if (value && value.length > 0)
+			return value.toLowerCase().replace(/\s/g, '');
+		return value;
+	}
+
+	displayFn(option: FilterModel): string {
+		if (option)
+			return option.value;
+		return '';
+	}
+
+
+	/*End top Fitlers*/
+	detectChanges() {
+		try {
+			this.cdr.detectChanges();
+		} catch (e) {
+
+		}
 	}
 }

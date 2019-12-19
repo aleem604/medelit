@@ -6,6 +6,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GestureConfig, MatProgressSpinnerModule } from '@angular/material';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { NgxSpinnerModule } from "ngx-spinner";
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 // Angular in memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 // Perfect Scroll bar
@@ -94,6 +96,7 @@ export function hljsLanguages(): HighlightLanguage[] {
 		BrowserModule,
 		AppRoutingModule,
 		HttpClientModule,
+		NgxMaterialTimepickerModule,
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forRoot(FakeApiService, {
 			passThruUnknownUrl: true,
 			dataEncapsulation: false
@@ -110,6 +113,7 @@ export function hljsLanguages(): HighlightLanguage[] {
 		TranslateModule.forRoot(),
 		MatProgressSpinnerModule,
 		InlineSVGModule.forRoot(),
+		NgxSpinnerModule,
 		ThemeModule
 	],
 	exports: [],

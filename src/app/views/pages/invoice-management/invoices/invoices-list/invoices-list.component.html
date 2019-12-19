@@ -82,8 +82,8 @@
 					   [dataSource]="dataSource"
 					   matSort
 					   #sort1="matSort"
-					   matSortActive="id"
-					   matSortDirection="asc"
+					   matSortActive="invoiceNumber"
+					   matSortDirection="desc"
 					   matSortDisableClear>
 				<!-- Checkbox Column -->
 				<ng-container matColumnDef="select">
@@ -103,9 +103,9 @@
 					</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="id">
+				<ng-container matColumnDef="invoiceNumber">
 					<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-vinCode">Id</mat-header-cell>
-					<mat-cell *matCellDef="let invoice" class="mat-column-vinCode">{{invoice.id}}</mat-cell>
+					<mat-cell *matCellDef="let invoice" class="mat-column-vinCode">{{invoice.invoiceNumber}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="createDate">
@@ -113,14 +113,14 @@
 					<mat-cell *matCellDef="let invoice">{{invoice.createDate | date: 'yyyy-MM-dd'}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="assigned">
+				<ng-container matColumnDef="assignedTo">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Assigned</mat-header-cell>
-					<mat-cell *matCellDef="let invoice">{{invoice.assigned}}</mat-cell>
+					<mat-cell *matCellDef="let invoice">{{invoice.assignedTo}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="customerName">
+				<ng-container matColumnDef="customer">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Customer Name</mat-header-cell>
-					<mat-cell *matCellDef="let invoice">{{invoice.customerName}}</mat-cell>
+					<mat-cell *matCellDef="let invoice">{{invoice.customer}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="invoiceStatus">

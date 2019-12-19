@@ -1,15 +1,14 @@
 // Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 // Material
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
 // RxJS
-import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
-import { map, startWith, delay, first } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
+import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
 // NGRX
 import { Store, select } from '@ngrx/store';
-import { Dictionary, Update } from '@ngrx/entity';
 import { AppState } from '../../../../../core/reducers';
 // Layout
 import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
@@ -17,38 +16,47 @@ import { SubheaderService, LayoutConfigService } from '../../../../../core/_base
 import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Services and Models
 import {
-	selectLastCreatedProductId,
-	selectProductById,
+	selectLastCreatedInvoiceEntityId,
+	selectInvoiceEntityById,
 	SPECIFICATIONS_DICTIONARY,
-	ProductModel,
-	ProductOnServerCreated,
-	ProductUpdated,
-	ProductsService
+	InvoiceEntityModel,
+	InvoiceEntityOnServerCreated,
+	InvoiceEntityUpdated,
+	InvoiceEntitiesService,
+	StaticDataModel,
+
+	StaticDataService,
+	FilterModel,
+	ApiResponse,
+
+	AppDateAdapter,
+	APP_DATE_FORMATS
 } from '../../../../../core/medelit';
+import { NgxSpinnerService } from 'ngx-spinner';
 
-const AVAILABLE_COLORS: string[] =
-	['Red', 'CadetBlue', 'Gold', 'LightSlateGrey', 'RoyalBlue', 'Crimson', 'Blue', 'Sienna', 'Indigo', 'Green', 'Violet',
-		'GoldenRod', 'OrangeRed', 'Khaki', 'Teal', 'Purple', 'Orange', 'Pink', 'Black', 'DarkTurquoise'];
-
-const AVAILABLE_MANUFACTURES: string[] =
-	['Pontiac', 'Subaru', 'Mitsubishi', 'Oldsmobile', 'Chevrolet', 'Chrysler', 'Suzuki', 'GMC', 'Cadillac', 'Mercury', 'Dodge',
-		'Ram', 'Lexus', 'Lamborghini', 'Honda', 'Nissan', 'Ford', 'Hyundai', 'Saab', 'Toyota'];
 
 @Component({
 	// tslint:disable-next-line:component-selector
-	selector: 'kt-invoice-entity-edit',
+	selector: 'kt-invoiceEntity-edit',
 	templateUrl: './invoice-entity-edit.component.html',
+	styleUrls: ['./invoice-entity-edit.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 	// Public properties
-	product: ProductModel;
-	productId$: Observable<number>;
-	oldProduct: ProductModel;
+	invoiceEntity: InvoiceEntityModel;
+	invoiceEntityId$: Observable<number>;
+	titles: Observable<StaticDataModel>;
+	languages: Observable<StaticDataModel>;
+	countries: Observable<StaticDataModel>;
+	cities: Observable<StaticDataModel>;
+	relationaships: Observable<StaticDataModel>;
+	services: Observable<StaticDataModel>;
+	oldInvoiceEntity: InvoiceEntityModel;
 	selectedTab = 0;
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;
-	productForm: FormGroup;
+	invoiceEntityForm: FormGroup;
 	hasFormErrors = false;
 	availableYears: number[] = [];
 	filteredColors: Observable<string[]>;
@@ -57,45 +65,88 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 	private componentSubscriptions: Subscription;
 	// sticky portlet header margin
 	private headerMargin: number;
+	selected = new FormControl(0);
+
+
+	languagesForFilter: FilterModel[] = [];
+	filteredLanguages: Observable<FilterModel[]>;
+
+	countriesForCountryOfBirthForFilter: FilterModel[] = [];
+	filteredCountriesOfBirth: Observable<FilterModel[]>;
+	filteredBillingCountries: Observable<FilterModel[]>;
+	filteredMailingCountries: Observable<FilterModel[]>;
+
+	servicesForFilter: FilterModel[] = [];
+	filteredServices: Observable<FilterModel[]>;
+
+	professionalsForFilter: FilterModel[] = [];
+	filteredProfessionals: Observable<FilterModel[]>;
+
+	paymentMethodOptions: FilterModel[];
+	ratingOptions: FilterModel[];
+	relationshipsForFilter: FilterModel[];
+	paymentMethodsOptions: FilterModel[];
+	paymentStatusOptions: FilterModel[];
+	discountNetworkOptions: FilterModel[];
+	ieTypeOptions: FilterModel[];
+	listedDiscountNetworkOptions: FilterModel[];
+	buildingTypeOptions: FilterModel[];
+	visitVenueOptions: FilterModel[];
+	invoiceEntityStatusOptions: FilterModel[];
+	invoiceEntitySourceOptions: FilterModel[];
+	contactMethodOptions: FilterModel[];
+	invoiceEntityCategoryOptions: FilterModel[];
+	proAccountOptions: FilterModel[];    // BE
+
+	invoiceEntitiesForFilter: FilterModel[] = [];
+	filteredInvoiceEntities: Observable<FilterModel[]>;
+
+	citiesForFilter: FilterModel[] = [];
+	filteredBillingCities: Observable<FilterModel[]>;
+	filteredMailingCities: Observable<FilterModel[]>;
+
+	countriesForFilter: FilterModel[] = [];
+	filteredCountriesHome: Observable<FilterModel[]>;
+	filteredCountriesVisit: Observable<FilterModel[]>;
 
 	constructor(
 		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
 		private typesUtilsService: TypesUtilsService,
-		private productFB: FormBuilder,
+		private invoiceEntityFB: FormBuilder,
 		public dialog: MatDialog,
 		private subheaderService: SubheaderService,
 		private layoutUtilsService: LayoutUtilsService,
 		private layoutConfigService: LayoutConfigService,
-		private productService: ProductsService,
+		private invoiceEntityService: InvoiceEntitiesService,
+		private staticService: StaticDataService,
+		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
 	}
 
 	ngOnInit() {
-		for (let i = 2019; i > 1945; i--) {
-			this.availableYears.push(i);
-		}
 		this.loading$ = this.loadingSubject.asObservable();
 		this.loadingSubject.next(true);
 		this.activatedRoute.params.subscribe(params => {
 			const id = params.id;
 			if (id && id > 0) {
 
-				this.store.pipe(
-					select(selectProductById(id))
-				).subscribe(result => {
-					if (!result) {
-						this.loadProductFromService(id);
-						return;
-					}
+				//this.store.pipe(
+				//	select(selectInvoiceEntityById(id))
+				//).subscribe(result => {
+				//	if (!result) {
+				//		this.loadInvoiceEntityFromService(id);
+				//		return;
+				//	}
 
-					this.loadProduct(result);
-				});
+				//	this.loadInvoiceEntity(result);
+				//});
+				this.loadInvoiceEntityFromService(id);
 			} else {
-				const newProduct = new ProductModel();
-				newProduct.clear();
-				this.loadProduct(newProduct);
+				const newInvoiceEntity = new InvoiceEntityModel();
+				newInvoiceEntity.clear();
+				this.loadInvoiceEntity(newInvoiceEntity);
 			}
 		});
 
@@ -106,111 +157,105 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 		};
 	}
 
-	loadProduct(_product, fromService: boolean = false) {
-		if (!_product) {
+	loadInvoiceEntity(_invoiceEntity, fromService: boolean = false) {
+		if (!_invoiceEntity) {
 			this.goBack('');
 		}
-		this.product = _product;
-		this.productId$ = of(_product.id);
-		this.oldProduct = Object.assign({}, _product);
-		this.initProduct();
+		this.invoiceEntity = _invoiceEntity;
+		this.invoiceEntityId$ = of(_invoiceEntity.id);
+		this.oldInvoiceEntity = Object.assign({}, _invoiceEntity);
+		this.initInvoiceEntity();
+
+		this.loadStaticResources();
+
 		if (fromService) {
 			this.cdr.detectChanges();
 		}
 	}
 
-	// If product didn't find in store
-	loadProductFromService(productId) {
-		this.productService.getProductById(productId).subscribe(res => {
-			this.loadProduct(res, true);
+	loadInvoiceEntityFromService(invoiceEntityId) {
+		this.loadingSubject.next(true);
+		this.invoiceEntityService.getInvoiceEntityById(invoiceEntityId).toPromise().then(res => {
+			this.loadingSubject.next(false);
+			let data = res as unknown as ApiResponse;
+			this.loadInvoiceEntity(data.data, true);
+		}).catch((e) => {
+			this.loadingSubject.next(false);
 		});
 	}
 
-	/**
-	 * On destroy
-	 */
 	ngOnDestroy() {
 		if (this.componentSubscriptions) {
 			this.componentSubscriptions.unsubscribe();
 		}
 	}
 
-	/**
-	 * Init product
-	 */
-	initProduct() {
+	initInvoiceEntity() {
 		this.createForm();
 		this.loadingSubject.next(false);
-		if (!this.product.id) {
+		if (!this.invoiceEntity.id) {
 			this.subheaderService.setBreadcrumbs([
-				{ title: 'Invoie Entity', page: `/invoice-entity-management` },
-				{ title: 'Invoice Entities', page: `/invoice-entity-management/invoice-entities` },
-				{ title: 'Create invoice entity', page: `/invoice-entity-management/invoice-entities/add` }
+				{ title: 'invoiceEntity-management', page: `/invoiceEntitys` },
+				{ title: 'InvoiceEntitys', page: `/invoiceEntity-management/invoiceEntitys` },
+				{ title: 'Create invoiceEntity', page: `/invoiceEntity-management/invoiceEntitys/add` }
 			]);
 			return;
 		}
-		this.subheaderService.setTitle('Edit invoice entity');
+		this.subheaderService.setTitle('Invoice Entities');
+
 		this.subheaderService.setBreadcrumbs([
-			{ title: 'invoice-entity-management', page: `/invoice-entity-management` },
-			{ title: 'Products', page: `/invoice-entity-management/invoice-entities` },
-			{ title: 'Edit invoice entity', page: `/invoice-entity-management/invoice-entities/edit`, queryParams: { id: this.product.id } }
+			{ title: 'invoiceEntity-management', page: `/invoiceEntitys` },
+			{ title: 'InvoiceEntitys', page: `/invoiceEntity-management/invoiceEntitys` },
+			{ title: 'Edit invoiceEntity', page: `/invoiceEntity-management/invoiceEntitys/edit`, queryParams: { id: this.invoiceEntity.id } }
 		]);
+
 	}
 
-	/**
-	 * Create form
-	 */
 	createForm() {
-		this.productForm = this.productFB.group({
-			model: [this.product.model, Validators.required],
-			manufacture: [this.product.manufacture, Validators.required],
-			modelYear: [this.product.modelYear.toString(), Validators.required],
-			mileage: [this.product.mileage, [Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-			description: [this.product.description],
-			color: [this.product.color, Validators.required],
-			price: [this.product.price, [Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-			condition: [this.product.condition.toString(), [Validators.required, Validators.min(0), Validators.max(1)]],
-			status: [this.product.status.toString(), [Validators.required, Validators.min(0), Validators.max(1)]],
-			VINCode: [this.product.VINCode, Validators.required]
-		});
+		this.invoiceEntityForm = this.invoiceEntityFB.group({
+			name: [this.invoiceEntity.name, Validators.required],
+			mainPhoneNumber: [this.invoiceEntity.mainPhoneNumber, Validators.required],
+			mainPhoneNumberOwner: [this.invoiceEntity.mainPhoneNumberOwner, Validators.required],
+			phone2: [this.invoiceEntity.phone2, []],
+			phone2Owner: [this.invoiceEntity.phone2Owner, []],
+			phone3: [this.invoiceEntity.phone3, []],
+			phone3Owner: [this.invoiceEntity.phone3Owner, []],
+			email: [this.invoiceEntity.email, [Validators.required, Validators.email]],
+			email2: [this.invoiceEntity.email2, [Validators.email]],
+			ratingId: [this.invoiceEntity.ratingId, Validators.required],
+			relationshipWithCustomerId: [this.invoiceEntity.relationshipWithCustomerId, []],
+			ieTypeId: [this.invoiceEntity.ieTypeId, [Validators.required]],
+			fax: [this.invoiceEntity.fax, []],
+			dateOfBirth: [this.invoiceEntity.dateOfBirth, [Validators.required]],
+			countryOfBirthId: [this.invoiceEntity.countryOfBirthId, [Validators.required]],
+			billingAddress: [this.invoiceEntity.billingAddress, [Validators.required]],
+			mailingAddress: [this.invoiceEntity.mailingAddress, [Validators.required]],
+			billingPostCode: [this.invoiceEntity.billingPostCode, []],
+			mailingPostCode: [this.invoiceEntity.mailingPostCode, []],
+			billingCityId: [this.invoiceEntity.billingCityId, [Validators.required]],
+			mailingCityId: [this.invoiceEntity.mailingCityId, [Validators.required]],
+			billingCountryId: [this.invoiceEntity.billingCountryId, [Validators.required]],
+			mailingCountryId: [this.invoiceEntity.mailingCountryId, [Validators.required]],
+			description: [this.invoiceEntity.description, []],
+			vatNumber: [this.invoiceEntity.vatNumber, []],
+			paymentMethodId: [this.invoiceEntity.paymentMethodId, [Validators.required]],
 
-		this.filteredManufactures = this.productForm.controls.manufacture.valueChanges
-			.pipe(
-				startWith(''),
-				map(val => this.filterManufacture(val.toString()))
-			);
-		this.filteredColors = this.productForm.controls.color.valueChanges
-			.pipe(
-				startWith(''),
-				map(val => this.filterColor(val.toString()))
-			);
+			bank: [this.invoiceEntity.bank, []],
+			accountNumber: [this.invoiceEntity.accountNumber, []],
+			sortCode: [this.invoiceEntity.sortCode, []],
+			iban: [this.invoiceEntity.iban, []],
+
+			insuranceCoverId: [this.invoiceEntity.insuranceCoverId, []],
+			invoicingNotes: [this.invoiceEntity.invoicingNotes, []],
+			discountNetworkId: [this.invoiceEntity.discountNetworkId, []],
+			personOfReference: [this.invoiceEntity.personOfReference, []],
+			personOfReferenceEmail: [this.invoiceEntity.personOfReferenceEmail, [Validators.required, Validators.email]],
+			personOfReferencePhone: [this.invoiceEntity.personOfReferencePhone, []],
+			blackListId: [this.invoiceEntity.blackListId, []],
+			discountPercent: [this.invoiceEntity.discountPercent, []],		
+		});		
 	}
 
-	/**
-	 * Filter manufacture
-	 *
-	 * @param val: string
-	 */
-	filterManufacture(val: string): string[] {
-		return AVAILABLE_MANUFACTURES.filter(option =>
-			option.toLowerCase().includes(val.toLowerCase()));
-	}
-
-	/**
-	 * Filter color
-	 *
-	 * @param val: string
-	 */
-	filterColor(val: string): string[] {
-		return AVAILABLE_COLORS.filter(option =>
-			option.toLowerCase().includes(val.toLowerCase()));
-	}
-
-	/**
-	 * Go back to the list
-	 *
-	 * @param id: any
-	 */
 	goBack(id) {
 		this.loadingSubject.next(false);
 		const url = `/invoice-entity-management/invoice-entities?id=${id}`;
@@ -221,13 +266,7 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 		this.router.navigateByUrl('/invoice-entity-management/invoice-entities', { relativeTo: this.activatedRoute });
 	}
 
-	/**
-	 * Refresh product
-	 *
-	 * @param isNew: boolean
-	 * @param id: number
-	 */
-	refreshProduct(isNew: boolean = false, id = 0) {
+	refreshInvoiceEntity(isNew: boolean = false, id = 0) {
 		this.loadingSubject.next(false);
 		let url = this.router.url;
 		if (!isNew) {
@@ -239,150 +278,357 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 		this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 	}
 
-	/**
-	 * Reset
-	 */
 	reset() {
-		this.product = Object.assign({}, this.oldProduct);
+		this.invoiceEntity = Object.assign({}, this.oldInvoiceEntity);
 		this.createForm();
 		this.hasFormErrors = false;
-		this.productForm.markAsPristine();
-		this.productForm.markAsUntouched();
-		this.productForm.updateValueAndValidity();
+		this.invoiceEntityForm.markAsPristine();
+		this.invoiceEntityForm.markAsUntouched();
+		this.invoiceEntityForm.updateValueAndValidity();
 	}
 
-	/**
-	 * Save data
-	 *
-	 * @param withBack: boolean
-	 */
 	onSumbit(withBack: boolean = false) {
 		this.hasFormErrors = false;
-		const controls = this.productForm.controls;
+		const controls = this.invoiceEntityForm.controls;
 		/** check form */
-		if (this.productForm.invalid) {
+		if (this.invoiceEntityForm.invalid) {
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
-
+			
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
 			return;
 		}
 
 		// tslint:disable-next-line:prefer-const
-		let editedProduct = this.prepareProduct();
+		let editedInvoiceEntity = this.prepareInvoiceEntity();
 
-		if (editedProduct.id > 0) {
-			this.updateProduct(editedProduct, withBack);
+		if (editedInvoiceEntity.id > 0) {
+			this.updateInvoiceEntity(editedInvoiceEntity, withBack);
 			return;
 		}
 
-		this.addProduct(editedProduct, withBack);
+		this.addInvoiceEntity(editedInvoiceEntity, withBack);
 	}
 
-	/**
-	 * Returns object for saving
-	 */
-	prepareProduct(): ProductModel {
-		const controls = this.productForm.controls;
-		const _product = new ProductModel();
-		_product.id = this.product.id;
-		_product.model = controls.model.value;
-		_product.manufacture = controls.manufacture.value;
-		_product.modelYear = +controls.modelYear.value;
-		_product.mileage = +controls.mileage.value;
-		_product.description = controls.description.value;
-		_product.color = controls.color.value;
-		_product.price = +controls.price.value;
-		_product.condition = +controls.condition.value;
-		_product.status = +controls.status.value;
-		_product.VINCode = controls.VINCode.value;
-		_product._userId = 1; // TODO: get version from userId
-		_product._createdDate = this.product._createdDate;
-		_product._updatedDate = this.product._updatedDate;
-		_product._updatedDate = this.typesUtilsService.getDateStringFromDate();
-		_product._createdDate = this.product.id > 0 ? _product._createdDate : _product._updatedDate;
-		return _product;
+	prepareInvoiceEntity(): InvoiceEntityModel {
+		const controls = this.invoiceEntityForm.controls;
+		const _invoiceEntity = new InvoiceEntityModel();
+		_invoiceEntity.id = this.invoiceEntity.id;
+		_invoiceEntity.name = controls.name.value;
+		_invoiceEntity.mainPhoneNumber = controls.mainPhoneNumber.value;
+		_invoiceEntity.mainPhoneNumberOwner = controls.mainPhoneNumberOwner.value;
+		_invoiceEntity.phone2 = controls.phone2.value;
+		_invoiceEntity.phone2Owner = controls.phone2Owner.value;
+		_invoiceEntity.phone3 = controls.phone3.value;
+		_invoiceEntity.phone3Owner = controls.phone3Owner.value;
+		_invoiceEntity.email = controls.email.value;
+		_invoiceEntity.email2 = controls.email2.value;
+		_invoiceEntity.ratingId = controls.ratingId.value;
+		_invoiceEntity.relationshipWithCustomerId = controls.relationshipWithCustomerId.value;
+		_invoiceEntity.ieTypeId = controls.ieTypeId.value;
+		_invoiceEntity.fax = controls.fax.value;
+		_invoiceEntity.dateOfBirth = controls.dateOfBirth.value;
+		if (controls.countryOfBirthId.value)
+			_invoiceEntity.countryOfBirthId = controls.countryOfBirthId.value.id;
+		_invoiceEntity.billingAddress = controls.billingAddress.value;
+		_invoiceEntity.mailingAddress = controls.mailingAddress.value;
+		_invoiceEntity.billingPostCode = controls.billingPostCode.value;
+		_invoiceEntity.mailingPostCode = controls.mailingPostCode.value;
+		if (controls.billingCityId.value)
+			_invoiceEntity.billingCityId = controls.billingCityId.value.id;
+		if (controls.mailingCityId.value)
+			_invoiceEntity.mailingCityId = controls.mailingCityId.value.id;
+
+		if (controls.billingCountryId.value)
+			_invoiceEntity.billingCountryId = controls.billingCountryId.value.id;
+		if (controls.mailingCountryId.value)
+			_invoiceEntity.mailingCountryId = controls.mailingCountryId.value.id;
+		_invoiceEntity.description = controls.description.value;
+		_invoiceEntity.vatNumber = controls.vatNumber.value;
+		_invoiceEntity.paymentMethodId = controls.paymentMethodId.value;
+		_invoiceEntity.bank = controls.bank.value;
+		_invoiceEntity.accountNumber = controls.accountNumber.value;
+		_invoiceEntity.sortCode = controls.sortCode.value;
+		_invoiceEntity.iban = controls.iban.value;
+
+		_invoiceEntity.insuranceCoverId = controls.insuranceCoverId.value;
+		_invoiceEntity.invoicingNotes = controls.invoicingNotes.value;
+		_invoiceEntity.discountNetworkId = controls.discountNetworkId.value;
+		_invoiceEntity.personOfReference = controls.personOfReference.value;
+		_invoiceEntity.personOfReferenceEmail = controls.personOfReferenceEmail.value;
+		_invoiceEntity.personOfReferencePhone = controls.personOfReferencePhone.value;
+		_invoiceEntity.blackListId = controls.blackListId.value;
+		_invoiceEntity.discountPercent = controls.discountPercent.value;
+
+		return _invoiceEntity;
 	}
 
-	/**
-	 * Add product
-	 *
-	 * @param _product: ProductModel
-	 * @param withBack: boolean
-	 */
-	addProduct(_product: ProductModel, withBack: boolean = false) {
-		this.loadingSubject.next(true);
-		this.store.dispatch(new ProductOnServerCreated({ product: _product }));
-		this.componentSubscriptions = this.store.pipe(
-			delay(1000),
-			select(selectLastCreatedProductId)
-		).subscribe(newId => {
-			if (!newId) {
-				return;
-			}
-
-			this.loadingSubject.next(false);
-			if (withBack) {
-				this.goBack(newId);
-			} else {
-				const message = `New product successfully has been added.`;
+	addInvoiceEntity(_invoiceEntity: InvoiceEntityModel, withBack: boolean = false) {
+		this.spinner.show();
+		this.invoiceEntityService.createInvoiceEntity(_invoiceEntity).toPromise().then((res) => {
+			this.spinner.hide();
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
+				const message = `New invoiceEntity successfully has been added.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
-				this.refreshProduct(true, newId);
-			}
-		});
-	}
-
-	/**
-	 * Update product
-	 *
-	 * @param _product: ProductModel
-	 * @param withBack: boolean
-	 */
-	updateProduct(_product: ProductModel, withBack: boolean = false) {
-		this.loadingSubject.next(true);
-
-		const updateProduct: Update<ProductModel> = {
-			id: _product.id,
-			changes: _product
-		};
-
-		this.store.dispatch(new ProductUpdated({
-			partialProduct: updateProduct,
-			product: _product
-		}));
-
-		of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
-			if (withBack) {
-				this.goBack(_product.id);
+				this.refreshInvoiceEntity(true, resp.data.id);
 			} else {
-				const message = `Product successfully has been saved.`;
-				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-				this.refreshProduct(false);
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
 			}
-		}); // Remove this line
+		}).catch((e) => {
+			this.spinner.hide();
+		});
+
+		//this.store.dispatch(new InvoiceEntityOnServerCreated({ invoiceEntity: _invoiceEntity }));
+		//this.componentSubscriptions = this.store.pipe(
+		//	delay(1000),
+		//	select(selectLastCreatedInvoiceEntityId)
+		//).subscribe(newId => {
+		//	if (!newId) {
+		//		return;
+		//	}
+
+		//	this.loadingSubject.next(false);
+		//	if (withBack) {
+		//		this.goBack(newId);
+		//	} else {
+		//		const message = `New invoiceEntity successfully has been added.`;
+		//		this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+		//		this.refreshInvoiceEntity(true, newId);
+		//	}
+		//});
 	}
 
-	/**
-	 * Returns component title
-	 */
+	updateInvoiceEntity(_invoiceEntity: InvoiceEntityModel, withBack: boolean = false) {
+		this.spinner.show();
+		this.invoiceEntityService.updateInvoiceEntity(_invoiceEntity).toPromise().then((res) => {
+			this.spinner.hide();
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
+				const _invoiceEntity = resp.data as unknown as InvoiceEntityModel;
+				this.loadInvoiceEntity(_invoiceEntity, true);
+
+				const message = `InvoiceEntity successfully has been saved.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+				this.refreshInvoiceEntity(false);
+			} else {
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+			}
+		}).catch((e) => {
+			this.spinner.hide();
+		});
+
+		//this.loadingSubject.next(true);
+		//const updateInvoiceEntity: Update<InvoiceEntityModel> = {
+		//	id: _invoiceEntity.id,
+		//	changes: _invoiceEntity
+		//};
+
+		//this.store.dispatch(new InvoiceEntityUpdated({
+		//	partialInvoiceEntity: updateInvoiceEntity,
+		//	invoiceEntity: _invoiceEntity
+		//}));
+
+		//of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
+		//	if (withBack) {
+		//		this.goBack(_invoiceEntity.id);
+		//	} else {
+		//		const message = `InvoiceEntity successfully has been saved.`;
+		//		this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+		//		this.refreshInvoiceEntity(false);
+		//	}
+		//}); 
+	}
+
 	getComponentTitle() {
-		let result = 'Create invoice entity';
-		if (!this.product || !this.product.id) {
+		let result = 'Create Invoice Entity';
+		if (!this.invoiceEntity || !this.invoiceEntity.id) {
 			return result;
 		}
 
-		result = `Edit invoice entity - ${this.product.manufacture} ${this.product.model}, ${this.product.modelYear}`;
+		result = `Edit Invoice Entity - ${this.invoiceEntity.name}`;
 		return result;
 	}
 
-	/**
-	 * Close alert
-	 *
-	 * @param $event
-	 */
 	onAlertClose($event) {
 		this.hasFormErrors = false;
 	}
+
+
+	/*Fitlers Section*/
+	loadStaticResources() {
+		this.loadCountriesFilter();
+		this.loadCitiesForFilter();
+
+		this.staticService.getRelationshipsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.relationshipsForFilter = data;
+
+			if (this.invoiceEntity.relationshipWithCustomerId) {
+				var obj = data.find((e) => { return e.id == this.invoiceEntity.relationshipWithCustomerId });
+				if (obj)
+					this.invoiceEntityForm.get('relationshipWithCustomerId').setValue(obj.id);
+			}
+		});
+
+		this.staticService.getPaymentMethodsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.paymentMethodOptions = data;
+
+			if (this.invoiceEntity.paymentMethodId) {
+				var obj = data.find((e) => { return e.id == this.invoiceEntity.paymentMethodId });
+				if (obj)
+					this.invoiceEntityForm.get('paymentMethodId').setValue(obj.id);
+			}
+		});
+
+		this.staticService.getRatingOptions().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.ratingOptions = data;
+
+			if (this.invoiceEntity.ratingId) {
+				var obj = data.find((e) => { return e.id == this.invoiceEntity.ratingId });
+				if (obj)
+					this.invoiceEntityForm.get('ratingId').setValue(obj.id);
+			}
+		});
+
+		this.staticService.getInvoiceEntityTypesForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.ieTypeOptions = data;
+
+			if (this.invoiceEntity.ieTypeId) {
+				var obj = data.find((e) => { return e.id == this.invoiceEntity.ieTypeId });
+				if (obj)
+					this.invoiceEntityForm.get('ieTypeId').setValue(obj.id);
+			}
+		});
+
+
+		this.staticService.getDiscountNetworksForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.discountNetworkOptions = data;
+
+			if (this.invoiceEntity.discountNetworkId) {
+				var obj = data.find((e) => { return e.id == this.invoiceEntity.discountNetworkId });
+				if (obj)
+					this.invoiceEntityForm.get('discountNetworkId').setValue(obj.id);
+			}
+		});
+
+
+		if (this.invoiceEntity.insuranceCoverId) {
+			this.invoiceEntityForm.get('insuranceCoverId').setValue(this.invoiceEntity.insuranceCoverId.toString());
+		}
+
+		if (this.invoiceEntity.blackListId !== undefined) {
+			this.invoiceEntityForm.get('blackListId').setValue(this.invoiceEntity.blackListId.toString());
+		}
+	}
+
+
+	//// Country of Birth
+	loadCountriesFilter() {
+		this.staticService.getCountriesForFilter().subscribe(res => {
+			this.countriesForCountryOfBirthForFilter = res.data;
+
+			this.filteredCountriesOfBirth = this.invoiceEntityForm.get('countryOfBirthId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this.filteredCountryOfBirth(value))
+				);
+			if (this.invoiceEntity.countryOfBirthId > 0) {
+				var title = this.countriesForCountryOfBirthForFilter.find(x => x.id == this.invoiceEntity.countryOfBirthId);
+				if (title) {
+					this.invoiceEntityForm.patchValue({ 'countryOfBirthId': { id: title.id, value: title.value } });
+				}
+			}
+
+
+			this.filteredBillingCountries = this.invoiceEntityForm.get('billingCountryId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this.filteredCountryOfBirth(value))
+				);
+			if (this.invoiceEntity.billingCountryId > 0) {
+				var title = this.countriesForCountryOfBirthForFilter.find(x => x.id == this.invoiceEntity.billingCountryId);
+				if (title) {
+					this.invoiceEntityForm.patchValue({ 'billingCountryId': { id: title.id, value: title.value } });
+				}
+			}
+
+			this.filteredMailingCountries = this.invoiceEntityForm.get('mailingCountryId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this.filteredCountryOfBirth(value))
+				);
+			if (this.invoiceEntity.mailingCountryId > 0) {
+				var title = this.countriesForCountryOfBirthForFilter.find(x => x.id == this.invoiceEntity.mailingCountryId);
+				if (title) {
+					this.invoiceEntityForm.patchValue({ 'mailingCountryId': { id: title.id, value: title.value } });
+				}
+			}
+
+		});
+
+	}
+
+	private filteredCountryOfBirth(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.countriesForCountryOfBirthForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end Country of Birth
+
+
+	// cities
+	loadCitiesForFilter() {
+		this.staticService.getCitiesForFilter().subscribe(res => {
+			this.citiesForFilter = res.data;
+
+			this.filteredBillingCities = this.invoiceEntityForm.get('billingCityId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterCities(value))
+				);
+			if (this.invoiceEntity.billingCityId > 0) {
+				var elem = this.citiesForFilter.find(x => x.id == this.invoiceEntity.billingCityId);
+				if (elem) {
+					this.invoiceEntityForm.patchValue({ 'billingCityId': { id: elem.id, value: elem.value } });
+				}
+			}
+
+			this.filteredMailingCities = this.invoiceEntityForm.get('mailingCityId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterCities(value))
+				);
+			if (this.invoiceEntity.mailingCityId > 0) {
+				var elem = this.citiesForFilter.find(x => x.id == this.invoiceEntity.mailingCityId);
+				if (elem) {
+					this.invoiceEntityForm.patchValue({ 'mailingCityId': { id: elem.id, value: elem.value } });
+				}
+			}
+
+		});
+
+	}
+	private _filterCities(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.citiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end clinic cities
+
+
+	displayFn(option: FilterModel): string {
+		if (option)
+			return option.value;
+		return '';
+	}
+
+	private _normalizeValue(value: string): string {
+		if (value && value.length > 0)
+			return value.toLowerCase().replace(/\s/g, '');
+		return value;
+	}
+
+	/*End Filters Section*/
 }

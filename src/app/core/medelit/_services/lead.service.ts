@@ -28,8 +28,8 @@ export class LeadsService {
 		return this.http.get<LeadModel[]>(API_LEADS_URL);
 	}
 
-	getLeadById(leadId: number): Observable<LeadModel> {
-		return this.http.get<LeadModel>(API_LEADS_URL + `/${leadId}`);
+	getLeadById(leadId: number, fromCustomer?:number): Observable<LeadModel> {
+		return this.http.get<LeadModel>(API_LEADS_URL + `/${leadId}/${fromCustomer}`);
 	}
 
 	findLeads(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
@@ -55,8 +55,8 @@ export class LeadsService {
 			leadsForUpdate: leads,
 			newStatus: status
 		};
-		const url = API_LEADS_URL + '/update-status';
-		return this.http.put(url, body, { headers: httpHeaders });
+		const url = API_LEADS_URL + '/update-status/'+ status;
+		return this.http.put(url, leads, { headers: httpHeaders });
 	}
 
 	// DELETE => delete the lead from the server
@@ -66,9 +66,16 @@ export class LeadsService {
 	}
 
 	deleteLeads(ids: number[] = []): Observable<any> {
-		const url = API_LEADS_URL + '/delete-leads';
+		const url = API_LEADS_URL + '/delete';
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		const body = { leadIdsForDelete: ids };
-		return this.http.put<QueryResultsModel>(url, body, { headers: httpHeaders} );
+		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders} );
 	}
+
+	convertToBooking(leadId: number): Observable<LeadModel> {
+		const url = `${API_LEADS_URL}/convert-booking/${leadId}`;
+		return this.http.get<LeadModel>(url);
+	}
+
+
 }

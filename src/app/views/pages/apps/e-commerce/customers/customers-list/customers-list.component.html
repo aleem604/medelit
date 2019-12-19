@@ -46,22 +46,6 @@
 					</div>
 
 					<div class="col-md-2 kt-margin-bottom-10-mobile">
-
-						<div class="kt-form__control">
-							<mat-form-field class="mat-form-field-fluid">
-								<mat-select [(value)]="filterType" (selectionChange)="loadCustomersList()">
-									<mat-option value="">All</mat-option>
-									<mat-option value="0">Business</mat-option>
-									<mat-option value="1">Individual</mat-option>
-								</mat-select>
-								<mat-hint align="start">
-									<strong>Filter</strong> by Type
-								</mat-hint>
-							</mat-form-field>
-						</div>
-					</div>
-
-					<div class="col-md-2 kt-margin-bottom-10-mobile">
 						<mat-form-field class="mat-form-field-fluid">
 							<input matInput placeholder="Search customer" #searchInput placeholder="Search">
 							<mat-hint align="start">

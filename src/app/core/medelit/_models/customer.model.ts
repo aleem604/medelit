@@ -1,27 +1,82 @@
 import { BaseModel } from '../../_base/crud';
+import { eRecordStatus } from '../_enums/e-record-status.enum';
 
-export class CustomerModel  extends BaseModel {
+export class CustomerModel extends BaseModel {
 	id: number;
-	firstName: string;
-	lastName: string;
+	titleId: number;
+	title: string;
+	surName: string;
+	name: string;
+	languageId: number;
+	mainPhone: string;
+	mainPhoneOwner: string;
+	phone2: string;
+	phone2Owner: string;
+	phone3: string;
+	phone3Owner: string;
+	contactPhone: string;
 	email: string;
-	userName: string;
-	gender: string;
-	status: number; // 0 = Active | 1 = Suspended | Pending = 2
-	dateOfBbirth: string;
-	dob: Date;
-	ipAddress: string;
-	type: number; // 0 = Business | 1 = Individual
+	email2: string;
+	fax: string;
+	dateOfBirth?: Date;
+	countryOfBirthId?: number;
+	visitRequestingPerson: string;
+	visitRequestingPersonRelationId?: number;
+	homeStreetName: string;
+	visitStreetName: string;
+	homeCityId: number;
+	visitCityId: number;
+	homePostCode: string;
+	visitPostCode: string;
+	homeCountryId?: number;
+	visitCountryId?: number;
+	gpCode: string;
+	visitVenueId?: number;
+	visitVenueDetail: string;
+	buzzer: string;
+	flatNumber?: number;
+	floor?: number;
+	buildingTypeId?: number;
+	contactMethodId?: number;
+	addressNotes: string;
+	listedDiscountNetworkId?: number;
+	discount?: number;
+	bankName: string;
+	accountNumber: string;
+	sortCode: string;
+	iban: string;
+	insuranceCoverId?: number;
+	haveDifferentIEId: number;
+	invoiceEntityId?: number;
+	paymentMethodId?: number;
+	invoicingNotes: string;
+	blacklistId?: number;
+	leadId?: number;
+
+
+	status: eRecordStatus;
+	crateDtae: Date;
+	createdBy: string;
+	updateDate: Date;
+	updatedBy: string;
+	deleteDate: Date;
+	deletedBy: string;
+	services: CustomerServicesModel[];
 
 	clear() {
-		this.dob = new Date();
-		this.firstName = '';
-		this.lastName = '';
-		this.email = '';
-		this.userName = '';
-		this.gender = 'Female';
-		this.ipAddress = '';
-		this.type = 1;
-		this.status = 1;
+		this.services = [];
 	}
+}
+
+export class CustomerServicesModel {
+	id: number;
+	customerId: number;
+	serviceId: number;
+	professionalId: number;
+	ptFeeId: number;
+	ptFeeA1: number;
+	ptFeeA2: number;
+	proFeeId: number;
+	proFeeA1: number;
+	proFeeA2: number;
 }

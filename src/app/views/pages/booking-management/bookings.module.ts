@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 // Fake API Angular-in-memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 // Translate Module
@@ -19,18 +20,10 @@ import { FakeApiService } from '../../../core/_base/layout';
 import { ModuleGuard } from '../../../core/auth';
 // Core => Services
 import {
-	customersReducer,
-	CustomerEffects,
-	CustomersService,
-	productsReducer,
-	ProductEffects,
-	ProductsService,
-	productRemarksReducer,
-	ProductRemarkEffects,
-	ProductRemarksService,
-	productSpecificationsReducer,
-	ProductSpecificationEffects,
-	ProductSpecificationsService
+    bookingsReducer,
+    BookingService,
+
+    BookingEffects
 } from '../../../core/medelit';
 // Core => Utils
 import { HttpUtilsService,
@@ -69,16 +62,19 @@ import {
 	MatAutocompleteModule,
 	MAT_DIALOG_DEFAULT_OPTIONS,
 	MatSnackBarModule,
-	MatTooltipModule
+	MatTooltipModule,
+
+    MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
 import { CoreModule } from '../../../core/core.module';
 import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { StaticDataService } from '../../../core/medelit/_services';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { BookingsComponent } from './bookings.component';
 import { BookingsListComponent } from './bookings/bookings-list/bookings-list.component';
 import { BookingEditComponent } from './bookings/booking-edit/booking-edit.component';
-
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -116,6 +112,7 @@ const routes: Routes = [
 		CommonModule,
 		HttpClientModule,
 		PartialsModule,
+		NgxMaterialTimepickerModule,
 		NgxPermissionsModule.forChild(),
 		RouterModule.forChild(routes),
 		FormsModule,
@@ -126,6 +123,7 @@ const routes: Routes = [
 		MatSelectModule,
         MatInputModule,
 		MatTableModule,
+		MatChipsModule,
 		MatAutocompleteModule,
 		MatRadioModule,
 		MatIconModule,
@@ -141,18 +139,13 @@ const routes: Routes = [
 		MatTabsModule,
 		MatTooltipModule,
 		NgbProgressbarModule,
+		NgxMatSelectSearchModule,
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false
 		}) : [],
-		StoreModule.forFeature('products', productsReducer),
-		EffectsModule.forFeature([ProductEffects]),
-		StoreModule.forFeature('customers', customersReducer),
-		EffectsModule.forFeature([CustomerEffects]),
-		StoreModule.forFeature('productRemarks', productRemarksReducer),
-		EffectsModule.forFeature([ProductRemarkEffects]),
-		StoreModule.forFeature('productSpecifications', productSpecificationsReducer),
-		EffectsModule.forFeature([ProductSpecificationEffects]),
+		StoreModule.forFeature('bookings', bookingsReducer),
+		EffectsModule.forFeature([BookingEffects]),
 	],
 	providers: [
 		ModuleGuard,
@@ -174,10 +167,8 @@ const routes: Routes = [
 		TypesUtilsService,
 		LayoutUtilsService,
 		HttpUtilsService,
-		CustomersService,
-		ProductRemarksService,
-		ProductSpecificationsService,
-		ProductsService,
+		BookingService,
+		StaticDataService,
 		TypesUtilsService,
 		LayoutUtilsService
 	],

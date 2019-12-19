@@ -125,7 +125,8 @@ export const locale = {
 				EDIT: {
 					UPDATE_MESSAGE: 'Lead has been updated',
 					ADD_MESSAGE: 'Lead has been created'
-				}
+				},
+				INVOICE_ENTITY_CREATED_SUCCESS:'Invoice entity created successfully'
 			},
 
 

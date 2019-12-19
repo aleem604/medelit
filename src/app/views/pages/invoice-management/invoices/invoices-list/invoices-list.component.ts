@@ -38,7 +38,7 @@ import { StaticDataService } from '../../../../../core/medelit/_services';
 export class InvoicesListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: InvoiceDataSource;
-	displayedColumns = ['select', 'id', 'createDate', 'assigned', 'customerName', 'invoiceStatus', 'dueDate','amount', 'status', 'actions'];
+	displayedColumns = ['select', 'invoiceNumber', 'createDate', 'assignedTo', 'customer', 'invoiceStatus', 'dueDate','amount', 'status', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields

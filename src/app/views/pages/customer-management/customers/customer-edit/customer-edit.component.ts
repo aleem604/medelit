@@ -1,12 +1,12 @@
 // Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 // Material
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
 // RxJS
-import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
-import { map, startWith, delay, first } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
+import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
 // NGRX
 import { Store, select } from '@ngrx/store';
 import { Dictionary, Update } from '@ngrx/entity';
@@ -17,38 +17,48 @@ import { SubheaderService, LayoutConfigService } from '../../../../../core/_base
 import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Services and Models
 import {
-	selectLastCreatedProductId,
-	selectProductById,
+	selectLastCreatedCustomerId,
+	selectCustomerById,
 	SPECIFICATIONS_DICTIONARY,
-	ProductModel,
-	ProductOnServerCreated,
-	ProductUpdated,
-	ProductsService
+	CustomerModel,
+	CustomerOnServerCreated,
+	CustomerUpdated,
+	CustomersService,
+	StaticDataModel,
+
+	StaticDataService,
+	FilterModel,
+	ApiResponse,
+
+	AppDateAdapter,
+	APP_DATE_FORMATS,
+    CustomerServicesModel,
 } from '../../../../../core/medelit';
+import { NgxSpinnerService } from 'ngx-spinner';
 
-const AVAILABLE_COLORS: string[] =
-	['Red', 'CadetBlue', 'Gold', 'LightSlateGrey', 'RoyalBlue', 'Crimson', 'Blue', 'Sienna', 'Indigo', 'Green', 'Violet',
-		'GoldenRod', 'OrangeRed', 'Khaki', 'Teal', 'Purple', 'Orange', 'Pink', 'Black', 'DarkTurquoise'];
-
-const AVAILABLE_MANUFACTURES: string[] =
-	['Pontiac', 'Subaru', 'Mitsubishi', 'Oldsmobile', 'Chevrolet', 'Chrysler', 'Suzuki', 'GMC', 'Cadillac', 'Mercury', 'Dodge',
-		'Ram', 'Lexus', 'Lamborghini', 'Honda', 'Nissan', 'Ford', 'Hyundai', 'Saab', 'Toyota'];
 
 @Component({
 	// tslint:disable-next-line:component-selector
 	selector: 'kt-customer-edit',
 	templateUrl: './customer-edit.component.html',
+	styleUrls: ['./customer-edit.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomerEditComponent implements OnInit, OnDestroy {
 	// Public properties
-	product: ProductModel;
-	productId$: Observable<number>;
-	oldProduct: ProductModel;
+	customer: CustomerModel;
+	customerId$: Observable<number>;
+	titles: Observable<StaticDataModel>;
+	languages: Observable<StaticDataModel>;
+	countries: Observable<StaticDataModel>;
+	cities: Observable<StaticDataModel>;
+	relationaships: Observable<StaticDataModel>;
+	services: Observable<StaticDataModel>;
+	oldCustomer: CustomerModel;
 	selectedTab = 0;
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;
-	productForm: FormGroup;
+	customerForm: FormGroup;
 	hasFormErrors = false;
 	availableYears: number[] = [];
 	filteredColors: Observable<string[]>;
@@ -57,45 +67,89 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	private componentSubscriptions: Subscription;
 	// sticky portlet header margin
 	private headerMargin: number;
+	selected = new FormControl(0);
+
+
+
+	customersForFilter: FilterModel[] = [];
+	filteredCustomers: Observable<FilterModel[]>;
+
+	titlesForFilter: FilterModel[] = [];
+	filteredTitles: Observable<FilterModel[]>;
+
+	languagesForFilter: FilterModel[] = [];
+	filteredLanguages: Observable<FilterModel[]>;
+
+	countriesForCountryOfBirthForFilter: FilterModel[] = [];
+	filteredCountriesForCountryOfBirth: Observable<FilterModel[]>;
+
+	relationshipsForFilter: FilterModel[] = [];
+	filteredRelationships: Observable<FilterModel[]>;
+
+	servicesForFilter: FilterModel[] = [];
+	filteredServices: Observable<FilterModel[]>;
+
+	professionalsForFilter: FilterModel[] = [];
+	filteredProfessionals: Observable<FilterModel[]>;
+
+	paymentMethodsOptions: FilterModel[];
+	listedDiscountNetworkOptions: FilterModel[];
+	buildingTypeOptions: FilterModel[];
+	visitVenueOptions: FilterModel[];
+	customerStatusOptions: FilterModel[];
+	customerSourceOptions: FilterModel[];
+	contactMethodOptions: FilterModel[];
+	customerCategoryOptions: FilterModel[];
+
+	invoiceEntitiesForFilter: FilterModel[] = [];
+	filteredInvoiceEntities: Observable<FilterModel[]>;
+
+	citiesForFilter: FilterModel[] = [];
+	visitFilteredCities: Observable<FilterModel[]>;
+	homeFilteredCities: Observable<FilterModel[]>;
+
+	countriesForFilter: FilterModel[] = [];
+	visitFilteredCountries: Observable<FilterModel[]>;
+	homeFilteredCountries: Observable<FilterModel[]>;
 
 	constructor(
 		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
 		private typesUtilsService: TypesUtilsService,
-		private productFB: FormBuilder,
+		private customerFB: FormBuilder,
 		public dialog: MatDialog,
 		private subheaderService: SubheaderService,
 		private layoutUtilsService: LayoutUtilsService,
 		private layoutConfigService: LayoutConfigService,
-		private productService: ProductsService,
+		private customerService: CustomersService,
+		private staticService: StaticDataService,
+		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
 	}
 
 	ngOnInit() {
-		for (let i = 2019; i > 1945; i--) {
-			this.availableYears.push(i);
-		}
 		this.loading$ = this.loadingSubject.asObservable();
 		this.loadingSubject.next(true);
 		this.activatedRoute.params.subscribe(params => {
 			const id = params.id;
 			if (id && id > 0) {
 
-				this.store.pipe(
-					select(selectProductById(id))
-				).subscribe(result => {
-					if (!result) {
-						this.loadProductFromService(id);
-						return;
-					}
+				//this.store.pipe(
+				//	select(selectCustomerById(id))
+				//).subscribe(result => {
+				//	if (!result) {
+				//		this.loadCustomerFromService(id);
+				//		return;
+				//	}
 
-					this.loadProduct(result);
-				});
+				//	this.loadCustomer(result);
+				//});
+				this.loadCustomerFromService(id);
 			} else {
-				const newProduct = new ProductModel();
-				newProduct.clear();
-				this.loadProduct(newProduct);
+				const newCustomer = new CustomerModel();
+				newCustomer.clear();
+				this.loadCustomer(newCustomer);
 			}
 		});
 
@@ -106,128 +160,132 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		};
 	}
 
-	loadProduct(_product, fromService: boolean = false) {
-		if (!_product) {
+	loadCustomer(_customer, fromService: boolean = false) {
+		if (!_customer) {
 			this.goBack('');
 		}
-		this.product = _product;
-		this.productId$ = of(_product.id);
-		this.oldProduct = Object.assign({}, _product);
-		this.initProduct();
+		this.customer = _customer;
+		this.customerId$ = of(_customer.id);
+		this.oldCustomer = Object.assign({}, _customer);
+		this.initCustomer();
+
+		this.loadStaticResources();
+
 		if (fromService) {
 			this.cdr.detectChanges();
 		}
 	}
 
-	// If product didn't find in store
-	loadProductFromService(productId) {
-		this.productService.getProductById(productId).subscribe(res => {
-			this.loadProduct(res, true);
+	loadCustomerFromService(customerId) {
+		this.spinner.show();
+		this.customerService.getCustomerById(customerId).toPromise().then(res => {
+			this.spinner.hide();
+			let data = res as unknown as ApiResponse;
+			this.loadCustomer(data.data, true);
+		}).catch((e) => {
+			this.spinner.hide();
 		});
 	}
 
-	/**
-	 * On destroy
-	 */
 	ngOnDestroy() {
 		if (this.componentSubscriptions) {
 			this.componentSubscriptions.unsubscribe();
 		}
 	}
 
-	/**
-	 * Init product
-	 */
-	initProduct() {
+	initCustomer() {
 		this.createForm();
 		this.loadingSubject.next(false);
-		if (!this.product.id) {
+		if (!this.customer.id) {
 			this.subheaderService.setBreadcrumbs([
-				{ title: 'eCommerce', page: `/ecommerce` },
-				{ title: 'Products', page: `/ecommerce/products` },
-				{ title: 'Create product', page: `/ecommerce/products/add` }
+				{ title: 'customer-management', page: `/customers` },
+				{ title: 'Customers', page: `/customer-management/customers` },
+				{ title: 'Create customer', page: `/customer-management/customers/add` }
 			]);
 			return;
 		}
-		this.subheaderService.setTitle('Edit product');
+		this.subheaderService.setTitle('Customers');
+
 		this.subheaderService.setBreadcrumbs([
-			{ title: 'eCommerce', page: `/ecommerce` },
-			{ title: 'Products', page: `/ecommerce/products` },
-			{ title: 'Edit product', page: `/ecommerce/products/edit`, queryParams: { id: this.product.id } }
+			{ title: 'customer-management', page: `/customers` },
+			{ title: 'Customers', page: `/customer-management/customers` },
+			{ title: 'Edit customer', page: `/customer-management/customers/edit`, queryParams: { id: this.customer.id } }
 		]);
+
 	}
 
-	/**
-	 * Create form
-	 */
 	createForm() {
-		this.productForm = this.productFB.group({
-			model: [this.product.model, Validators.required],
-			manufacture: [this.product.manufacture, Validators.required],
-			modelYear: [this.product.modelYear.toString(), Validators.required],
-			mileage: [this.product.mileage, [Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-			description: [this.product.description],
-			color: [this.product.color, Validators.required],
-			price: [this.product.price, [Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)]],
-			condition: [this.product.condition.toString(), [Validators.required, Validators.min(0), Validators.max(1)]],
-			status: [this.product.status.toString(), [Validators.required, Validators.min(0), Validators.max(1)]],
-			VINCode: [this.product.VINCode, Validators.required]
+		this.customerForm = this.customerFB.group({
+			titleId: [this.customer.titleId, Validators.required],
+			surName: [this.customer.surName, [Validators.required, Validators.min(4)]],
+			name: [this.customer.name, Validators.required],
+			languageId: [this.customer.languageId, [Validators.required]],
+			mainPhone: [this.customer.mainPhone, []],
+			mainPhoneOwner: [this.customer.mainPhoneOwner],
+			contactPhone: [this.customer.contactPhone, []],
+			phone2: [this.customer.phone2, []],
+			phone2Owner: [this.customer.phone2Owner, []],
+			phone3: [this.customer.phone3, []],
+			phone3Owner: [this.customer.phone3Owner, []],
+			email: [this.customer.email, [Validators.required, Validators.email,]],
+			email2: [this.customer.email2, [Validators.email,]],
+			fax: [this.customer.fax, []],
+			dateOfBirth: [this.customer.dateOfBirth, []],
+			countryOfBirthId: [this.customer.countryOfBirthId, []],
+			visitRequestingPerson: [this.customer.visitRequestingPerson, []],
+			visitRequestingPersonRelationId: [this.customer.visitRequestingPersonRelationId, []],
+			gpCode: [this.customer.gpCode, []],
+
+			services: this.customerFB.array([]),
+
+			paymentMethodId: [this.customer.paymentMethodId, []],
+			listedDiscountNetworkId: [this.customer.listedDiscountNetworkId, []],
+			invoiceEntityId: [this.customer.invoiceEntityId, []],
+			invoicingNotes: [this.customer.invoicingNotes, []],
+			// address info
+			visitStreetName: [this.customer.visitStreetName, [Validators.required]],
+			homeStreetName: [this.customer.homeStreetName, [Validators.required]],
+			visitPostCode: [this.customer.visitPostCode, [Validators.required]],
+			homePostCode: [this.customer.homePostCode, [Validators.required]],
+			visitCityId: [this.customer.visitCityId, [Validators.required]],
+			homeCityId: [this.customer.homeCityId, [Validators.required]],
+			visitCountryId: [this.customer.visitCountryId, [Validators.required]],
+			homeCountryId: [this.customer.homeCountryId, [Validators.required]],
+			buildingTypeId: [this.customer.buildingTypeId, []],
+			contactMethodId: [this.customer.contactMethodId, []],
+			buzzer: [this.customer.buzzer, []],
+			flatNumber: [this.customer.flatNumber, []],
+			floor: [this.customer.floor, []],
+			visitVenueId: [this.customer.visitVenueId, []],
+			addressNotes: [this.customer.addressNotes, []],
+			visitVenueDetail: [this.customer.visitVenueDetail, []],
+
+			
+			// bank info
+			bankName: [this.customer.bankName, []],
+			accountNumber: [this.customer.accountNumber, []],
+			sortCode: [this.customer.sortCode, []],
+			iban: [this.customer.iban, []],
+			insuranceCoverId: [this.customer.insuranceCoverId, []],
+			haveDifferentIEId: [this.customer.haveDifferentIEId, []],
+
+			blacklistId: [this.customer.blacklistId.toString(), []],
+
 		});
 
-		this.filteredManufactures = this.productForm.controls.manufacture.valueChanges
-			.pipe(
-				startWith(''),
-				map(val => this.filterManufacture(val.toString()))
-			);
-		this.filteredColors = this.productForm.controls.color.valueChanges
-			.pipe(
-				startWith(''),
-				map(val => this.filterColor(val.toString()))
-			);
 	}
 
-	/**
-	 * Filter manufacture
-	 *
-	 * @param val: string
-	 */
-	filterManufacture(val: string): string[] {
-		return AVAILABLE_MANUFACTURES.filter(option =>
-			option.toLowerCase().includes(val.toLowerCase()));
-	}
-
-	/**
-	 * Filter color
-	 *
-	 * @param val: string
-	 */
-	filterColor(val: string): string[] {
-		return AVAILABLE_COLORS.filter(option =>
-			option.toLowerCase().includes(val.toLowerCase()));
-	}
-
-	/**
-	 * Go back to the list
-	 *
-	 * @param id: any
-	 */
 	goBack(id) {
 		this.loadingSubject.next(false);
-		const url = `/ecommerce/products?id=${id}`;
+		const url = `/customer-management/customers?id=${id}`;
 		this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 	}
 
 	goBackWithoutId() {
-		this.router.navigateByUrl('/ecommerce/products', { relativeTo: this.activatedRoute });
+		this.router.navigateByUrl('/customer-management/customers', { relativeTo: this.activatedRoute });
 	}
 
-	/**
-	 * Refresh product
-	 *
-	 * @param isNew: boolean
-	 * @param id: number
-	 */
-	refreshProduct(isNew: boolean = false, id = 0) {
+	refreshCustomer(isNew: boolean = false, id = 0) {
 		this.loadingSubject.next(false);
 		let url = this.router.url;
 		if (!isNew) {
@@ -235,154 +293,543 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		url = `/ecommerce/products/edit/${id}`;
+		url = `/customer-management/customers/edit/${id}`;
 		this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 	}
 
-	/**
-	 * Reset
-	 */
 	reset() {
-		this.product = Object.assign({}, this.oldProduct);
+		this.customer = Object.assign({}, this.oldCustomer);
 		this.createForm();
 		this.hasFormErrors = false;
-		this.productForm.markAsPristine();
-		this.productForm.markAsUntouched();
-		this.productForm.updateValueAndValidity();
+		this.customerForm.markAsPristine();
+		this.customerForm.markAsUntouched();
+		this.customerForm.updateValueAndValidity();
 	}
 
-	/**
-	 * Save data
-	 *
-	 * @param withBack: boolean
-	 */
 	onSumbit(withBack: boolean = false) {
 		this.hasFormErrors = false;
-		const controls = this.productForm.controls;
+		const controls = this.customerForm.controls;
 		/** check form */
-		if (this.productForm.invalid) {
+		if (this.customerForm.invalid) {
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
-
+			
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
 			return;
 		}
 
 		// tslint:disable-next-line:prefer-const
-		let editedProduct = this.prepareProduct();
+		let editedCustomer = this.prepareCustomer();
 
-		if (editedProduct.id > 0) {
-			this.updateProduct(editedProduct, withBack);
+		if (editedCustomer.id > 0) {
+			this.updateCustomer(editedCustomer, withBack);
 			return;
 		}
 
-		this.addProduct(editedProduct, withBack);
+		this.addCustomer(editedCustomer, withBack);
 	}
 
-	/**
-	 * Returns object for saving
-	 */
-	prepareProduct(): ProductModel {
-		const controls = this.productForm.controls;
-		const _product = new ProductModel();
-		_product.id = this.product.id;
-		_product.model = controls.model.value;
-		_product.manufacture = controls.manufacture.value;
-		_product.modelYear = +controls.modelYear.value;
-		_product.mileage = +controls.mileage.value;
-		_product.description = controls.description.value;
-		_product.color = controls.color.value;
-		_product.price = +controls.price.value;
-		_product.condition = +controls.condition.value;
-		_product.status = +controls.status.value;
-		_product.VINCode = controls.VINCode.value;
-		_product._userId = 1; // TODO: get version from userId
-		_product._createdDate = this.product._createdDate;
-		_product._updatedDate = this.product._updatedDate;
-		_product._updatedDate = this.typesUtilsService.getDateStringFromDate();
-		_product._createdDate = this.product.id > 0 ? _product._createdDate : _product._updatedDate;
-		return _product;
+	prepareCustomer(): CustomerModel {
+		const controls = this.customerForm.controls;
+		const _customer = new CustomerModel();
+		_customer.id = this.customer.id;
+		if (controls.titleId.value)
+			_customer.titleId = +controls.titleId.value.id;
+		_customer.surName = controls.surName.value;
+		_customer.name = controls.name.value;
+		if (controls.languageId.value)
+			_customer.languageId = +controls.languageId.value.id;
+		_customer.mainPhone = controls.mainPhone.value;
+		_customer.mainPhoneOwner = controls.mainPhoneOwner.value;
+		_customer.contactPhone = controls.contactPhone.value;
+		_customer.phone2 = controls.phone2.value;
+		_customer.phone2Owner = controls.phone2Owner.value;
+		_customer.phone3 = controls.phone3.value;
+		_customer.phone3Owner = controls.phone3Owner.value;
+		_customer.email = controls.email.value;
+		_customer.fax = controls.fax.value;
+		_customer.dateOfBirth = controls.dateOfBirth.value;
+		if (controls.countryOfBirthId.value)
+			_customer.countryOfBirthId = controls.countryOfBirthId.value.id;
+		_customer.visitRequestingPerson = controls.visitRequestingPerson.value;
+		if (controls.visitRequestingPersonRelationId.value)
+			_customer.visitRequestingPersonRelationId = controls.visitRequestingPersonRelationId.value.id;
+		_customer.gpCode = controls.gpCode.value;
+
+		_customer.paymentMethodId = controls.paymentMethodId.value;
+		_customer.listedDiscountNetworkId = controls.listedDiscountNetworkId.value;
+		if (controls.invoiceEntityId.value)
+			_customer.invoiceEntityId = controls.invoiceEntityId.value.id;
+		_customer.invoicingNotes = controls.invoicingNotes.value;
+
+		// address info
+		_customer.visitStreetName = controls.visitStreetName.value;
+		_customer.homeStreetName = controls.homeStreetName.value;
+		_customer.visitPostCode = controls.visitPostCode.value;
+		_customer.homePostCode = controls.homePostCode.value;
+		if (controls.visitCityId.value)
+			_customer.visitCityId = controls.visitCityId.value.id;
+		if (controls.homeCityId.value)
+			_customer.homeCityId = controls.homeCityId.value.id;
+
+		if (controls.visitCountryId.value)
+			_customer.visitCountryId = controls.visitCountryId.value.id;
+		if (controls.homeCountryId.value)
+			_customer.homeCountryId = controls.homeCountryId.value.id;
+
+		_customer.buildingTypeId = controls.buildingTypeId.value;
+		_customer.contactMethodId = controls.contactMethodId.value;
+		_customer.buzzer = controls.buzzer.value;
+		_customer.flatNumber = controls.flatNumber.value;
+		_customer.floor = controls.floor.value;
+		_customer.visitVenueId = controls.visitVenueId.value;
+		_customer.addressNotes = controls.addressNotes.value;
+		_customer.visitVenueDetail = controls.visitVenueDetail.value;
+
+		// bank info
+		_customer.bankName = controls.bankName.value;
+		_customer.accountNumber = controls.accountNumber.value;
+		_customer.sortCode = controls.sortCode.value;
+		_customer.iban = controls.iban.value;
+		_customer.blacklistId = +controls.blacklistId.value;
+		_customer.insuranceCoverId = +controls.insuranceCoverId.value;
+		_customer.haveDifferentIEId = +controls.haveDifferentIEId.value;
+
+		_customer.services = [];
+
+		const control = <FormArray>this.customerForm.controls['services'];
+		for (let i = 0; i < control.length; i++) {
+			var s = new CustomerServicesModel();
+			if (control.controls[i].get('serviceId').value)
+				s.serviceId = +control.controls[i].get('serviceId').value.id;
+			s.professionalId = +control.controls[i].get('professionalId').value
+
+			s.ptFeeId = +control.controls[i].get('ptFeeId').value
+			s.ptFeeA1 = +control.controls[i].get('ptFeeA1').value
+			s.ptFeeA2 = +control.controls[i].get('ptFeeA2').value
+
+			s.proFeeId = +control.controls[i].get('proFeeId').value
+			s.proFeeA1 = +control.controls[i].get('proFeeA1').value
+			s.proFeeA2 = +control.controls[i].get('proFeeA2').value
+
+			_customer.services.push(s);
+		}
+		return _customer;
 	}
 
-	/**
-	 * Add product
-	 *
-	 * @param _product: ProductModel
-	 * @param withBack: boolean
-	 */
-	addProduct(_product: ProductModel, withBack: boolean = false) {
-		this.loadingSubject.next(true);
-		this.store.dispatch(new ProductOnServerCreated({ product: _product }));
-		this.componentSubscriptions = this.store.pipe(
-			delay(1000),
-			select(selectLastCreatedProductId)
-		).subscribe(newId => {
-			if (!newId) {
-				return;
-			}
-
-			this.loadingSubject.next(false);
-			if (withBack) {
-				this.goBack(newId);
-			} else {
-				const message = `New product successfully has been added.`;
+	addCustomer(_customer: CustomerModel, withBack: boolean = false) {
+		this.spinner.show();
+		this.customerService.createCustomer(_customer).toPromise().then((res) => {
+			this.spinner.hide();
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
+				const message = `New customer successfully has been added.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
-				this.refreshProduct(true, newId);
-			}
-		});
-	}
-
-	/**
-	 * Update product
-	 *
-	 * @param _product: ProductModel
-	 * @param withBack: boolean
-	 */
-	updateProduct(_product: ProductModel, withBack: boolean = false) {
-		this.loadingSubject.next(true);
-
-		const updateProduct: Update<ProductModel> = {
-			id: _product.id,
-			changes: _product
-		};
-
-		this.store.dispatch(new ProductUpdated({
-			partialProduct: updateProduct,
-			product: _product
-		}));
-
-		of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
-			if (withBack) {
-				this.goBack(_product.id);
+				this.refreshCustomer(true, resp.data.id);
 			} else {
-				const message = `Product successfully has been saved.`;
-				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-				this.refreshProduct(false);
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
 			}
-		}); // Remove this line
+		}).catch((e) => {
+			this.spinner.hide();
+		});
+
+
+
+		//this.store.dispatch(new CustomerOnServerCreated({ customer: _customer }));
+		//this.componentSubscriptions = this.store.pipe(
+		//	delay(1000),
+		//	select(selectLastCreatedCustomerId)
+		//).subscribe(newId => {
+		//	if (!newId) {
+		//		return;
+		//	}
+
+		//	this.loadingSubject.next(false);
+		//	if (withBack) {
+		//		this.goBack(newId);
+		//	} else {
+		//		const message = `New customer successfully has been added.`;
+		//		this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+		//		this.refreshCustomer(true, newId);
+		//	}
+		//});
 	}
 
-	/**
-	 * Returns component title
-	 */
+	updateCustomer(_customer: CustomerModel, withBack: boolean = false) {
+		this.spinner.show();
+		this.customerService.updateCustomer(_customer).toPromise().then((res) => {
+			this.spinner.hide();
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
+				const _customer = resp.data as unknown as CustomerModel;
+				this.loadCustomer(_customer, true);
+
+				const message = `Customer successfully has been saved.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+				this.refreshCustomer(false);
+			} else {
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+			}
+		}).catch((e) => {
+			this.spinner.hide();
+		});
+
+		//this.loadingSubject.next(true);
+		//const updateCustomer: Update<CustomerModel> = {
+		//	id: _customer.id,
+		//	changes: _customer
+		//};
+
+		//this.store.dispatch(new CustomerUpdated({
+		//	partialCustomer: updateCustomer,
+		//	customer: _customer
+		//}));
+
+		//of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
+		//	if (withBack) {
+		//		this.goBack(_customer.id);
+		//	} else {
+		//		const message = `Customer successfully has been saved.`;
+		//		this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+		//		this.refreshCustomer(false);
+		//	}
+		//}); 
+	}
+
 	getComponentTitle() {
 		let result = 'Create customer';
-		if (!this.product || !this.product.id) {
+		if (!this.customer || !this.customer.id) {
 			return result;
 		}
 
-		result = `Edit customer - ${this.product.manufacture} ${this.product.model}, ${this.product.modelYear}`;
+		result = `Edit customer - ${this.customer.surName} ${this.customer.name}`;
 		return result;
 	}
 
-	/**
-	 * Close alert
-	 *
-	 * @param $event
-	 */
 	onAlertClose($event) {
 		this.hasFormErrors = false;
 	}
+
+
+	/*Fitlers Section*/
+	loadStaticResources() {
+		this.loadTitlesForFilter();
+		this.loadLanguagesForFilter();
+		this.loadCountriesForCountryOfBirthFilter();
+		this.loadRelationshipsForFilter();
+		this.subscribeInvoiceEntity();
+		this.loadVisitCitiesForFilter();
+		this.loadCountiesForFilter();
+
+
+		this.staticService.getPaymentMethodsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.paymentMethodsOptions = data;
+
+			if (this.customer.paymentMethodId) {
+				var obj = data.find((e) => { return e.id == this.customer.paymentMethodId });
+				if (obj)
+					this.customerForm.get('paymentMethodId').setValue(obj.id);
+			}
+		});
+
+		this.staticService.getDiscountNetworksForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.listedDiscountNetworkOptions = data;
+
+			if (this.customer.listedDiscountNetworkId) {
+				var obj = data.find((e) => { return e.id == this.customer.listedDiscountNetworkId });
+				if (obj)
+					this.customerForm.get('listedDiscountNetworkId').setValue(obj.id);
+			}
+		});
+
+		this.staticService.getBuildingTypesForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.buildingTypeOptions = data;
+
+			if (this.customer.buildingTypeId) {
+				var obj = data.find((e) => { return e.id == this.customer.buildingTypeId });
+				if (obj)
+					this.customerForm.get('buildingTypeId').setValue(obj.id);
+			}
+		});
+
+		this.staticService.getVisitVenuesForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.visitVenueOptions = data;
+
+			if (this.customer.visitVenueId) {
+				const obj = data.find((e) => { return e.id == this.customer.visitVenueId });
+				if (obj)
+					this.customerForm.get('visitVenueId').setValue(obj.id);
+			}
+		});
+
+		
+
+		this.staticService.getContactMethodsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.contactMethodOptions = data;
+
+			if (this.customer.contactMethodId) {
+				const obj = data.find((e) => { return e.id == this.customer.contactMethodId });
+				if (obj)
+					this.customerForm.get('contactMethodId').setValue(obj.id);
+			}
+		});
+		if (this.customer.insuranceCoverId) {
+			this.customerForm.get('insuranceCoverId').setValue(this.customer.insuranceCoverId.toString());
+		}
+		if (this.customer.haveDifferentIEId !== null) {
+			this.customerForm.get('haveDifferentIEId').setValue(this.customer.haveDifferentIEId.toString());
+		}
+
+
+	}
+
+	//// Customers
+
+	// titles
+	loadTitlesForFilter() {
+		this.staticService.getTitlesForFilter().subscribe(res => {
+			this.titlesForFilter = res.data;
+
+			this.filteredTitles = this.customerForm.get('titleId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterTitles(value))
+				);
+			if (this.customer.titleId > 0) {
+				var title = this.titlesForFilter.find(x => x.id == this.customer.titleId);
+				if (title) {
+					this.customerForm.patchValue({ 'titleId': { id: title.id, value: title.value } });
+				}
+			}
+		});
+
+	}
+	private _filterTitles(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.titlesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+
+	//// Languages
+	loadLanguagesForFilter() {
+		this.staticService.getLanguagesForFilter().subscribe(res => {
+			this.languagesForFilter = res.data;
+
+			this.filteredLanguages = this.customerForm.get('languageId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterLanguages(value))
+				);
+			if (this.customer.languageId > 0) {
+				var title = this.languagesForFilter.find(x => x.id == this.customer.languageId);
+				if (title) {
+					this.customerForm.patchValue({ 'languageId': { id: title.id, value: title.value } });
+				}
+			}
+		});
+
+	}
+	private _filterLanguages(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.languagesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end languages
+
+	//// Country of Birth
+	loadCountriesForCountryOfBirthFilter() {
+		this.staticService.getCountriesForFilter().subscribe(res => {
+			this.countriesForCountryOfBirthForFilter = res.data;
+
+			this.filteredCountriesForCountryOfBirth = this.customerForm.get('countryOfBirthId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this.filteredCountryOfBirth(value))
+				);
+			if (this.customer.countryOfBirthId > 0) {
+				var title = this.countriesForCountryOfBirthForFilter.find(x => x.id == this.customer.countryOfBirthId);
+				if (title) {
+					this.customerForm.patchValue({ 'countryOfBirthId': { id: title.id, value: title.value } });
+				}
+			}
+		});
+
+	}
+	private filteredCountryOfBirth(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.countriesForCountryOfBirthForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end Country of Birth
+
+	//// relationships
+	loadRelationshipsForFilter() {
+		this.staticService.getRelationshipsForFilter().subscribe(res => {
+			this.relationshipsForFilter = res.data;
+
+			this.filteredRelationships = this.customerForm.get('visitRequestingPersonRelationId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterRelationships(value))
+				);
+			if (this.customer.visitRequestingPersonRelationId > 0) {
+				var title = this.relationshipsForFilter.find(x => x.id == this.customer.titleId);
+				if (title) {
+					this.customerForm.patchValue({ 'visitRequestingPersonRelationId': { id: title.id, value: title.value } });
+				}
+			}
+		});
+
+	}
+	private _filterRelationships(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.relationshipsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end relationships
+
+
+	//// Invoice Entities
+	loadInvoiceEntitiesForFilter() {
+		this.staticService.getInvoiceEntitiesForFilter().subscribe(res => {
+			this.invoiceEntitiesForFilter = res.data;
+
+			this.filteredInvoiceEntities = this.customerForm.get('invoiceEntityId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterInvoiceEntities(value))
+				);
+			if (this.customer.invoiceEntityId > 0) {
+				var ie = this.invoiceEntitiesForFilter.find(x => x.id == this.customer.titleId);
+				if (ie) {
+					this.customerForm.patchValue({ 'invoiceEntityId': { id: ie.id, value: ie.value } });
+				}
+			}
+		});
+
+	}
+	private _filterInvoiceEntities(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.invoiceEntitiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+
+	subscribeInvoiceEntity() {
+		var differetIdControl = this.customerForm.get('haveDifferentIEId');
+		var ieControl = this.customerForm.get('invoiceEntityId');
+
+		if (differetIdControl.value == 0) {
+			ieControl.disable();
+		} else {
+			ieControl.enable();
+			this.loadInvoiceEntitiesForFilter();
+		}
+
+
+		differetIdControl.valueChanges
+			.subscribe((v) => {
+				if (v == 0) {
+					ieControl.disable();
+					ieControl.setValue('');
+					this.invoiceEntitiesForFilter = [];
+					this.filteredInvoiceEntities = new Observable<FilterModel[]>();
+				}
+				else {
+					ieControl.enable();
+					this.loadInvoiceEntitiesForFilter();
+				}
+			});
+	}
+
+
+	// end Invoice Entities
+
+	// cities
+	loadVisitCitiesForFilter() {
+		this.staticService.getCitiesForFilter().subscribe(res => {
+			this.citiesForFilter = res.data;
+
+			this.visitFilteredCities = this.customerForm.get('visitCityId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterCities(value))
+			);
+			this.homeFilteredCities = this.customerForm.get('homeCityId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterCities(value))
+				);
+
+
+			if (this.customer.visitCityId > 0) {
+				var elem = this.citiesForFilter.find(x => x.id == this.customer.visitCityId);
+				if (elem) {
+					this.customerForm.patchValue({ 'visitCityId': { id: elem.id, value: elem.value } });
+				}
+			}
+
+			if (this.customer.homeCityId > 0) {
+				var elem = this.citiesForFilter.find(x => x.id == this.customer.homeCityId);
+				if (elem) {
+					this.customerForm.patchValue({ 'homeCityId': { id: elem.id, value: elem.value } });
+				}
+			}
+		});
+	}
+	private _filterCities(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.citiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end clinic cities
+
+	// countries
+	loadCountiesForFilter() {
+		this.staticService.getCountriesForFilter().subscribe(res => {
+			this.countriesForFilter = res.data;
+
+			this.visitFilteredCountries = this.customerForm.get('visitCountryId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterCountries(value))
+			);
+			this.homeFilteredCountries = this.customerForm.get('homeCountryId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterCountries(value))
+				);
+
+			if (this.customer.visitCountryId > 0) {
+				var elem = this.countriesForFilter.find(x => x.id == this.customer.visitCountryId);
+				if (elem) {
+					this.customerForm.patchValue({ 'visitCountryId': { id: elem.id, value: elem.value } });
+				}
+			}
+			if (this.customer.homeCountryId > 0) {
+				var elem = this.countriesForFilter.find(x => x.id == this.customer.homeCountryId);
+				if (elem) {
+					this.customerForm.patchValue({ 'homeCountryId': { id: elem.id, value: elem.value } });
+				}
+			}
+		});
+
+	}
+	private _filterCountries(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.countriesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end account code id filter
+
+
+	displayFn(option: FilterModel): string {
+		if (option)
+			return option.value;
+		return '';
+	}
+
+	private _normalizeValue(value: string): string {
+		if (value && value.length > 0)
+			return value.toLowerCase().replace(/\s/g, '');
+		return value;
+	}
+
+	/*End Filters Section*/
 }

@@ -713,10 +713,10 @@ export class MenuConfig {
 							title: 'Bookings',
 							page: '/booking-management/bookings'
 						},
-						{
-							title: 'Add Booking',
-							page: '/booking-management/bookings/add'
-						},
+						//{
+						//	title: 'Add Booking',
+						//	page: '/booking-management/bookings/add'
+						//},
 					]
 				},
 				{

@@ -45,14 +45,14 @@ export class CustomerEffects {
             return forkJoin(requestToServer, lastQuery);
         }),
         map(response => {
-            const result: QueryResultsModel = response[0];
-            const lastQuery: QueryParamsModel = response[1];
-            const pageLoadedDispatch = new CustomersPageLoaded({
-                customers: result.items,
-                totalCount: result.totalCount,
-                page: lastQuery
-            });
-            return pageLoadedDispatch;
+			const result: QueryResultsModel = response[0].data;
+			const lastQuery: QueryParamsModel = response[1];
+			const pageLoadedDispatch = new CustomersPageLoaded({
+				customers: result.items,
+				totalCount: result.totalCount,
+				page: lastQuery
+			});
+			return pageLoadedDispatch;
         })
     );
 

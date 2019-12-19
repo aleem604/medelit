@@ -48,7 +48,7 @@ import {
 // Components
 import { ECommerceComponent } from './e-commerce.component';
 // Customers
-import { CustomersListComponent } from './customers/customers-list/customers-list.component';
+import { CustomersListOldComponent } from './customers/customers-list/customers-list.component';
 import { CustomerEditDialogComponent } from './customers/customer-edit/customer-edit.dialog.component';
 // Products
 import { ProductsListComponent } from './products/products-list/products-list.component';
@@ -103,7 +103,7 @@ const routes: Routes = [
 			},
 			{
 				path: 'customers',
-				component: CustomersListComponent
+				component: CustomersListOldComponent
 			},
 			{
 				path: 'orders',
@@ -211,7 +211,7 @@ const routes: Routes = [
 	declarations: [
 		ECommerceComponent,
 		// Customers
-		CustomersListComponent,
+		CustomersListOldComponent,
 		CustomerEditDialogComponent,
 		// Orders
 		OrdersListComponent,

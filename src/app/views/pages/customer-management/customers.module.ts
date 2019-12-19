@@ -21,16 +21,9 @@ import { ModuleGuard } from '../../../core/auth';
 import {
 	customersReducer,
 	CustomerEffects,
-	CustomersService,
-	productsReducer,
-	ProductEffects,
-	ProductsService,
-	productRemarksReducer,
-	ProductRemarkEffects,
-	ProductRemarksService,
-	productSpecificationsReducer,
-	ProductSpecificationEffects,
-	ProductSpecificationsService
+	
+    StaticDataService,
+    CustomersService
 } from '../../../core/medelit';
 // Core => Utils
 import { HttpUtilsService,
@@ -96,13 +89,8 @@ const routes: Routes = [
 				path: 'customers',
 				component: CustomersListComponent
 			},
-			
 			{
-				path: 'customers/add',
-				component: CustomerEditComponent
-			},
-			{
-				path: 'leads/edit/:id',
+				path: 'customers/edit/:id',
 				component: CustomerEditComponent
 			},
 		]
@@ -144,14 +132,8 @@ const routes: Routes = [
 			passThruUnknownUrl: true,
         	dataEncapsulation: false
 		}) : [],
-		StoreModule.forFeature('products', productsReducer),
-		EffectsModule.forFeature([ProductEffects]),
 		StoreModule.forFeature('customers', customersReducer),
 		EffectsModule.forFeature([CustomerEffects]),
-		StoreModule.forFeature('productRemarks', productRemarksReducer),
-		EffectsModule.forFeature([ProductRemarkEffects]),
-		StoreModule.forFeature('productSpecifications', productSpecificationsReducer),
-		EffectsModule.forFeature([ProductSpecificationEffects]),
 	],
 	providers: [
 		ModuleGuard,
@@ -174,11 +156,9 @@ const routes: Routes = [
 		LayoutUtilsService,
 		HttpUtilsService,
 		CustomersService,
-		ProductRemarksService,
-		ProductSpecificationsService,
-		ProductsService,
 		TypesUtilsService,
-		LayoutUtilsService
+		LayoutUtilsService,
+		StaticDataService
 	],
 	entryComponents: [
 		ActionNotificationComponent,

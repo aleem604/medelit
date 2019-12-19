@@ -4,7 +4,7 @@ import { Update } from '@ngrx/entity';
 // CRUD
 import { QueryParamsModel } from '../../_base/crud';
 // Models
-import { CustomerModel } from '../_models/customer.model';
+import { CustomerModel } from '..';
 
 export enum CustomerActionTypes {
     CustomerOnServerCreated = '[Edit Customer Dialog] Customer On Server Created',
@@ -22,26 +22,26 @@ export enum CustomerActionTypes {
 
 export class CustomerOnServerCreated implements Action {
     readonly type = CustomerActionTypes.CustomerOnServerCreated;
-    constructor(public payload: { customer: CustomerModel }) { }
+	constructor(public payload: { customer: CustomerModel }) { }
 }
 
 export class CustomerCreated implements Action {
     readonly type = CustomerActionTypes.CustomerCreated;
-    constructor(public payload: { customer: CustomerModel }) { }
+	constructor(public payload: { customer: CustomerModel }) { }
 }
 
 export class CustomerUpdated implements Action {
     readonly type = CustomerActionTypes.CustomerUpdated;
     constructor(public payload: {
-        partialCustomer: Update<CustomerModel>, // For State update
-        customer: CustomerModel // For Server update (through service)
+		partialCustomer: Update<CustomerModel>, // For State update
+		customer: CustomerModel // For Server update (through service)
     }) { }
 }
 
 export class CustomersStatusUpdated implements Action {
     readonly type = CustomerActionTypes.CustomersStatusUpdated;
     constructor(public payload: {
-        customers: CustomerModel[],
+		customers: CustomerModel[],
         status: number
     }) { }
 }
@@ -63,7 +63,7 @@ export class CustomersPageRequested implements Action {
 
 export class CustomersPageLoaded implements Action {
     readonly type = CustomerActionTypes.CustomersPageLoaded;
-    constructor(public payload: { customers: CustomerModel[], totalCount: number, page: QueryParamsModel }) { }
+	constructor(public payload: { customers: CustomerModel[], totalCount: number, page: QueryParamsModel }) { }
 }
 
 export class CustomersPageCancelled implements Action {

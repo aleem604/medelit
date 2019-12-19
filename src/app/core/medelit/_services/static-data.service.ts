@@ -10,12 +10,16 @@ const API_STATIC_DATA_URL = environment.apiEndpoint + '/static';
 // Real REST API
 @Injectable()
 export class StaticDataService {
-       
+
 	lastFilter$: BehaviorSubject<QueryParamsModel> = new BehaviorSubject(new QueryParamsModel({}, 'asc', '', 0, 10));
 
 	constructor(private http: HttpClient,
 		private httpUtils: HttpUtilsService) { }
 
+
+	getCustomersForImportFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/customers');
+	}
 
 	getApplicationMethodsForFilter(): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/application-methods');
@@ -32,7 +36,7 @@ export class StaticDataService {
 	getDocumentListSentForFilter(): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/document-list-sent');
 	}
-	
+
 	getCollaborationCodes(): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/collaboration-codes');
 	}
@@ -41,7 +45,7 @@ export class StaticDataService {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/statuses');
 	}
 
-	getTitlesForFilter(): any {
+	getTitlesForFilter(): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/titles');
 	}
 
@@ -57,7 +61,7 @@ export class StaticDataService {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/countries');
 	}
 
-	getRelationshipsForFilter(): any {
+	getRelationshipsForFilter(): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/relationships');
 	}
 
@@ -89,7 +93,83 @@ export class StaticDataService {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/profees');
 	}
 
-	getProfessionalsForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionals');
+	getProfessionalsForFilter(serviceId?: number): any {
+		if (serviceId)
+			return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionals/' + serviceId);
+		else
+			return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionals');
 	}
+
+	getServicesForFilter(): any {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/services');
+	}
+
+	getPaymentMethodsForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/payment-methods');
+	}
+
+	getPaymentStatusForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/payment-status');
+	}
+
+	getDiscountNetworksForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/discount-networks');
+	}
+
+	getInvoiceEntitiesForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/invoice-entities');
+	}
+
+	getVisitVenuesForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/visit-venues');
+	}
+
+	getBuildingTypesForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/building-types');
+	}
+
+	getLeadStatusesForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/lead-statuses');
+	}
+
+	getLeadSourcesForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/lead-sources');
+	}
+
+	getLeadCategoriesForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/lead-categories');
+	}
+
+	getContactMethodsForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/contact-methods');
+	}
+
+	getBookingStatusesForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/booking-status');
+	}
+
+	getReportDeliveryOptions(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/report-delivery-options');
+	}
+
+	getAddedToAccountOptions(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/added-to-account-options');
+	}
+
+	getRatingOptions(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/ratings');
+	}
+
+	getInvoiceEntityTypesForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/ie-types');
+	}
+
+	getInvoiceStatusOptions(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/invoice-status');
+	}
+
+	getStaticDataForFitler(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/static-data');
+	}
+
 }

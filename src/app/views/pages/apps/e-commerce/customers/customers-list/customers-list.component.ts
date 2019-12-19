@@ -14,7 +14,7 @@ import { AppState } from '../../../../../../core/reducers';
 // CRUD
 import { LayoutUtilsService, MessageType, QueryParamsModel } from '../../../../../../core/_base/crud';
 // Services and Models
-import { CustomerModel, CustomersDataSource, CustomersPageRequested, OneCustomerDeleted, ManyCustomersDeleted, CustomersStatusUpdated } from '../../../../../../core/medelit';
+import { CustomerModelOld, CustomersDataSource, CustomersPageRequested, OneCustomerDeleted, ManyCustomersDeleted, CustomersStatusUpdated } from '../../../../../../core/medelit';
 // Components
 import { CustomerEditDialogComponent } from '../customer-edit/customer-edit.dialog.component';
 
@@ -32,7 +32,7 @@ import { CustomerEditDialogComponent } from '../customer-edit/customer-edit.dial
 	changeDetection: ChangeDetectionStrategy.OnPush,
 
 })
-export class CustomersListComponent implements OnInit, OnDestroy {
+export class CustomersListOldComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: CustomersDataSource;
 	displayedColumns = ['select', 'id', 'lastName', 'firstName', 'email', 'gender', 'status', 'type', 'actions'];
@@ -43,8 +43,8 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 	filterStatus = '';
 	filterType = '';
 	// Selection
-	selection = new SelectionModel<CustomerModel>(true, []);
-	customersResult: CustomerModel[] = [];
+	selection = new SelectionModel<CustomerModelOld>(true, []);
+	customersResult: CustomerModelOld[] = [];
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
 
@@ -171,7 +171,7 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 	 *
 	 * @param _item: CustomerModel
 	 */
-	deleteCustomer(_item: CustomerModel) {
+	deleteCustomer(_item: CustomerModelOld) {
 		const _title: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_SIMPLE.TITLE');
 		const _description: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_SIMPLE.DESCRIPTION');
 		const _waitDesciption: string = this.translate.instant('ECOMMERCE.CUSTOMERS.DELETE_CUSTOMER_SIMPLE.WAIT_DESCRIPTION');
@@ -254,10 +254,10 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 				return;
 			}
 
-			this.store.dispatch(new CustomersStatusUpdated({
-				status: +res,
-				customers: this.selection.selected
-			}));
+			//this.store.dispatch(new CustomersStatusUpdated({
+			//	status: +res,
+			//	customers: this.selection.selected
+			//}));
 
 			this.layoutUtilsService.showActionNotification(_updateMessage, MessageType.Update, 10000, true, true);
 			this.selection.clear();
@@ -268,16 +268,16 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 	 * Show add customer dialog
 	 */
 	addCustomer() {
-		const newCustomer = new CustomerModel();
-		newCustomer.clear(); // Set all defaults fields
-		this.editCustomer(newCustomer);
+		//const newCustomer = new CustomerModel();
+		//newCustomer.clear(); // Set all defaults fields
+		//this.editCustomer(newCustomer);
 	}
 
 	/**
 	 * Show Edit customer dialog and save after success close result
 	 * @param customer: CustomerModel
 	 */
-	editCustomer(customer: CustomerModel) {
+	editCustomer(customer: CustomerModelOld) {
 		let saveMessageTranslateParam = 'ECOMMERCE.CUSTOMERS.EDIT.';
 		saveMessageTranslateParam += customer.id > 0 ? 'UPDATE_MESSAGE' : 'ADD_MESSAGE';
 		const _saveMessage = this.translate.instant(saveMessageTranslateParam);

@@ -1,12 +1,12 @@
 // Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 // Material
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
 // RxJS
-import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
-import { map, startWith, delay, first } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
+import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
 // NGRX
 import { Store, select } from '@ngrx/store';
 import { Dictionary, Update } from '@ngrx/entity';
@@ -28,8 +28,19 @@ import {
 
 	StaticDataService,
 	FilterModel,
-	ApiResponse
+	ApiResponse,
+
+	AppDateAdapter,
+	APP_DATE_FORMATS,
+
+	LeadServicesModel,
+
+	MedelitStaticData,
+	InvoiceEntityModel
 } from '../../../../../core/medelit';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { CreateInvoiceEntityDialogComponent } from '../create-invoice-entity/create-invoice-entity.dialog.component';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -41,6 +52,7 @@ import {
 })
 export class LeadEditComponent implements OnInit, OnDestroy {
 	// Public properties
+	fromCustomerId: number;
 	lead: LeadModel;
 	leadId$: Observable<number>;
 	titles: Observable<StaticDataModel>;
@@ -62,6 +74,10 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	private componentSubscriptions: Subscription;
 	// sticky portlet header margin
 	private headerMargin: number;
+	selected = new FormControl(0);
+
+	customersForFilter: FilterModel[] = [];
+	filteredCustomers: Observable<FilterModel[]>;
 
 	titlesForFilter: FilterModel[] = [];
 	filteredTitles: Observable<FilterModel[]>;
@@ -75,6 +91,30 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	relationshipsForFilter: FilterModel[] = [];
 	filteredRelationships: Observable<FilterModel[]>;
 
+	servicesForFilter: FilterModel[] = [];
+	filteredServices: Observable<FilterModel[]>;
+
+	professionalsForFilter: FilterModel[] = [];
+	filteredProfessionals: Observable<FilterModel[]>;
+
+	paymentMethodsOptions: FilterModel[];
+	listedDiscountNetworkOptions: FilterModel[];
+	buildingTypeOptions: FilterModel[];
+	visitVenueOptions: FilterModel[];
+	leadStatusOptions: FilterModel[];
+	leadSourceOptions: FilterModel[];
+	contactMethodOptions: FilterModel[];
+	leadCategoryOptions: FilterModel[];
+
+	invoiceEntitiesForFilter: FilterModel[] = [];
+	filteredInvoiceEntities: Observable<FilterModel[]>;
+
+	citiesForFilter: FilterModel[] = [];
+	filteredCities: Observable<FilterModel[]>;
+
+	countriesForFilter: FilterModel[] = [];
+	filteredCountries: Observable<FilterModel[]>;
+
 	constructor(
 		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
@@ -87,32 +127,42 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		private layoutConfigService: LayoutConfigService,
 		private leadService: LeadsService,
 		private staticService: StaticDataService,
+		private spinner: NgxSpinnerService,
+		private translate: TranslateService,
 		private cdr: ChangeDetectorRef) {
 	}
 
 	ngOnInit() {
 		this.loading$ = this.loadingSubject.asObservable();
 		this.loadingSubject.next(true);
-		this.activatedRoute.params.subscribe(params => {
-			const id = params.id;
-			if (id && id > 0) {
+		this.activatedRoute.queryParams.subscribe((param) => {
+			const fromCustomerId = +param.fromCustomer;
 
-				//this.store.pipe(
-				//	select(selectLeadById(id))
-				//).subscribe(result => {
-				//	if (!result) {
-				//		this.loadLeadFromService(id);
-				//		return;
-				//	}
+			this.activatedRoute.params.subscribe(params => {
+				const id = params.id;
+				if (id && id > 0) {
 
-				//	this.loadLead(result);
-				//});
-				this.loadLeadFromService(id);
-			} else {
-				const newLead = new LeadModel();
-				newLead.clear();
-				this.loadLead(newLead);
-			}
+					//this.store.pipe(
+					//	select(selectLeadById(id))
+					//).subscribe(result => {
+					//	if (!result) {
+					//		this.loadLeadFromService(id);
+					//		return;
+					//	}
+
+					//	this.loadLead(result);
+					//});
+					this.loadLeadFromService(id, fromCustomerId);
+				} else if (fromCustomerId) {
+					this.loadLeadFromService(0, fromCustomerId);
+				}
+				else {
+					const newLead = new LeadModel();
+					newLead.clear();
+					this.loadLead(newLead);
+				}
+			});
+
 		});
 
 		// sticky portlet header
@@ -130,19 +180,22 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.leadId$ = of(_lead.id);
 		this.oldLead = Object.assign({}, _lead);
 		this.initLead();
-		this.loadTitlesForFilter();
-		this.loadLanguagesForFilter();
-		this.loadCountriesForCountryOfBirthFilter();
-		this.loadRelationshipsForFilter();
+
+		this.loadStaticResources();
+
 		if (fromService) {
 			this.cdr.detectChanges();
 		}
 	}
 
-	loadLeadFromService(leadId) {
-		this.leadService.getLeadById(leadId).subscribe(res => {
+	loadLeadFromService(leadId, fromCustomerId?: number) {
+		this.loadingSubject.next(true);
+		this.leadService.getLeadById(leadId, fromCustomerId).toPromise().then(res => {
+			this.loadingSubject.next(false);
 			let data = res as unknown as ApiResponse;
 			this.loadLead(data.data, true);
+		}).catch((e) => {
+			this.loadingSubject.next(false);
 		});
 	}
 
@@ -175,32 +228,126 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 	createForm() {
 		this.leadForm = this.leadFB.group({
+			fromCustomerId: [this.lead.fromCustomerId, []],
 			titleId: [this.lead.titleId, Validators.required],
-			surName: [this.lead.surName, [Validators.required, Validators.min(4), Validators.max(250)]],
+			surName: [this.lead.surName, [Validators.required, Validators.min(4)]],
 			name: [this.lead.name, Validators.required],
 			languageId: [this.lead.languageId, [Validators.required]],
 			mainPhone: [this.lead.mainPhone, []],
 			mainPhoneOwner: [this.lead.mainPhoneOwner],
 			contactPhone: [this.lead.contactPhone, []],
 			phone2: [this.lead.phone2, []],
-			phone2Owner: [this.lead.phone2Owner, [Validators.max(250)]],
+			phone2Owner: [this.lead.phone2Owner, []],
 			phone3: [this.lead.phone3, []],
-			phone3Owner: [this.lead.phone3Owner, [Validators.max(250)]],
-			email: [this.lead.email, [Validators.required,  Validators.email, Validators.max(250)]],
-			fax: [this.lead.fax, [Validators.max(250)]],
-			dateOfBirth: [this.lead.dateOfBirth, [Validators.max(250)]],
-			countryOfBirthId: [this.lead.countryOfBirthId, [Validators.max(250)]],
-			visitRequestingPerson: [this.lead.visitRequestingPerson, [Validators.max(250)]],
+			phone3Owner: [this.lead.phone3Owner, []],
+			email: [this.lead.email, [Validators.required, Validators.email,]],
+			email2: [this.lead.email2, [Validators.email,]],
+			fax: [this.lead.fax, []],
+			dateOfBirth: [this.lead.dateOfBirth, []],
+			countryOfBirthId: [this.lead.countryOfBirthId, []],
+			visitRequestingPerson: [this.lead.visitRequestingPerson, []],
 			visitRequestingPersonRelationId: [this.lead.visitRequestingPersonRelationId, []],
-			gpCode: [this.lead.gpCode, [Validators.max(250)]],
+			gpCode: [this.lead.gpCode, []],
 
+			services: this.leadFB.array([]),
 
+			preferredPaymentMethodId: [this.lead.preferredPaymentMethodId, []],
+			insuranceCoverId: [this.lead.insuranceCoverId, []],
+			listedDiscountNetworkId: [this.lead.listedDiscountNetworkId, []],
+			discount: [this.lead.discount, []],
+			haveDifferentIEId: [this.lead.haveDifferentIEId, []],
+			invoiceEntityId: [this.lead.invoiceEntityId, [Validators.required]],
+			invoicingNotes: [this.lead.invoicingNotes, []],
+			// address info
+			addressStreetName: [this.lead.addressStreetName, [Validators.required]],
+			postalCode: [this.lead.postalCode, [Validators.required]],
+			cityId: [this.lead.cityId, [Validators.required]],
+			countryId: [this.lead.countryId, [Validators.required]],
+			buildingTypeId: [this.lead.buildingTypeId, []],
+			buzzer: [this.lead.buzzer, []],
+			flatNumber: [this.lead.flatNumber, []],
+			floor: [this.lead.floor, []],
+			visitVenueId: [this.lead.visitVenueId, []],
+			addressNotes: [this.lead.addressNotes, []],
+			visitVenueDetail: [this.lead.visitVenueDetail, []],
 
+			// Lead Information
+			leadStatusId: [this.lead.leadStatusId, []],
+			leadSourceId: [this.lead.leadSourceId, []],
+			leadCategoryId: [this.lead.leadCategoryId, []],
+			contactMethodId: [this.lead.contactMethodId, []],
+			leadDescription: [this.lead.leadDescription, []],
 
+			// bank info
+			bankName: [this.lead.bankName, []],
+			accountNumber: [this.lead.accountNumber, []],
+			sortCode: [this.lead.sortCode, []],
+			iban: [this.lead.iban, []],
+			blacklistId: [this.lead.blacklistId.toString(), []],
 
 		});
+		this.initServicesForm();
 
 	}
+
+	initServicesForm() {
+
+		if (this.lead.services.length > 0) {
+
+			this.lead.services.forEach((service) => {
+				const group = this.leadFB.group({
+					id: [service.id, []],
+					serviceId: [service.serviceId, [Validators.required]],
+					professionalId: [service.professionalId, [Validators.required]],
+					ptFeeId: [service.ptFeeId, [Validators.required]],
+					ptFeeA1: [service.ptFeeA1, [Validators.required]],
+					ptFeeA2: [service.ptFeeA2, [Validators.required]],
+					proFeeId: [service.proFeeId, [Validators.required]],
+					proFeeA1: [service.proFeeA1, [Validators.required]],
+					proFeeA2: [service.proFeeA2, [Validators.required]],
+				});
+				(<FormArray>this.leadForm.get('services')).push(group);
+			});
+
+		} else {
+			this.addService();
+		}
+	}
+
+	addService() {
+
+		var newModel = new LeadServicesModel();
+		newModel.id = null;
+		newModel.serviceId = null;
+		newModel.professionalId = null;
+		//this.lead.services.push(newModel);
+
+		const group = this.leadFB.group({
+			id: [null, []],
+			serviceId: [null, [Validators.required]],
+			professionalId: [null, [Validators.required]],
+			ptFeeId: [null, [Validators.required]],
+			ptFeeA1: [null, [Validators.required]],
+			ptFeeA2: [null, [Validators.required]],
+			proFeeId: [null, [Validators.required]],
+			proFeeA1: [null, [Validators.required]],
+			proFeeA2: [null, [Validators.required]],
+		});
+		(<FormArray>this.leadForm.get('services')).push(group);
+		//this.selected.setValue(this.lead.services.length - 1);
+	}
+
+	removeService(index) {
+		if (index > 0) {
+			this.lead.services.splice(index, 1);
+			const control = <FormArray>this.leadForm.controls['services'];
+			for (let i = control.length - 1; i >= 0; i--) {
+				control.removeAt(i)
+			}
+			this.initServicesForm();
+		}
+	}
+
 
 	goBack(id) {
 		this.loadingSubject.next(false);
@@ -215,18 +362,20 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	refreshLead(isNew: boolean = false, id = 0) {
 		this.loadingSubject.next(false);
 		let url = this.router.url;
-		if (!isNew) {
-			this.router.navigate([url], { relativeTo: this.activatedRoute });
-			return;
-		}
+		//if (!isNew) {
+		//	this.router.navigate([url], { relativeTo: this.activatedRoute });
+		//	return;
+		//}
 
 		url = `/lead-management/leads/edit/${id}`;
-		this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
+		this.router.navigate([url]);
+		//this.router.navigate([url], { relativeTo: this.activatedRoute });
 	}
 
 	reset() {
 		this.lead = Object.assign({}, this.oldLead);
-		this.createForm();
+		//this.createForm();
+		this.loadLead(this.lead);
 		this.hasFormErrors = false;
 		this.leadForm.markAsPristine();
 		this.leadForm.markAsUntouched();
@@ -241,6 +390,11 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
+			(<FormArray>this.leadForm.get('services')).controls.forEach((group: FormGroup) => {
+				(<any>Object).values(group.controls).forEach((control: FormControl) => {
+					control.markAsTouched();
+				})
+			});
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
@@ -262,59 +416,169 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		const controls = this.leadForm.controls;
 		const _lead = new LeadModel();
 		_lead.id = this.lead.id;
+		_lead.fromCustomerId = controls.fromCustomerId.value;
+		_lead.titleId = +controls.titleId.value;
+		_lead.surName = controls.surName.value;
+		_lead.name = controls.name.value;
+		if (controls.languageId.value)
+			_lead.languageId = +controls.languageId.value.id;
+		_lead.mainPhone = controls.mainPhone.value;
+		_lead.mainPhoneOwner = controls.mainPhoneOwner.value;
+		_lead.contactPhone = controls.contactPhone.value;
+		_lead.phone2 = controls.phone2.value;
+		_lead.phone2Owner = controls.phone2Owner.value;
+		_lead.phone3 = controls.phone3.value;
+		_lead.phone3Owner = controls.phone3Owner.value;
+		_lead.email = controls.email.value;
+		_lead.email2 = controls.email2.value;
+		_lead.fax = controls.fax.value;
+		_lead.dateOfBirth = controls.dateOfBirth.value;
+		if (controls.countryOfBirthId.value)
+			_lead.countryOfBirthId = controls.countryOfBirthId.value.id;
+		_lead.visitRequestingPerson = controls.visitRequestingPerson.value;
+		if (controls.visitRequestingPersonRelationId.value)
+			_lead.visitRequestingPersonRelationId = controls.visitRequestingPersonRelationId.value.id;
+		_lead.gpCode = controls.gpCode.value;
 
-		_lead._userId = 1; // TODO: get version from userId
-		_lead._createdDate = this.lead._createdDate;
-		_lead._updatedDate = this.lead._updatedDate;
-		_lead._updatedDate = this.typesUtilsService.getDateStringFromDate();
-		_lead._createdDate = this.lead.id > 0 ? _lead._createdDate : _lead._updatedDate;
+		_lead.preferredPaymentMethodId = controls.preferredPaymentMethodId.value;
+		_lead.insuranceCoverId = controls.insuranceCoverId.value;
+		_lead.listedDiscountNetworkId = controls.listedDiscountNetworkId.value;
+		_lead.discount = controls.discount.value;
+		_lead.haveDifferentIEId = +controls.haveDifferentIEId.value;
+		if (controls.invoiceEntityId.value)
+			_lead.invoiceEntityId = controls.invoiceEntityId.value.id;
+		_lead.invoicingNotes = controls.invoicingNotes.value;
+		_lead.visitRequestingPersonRelationId = controls.visitRequestingPersonRelationId.value;
+
+		// address info
+		_lead.addressStreetName = controls.addressStreetName.value;
+		_lead.postalCode = controls.postalCode.value;
+		if (controls.cityId.value)
+			_lead.cityId = controls.cityId.value.id;
+		if (controls.countryId.value)
+			_lead.countryId = controls.countryId.value.id;
+		_lead.buildingTypeId = controls.buildingTypeId.value;
+		_lead.buzzer = controls.buzzer.value;
+		_lead.flatNumber = controls.flatNumber.value;
+		_lead.floor = controls.floor.value;
+		_lead.visitVenueId = controls.visitVenueId.value;
+		_lead.addressNotes = controls.addressNotes.value;
+		_lead.visitVenueDetail = controls.visitVenueDetail.value;
+
+		// lead info
+		_lead.leadStatusId = controls.leadStatusId.value;
+		_lead.leadSourceId = controls.leadSourceId.value;
+		_lead.leadCategoryId = controls.leadCategoryId.value;
+		_lead.contactMethodId = controls.contactMethodId.value;
+		_lead.leadDescription = controls.leadDescription.value;
+
+		// bank info
+		_lead.bankName = controls.bankName.value;
+		_lead.accountNumber = controls.accountNumber.value;
+		_lead.sortCode = controls.sortCode.value;
+		_lead.iban = controls.iban.value;
+		_lead.blacklistId = +controls.blacklistId.value;
+		_lead.services = [];
+
+		const control = <FormArray>this.leadForm.controls['services'];
+		for (let i = 0; i < control.length; i++) {
+			var s = new LeadServicesModel();
+			if (control.controls[i].get('serviceId').value)
+				s.serviceId = +control.controls[i].get('serviceId').value.id;
+			s.professionalId = +control.controls[i].get('professionalId').value
+
+			s.ptFeeId = +control.controls[i].get('ptFeeId').value
+			s.ptFeeA1 = +control.controls[i].get('ptFeeA1').value
+			s.ptFeeA2 = +control.controls[i].get('ptFeeA2').value
+
+			s.proFeeId = +control.controls[i].get('proFeeId').value
+			s.proFeeA1 = +control.controls[i].get('proFeeA1').value
+			s.proFeeA2 = +control.controls[i].get('proFeeA2').value
+
+			_lead.services.push(s);
+		}
 		return _lead;
 	}
 
 	addLead(_lead: LeadModel, withBack: boolean = false) {
-		this.loadingSubject.next(true);
-		this.store.dispatch(new LeadOnServerCreated({ lead: _lead }));
-		this.componentSubscriptions = this.store.pipe(
-			delay(1000),
-			select(selectLastCreatedLeadId)
-		).subscribe(newId => {
-			if (!newId) {
-				return;
-			}
-
-			this.loadingSubject.next(false);
-			if (withBack) {
-				this.goBack(newId);
-			} else {
+		this.spinner.show();
+		this.leadService.createLead(_lead).toPromise().then((res) => {
+			this.spinner.hide();
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
 				const message = `New lead successfully has been added.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
-				this.refreshLead(true, newId);
+				this.refreshLead(true, resp.data.id);
+			} else {
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
 			}
+		}).catch((e) => {
+			this.spinner.hide();
 		});
+
+
+
+		//this.store.dispatch(new LeadOnServerCreated({ lead: _lead }));
+		//this.componentSubscriptions = this.store.pipe(
+		//	delay(1000),
+		//	select(selectLastCreatedLeadId)
+		//).subscribe(newId => {
+		//	if (!newId) {
+		//		return;
+		//	}
+
+		//	this.loadingSubject.next(false);
+		//	if (withBack) {
+		//		this.goBack(newId);
+		//	} else {
+		//		const message = `New lead successfully has been added.`;
+		//		this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+		//		this.refreshLead(true, newId);
+		//	}
+		//});
 	}
 
 	updateLead(_lead: LeadModel, withBack: boolean = false) {
-		this.loadingSubject.next(true);
+		this.spinner.show();
+		this.leadService.updateLead(_lead).toPromise().then((res) => {
+			this.spinner.hide();
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
+				const _lead = resp.data as unknown as LeadModel;
+				this.loadLead(_lead, true);
 
-		const updateLead: Update<LeadModel> = {
-			id: _lead.id,
-			changes: _lead
-		};
-
-		this.store.dispatch(new LeadUpdated({
-			partialLead: updateLead,
-			lead: _lead
-		}));
-
-		of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
-			if (withBack) {
-				this.goBack(_lead.id);
-			} else {
 				const message = `Lead successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-				this.refreshLead(false);
+				this.refreshLead(false, resp.data.id);
+			} else {
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
 			}
-		}); // Remove this line
+		}).catch((e) => {
+			this.spinner.hide();
+		});
+
+		//this.loadingSubject.next(true);
+		//const updateLead: Update<LeadModel> = {
+		//	id: _lead.id,
+		//	changes: _lead
+		//};
+
+		//this.store.dispatch(new LeadUpdated({
+		//	partialLead: updateLead,
+		//	lead: _lead
+		//}));
+
+		//of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
+		//	if (withBack) {
+		//		this.goBack(_lead.id);
+		//	} else {
+		//		const message = `Lead successfully has been saved.`;
+		//		this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+		//		this.refreshLead(false);
+		//	}
+		//}); 
 	}
 
 	getComponentTitle() {
@@ -333,28 +597,159 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 
 	/*Fitlers Section*/
-	loadTitlesForFilter() {
-		this.staticService.getTitlesForFilter().subscribe(res => {
-			this.titlesForFilter = res.data;
+	loadStaticResources() {
+		this.loadCustomerForImport();
+		this.loadLanguagesForFilter();
+		this.loadCountriesForCountryOfBirthFilter();
+		this.subscribeInvoiceEntity();
+		this.loadCitiesForFilter();
+		this.loadCountiesForFilter();
+		this.loadServicesForFilter();
+		this.loadProfessionalsForFilter(1);
 
-			this.filteredTitles = this.leadForm.get('titleId').valueChanges
+		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
+			this.titlesForFilter = data.map((el) => { return { id: el.id, value: el.titles }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.lead.titleId) {
+				var obj = data.find((e) => { return e.id == this.lead.titleId });
+				if (obj)
+					this.leadForm.get('titleId').setValue(obj.id);
+			}
+
+			// payment methods
+			this.paymentMethodsOptions = data.map((el) => { return { id: el.id, value: el.paymentMethods }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.lead.preferredPaymentMethodId) {
+				var obj = data.find((e) => { return e.id == this.lead.preferredPaymentMethodId });
+				if (obj)
+					this.leadForm.get('preferredPaymentMethodId').setValue(obj.id);
+			}
+
+			// discount networks
+			this.listedDiscountNetworkOptions = data.map((el) => { return { id: el.id, value: el.discountNetworks }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.lead.listedDiscountNetworkId) {
+				var obj = data.find((e) => { return e.id == this.lead.listedDiscountNetworkId });
+				if (obj)
+					this.leadForm.get('listedDiscountNetworkId').setValue(obj.id);
+			}
+			// building types
+			this.buildingTypeOptions = data.map((el) => { return { id: el.id, value: el.buildingTypes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+
+			if (this.lead.buildingTypeId) {
+				var obj = data.find((e) => { return e.id == this.lead.buildingTypeId });
+				if (obj)
+					this.leadForm.get('buildingTypeId').setValue(obj.id);
+			}
+
+			/// visit venues
+			this.visitVenueOptions = data.map((el) => { return { id: el.id, value: el.visitVenues }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+
+			if (this.lead.visitVenueId) {
+				const obj = data.find((e) => { return e.id == this.lead.visitVenueId });
+				if (obj)
+					this.leadForm.get('visitVenueId').setValue(obj.id);
+			}
+
+			// lead status
+			this.leadStatusOptions = data.map((el) => { return { id: el.id, value: el.leadStatus }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+
+			if (this.lead.leadStatusId) {
+				const obj = data.find((e) => { return e.id == this.lead.leadStatusId });
+				if (obj)
+					this.leadForm.get('leadStatusId').setValue(obj.id);
+			}
+
+			// lead sources
+			this.leadSourceOptions = data.map((el) => { return { id: el.id, value: el.leadSources }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+
+			if (this.lead.leadSourceId) {
+				const obj = data.find((e) => { return e.id == this.lead.leadSourceId });
+				if (obj)
+					this.leadForm.get('leadSourceId').setValue(obj.id);
+			}
+
+			// contact methods
+			this.contactMethodOptions = data.map((el) => { return { id: el.id, value: el.contactMethods }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+
+			if (this.lead.contactMethodId) {
+				const obj = data.find((e) => { return e.id == this.lead.contactMethodId });
+				if (obj)
+					this.leadForm.get('contactMethodId').setValue(obj.id);
+			}
+
+			// lead categories
+			this.leadCategoryOptions = data.map((el) => { return { id: el.id, value: el.leadCategories }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });;
+
+			if (this.lead.leadCategoryId) {
+				const obj = data.find((e) => { return e.id == this.lead.leadCategoryId });
+				if (obj)
+					this.leadForm.get('leadCategoryId').setValue(obj.id);
+			}
+
+			// relationships
+			this.relationshipsForFilter = data.map((el) => { return { id: el.id, value: el.relationships }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+
+			if (this.lead.visitRequestingPersonRelationId) {
+				const obj = data.find((e) => { return e.id == this.lead.visitRequestingPersonRelationId });
+				if (obj)
+					this.leadForm.get('visitRequestingPersonRelationId').setValue(obj.id);
+			}
+
+		});
+
+		if (this.lead.insuranceCoverId) {
+			this.leadForm.get('insuranceCoverId').setValue(this.lead.insuranceCoverId.toString());
+		}
+		if (this.lead.haveDifferentIEId !== null) {
+			this.leadForm.get('haveDifferentIEId').setValue(this.lead.haveDifferentIEId.toString());
+		}
+	}
+
+
+
+	// Customer
+	loadCustomerForImport() {
+		this.staticService.getCustomersForImportFilter().subscribe(res => {
+			this.customersForFilter = res.data;
+
+			this.filteredCustomers = this.leadForm.get('fromCustomerId').valueChanges
 				.pipe(
 					startWith(''),
-					map(value => this._filterTitles(value))
+					map(value => this._filterCustomers(value))
 				);
-			if (this.lead.titleId > 0) {
-				var title = this.titlesForFilter.find(x => x.id == this.lead.titleId);
+			if (this.lead.fromCustomerId > 0) {
+				var title = this.customersForFilter.find(x => x.id == this.lead.titleId);
 				if (title) {
-					this.leadForm.patchValue({ 'titleId': { id: title.id, value: title.value } });
+					this.leadForm.patchValue({ 'fromCustomerId': { id: title.id, value: title.value } });
 				}
 			}
 		});
 
 	}
-	private _filterTitles(value: string): FilterModel[] {
+	private _filterCustomers(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
-		return this.titlesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+		return this.customersForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
 	}
+
+	importFromCustomer() {
+		var fromCustomer = this.leadForm.get('fromCustomerId').value;
+		if (fromCustomer) {
+			if (this.lead.id > 0) {
+				this.router.navigate([`/lead-management/leads/edit/${this.lead.id}`], { queryParams: { fromCustomer: fromCustomer.id }, queryParamsHandling: 'merge' });
+			} else {
+				this.router.navigate([`/lead-management/leads/add`], { queryParams: { fromCustomer: fromCustomer.id }, queryParamsHandling: 'merge' });
+			}
+		}
+	}
+
+	clearCustomer() {
+		if (this.lead.id > 0) {
+			this.router.navigate([`/lead-management/leads/edit/${this.lead.id}`]);
+		} else {
+			this.router.navigate([`/lead-management/leads/add`]);
+		}
+	}
+
+	//// Customers
+
 
 	//// Languages
 	loadLanguagesForFilter() {
@@ -367,7 +762,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 					map(value => this._filterLanguages(value))
 				);
 			if (this.lead.languageId > 0) {
-				var title = this.languagesForFilter.find(x => x.id == this.lead.titleId);
+				var title = this.languagesForFilter.find(x => x.id == this.lead.languageId);
 				if (title) {
 					this.leadForm.patchValue({ 'languageId': { id: title.id, value: title.value } });
 				}
@@ -391,8 +786,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 					startWith(''),
 					map(value => this.filteredCountryOfBirth(value))
 				);
-			if (this.lead.languageId > 0) {
-				var title = this.countriesForCountryOfBirthForFilter.find(x => x.id == this.lead.titleId);
+			if (this.lead.countryOfBirthId > 0) {
+				var title = this.countriesForCountryOfBirthForFilter.find(x => x.id == this.lead.countryOfBirthId);
 				if (title) {
 					this.leadForm.patchValue({ 'countryOfBirthId': { id: title.id, value: title.value } });
 				}
@@ -406,34 +801,299 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 	// end Country of Birth
 
-	//// relationships
-	loadRelationshipsForFilter() {
-		this.staticService.getRelationshipsForFilter().subscribe(res => {
-			this.relationshipsForFilter = res.data;
 
-			this.filteredRelationships = this.leadForm.get('visitRequestingPersonRelationId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterRelationships(value))
-				);
-			if (this.lead.visitRequestingPersonRelationId > 0) {
-				var title = this.relationshipsForFilter.find(x => x.id == this.lead.titleId);
-				if (title) {
-					this.leadForm.patchValue({ 'visitRequestingPersonRelationId': { id: title.id, value: title.value } });
+	//// services
+	loadServicesForFilter() {
+		this.staticService.getServicesForFilter().subscribe(res => {
+			this.servicesForFilter = res.data;
+
+			const control = <FormArray>this.leadForm.controls['services'];
+			for (let i = 0; i < control.length; i++) {
+				const serviceObj = control.controls[i].get('serviceId').value;
+				if (serviceObj) {
+					const sobj = this.servicesForFilter.filter((ele) => {
+						return ele.id == serviceObj;
+					});
+					if (sobj)
+						control.controls[i].patchValue({ 'serviceId': sobj[0] });
 				}
 			}
 		});
 
 	}
-	private _filterRelationships(value: string): FilterModel[] {
+	private _filterServices(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
-		return this.relationshipsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+		return this.servicesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
 	}
-	// end languages
+
+	serviceDrpClosed() {
+		var service = this.leadForm.get('requestedServiceId').value;
+		if (service) {
+			this.loadProfessionalsForFilter(service.id);
+
+			this.leadForm.get('ptFeeId').setValue(service.ptFeeId);
+			this.leadForm.get('ptFeeA1').setValue(service.ptFeeA1);
+			this.leadForm.get('ptFeeA2').setValue(service.ptFeeA2);
+
+			this.leadForm.get('proFeeId').setValue(service.proFeeId);
+			this.leadForm.get('proFeeA1').setValue(service.proFeeA1);
+			this.leadForm.get('proFeeA2').setValue(service.proFeeA2);
+
+
+		} else {
+			this.professionalsForFilter = [];
+			this.filteredProfessionals = new Observable<FilterModel[]>();
+			this.leadForm.patchValue({ 'professionalId': '' });
+			this.leadForm.get('ptFeeId').setValue('');
+			this.leadForm.get('ptFeeA1').setValue('');
+			this.leadForm.get('ptFeeA2').setValue('');
+			this.leadForm.get('ptFeeCustom').setValue('');
+
+			this.leadForm.get('proFeeId').setValue('');
+			this.leadForm.get('proFeeA1').setValue('');
+			this.leadForm.get('proFeeA2').setValue('');
+			this.leadForm.get('proFeeCustom').setValue('');
+		}
+	}
+
+	getProfessionals(index: number) {
+		// @ts-ignore:
+		var serviceControls = this.leadForm.get('services').controls[index];
+		if (serviceControls.get('serviceId').value) {
+
+			var serviceId = serviceControls.get('serviceId').value.id;
+			return this.professionalsForFilter.filter((el) => {
+				var elm = el as unknown as any;
+				return elm.sid === serviceId
+			});
+		}
+	}
 
 
 
+	serviceSelected(event, index) {
+		// @ts-ignore:
+		var serviceControls = this.leadForm.get('services').controls[index];
+		var serviceObj = serviceControls.get('serviceId').value;
+		if (serviceObj) {
+			this.loadProfessionalsForFilter(serviceObj.id);
 
+			serviceControls.get('ptFeeId').setValue(serviceObj.ptFeeId);
+			serviceControls.get('ptFeeA1').setValue(serviceObj.ptFeeA1);
+			serviceControls.get('ptFeeA2').setValue(serviceObj.ptFeeA2);
+			serviceControls.get('proFeeId').setValue(serviceObj.proFeeId);
+			serviceControls.get('proFeeA1').setValue(serviceObj.proFeeA1);
+			serviceControls.get('proFeeA2').setValue(serviceObj.proFeeA2);
+
+
+		} else {
+			this.professionalsForFilter = [];
+			this.filteredProfessionals = new Observable<FilterModel[]>();
+			serviceControls.patchValue({ 'professionalId': '' });
+			serviceControls.get('ptFeeId').setValue('');
+			serviceControls.get('ptFeeA1').setValue('');
+			serviceControls.get('ptFeeA2').setValue('');
+			serviceControls.get('ptFeeCustom').setValue('');
+			serviceControls.get('proFeeId').setValue('');
+			serviceControls.get('proFeeA1').setValue('');
+			serviceControls.get('proFeeA2').setValue('');
+			serviceControls.get('proFeeCustom').setValue('');
+		}
+
+	}
+
+
+	// end services
+
+	// Service Professionals
+	loadProfessionalsForFilter(serviceId?: number) {
+		this.staticService.getProfessionalsForFilter(serviceId).subscribe(res => {
+			this.professionalsForFilter = res.data;
+
+			//this.filteredProfessionals = this.leadForm.get('professionalId').valueChanges
+			//	.pipe(
+			//		startWith(''),
+			//		map(value => this._filterProfessionals(value))
+			//	);
+			if (this.lead.professionalId > 0) {
+				var professional = this.professionalsForFilter.find(x => x.id == this.lead.professionalId);
+				if (professional) {
+					this.leadForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value } });
+				}
+			}
+		});
+
+	}
+	private _filterProfessionals(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.professionalsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+
+	// Service Professionals
+
+	//// Invoice Entities
+	loadInvoiceEntitiesForFilter() {
+		this.staticService.getInvoiceEntitiesForFilter().subscribe(res => {
+			this.invoiceEntitiesForFilter = res.data;
+
+			this.filteredInvoiceEntities = this.leadForm.get('invoiceEntityId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterInvoiceEntities(value))
+				);
+			if (this.lead.invoiceEntityId > 0) {
+				var ie = this.invoiceEntitiesForFilter.find(x => x.id == this.lead.invoiceEntityId);
+				if (ie) {
+					this.leadForm.patchValue({ 'invoiceEntityId': { id: ie.id, value: ie.value } });
+				}
+			}
+		});
+
+	}
+	private _filterInvoiceEntities(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.invoiceEntitiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+
+	subscribeInvoiceEntity() {
+		var differetIdControl = this.leadForm.get('haveDifferentIEId');
+		var ieControl = this.leadForm.get('invoiceEntityId');
+
+		if (differetIdControl.value == 0) {
+			ieControl.disable();
+		} else {
+			ieControl.enable();
+			this.loadInvoiceEntitiesForFilter();
+		}
+
+
+		differetIdControl.valueChanges
+			.subscribe((v) => {
+				if (v == 0) {
+					ieControl.disable();
+					ieControl.setValue('');
+					this.invoiceEntitiesForFilter = [];
+					this.filteredInvoiceEntities = new Observable<FilterModel[]>();
+				}
+				else {
+					ieControl.enable();
+					this.loadInvoiceEntitiesForFilter();
+				}
+			});
+	}
+
+	createNewIE() {
+		let saveMessageTranslateParam = 'MEDELIT.LEADS.INVOICE_ENTITY_CREATED_SUCCESS';
+		//saveMessageTranslateParam += this.lead.id > 0 ? 'UPDATE_MESSAGE' : 'ADD_MESSAGE';
+		const _saveMessage = this.translate.instant(saveMessageTranslateParam);
+		const _messageType = this.lead.id > 0 ? MessageType.Update : MessageType.Create;
+		var ieModel = new InvoiceEntityModel();
+		const controls = this.leadForm.controls;
+		ieModel.mainPhoneNumber = controls.mainPhone.value;
+		ieModel.mainPhoneNumberOwner = controls.mainPhoneOwner.value;
+		ieModel.phone2 = controls.phone2.value;
+		ieModel.phone2Owner = controls.phone2Owner.value;
+		ieModel.phone3 = controls.phone3.value;
+		ieModel.phone3Owner = controls.phone3Owner.value;
+		ieModel.email = controls.email.value;
+		ieModel.email2 = controls.email2.value;
+		ieModel.relationshipWithCustomerId = controls.visitRequestingPersonRelationId.value;
+		ieModel.fax = controls.fax.value;
+		ieModel.dateOfBirth = controls.dateOfBirth.value;
+		if (controls.countryOfBirthId.value)
+			ieModel.countryOfBirthId = controls.countryOfBirthId.value.id;
+		ieModel.billingAddress = controls.addressStreetName.value;
+		ieModel.mailingAddress = controls.addressStreetName.value;
+		ieModel.billingPostCode = controls.postalCode.value;
+		ieModel.mailingPostCode = controls.postalCode.value;
+		if (controls.cityId.value)
+			ieModel.billingCityId = controls.cityId.value.id;
+		if (controls.cityId.value)
+			ieModel.mailingCityId = controls.cityId.value.id;
+		if (controls.countryId.value)
+			ieModel.billingCountryId = controls.countryId.value.id;
+		if (controls.countryId.value)
+		ieModel.mailingCountryId = controls.countryId.value.id;
+		ieModel.description = controls.leadDescription.value;
+		ieModel.paymentMethodId = controls.preferredPaymentMethodId.value;
+		ieModel.bank = controls.bankName.value;
+		ieModel.accountNumber = controls.accountNumber.value;
+		ieModel.sortCode = controls.sortCode.value;
+		ieModel.iban = controls.iban.value;
+		ieModel.insuranceCoverId = controls.insuranceCoverId.value;
+		ieModel.invoicingNotes = controls.invoicingNotes.value;
+		ieModel.discountNetworkId = controls.listedDiscountNetworkId.value;
+		ieModel.personOfReference = controls.visitRequestingPerson.value;
+		ieModel.personOfReferenceEmail = controls.email.value;
+		ieModel.personOfReferencePhone = controls.mainPhone.value;
+		ieModel.blackListId = controls.blacklistId.value;
+		ieModel.discountPercent = controls.discount.value;
+
+		const dialogRef = this.dialog.open(CreateInvoiceEntityDialogComponent, { data: ieModel });
+		dialogRef.afterClosed().subscribe(res => {
+			if (!res) {
+				return;
+			}
+
+			this.loadInvoiceEntitiesForFilter();
+
+			this.layoutUtilsService.showActionNotification(_saveMessage, _messageType);
+			this.refreshLead(false, this.lead.id);
+		});
+
+	}
+
+	// end Invoice Entities
+
+	// cities
+	loadCitiesForFilter() {
+		this.staticService.getCitiesForFilter().subscribe(res => {
+			this.citiesForFilter = res.data;
+
+			this.filteredCities = this.leadForm.get('cityId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterCities(value))
+				);
+			if (this.lead.cityId > 0) {
+				var elem = this.citiesForFilter.find(x => x.id == this.lead.cityId);
+				if (elem) {
+					this.leadForm.patchValue({ 'cityId': { id: elem.id, value: elem.value } });
+				}
+			}
+		});
+
+	}
+	private _filterCities(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.citiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end clinic cities
+
+	// countries
+	loadCountiesForFilter() {
+		this.staticService.getCountriesForFilter().subscribe(res => {
+			this.countriesForFilter = res.data;
+
+			this.filteredCountries = this.leadForm.get('countryId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterCountries(value))
+				);
+			if (this.lead.countryId > 0) {
+				var elem = this.countriesForFilter.find(x => x.id == this.lead.countryId);
+				if (elem) {
+					this.leadForm.patchValue({ 'countryId': { id: elem.id, value: elem.value } });
+				}
+			}
+		});
+
+	}
+	private _filterCountries(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.countriesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end account code id filter
 
 
 	displayFn(option: FilterModel): string {

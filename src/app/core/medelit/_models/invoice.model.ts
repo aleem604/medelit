@@ -3,37 +3,38 @@ import { eRecordStatus } from '../_enums/e-record-status.enum';
 
 export class InvoiceModel extends BaseModel {
 	id: number;
-	invoiceNumber: string;
 	subject: string;
-	bookingId?: number;
-	invocingEntityId?: number;
-	customerId: number;
-	dueDate?: Date;
-	invoiceDate?: Date;
+	invoiceEntityId?: number;
+	invoiceEntity: string;
+	customerId?: number;
+	customer: string;
+	invoiceNumber: string;
+	dueDate: Date;
+	invoiceDate: Date;
 	subTotal?: number;
 	taxCodeId?: number;
 	taxAmount?: number;
 	discount?: number;
 	totalInvoice?: number;
-	invoiceStatusId?: number;
+	statusId?: number;
 	paymentDue?: Date;
-	invoiceDeliveryDate?: Date;
-	invoiceSentByEmail?: boolean;
-	invoiceSentByMail?: boolean;
-	paymentMethodId?: number;
-	patientDOB?: Date;
+	invoiceDeliveryDate: Date;
+	invoiceSentByEmailId?: number;
+	invoiceSentByMailId?: number;
+	paymentMethodId: number;
+	patientDateOfBirth?: Date;
 	ieBillingAddress: string;
 	mailingAddress: string;
-	iePostCode: string;
+	ieBillingPostCode: string;
 	mailingPostCode: string;
-	ieCityId?: number;
+	ieBillingCityId?: number;
 	mailingCityId?: number;
 	ieBillingCountryId?: number;
 	mailingCountryId?: number;
 	invoiceNotes: string;
 	insuranceCoverId?: number;
 	invoiceDiagnosis: string;
-	dateOfVist?: Date;
+	dateOfVisit?: Date;
 	termsAndConditions: string;
 	invoiceDescription: string;
 	itemNameOnInvoice: string;
@@ -41,6 +42,8 @@ export class InvoiceModel extends BaseModel {
 	paymentArrivalDate?: Date;
 	proInvoiceDate?: Date;
 	assignedToId?: number;
+	services: InvoiceServicesModel[];
+
 	status: eRecordStatus;
 	createDate: Date;
 	createdById?: number;
@@ -49,8 +52,28 @@ export class InvoiceModel extends BaseModel {
 	deletedAt?: Date;
 	deletedById?: number;
 
+
 	clear() {
+		this.invoiceSentByEmailId = 0;
+		this.invoiceSentByMailId = 0;
+		this.statusId = 2;
+		this.services = [];
 
 
 	}
+}
+
+export class InvoiceServicesModel {
+	id: number;
+	invoiceId: number;
+	serviceId: number;
+	professionalId: number;
+	ptFeeId: number;
+	ptFeeA1: number;
+	ptFeeA2: number;
+	ptFeeCustom: number;
+	proFeeId: number;
+	proFeeA1: number;
+	proFeeA2: number;
+	proFeeCustomer: number;
 }

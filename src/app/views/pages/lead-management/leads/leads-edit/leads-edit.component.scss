@@ -1,6 +1,34 @@
 .example-chip-list {
 	width: 100%;
 }
+.clear-customer, .new-ie {
+	margin-left: 1.5em;
+	font-size: larger;
+	cursor: pointer;
+	color: #5867dd;
+}
+
+
+.table-wrapper {
+	width: 100%;
+	position: relative;
+
+	table {
+		tr {
+			th:last-of-type, td:last-of-type {
+				width: 50px !important;
+				vertical-align: middle;
+				text-align: center;
+
+				i {
+					font-size: 18px;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+}
+
 
 .heading-wrapper {
 	border-top: solid 1px #ddd;
@@ -11,6 +39,12 @@
 	.title-wrapper {
 		padding-top: 1em;
 		padding-bottom: 1em;
+
+		.btn {
+			position: absolute;
+			bottom: 0.35rem;
+			right: 0.5em;
+		}
 	}
 
 	h5, h6 {

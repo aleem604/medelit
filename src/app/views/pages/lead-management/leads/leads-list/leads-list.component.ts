@@ -6,7 +6,7 @@ import { MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 // RXJS
 import { debounceTime, distinctUntilChanged, tap, skip, delay, startWith, map } from 'rxjs/operators';
-import { fromEvent, merge, Observable, of, Subscription } from 'rxjs';
+import { fromEvent, merge, Observable, of, Subscription, BehaviorSubject } from 'rxjs';
 // NGRX
 import { Store, select } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
@@ -26,7 +26,10 @@ import {
 } from '../../../../../core/medelit';
 import { selectLeadsPageLastQuery } from '../../../../../core/medelit/_selectors/lead.selectors';
 import { FormControl } from '@angular/forms';
-import { StaticDataService } from '../../../../../core/medelit/_services';
+import { StaticDataService, LeadsService } from '../../../../../core/medelit/_services';
+import { transcode } from 'buffer';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { LeadServicesModel } from '../../../../../core/medelit/_models/lead.model';
 
 
 @Component({
@@ -42,6 +45,7 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 	displayedColumns = ['select', 'id', 'title', 'surName', 'name', 'language', 'phone', 'services', 'professionals', 'updateDate','status', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
+	loadingSubject = new BehaviorSubject<boolean>(true);
 	// Filter fields
 	filterStatus: string = '';
 	filterCondition: string = '';
@@ -79,6 +83,8 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		private subheaderService: SubheaderService,
 		private utilService: StaticDataService,
 		private layoutUtilsService: LayoutUtilsService,
+		private spinner: NgxSpinnerService,
+		private leadService: LeadsService,
 		private cdr: ChangeDetectorRef,
 		private store: Store<AppState>) { }
 
@@ -161,9 +167,6 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		this.selection.clear();
 	}
 
-	/**
-	 * Returns object for filter
-	 */
 	filterConfiguration(): any {
 		const filter: any = {};
 		try {
@@ -180,17 +183,8 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 
 		}
 		return filter;
-
-
-
 	}
 
-	/**
-	 * Restore state
-	 *
-	 * @param queryParams: QueryParamsModel
-	 * @param id: number
-	 */
 	restoreState(queryParams: QueryParamsModel, id: number) {
 
 		if (!queryParams.filter) {
@@ -210,12 +204,6 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/** ACTIONS */
-	/**
-	 * Delete lead
-	 *
-	 * @param _item: LeadModel
-	 */
 	deleteLead(_item: LeadModel) {
 		const _title = 'Lead Delete';
 		const _description = 'Are you sure to permanently delete this lead?';
@@ -233,9 +221,6 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	/**
-	 * Delete leads
-	 */
 	deleteLeads() {
 		const _title = 'Leads Delete';
 		const _description = 'Are you sure to permanently delete selected leads?';
@@ -259,9 +244,6 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	/**
-	 * Fetch selected leads
-	 */
 	fetchLeads() {
 		// tslint:disable-next-line:prefer-const
 		let messages = [];
@@ -275,9 +257,6 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		this.layoutUtilsService.fetchElements(messages);
 	}
 
-	/**
-	 * Update status dialog
-	 */
 	updateStatusForLeads() {
 		const _title = 'Update status for selected leads';
 		const _updateMessage = 'Status has been updated for selected leads';
@@ -311,11 +290,6 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	/**
-	 * Redirect to edit page
-	 *
-	 * @param id: any
-	 */
 	editLead(id) {
 		this.router.navigate(['../leads/edit', id], { relativeTo: this.activatedRoute });
 	}
@@ -324,18 +298,29 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		this.router.navigateByUrl('/lead-management/leads/add');
 	}
 
-	/**
-	 * Check all rows are selected
-	 */
+	convertToBooking(lead: LeadModel) {
+		this.spinner.show();
+		this.leadService.convertToBooking(lead.id).toPromise().then((res) => {
+			this.spinner.hide();
+			const message = `Booking created successfully.`;
+			this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+			this.loadLeadsList();
+
+		}).catch((e) => {
+			this.spinner.hide();
+			const message = `An error occured. Please try again later.`;
+			this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+		});
+
+
+	}
+
 	isAllSelected() {
 		const numSelected = this.selection.selected.length;
 		const numRows = this.leadsResult.length;
 		return numSelected === numRows;
 	}
 
-	/**
-	 * Selects all rows if they are not all selected; otherwise clear selection
-	 */
 	masterToggle() {
 		if (this.isAllSelected()) {
 			this.selection.clear();
@@ -406,55 +391,7 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	//loadCountriesForFilter() {
-	//	this.countryService.getCountriesForFilter().subscribe(res => {
-	//		this.countriesForFilter = res.data;
-
-	//		this.filteredCountries = this.countryControl.valueChanges
-	//			.pipe(
-	//				startWith(''),
-	//				map(value => this._filterCountries(value))
-	//			);
-	//	});
-	//}
-
-	//loadRegionsForFilter(country: string) {
-	//	this.regionService.getRegionsForFilter(country).subscribe(res => {
-	//		this.regionsForFilter = res.data;
-
-	//		this.filteredRegions = this.regionControl.valueChanges
-	//			.pipe(
-	//				startWith(''),
-	//				map(value => this._filterRegions(value))
-	//			);
-	//		this.regionControl.setValue('');
-	//		this.detectChanges();
-	//	});
-	//}
-
-	//loadCitiesForFilter(region: string, country?: string) {
-	//	this.cityService.getCitiesForFilter(region, country).subscribe(res => {
-	//		this.citiesForFilter = res.data;
-	//		this.filteredCities = this.cityControl.valueChanges
-	//			.pipe(
-	//				startWith(''),
-	//				map(value => this._filterCities(value))
-	//			);
-	//		this.cityControl.setValue('');
-	//	});
-	//}
-
-	//loadNeighborhoodsForFilter(city: number) {
-	//	this.neighborhoodService.getNeighborhoodsForFilter(city).subscribe(res => {
-	//		this.neighborhoodsForFilter = res.data;
-	//		this.filteredNeighborhoods = this.neighborhoodControl.valueChanges
-	//			.pipe(
-	//				startWith(''),
-	//				map(value => this._filterNeighborhoods(value))
-	//			);
-	//		this.neighborhoodControl.setValue('');
-	//	});
-	//}
+	
 
 	private _filterStatuses(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);

@@ -1,7 +1,7 @@
 <kt-portlet>
 	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
 		<ng-container ktPortletTools>
-			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10"  mat-raised-button matTooltip="Back to the products list">
+			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the products list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
@@ -17,178 +17,1278 @@
 			</button>
 			<mat-menu #menu="matMenu">
 				<button mat-menu-item color="primary" (click)="onSumbit(true)">Save & Exit</button>
-				<button mat-menu-item color="primary">Save & Duplicate</button>
+				<!--<button mat-menu-item color="primary">Save & Duplicate</button>-->
 				<button mat-menu-item color="primary" (click)="onSumbit(false)">Save & Continue</button>
 			</mat-menu>
 		</ng-container>
 	</kt-portlet-header>
-	<kt-portlet-body>
-		<mat-tab-group [(selectedIndex)]="selectedTab" *ngIf="product">
-			<mat-tab label="Basic info">
-				<ng-template matTabContent>
-					<div *ngIf="product">
-						<!--begin::Form-->
-						<form [formGroup]="productForm" class="kt-form kt-form--group-seperator-dashed">
+	<kt-portlet-body class="pt-3">
+		<div *ngIf="booking">
 
-							<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
-								Oh snap! Change a few things up and try submitting again.
-							</kt-alert>
+			<form [formGroup]="bookingForm" class="kt-form kt-form--group-seperator-dashed">
 
-							<div class="kt-form__section kt-form__section--first">
-								<div class="kt-form__group">
-									<div class="row">
+				<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+					Oh snap! Change a few things up and try submitting again.
+				</kt-alert>
 
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Model" formControlName="model">
-												<mat-error>
-													Model is
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Model</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Manufacture" formControlName="manufacture" [matAutocomplete]="manuf">
-												<mat-autocomplete #manuf="matAutocomplete">
-													<mat-option *ngFor="let manufacture of filteredManufactures | async" [value]="manufacture">
-														{{ manufacture }}
-													</mat-option>
-												</mat-autocomplete>
-												<mat-error>
-													Manufacture is
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Manufacture</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<mat-select placeholder="Enter Model year" formControlName="modelYear">
-													<mat-option value="{{year}}" *ngFor="let year of availableYears;">{{year}}</mat-option>
-												</mat-select>
-												<mat-error>
-													Model year
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Model year</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-									</div>
+				<div class="kt-form__section kt-form__section--first">
+					<div class="kt-form__group pt-1">
+						<div class="form-group kt-form__group row" *ngIf="booking.id">
+							<!--<div class="col-md-12 heading-wrapper mt-0">
+								<div class="title-wrapper">
+									<h5>Booking Info</h5>
 								</div>
-
-								<div class="kt-form__group">
-									<div class="row">
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Mileage" formControlName="mileage">
-												<mat-error>
-													Mileage is
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Mileage</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Color" formControlName="color" [matAutocomplete]="col">
-												<mat-autocomplete #col="matAutocomplete">
-													<mat-option *ngFor="let col of filteredColors | async" [value]="col">
-														{{ col }}
-													</mat-option>
-												</mat-autocomplete>
-												<mat-error>
-													Color
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Color</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Price" formControlName="price">
-												<span matPrefix>$&nbsp;</span>
-												<mat-error>
-													Price is
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>Price</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-									</div>
-
-								</div>
-
-								<div class="kt-form__group">
-									<div class="row">
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter VIN code" formControlName="VINCode">
-												<mat-error>
-													VIN Code is
-													<strong>required</strong>
-												</mat-error>
-												<mat-hint align="start">Please enter
-													<strong>VIN Code</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile">
-											<div>Condition:</div>
-											<mat-radio-group formControlName="condition" class="example-radio-group">
-												<mat-radio-button class="example-radio-button" value="0">New</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Used</mat-radio-button>
-											</mat-radio-group>
-										</div>
-										<div class="col-md-4">
-											<div>Status:</div>
-											<mat-radio-group formControlName="status" class="example-radio-group">
-												<mat-radio-button class="example-radio-button" value="0">Selling</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Sold</mat-radio-button>
-											</mat-radio-group>
-										</div>
-									</div>
-								</div>
-
-								<div class="kt-form__group">
-									<div class="row">
-										<div class="col-md-12 kt-margin-bottom-10-mobile">
-											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="7" placeholder="Enter Description" formControlName="description"></textarea>
-											</mat-form-field>
-										</div>
-									</div>
+							</div>-->
+							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+								<label class="font-500">Created : </label> {{booking.createDate | date:'yyyy-MM-dd h:mm a'}}
+							</div>
+							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+								<label class="font-500">Last Changed : </label> {{booking.updateDate | date:'yyyy-MM-dd h:mm a'}}
+							</div>
+							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+								<label class="font-500">Assigned To : </label> {{booking.assignedTo}}
+							</div>
+							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+								<label class="font-500">Associated to existing Customer: </label> {{booking.customerId > 0 ? 'Yes':'No'}}
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 heading-wrapper mt-0">
+								<div class="title-wrapper">
+									<h5>Booking Information</h5>
 								</div>
 							</div>
-						</form>
-					</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter booking name" #name formControlName="name">
+									<button mat-button *ngIf="name.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('name').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Booking Name is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Booking Name</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<label class="font-500">Customer Name: </label> {{ booking.customerName }}
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<label class="font-500">Invoice Entity Name: </label> {{ booking.invoiceEntityName }}
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<mat-select [formControlName]="'bookingStatusId'">
+										<mat-option *ngFor="let val of bookingStatusOptions" [value]="val.id">
+											{{ val.value }}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select a <strong> Booking Status </strong>
+									</mat-hint>
+									<mat-error>
+										Booking Status is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput [matDatepicker]="bookingDatePicker" #bookingDate placeholder="Choose a booking date" [formControlName]="'bookingDate'">
+									<button mat-button *ngIf="bookingDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('bookingDate').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-datepicker-toggle matSuffix [for]="bookingDatePicker"></mat-datepicker-toggle>
+									<mat-datepicker #bookingDatePicker></mat-datepicker>
+									<mat-error>
+										Booking Date
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Booking Date</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3 time-picker">
+								<ngx-timepicker-field [toggleIcon]="icon" formControlName="bookingTime"></ngx-timepicker-field>
+								<ng-template #icon>
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="30px" height="30px">
+										<path d="M15,3C8.373,3,3,8.373,3,15c0,6.627,5.373,12,12,12s12-5.373,12-12C27,8.373,21.627,3,15,3z M16,16H7.995 C7.445,16,7,15.555,7,15.005v-0.011C7,14.445,7.445,14,7.995,14H14V5.995C14,5.445,14.445,5,14.995,5h0.011 C15.555,5,16,5.445,16,5.995V16z" />
+									</svg>
+								</ng-template>
+								<mat-hint class="custom-hint-size" align="start" *ngIf="!(bookingForm.get('bookingTime').touched && bookingForm.get('bookingTime').hasError('required'))">
+									Please select
+									<strong>Booking Hours</strong>
+								</mat-hint>
+								<mat-error class="custom-error-size" *ngIf="bookingForm.get('bookingTime').touched &&  bookingForm.get('bookingTime').hasError('required')">
+									Booking Hours is
+									<strong>required</strong>
+								</mat-error>
+							</div>
 
-					<!--end::Form-->
-				</ng-template>
-			</mat-tab>
-			<mat-tab label="Product remarks" [disabled]="!product || !product.id">
-				<ng-template matTabContent>
-					<!--<kt-remarks-list [productId$]="productId$"></kt-remarks-list>-->
-				</ng-template>
-			</mat-tab>
-			<mat-tab label="Product specifications" [disabled]="!product || !product.id">
-				<ng-template matTabContent>
-					<!--<kt-specifications-list [productId$]="productId$"></kt-specifications-list>-->
-				</ng-template>
-			</mat-tab>
-		</mat-tab-group>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput [matDatepicker]="visitDatePicker" #visitDate placeholder="Choose a visit date" [formControlName]="'visitDate'">
+									<button mat-button *ngIf="visitDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitDate').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-datepicker-toggle matSuffix [for]="visitDatePicker"></mat-datepicker-toggle>
+									<mat-datepicker #visitDatePicker></mat-datepicker>
+									<mat-error>
+										Visit Date
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Visit Date</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3 time-picker">
+								<ngx-timepicker-field [toggleIcon]="icon" formControlName="visitTime"></ngx-timepicker-field>
+								<ng-template #icon>
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="30px" height="30px">
+										<path d="M15,3C8.373,3,3,8.373,3,15c0,6.627,5.373,12,12,12s12-5.373,12-12C27,8.373,21.627,3,15,3z M16,16H7.995 C7.445,16,7,15.555,7,15.005v-0.011C7,14.445,7.445,14,7.995,14H14V5.995C14,5.445,14.445,5,14.995,5h0.011 C15.555,5,16,5.445,16,5.995V16z" />
+									</svg>
+								</ng-template>
+								<mat-hint class="custom-hint-size" align="start" *ngIf="!(bookingForm.get('visitTime').touched && bookingForm.get('visitTime').hasError('required'))">
+									Please select
+									<strong>Visit Time</strong>
+								</mat-hint>
+								<mat-error class="custom-error-size" *ngIf="bookingForm.get('visitTime').touched &&  bookingForm.get('visitTime').hasError('required')">
+									Visit Time is
+									<strong>required</strong>
+								</mat-error>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<mat-select [formControlName]="'buildingTypeId'">
+										<mat-option *ngFor="let val of buildingTypeOptions" [value]="val.id">
+											{{ val.value }}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select a <strong> Type of Building </strong>
+									</mat-hint>
+									<mat-error>
+										Type of Building is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<label>Cycle: </label> {{booking.cycle}}
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<label>Cycle Number: </label> {{booking.cycleNumber}}
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12 heading-wrapper mt-4">
+								<div class="title-wrapper">
+									<h5>Customer Information</h5>
+								</div>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter contact phone" #phoneNumber formControlName="phoneNumber">
+									<button mat-button *ngIf="phoneNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('phoneNumber').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Contact phone is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Contact Phone</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter phone 2" #phone2 formControlName="phone2">
+									<button mat-button *ngIf="phone2.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('phone2').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Phone 2 is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Phone 2</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter phone 2 owner" #phone2Owner formControlName="phone2Owner">
+									<button mat-button *ngIf="phone2Owner.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('phone2Owner').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Phone 2 owner is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Phone 2</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter email" #email formControlName="email">
+									<button mat-button *ngIf="email.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('email').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error *ngIf="bookingForm.get('email').errors?.required">
+										Email
+										<strong>required</strong>
+									</mat-error>
+									<mat-error *ngIf="bookingForm.get('email').errors?.email">
+										Invalid
+										<strong>Email</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Email</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter email 2" #email2 formControlName="email2">
+									<button mat-button *ngIf="email2.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('email2').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error *ngIf="bookingForm.get('email2').errors?.required">
+										Email 2
+										<strong>required</strong>
+									</mat-error>
+									<mat-error *ngIf="bookingForm.get('email2').errors?.email">
+										Invalid
+										<strong>Email 2</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Email 2</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput [matDatepicker]="dateOfBirthPicker" #dateOfBirth placeholder="Choose date of birth" [formControlName]="'dateOfBirth'">
+									<button mat-button *ngIf="dateOfBirth.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('dateOfBirth').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
+									<mat-datepicker #dateOfBirthPicker></mat-datepicker>
+									<mat-error>
+										Date of birth
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Date of Birth</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick country of birth" aria-label="Number" matInput #countryOfBirthId [matAutocomplete]="countryAuto" [formControlName]="'countryOfBirthId'">
+									<button mat-button *ngIf="countryOfBirthId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('countryOfBirthId').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-autocomplete autoActiveFirstOption #countryAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredCountries | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Country of Birth </strong>
+									</mat-hint>
+									<mat-error>
+										Country of Birth is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick visit language" aria-label="Number" matInput #visitLanguageId [matAutocomplete]="visitLanguageAuto" [formControlName]="'visitLanguageId'">
+									<button mat-button *ngIf="visitLanguageId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitLanguageId').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-autocomplete autoActiveFirstOption #visitLanguageAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredLanguages | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Visit Language </strong>
+									</mat-hint>
+									<mat-error>
+										Visit Language is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter name of person requesting visit" #visitRequestingPerson formControlName="visitRequestingPerson">
+									<button mat-button *ngIf="visitRequestingPerson.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitRequestingPerson').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Name of Person Requesting Visit is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Name of Person Requesting Visit</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<mat-select [formControlName]="'visitRequestingPersonRelationId'">
+										<mat-option *ngFor="let val of relationshipsForFilter" [value]="val.id">
+											{{ val.value }}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select a <strong> Visit Requesting Person Relationship </strong>
+									</mat-hint>
+									<mat-error>
+										Visit Requesting Person Relationship is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12 heading-wrapper mt-4">
+								<div class="title-wrapper">
+									<h5>Visit Address Informaton</h5>
+								</div>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter visit street name" #visitStreetName formControlName="visitStreetName">
+									<button mat-button *ngIf="visitStreetName.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitStreetName').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Visit Street Name is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Visit Street Name</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter visit post code" #visitPostCode formControlName="visitPostCode">
+									<button mat-button *ngIf="visitPostCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitPostCode').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Visit Post Code is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Visit Post Code</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick visit city/town" aria-label="Number" #visitCityId matInput [matAutocomplete]="visitCityIdAuto" [formControlName]="'visitCityId'">
+									<button mat-button *ngIf="visitCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitCityId').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-autocomplete autoActiveFirstOption #visitCityIdAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredCitiesVisit | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Visit City / Town </strong>
+									</mat-hint>
+									<mat-error>
+										Visit City / Town is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick visit country" aria-label="Number" #visitCountryId matInput [matAutocomplete]="visitCountryIdAuto" [formControlName]="'visitCountryId'">
+									<button mat-button *ngIf="visitCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitCountryId').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-autocomplete autoActiveFirstOption #visitCountryIdAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredVisitCountries | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Visit Country </strong>
+									</mat-hint>
+									<mat-error>
+										Visit Country is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<mat-select [formControlName]="'buildingTypeId'">
+										<mat-option *ngFor="let val of buildingTypeOptions" [value]="val.id">
+											{{ val.value }}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select a <strong>Visit Building Type </strong>
+									</mat-hint>
+									<mat-error>
+										Visit Building Type is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter buzzer" #buzzer formControlName="buzzer">
+									<button mat-button *ngIf="buzzer.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('buzzer').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Buzzer is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Buzzer</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter flat number" #flatNumber formControlName="flatNumber">
+									<button mat-button *ngIf="flatNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('flatNumber').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Flat Number is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Flat Number</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter floor number" #floor formControlName="floor">
+									<button mat-button *ngIf="floor.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('floor').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Floor number is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Floor Number</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<mat-select [formControlName]="'visitVenueId'">
+										<mat-option *ngFor="let val of visitVenueOptions" [value]="val.id">
+											{{ val.value }}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select a <strong> Visit Venue </strong>
+									</mat-hint>
+									<mat-error>
+										Visit Venue is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea rows="4" matInput placeholder="Enter visit venue detail" #visitVenueDetail formControlName="visitVenueDetail"></textarea>
+									<button mat-button *ngIf="visitVenueDetail.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitVenueDetail').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Venue Detail is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Venue Detail</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea rows="4" matInput placeholder="Enter address notes" #addressNotes formControlName="addressNotes"></textarea>
+									<button mat-button *ngIf="addressNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('addressNotes').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Address Notes are
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Address Notes</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12 heading-wrapper mt-4">
+								<div class="title-wrapper">
+									<h5>Home Address Information</h5>
+								</div>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter home street name" #homeStreetName formControlName="homeStreetName">
+									<button mat-button *ngIf="homeStreetName.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('homeStreetName').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Home Street Name is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Home Street Name</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter home post code" #homePostCode formControlName="homePostCode">
+									<button mat-button *ngIf="homePostCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('homePostCode').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Home Post Code is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Home Post Code</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick home city/town" aria-label="Number" #homeCityId matInput [matAutocomplete]="homeCityIdAuto" [formControlName]="'homeCityId'">
+									<button mat-button *ngIf="homeCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('homeCityId').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-autocomplete autoActiveFirstOption #homeCityIdAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredHomeCities | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Home City/ / Town </strong>
+									</mat-hint>
+									<mat-error>
+										Home City / Town is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<input type="text" placeholder="Pick home country" aria-label="Number" #homeCountryId matInput [matAutocomplete]="homeCountryAuto" [formControlName]="'homeCountryId'">
+									<button mat-button *ngIf="homeCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('homeCountryId').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-autocomplete autoActiveFirstOption #homeCountryAuto="matAutocomplete"
+													  [displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredHomeCountries | async" [value]="t">
+											{{t.value}}
+										</mat-option>
+									</mat-autocomplete>
+									<mat-hint align="start">
+										Select a <strong>Home Country </strong>
+									</mat-hint>
+									<mat-error>
+										Home Country is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12 heading-wrapper mt-4">
+								<div class="title-wrapper">
+									<h5>Payment and Invoicing</h5>
+								</div>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<mat-select [formControlName]="'paymentMethodId'">
+										<mat-option *ngFor="let val of paymentMethodsOptions" [value]="val.id">
+											{{ val.value }}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select a <strong> Payment Method </strong>
+									</mat-hint>
+									<mat-error>
+										Payment Method is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<mat-select [formControlName]="'paymentStatusId'">
+										<mat-option *ngFor="let val of paymentStatusOptions" [value]="val.id">
+											{{ val.value }}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select a <strong> Payment Status </strong>
+									</mat-hint>
+									<mat-error>
+										Payment Status is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Payment Concluded:</div>
+								<mat-radio-group class="example-radio-group" formControlName="paymentConcludedId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput [matDatepicker]="paymentArrivalDatePicker" #paymentArrivalDate placeholder="Choose payment arrival date" [formControlName]="'paymentArrivalDate'">
+									<button mat-button *ngIf="paymentArrivalDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('paymentArrivalDate').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-datepicker-toggle matSuffix [for]="paymentArrivalDatePicker"></mat-datepicker-toggle>
+									<mat-datepicker #paymentArrivalDatePicker></mat-datepicker>
+									<mat-error>
+										Payment Arrival Date
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Payment Arrival Date</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>CC Authorization:</div>
+								<mat-radio-group class="example-radio-group" formControlName="ccAuthorizationId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Cash Confirmation Mail:</div>
+								<mat-radio-group class="example-radio-group" formControlName="cashConfirmationMailId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Bank Transfer Receipt:</div>
+								<mat-radio-group class="example-radio-group" formControlName="bankTransfterReceiptId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter cc owner info" formControlName="ccOwner" maxlength="250">
+									<mat-error>
+										CC Owner info is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>CC Owner Info</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput type="number" placeholder="Enter cash return info" formControlName="cashReturn" maxlength="250">
+									<mat-error>
+										Cash Return info is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Cash Return Info</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile">
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea matInput rows="7" placeholder="Enter notes in payment" formControlName="notesOnPayment"></textarea>
+									<mat-hint align="start">
+										Enter a <strong>Notes in Payment </strong>
+									</mat-hint>
+									<mat-error>
+										Notes in Payment are
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Pro Availability Asked:</div>
+								<mat-radio-group class="example-radio-group" formControlName="proAvailabilityAskedId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Pt. Called for Appointment:</div>
+								<mat-radio-group class="example-radio-group" formControlName="ptCalledForAppointmentId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>IM to Pro.:</div>
+								<mat-radio-group class="example-radio-group" formControlName="imToProId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Mail to Pt.:</div>
+								<mat-radio-group class="example-radio-group" formControlName="mailToPtId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter feedback from pro." #feedbackFromPro formControlName="feedbackFromPro" maxlength="250">
+									<button mat-button *ngIf="feedbackFromPro.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('feedbackFromPro').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Feedback From Pro. is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Feedback From Pro.</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<mat-select [formControlName]="'reportDeliveredId'">
+										<mat-option *ngFor="let val of reportDeliveredOptions" [value]="val.id">
+											{{ val.value }}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select a <strong>Report Delivered Option </strong>
+									</mat-hint>
+									<mat-error>
+										Report Delivered Option is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>Insurance Covered:</div>
+								<mat-radio-group class="example-radio-group" formControlName="insuranceCoverId">
+									<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+								</mat-radio-group>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<mat-select [formControlName]="'discountNetworkId'">
+										<mat-option *ngFor="let val of discountNetworkOptions" [value]="val.id">
+											{{ val.value }}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select a <strong>Discount Network </strong>
+									</mat-hint>
+									<mat-error>
+										Discount Network is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput type="number" placeholder="Enter patient discount" #patientDiscount formControlName="patientDiscount">
+									<button mat-button *ngIf="patientDiscount.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('patientDiscount').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Patient Discount is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Patient Discount</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput type="number" placeholder="Enter pro. discount" #proDiscount formControlName="proDiscount">
+									<button mat-button *ngIf="proDiscount.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('proDiscount').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Pro. Discount is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Pro. Discount</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea matInput rows="4" placeholder="Enter invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
+									<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('invoicingNotes').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Invoicing Notes is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Invoicing Notes</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput [matDatepicker]="invoiceDueDatePicker" #invoiceDueDate placeholder="Choose an invoice date" [formControlName]="'invoiceDueDate'" readonly="readonly">
+									<button mat-button *ngIf="invoiceDueDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('invoiceDueDate').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-datepicker-toggle matSuffix [for]="invoiceDueDatePicker"></mat-datepicker-toggle>
+									<mat-datepicker #invoiceDueDatePicker></mat-datepicker>
+									<mat-error>
+										Invoice Due Date
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please select an
+										<strong>Invoice Due Date</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-20-mobile pt-3">
+								<label>Invoice Number: </label> {{booking.invoiceNumber}}
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="example-full-width">
+									<mat-select [formControlName]="'addToAccountingId'">
+										<mat-option *ngFor="let val of addedToAccountOptions" [value]="val.id">
+											{{ val.value }}
+										</mat-option>
+									</mat-select>
+									<mat-hint align="start">
+										Select a <strong>Added to Accounting Option </strong>
+									</mat-hint>
+									<mat-error>
+										Added to Accounting Option is
+										<strong>required</strong>
+									</mat-error>
+								</mat-form-field>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 heading-wrapper mt-4">
+								<div class="title-wrapper">
+									<h5>Blood Tests</h5>
+								</div>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput [matDatepicker]="dateOnPrescriptionPicker" #dateOnPrescription placeholder="Choose a prescription date" [formControlName]="'dateOnPrescription'">
+									<button mat-button *ngIf="dateOnPrescription.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('dateOnPrescription').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-datepicker-toggle matSuffix [for]="dateOnPrescriptionPicker"></mat-datepicker-toggle>
+									<mat-datepicker #dateOnPrescriptionPicker></mat-datepicker>
+									<mat-error>
+										Prescription Date
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Prescription Date</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput placeholder="Enter lab info" #lab formControlName="lab">
+									<button mat-button *ngIf="lab.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('lab').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Lab info is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Lab Info</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput type="number" placeholder="Enter vials info" #vials formControlName="vials">
+									<button mat-button *ngIf="vials.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('vials').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Vials info is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Vials Info</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput type="number" placeholder="Enter prescription number" #repeadPrescriptionNumber formControlName="repeadPrescriptionNumber">
+									<button mat-button *ngIf="repeadPrescriptionNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('repeadPrescriptionNumber').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Prescription Number is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Prescription Number</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea matInput rows="4" placeholder="Enter Notes" #notes formControlName="notes"></textarea>
+									<button mat-button *ngIf="notes.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('notes').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Notes are
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Notes</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput type="number" placeholder="Enter private fee" #privateFee formControlName="privateFee">
+									<button mat-button *ngIf="privateFee.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('privateFee').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Private Fee is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Private Fee</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput type="number" placeholder="Enter ticket fee" #ticketFee formControlName="ticketFee">
+									<button mat-button *ngIf="ticketFee.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('ticketFee').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Ticket Fee is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Ticket Fee</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<input matInput type="text" placeholder="Enter exemption code" #excemptionCode formControlName="excemptionCode">
+									<button mat-button *ngIf="excemptionCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('excemptionCode').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Exemption Code is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Exemption Code</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<div>NHS/Private:</div>
+								<mat-radio-group class="example-radio-group" formControlName="nhsOrPrivateId">
+									<mat-radio-button class="example-radio-button" value="0">NHS</mat-radio-button>
+									<mat-radio-button class="example-radio-button" value="1">Private</mat-radio-button>
+								</mat-radio-group>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 heading-wrapper mt-4">
+								<div class="title-wrapper">
+									<h5>Visit Details</h5>
+								</div>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea matInput rows="4" placeholder="Enter details" #details formControlName="details"></textarea>
+									<button mat-button *ngIf="details.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('details').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Details are
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Details</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea matInput rows="4" placeholder="Enter diagnosis info" #diagnosis formControlName="diagnosis"></textarea>
+									<button mat-button *ngIf="diagnosis.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('diagnosis').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Diagnosis info is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Diagnosis Info</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea matInput rows="4" placeholder="Enter reason for visit" #reasonForVisit formControlName="reasonForVisit"></textarea>
+									<button mat-button *ngIf="reasonForVisit.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('reasonForVisit').setValue('')">
+										<mat-icon>close</mat-icon>
+									</button>
+									<mat-error>
+										Reason For Visit is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										Please enter
+										<strong>Reason For Visit</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+						</div>
+
+
+						<div class="row">
+							<div class="col-md-12 heading-wrapper mt-4">
+								<div class="title-wrapper">
+									<h5>
+										Services Requested
+										<a href="javascript:;" class="btn pull-right" (click)="addService()" mat-raised-button matTooltip="Add New Service Row">
+											<span class="kt-hidden-mobile">Add Service</span>
+										</a>
+
+									</h5>
+								</div>
+							</div>
+							<div class="table-wrapper" formArrayName="services">
+								<table class="table table-bordered table-head-solid">
+									<thead>
+										<tr>
+											<th>Services</th>
+											<th>Professionals</th>
+											<th>PT Fees</th>
+											<th>PRO Fees</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody *ngFor="let service of bookingForm.get('services').controls; let i = index">
+										<tr [formGroupName]="i">
+											<td>
+												<mat-form-field class="example-full-width">
+													<mat-select [formControlName]="'serviceId'" (selectionChange)="serviceSelected($event, i)">
+														<mat-option *ngFor="let val of servicesForFilter" [value]="val">
+															{{ val.value }}
+														</mat-option>
+													</mat-select>
+													<mat-hint align="start">
+														Select a <strong>Service </strong>
+													</mat-hint>
+													<mat-error>
+														Service is
+														<strong>required</strong>
+													</mat-error>
+												</mat-form-field>
+
+											</td>
+											<td>
+												<mat-form-field class="example-full-width">
+													<mat-select [formControlName]="'professionalId'">
+														<mat-option *ngFor="let val of getProfessionals(i)" [value]="val.id">
+															{{ val.value }}
+														</mat-option>
+													</mat-select>
+													<mat-hint align="start">
+														Select a <strong>Professional </strong>
+													</mat-hint>
+													<mat-error>
+														Professional is
+														<strong>required</strong>
+													</mat-error>
+												</mat-form-field>
+											</td>
+											<td>
+												<div class="row">
+													<div class="col-md-6">
+														<mat-form-field>
+															<input type="number" matInput placeholder="PT Fee A1" formControlName="ptFeeA1" min="0">
+															<mat-hint align="start">
+																PT Fee <strong>A1 </strong>
+															</mat-hint>
+															<mat-error>
+																PT Fee A1
+																<strong>required</strong>
+															</mat-error>
+														</mat-form-field>
+													</div>
+													<div class="col-md-6">
+														<mat-form-field>
+															<input type="number" matInput placeholder="PT Fee A2" formControlName="ptFeeA2" min="0">
+															<mat-hint align="start">
+																PT Fee <strong>A2 </strong>
+															</mat-hint>
+															<mat-error>
+																PT Fee A2
+																<strong>required</strong>
+															</mat-error>
+														</mat-form-field>
+													</div>
+												</div>
+											</td>
+											<td>
+												<div class="row">
+													<div class="col-md-6">
+														<mat-form-field>
+															<input type="number" matInput placeholder="PRO Fee A1" formControlName="proFeeA1" min="0">
+															<mat-hint align="start">
+																PRO Fee <strong>A1 </strong>
+															</mat-hint>
+															<mat-error>
+																PRO Fee A1
+																<strong>required</strong>
+															</mat-error>
+														</mat-form-field>
+													</div>
+													<div class="col-md-6">
+														<mat-form-field>
+															<input type="number" matInput placeholder="PRO Fee A2" formControlName="proFeeA2" min="0">
+															<mat-hint align="start">
+																PRO Fee <strong>A2 </strong>
+															</mat-hint>
+															<mat-error>
+																PRO Fee A2
+																<strong>required</strong>
+																
+															</mat-error>
+														</mat-form-field>
+													</div>
+												</div>
+											</td>
+											<td>
+												<i *ngIf="i >0" class="la la-trash-o" (click)="removeService(i)"></i>
+											</td>
+
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+			</form>
+		</div>
+
+
+
+
 	</kt-portlet-body>
 </kt-portlet>

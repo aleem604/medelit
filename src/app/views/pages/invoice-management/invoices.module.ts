@@ -92,10 +92,10 @@ const routes: Routes = [
 				component: InvoicesListComponent
 			},
 			
-			//{
-			//	path: 'invoices/add',
-			//	component: InvoiceEditComponent
-			//},
+			{
+				path: 'invoices/add',
+				component: InvoiceEditComponent
+			},
 			{
 				path: 'invoices/edit/:id',
 				component: InvoiceEditComponent

@@ -14,7 +14,7 @@ import { AppState } from '../../../../../../core/reducers';
 // CRUD
 import { TypesUtilsService } from '../../../../../../core/_base/crud';
 // Services and Models
-import { CustomerModel, CustomerUpdated, CustomerOnServerCreated, selectLastCreatedCustomerId, selectCustomersPageLoading, selectCustomersActionLoading } from '../../../../../../core/medelit';
+import { CustomerModelOld, CustomerUpdated, CustomerOnServerCreated, selectLastCreatedCustomerId, selectCustomersPageLoading, selectCustomersActionLoading } from '../../../../../../core/medelit';
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -25,7 +25,7 @@ import { CustomerModel, CustomerUpdated, CustomerOnServerCreated, selectLastCrea
 })
 export class CustomerEditDialogComponent implements OnInit, OnDestroy {
 	// Public properties
-	customer: CustomerModel;
+	customer: CustomerModelOld;
 	customerForm: FormGroup;
 	hasFormErrors = false;
 	viewLoading = false;
@@ -75,7 +75,7 @@ export class CustomerEditDialogComponent implements OnInit, OnDestroy {
 			firstName: [this.customer.firstName, Validators.required],
 			lastName: [this.customer.lastName, Validators.required],
 			email: [ this.customer.email, Validators.compose([Validators.required, Validators.email]) ],
-			dob: [this.typesUtilsService.getDateFromString(this.customer.dateOfBbirth), Validators.compose([Validators.nullValidator])],
+			dob: [this.typesUtilsService.getDateFromString(this.customer.dateOfBirth), Validators.compose([Validators.nullValidator])],
 			userName: [this.customer.userName, Validators.compose([Validators.required])],
 			gender: [this.customer.gender, Validators.compose([Validators.required])],
 			ipAddress: [this.customer.ipAddress, Validators.compose([Validators.required])],
@@ -111,15 +111,15 @@ export class CustomerEditDialogComponent implements OnInit, OnDestroy {
 	/**
 	 * Returns prepared customer
 	 */
-	prepareCustomer(): CustomerModel {
+	prepareCustomer(): CustomerModelOld {
 		const controls = this.customerForm.controls;
-		const _customer = new CustomerModel();
+		const _customer = new CustomerModelOld();
 		_customer.id = this.customer.id;
 		const _date = controls.dob.value;
 		if (_date) {
-			_customer.dateOfBbirth = this.typesUtilsService.dateFormat(_date);
+			_customer.dateOfBirth = this.typesUtilsService.dateFormat(_date);
 		} else {
-			_customer.dateOfBbirth = '';
+			_customer.dateOfBirth = '';
 		}
 		_customer.firstName = controls.firstName.value;
 		_customer.lastName = controls.lastName.value;
@@ -161,15 +161,15 @@ export class CustomerEditDialogComponent implements OnInit, OnDestroy {
 	 *
 	 * @param _customer: CustomerModel
 	 */
-	updateCustomer(_customer: CustomerModel) {
-		const updateCustomer: Update<CustomerModel> = {
+	updateCustomer(_customer: CustomerModelOld) {
+		const updateCustomer: Update<CustomerModelOld> = {
 			id: _customer.id,
 			changes: _customer
 		};
-		this.store.dispatch(new CustomerUpdated({
-			partialCustomer: updateCustomer,
-			customer: _customer
-		}));
+		//this.store.dispatch(new CustomerUpdated({
+		//	partialCustomer: updateCustomer,
+		//	customer: _customer
+		//}));
 
 		// Remove this line
 		of(undefined).pipe(delay(1000)).subscribe(() => this.dialogRef.close({ _customer, isEdit: true }));
@@ -182,8 +182,8 @@ export class CustomerEditDialogComponent implements OnInit, OnDestroy {
 	 *
 	 * @param _customer: CustomerModel
 	 */
-	createCustomer(_customer: CustomerModel) {
-		this.store.dispatch(new CustomerOnServerCreated({ customer: _customer }));
+	createCustomer(_customer: CustomerModelOld) {
+		//this.store.dispatch(new CustomerOnServerCreated({ customer: _customer }));
 		this.componentSubscriptions = this.store.pipe(
 			select(selectLastCreatedCustomerId),
 			delay(1000), // Remove this line

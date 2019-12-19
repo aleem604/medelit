@@ -7,6 +7,18 @@ export class LeadModel extends BaseModel {
 	titleId?: number;
 	title: string;
 	name: string;
+	requestedServiceId: number;
+	professionalId: number;
+	professionals: number[];
+	ptFeeId: number;
+	ptFeeA1: number;
+	ptFeeA2: number;
+	ptFeeCustom: number;
+	proFeeId: number;
+	proFeeA1: number;
+	proFeeA2: number;
+	proFeeCustom: number;
+
 	invoiceEntityId?: number;
 	invoiceEntity: string;
 	mainPhone: string;
@@ -20,6 +32,7 @@ export class LeadModel extends BaseModel {
 	visitRequestingPersonRelationId?: number;
 	fax: string;
 	email: string;
+	email2: string;
 	leadSourceId?: number;
 	leadSource: string;
 	leadStatusId?: number;
@@ -28,16 +41,17 @@ export class LeadModel extends BaseModel {
 	language: string;
 	leadCategoryId?: number;
 	leadCategory: string;
-	contactMethod?: number;
+	contactMethodId?: number;
 	dateOfBirth?: Date;
 	countryOfBirthId?: number;
 	countryOfBirth: string;
 	preferredPaymentMethodId?: number;
 	preferredPaymentMethod: string;
 	invoicingNotes: string;
-	insuranceCover?: boolean;
+	insuranceCoverId?: number;
 	listedDiscountNetworkId?: number;
 	listedDiscountNetwork: string;
+	haveDifferentIEId: number;
 	discount?: number;
 	gpCode: string;
 	addressStreetName: string;
@@ -55,10 +69,20 @@ export class LeadModel extends BaseModel {
 	visitVenue: string;
 	addressNotes: string;
 	visitVenueDetail: string;
+	leadDescription: string;
+	convertDate?: Date;
+	services: LeadServicesModel[];
+	bankName: string;
+	accountNumber: string;
+	sortCode: string;
+	iban: string;
+	blacklistId: number;
 	fromCustomerId?: number;
 	fromCustomer: string;
-	convertDate?: Date;
-	services: LeadServices[];
+	customerId?: number;
+	customer: string;
+
+
 
 	status: eRecordStatus;
 	createDate: Date;
@@ -71,18 +95,25 @@ export class LeadModel extends BaseModel {
 	deletedById: number;
 	deletedBy: string;
 
-
 	clear() {
-
+		this.haveDifferentIEId = 0;
+		this.blacklistId = 0;
+		this.leadStatusId = 1;
+		this.services = [];
 	}
 }
 
-export interface LeadServices {
+export class LeadServicesModel {
 	id: number;
-	serviceId: null;
-	professionals: number[];
+	leadId: number;
+	serviceId: number;
+	professionalId: number;
+	ptFeeId: number;
 	ptFeeA1: number;
 	ptFeeA2: number;
+	ptFeeCustom: number;
+	proFeeId: number;
 	proFeeA1: number;
 	proFeeA2: number;
+	proFeeCustomer: number;
 }
