@@ -33,6 +33,7 @@ import { StaticDataService } from '../../../../../core/medelit/_services';
 	// tslint:disable-next-line:component-selector
 	selector: 'kt-invoices-list',
 	templateUrl: './invoices-list.component.html',
+	styleUrls: ['./invoices-list.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoicesListComponent implements OnInit, OnDestroy {

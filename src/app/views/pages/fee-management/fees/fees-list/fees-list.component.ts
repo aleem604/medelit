@@ -16,7 +16,6 @@ import { LayoutUtilsService, MessageType, QueryParamsModel } from '../../../../.
 // Services and Models
 import { FeeModel, FeesDataSource, FeesPageRequested, OneFeeDeleted, ManyFeesDeleted, FeesStatusUpdated } from '../../../../../core/medelit';
 import { FeeEditDialogComponent } from '../fee-edit/fee-edit.dialog.component';
-import { Subheader1Component } from '../../../../partials/layout';
 import { SubheaderService } from '../../../../../core/_base/layout';
 
 @Component({
@@ -29,7 +28,7 @@ import { SubheaderService } from '../../../../../core/_base/layout';
 export class FeesListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: FeesDataSource;
-	displayedColumns = ['select', 'feeCode', 'feeType', 'feeName', 'fields', 'subCategories', 'a1', 'a2', 'status', 'actions'];
+	displayedColumns = ['select', 'feeCode', 'feeType', 'feeName', 'a1', 'a2', 'status', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields

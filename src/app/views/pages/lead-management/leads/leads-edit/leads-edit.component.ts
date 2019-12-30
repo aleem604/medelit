@@ -3,13 +3,12 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRe
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 // Material
-import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
+import { MatDialog } from '@angular/material';
 // RxJS
-import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
-import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 // NGRX
 import { Store, select } from '@ngrx/store';
-import { Dictionary, Update } from '@ngrx/entity';
 import { AppState } from '../../../../../core/reducers';
 // Layout
 import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
@@ -17,22 +16,13 @@ import { SubheaderService, LayoutConfigService } from '../../../../../core/_base
 import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Services and Models
 import {
-	selectLastCreatedLeadId,
-	selectLeadById,
-	SPECIFICATIONS_DICTIONARY,
 	LeadModel,
-	LeadOnServerCreated,
-	LeadUpdated,
 	LeadsService,
 	StaticDataModel,
 
 	StaticDataService,
 	FilterModel,
 	ApiResponse,
-
-	AppDateAdapter,
-	APP_DATE_FORMATS,
-
 	LeadServicesModel,
 
 	MedelitStaticData,
@@ -119,12 +109,10 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
-		private typesUtilsService: TypesUtilsService,
 		private leadFB: FormBuilder,
 		public dialog: MatDialog,
 		private subheaderService: SubheaderService,
 		private layoutUtilsService: LayoutUtilsService,
-		private layoutConfigService: LayoutConfigService,
 		private leadService: LeadsService,
 		private staticService: StaticDataService,
 		private spinner: NgxSpinnerService,
@@ -300,9 +288,13 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 					serviceId: [service.serviceId, [Validators.required]],
 					professionalId: [service.professionalId, [Validators.required]],
 					ptFeeId: [service.ptFeeId, [Validators.required]],
+					isPtFeeA1: [service.isPtFeeA1, [Validators.required]],
+
 					ptFeeA1: [service.ptFeeA1, [Validators.required]],
 					ptFeeA2: [service.ptFeeA2, [Validators.required]],
 					proFeeId: [service.proFeeId, [Validators.required]],
+					isProFeeA1: [service.isProFeeA1, [Validators.required]],
+
 					proFeeA1: [service.proFeeA1, [Validators.required]],
 					proFeeA2: [service.proFeeA2, [Validators.required]],
 				});
@@ -327,9 +319,11 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			serviceId: [null, [Validators.required]],
 			professionalId: [null, [Validators.required]],
 			ptFeeId: [null, [Validators.required]],
+			isPtFeeA1: ['1', [Validators.required]],
 			ptFeeA1: [null, [Validators.required]],
 			ptFeeA2: [null, [Validators.required]],
 			proFeeId: [null, [Validators.required]],
+			isProFeeA1: ['1', [Validators.required]],
 			proFeeA1: [null, [Validators.required]],
 			proFeeA2: [null, [Validators.required]],
 		});
@@ -337,14 +331,38 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		//this.selected.setValue(this.lead.services.length - 1);
 	}
 
+	get feesSubTotals() {
+		let ptFeeSubTotal = 0;
+		let proFeeSubTotal = 0;
+
+		if (!this.leadForm) return;
+		const control = <FormArray>this.leadForm.controls['services'];
+		for (let i = 0; i < control.length; i++) {
+			if (control.controls[i].get('isPtFeeA1').value === '1')
+				ptFeeSubTotal += +control.controls[i].get('ptFeeA1').value;
+			else
+				ptFeeSubTotal += +control.controls[i].get('ptFeeA2').value;
+
+			if (control.controls[i].get('isProFeeA1').value === '1')
+				proFeeSubTotal += +control.controls[i].get('proFeeA1').value;
+			else
+				proFeeSubTotal += +control.controls[i].get('proFeeA2').value;
+		}
+
+		return { ptFeeSubTotal: ptFeeSubTotal, proFeeSubTotal: proFeeSubTotal };
+	}
+
+
 	removeService(index) {
 		if (index > 0) {
 			this.lead.services.splice(index, 1);
 			const control = <FormArray>this.leadForm.controls['services'];
 			for (let i = control.length - 1; i >= 0; i--) {
-				control.removeAt(i)
+				if (i === index)
+					control.removeAt(i)
 			}
-			this.initServicesForm();
+			//this.initServicesForm();
+			//this.loadServicesForFilter();
 		}
 	}
 
@@ -387,12 +405,21 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		const controls = this.leadForm.controls;
 		/** check form */
 		if (this.leadForm.invalid) {
+			Object.keys(controls).forEach(controlName => {
+				if (controls[controlName].status === 'INVALID')
+					console.log('invlaid controls', controlName);
+			}
+			);
+
+
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
 			(<FormArray>this.leadForm.get('services')).controls.forEach((group: FormGroup) => {
 				(<any>Object).values(group.controls).forEach((control: FormControl) => {
 					control.markAsTouched();
+					if (control.status === 'INVALID')
+						console.log('invlaid controls', control.errors);
 				})
 			});
 
@@ -485,13 +512,15 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			var s = new LeadServicesModel();
 			if (control.controls[i].get('serviceId').value)
 				s.serviceId = +control.controls[i].get('serviceId').value.id;
-			s.professionalId = +control.controls[i].get('professionalId').value
+			s.professionalId = +control.controls[i].get('professionalId').value;
 
 			s.ptFeeId = +control.controls[i].get('ptFeeId').value
+			s.isPtFeeA1 = +control.controls[i].get('isPtFeeA1').value
 			s.ptFeeA1 = +control.controls[i].get('ptFeeA1').value
 			s.ptFeeA2 = +control.controls[i].get('ptFeeA2').value
 
 			s.proFeeId = +control.controls[i].get('proFeeId').value
+			s.isProFeeA1 = +control.controls[i].get('isProFeeA1').value
 			s.proFeeA1 = +control.controls[i].get('proFeeA1').value
 			s.proFeeA2 = +control.controls[i].get('proFeeA2').value
 
@@ -595,6 +624,20 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.hasFormErrors = false;
 	}
 
+	convertToBooking() {
+		this.spinner.show();
+		this.leadService.convertToBooking(this.lead.id).toPromise().then((res) => {
+			const message = `Booking created successfully.`;
+			this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+			this.loadLeadFromService(this.lead.id);
+		}).catch((e) => {
+			this.spinner.hide();
+			const message = `An error occured. Please try again later.`;
+			this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+		}).finally(() => {
+			this.spinner.hide();
+		});
+	}
 
 	/*Fitlers Section*/
 	loadStaticResources() {
@@ -817,10 +860,40 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 					if (sobj)
 						control.controls[i].patchValue({ 'serviceId': sobj[0] });
 				}
+
+				var isPtFeeA1 = control.controls[i].get('isPtFeeA1').value;
+				var isProFeeA1 = control.controls[i].get('isProFeeA1').value;
+				if (isPtFeeA1 != undefined || isPtFeeA1 != null)
+					control.controls[i].patchValue({ 'isPtFeeA1': isPtFeeA1.toString() });
+
+				if (isProFeeA1 != undefined || isProFeeA1 != null)
+					control.controls[i].patchValue({ 'isProFeeA1': isProFeeA1.toString() });
+
+				control.controls[i].get('isPtFeeA1').valueChanges.subscribe((r) => {
+					if (r === '1') {
+						control.controls[i].get('ptFeeA1').enable();
+						control.controls[i].get('ptFeeA2').disable();
+					}
+					else {
+						control.controls[i].get('ptFeeA1').disable();
+						control.controls[i].get('ptFeeA2').enable();
+					}
+				});
+
+				control.controls[i].get('isProFeeA1').valueChanges.subscribe((r) => {
+					if (r === '1') {
+						control.controls[i].get('proFeeA1').enable();
+						control.controls[i].get('proFeeA2').disable();
+					}
+					else {
+						control.controls[i].get('proFeeA1').disable();
+						control.controls[i].get('proFeeA2').enable();
+					}
+				});
 			}
 		});
-
 	}
+
 	private _filterServices(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.servicesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
@@ -847,12 +920,11 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			this.leadForm.get('ptFeeId').setValue('');
 			this.leadForm.get('ptFeeA1').setValue('');
 			this.leadForm.get('ptFeeA2').setValue('');
-			this.leadForm.get('ptFeeCustom').setValue('');
 
 			this.leadForm.get('proFeeId').setValue('');
 			this.leadForm.get('proFeeA1').setValue('');
 			this.leadForm.get('proFeeA2').setValue('');
-			this.leadForm.get('proFeeCustom').setValue('');
+
 		}
 	}
 
@@ -1013,7 +1085,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		if (controls.countryId.value)
 			ieModel.billingCountryId = controls.countryId.value.id;
 		if (controls.countryId.value)
-		ieModel.mailingCountryId = controls.countryId.value.id;
+			ieModel.mailingCountryId = controls.countryId.value.id;
 		ieModel.description = controls.leadDescription.value;
 		ieModel.paymentMethodId = controls.preferredPaymentMethodId.value;
 		ieModel.bank = controls.bankName.value;

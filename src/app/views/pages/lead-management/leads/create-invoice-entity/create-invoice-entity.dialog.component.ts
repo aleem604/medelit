@@ -27,6 +27,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 })
 export class CreateInvoiceEntityDialogComponent implements OnInit, OnDestroy {
 	// Public properties
+	viewLoading: boolean;
 	invoiceEntity: InvoiceEntityModel;
 	invoiceEntityId$: Observable<number>;
 	titles: Observable<StaticDataModel>;

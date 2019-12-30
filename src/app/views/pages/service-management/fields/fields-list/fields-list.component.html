@@ -85,7 +85,7 @@
 					   matSort
 					   #sort1="matSort"
 					   matSortActive="id"
-					   matSortDirection="asc"
+					   matSortDirection="desc"
 					   matSortDisableClear>
 				<!-- Checkbox Column -->
 				<ng-container matColumnDef="select">
@@ -115,7 +115,7 @@
 					<mat-cell *matCellDef="let field">{{field.code}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="field">
+				<ng-container matColumnDef="fields">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Field</mat-header-cell>
 					<mat-cell *matCellDef="let field">{{field.field}}</mat-cell>
 				</ng-container>

@@ -1,0 +1,47 @@
+<div class="p-4 position-relative">
+	<h1 mat-dialog-title>Select an existing invoice to attach booking</h1>
+	<div mat-dialog-content>
+		<div class="row mb-3">
+			<kt-alert class="kt-alert" *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+				<span [innerHtml]="operationErrors"></span>
+			</kt-alert>
+		</div>
+
+
+		<div class="row mb-3">
+
+			<div class="col-md-9 kt-margin-bottom-20-mobile pt-3">
+				<mat-form-field class="example-full-width">
+					<input type="text" placeholder="Look up for a existing invoices"
+						   aria-label="Number" matInput [matAutocomplete]="invoiceAuto"
+						   #invoiceControl [formControl]="invoiceCtrl">
+					<button mat-button *ngIf="invoiceControl.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceCtrl.setValue('')">
+						<mat-icon>close</mat-icon>
+					</button>
+					<mat-autocomplete autoActiveFirstOption #invoiceAuto="matAutocomplete"
+									  [displayWith]="displayFn">
+						<mat-option *ngFor="let t of filteredInvoices | async" [value]="t">
+							{{t.value}}
+						</mat-option>
+					</mat-autocomplete>
+					<mat-hint align="start">
+						Select a <strong>Invoice </strong>
+					</mat-hint>
+					<mat-error>
+						Invoice is
+						<strong>required</strong>
+					</mat-error>
+				</mat-form-field>
+			</div>
+			<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+				<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="invoiceCtrl.markAsTouched(); invoiceCtrl.valid && attachToBooking(invoiceControl)" [disabled]="!invoiceCtrl.valid" mat-raised-button matTooltip="Select">
+					<span class="kt-hidden-mobile">Select</span>
+				</a>
+			</div>
+		</div>
+
+	</div>
+	<div mat-dialog-actions class="">
+		<button mat-button (click)="onCancel()">Close</button>
+	</div>
+</div>

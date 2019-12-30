@@ -13,7 +13,7 @@
 			<!-- start::FILTERS -->
 			<div class="kt-form__filtration">
 				<div class="row align-items-center">
-					<div class="col-md-4 kt-margin-bottom-10-mobile">
+					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field class="example-full-width">
 							<input type="text" placeholder="Pick status" aria-label="Number" matInput [matAutocomplete]="status" [formControl]="statusControl">
 							<mat-autocomplete autoActiveFirstOption #status="matAutocomplete"
@@ -31,7 +31,7 @@
 						</mat-form-field>
 					</div>
 					
-					<div class="col-md-4 kt-margin-bottom-10-mobile">
+					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field>
 							<input matInput placeholder="Search lead" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
@@ -141,14 +141,7 @@
 					</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="condition">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Condition</mat-header-cell>
-					<mat-cell *matCellDef="let lead">
-						<span class="kt-badge kt-badge--{{ getItemCssClassByCondition(lead.condition) }} kt-badge--dot"></span>&nbsp;
-						<span class="kt--font-bold kt-font-{{ getItemCssClassByCondition(lead.condition) }}">{{ getItemConditionString(lead.condition) }}</span>
-					</mat-cell>
-				</ng-container>
-
+				
 				<ng-container matColumnDef="actions">
 					<mat-header-cell *matHeaderCellDef>
 						Actions
@@ -161,9 +154,9 @@
 						<button mat-icon-button color="warn" type="button" (click)="deleteLead(lead)" matTooltip="Delete lead">
 							<mat-icon>delete</mat-icon>
 						</button>&nbsp;
-						<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
+						<!--<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
 							<mat-icon>more_vert</mat-icon>
-						</button>
+						</button>-->
 						<mat-menu #menu="matMenu">
 							<button mat-menu-item type="button" (click)="convertToBooking(lead)">
 								<mat-icon>subject</mat-icon>

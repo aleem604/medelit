@@ -29,7 +29,7 @@
 							</mat-hint>
 						</mat-form-field>
 					</div>
-					<div class="col-md-4 kt-margin-bottom-10-mobile">
+					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field>
 							<input matInput placeholder="Search invoice" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
@@ -39,11 +39,7 @@
 					</div>
 				</div>
 			</div>
-			<!-- end::FILTERS -->
 
-			<!-- start::GROUP ACTIONS -->
-			<!-- Group actions list: 'Delete selected' | 'Fetch selected' | 'Update status for selected' -->
-			<!-- Group actions are shared for all LISTS | See '../../_shared' folder -->
 			<div class="row align-items-center collapse kt-form__group-actions kt-margin-top-20 kt-margin-bottom-20" [ngClass]="{'show' : selection.selected.length > 0}">
 				<div class="col-xl-12">
 					<div class="kt-form__group kt-form__group--inline">
@@ -51,32 +47,25 @@
 							<label class="kt--font-bold kt-font-danger-">Selected records count: {{ selection.selected.length }}</label>
 						</div>
 						<div class="kt-form__control kt-form__group--inline">
-							<button mat-raised-button color="accent" (click)="deleteInvoices()" matTooltip="Delete selected invoices"  class="mat-button-mt-4">
+							<button mat-raised-button color="accent" (click)="deleteInvoices()" matTooltip="Delete selected invoices" class="mat-button-mt-4">
 								<mat-icon>delete</mat-icon>
 								Delete All
-							</button>&nbsp;<!-- Call 'delete-entity-dialog' from _shared folder -->
-							<button mat-raised-button (click)="fetchInvoices()" matTooltip="Fetch selected invoices"  class="mat-button-mt-4">
+							</button>&nbsp;
+							<button mat-raised-button (click)="fetchInvoices()" matTooltip="Fetch selected invoices" class="mat-button-mt-4">
 								<mat-icon>clear_all</mat-icon>
 								Fetch Selected Records
-							</button>&nbsp;<!-- Call 'fetch-entity-dialog' from _shared folder -->
-							<button mat-raised-button (click)="updateStatusForInvoices()" matTooltip="Update status for selected invoices"  class="mat-button-mt-4">
+							</button>&nbsp;
+							<button mat-raised-button (click)="updateStatusForInvoices()" matTooltip="Update status for selected invoices" class="mat-button-mt-4">
 								<mat-icon>update</mat-icon>
 								Update status
-							</button><!-- Call 'update-stated-dialog' from _shared folder -->
+							</button>
 						</div>
 					</div>
 				</div>
 			</div>
-			<!-- end::GROUP ACTIONS -->
 		</div>
-		<!-- end::FILTERS & GROUP ACTIONS -->
 
-		<!-- MATERIAL TABLE | Binded to datasources -->
-		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
 		<div class="mat-table__wrapper">
-			<!-- Checkbox Column -->
-			<!-- Table with selection -->
-			<!-- https://run.stackblitz.com/api/angular/v1?file=app%2Ftable-selection-example.ts -->
 			<mat-table class="lmat-elevation-z8"
 					   #table
 					   [dataSource]="dataSource"
@@ -85,7 +74,7 @@
 					   matSortActive="invoiceNumber"
 					   matSortDirection="desc"
 					   matSortDisableClear>
-				<!-- Checkbox Column -->
+
 				<ng-container matColumnDef="select">
 					<mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
 						<mat-checkbox (change)="$event ? masterToggle() : null"
@@ -104,8 +93,8 @@
 				</ng-container>
 
 				<ng-container matColumnDef="invoiceNumber">
-					<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-vinCode">Id</mat-header-cell>
-					<mat-cell *matCellDef="let invoice" class="mat-column-vinCode">{{invoice.invoiceNumber}}</mat-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Number</mat-header-cell>
+					<mat-cell *matCellDef="let invoice">{{invoice.invoiceNumber}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="createDate">
@@ -134,7 +123,7 @@
 				</ng-container>
 
 				<ng-container matColumnDef="amount">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Total</mat-header-cell>
 					<mat-cell *matCellDef="let invoice">£{{invoice.amount}}</mat-cell>
 				</ng-container>
 
@@ -164,9 +153,12 @@
 						<button mat-icon-button color="warn" type="button" (click)="deleteInvoice(invoice)" matTooltip="Delete invoice">
 							<mat-icon>delete</mat-icon>
 						</button>&nbsp;
+						<button mat-icon-button color="warn" type="button" [routerLink]="['/invoice-management/invoices/view/', invoice.id]" matTooltip="View invoice">
+							<mat-icon>remove_red_eye</mat-icon>
+						</button>&nbsp;
 						<!--<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
-				<mat-icon>more_vert</mat-icon>
-			</button>-->
+							<mat-icon>more_vert</mat-icon>
+						</button>-->
 						<mat-menu #menu="matMenu">
 							<button mat-menu-item type="button">
 								<mat-icon>subject</mat-icon>
@@ -186,13 +178,9 @@
 			<div class="mat-table__message" *ngIf="!dataSource.hasItems">No records found</div>
 			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">Please wait....</div>
 		</div>
-
-		<!-- start: BOTTOM -->
 		<div class="mat-table__bottom">
 			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
 			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
 		</div>
-		<!-- end: BOTTOM -->
 	</kt-portlet-body>
-	<!-- end::Body -->
 </kt-portlet>

@@ -27,7 +27,8 @@ import {
 
 	FilterModel,
 	StaticDataService,
-	ApiResponse
+	ApiResponse,
+	MedelitStaticData
 } from '../../../../../core/medelit';
 import { ENTER, COMMA, CONTROL } from '@angular/cdk/keycodes';
 import { lang } from 'moment';
@@ -69,7 +70,6 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	filteredTitles: Observable<FilterModel[]>;
 
 	accCodesForFilter: FilterModel[] = [];
-	filteredAccCodes: Observable<FilterModel[]>;
 
 	citiesForFilter: FilterModel[] = [];
 	filteredCities: Observable<FilterModel[]>;
@@ -81,22 +81,17 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	filteredCountries: Observable<FilterModel[]>;
 
 	applicationMethodsForFilter: FilterModel[] = [];
-	filteredApplicationMethods: Observable<FilterModel[]>;
 
 	applicationMeansForFilter: FilterModel[] = [];
-	filteredApplicationMeans: Observable<FilterModel[]>;
 
 	contractStatusForFilter: FilterModel[] = [];
-	filteredContractStatus: Observable<FilterModel[]>;
 
 	accountCodesForFilter: FilterModel[] = [];
-	filteredAccountCodes: Observable<FilterModel[]>;
 
 	collaborationCodesForFilter: FilterModel[] = [];
-	filteredCollaborationCodes: Observable<FilterModel[]>;
 
-	documentListSentOptions$: Observable<FilterModel[]>;
-	contractStatusOptions$: Observable<FilterModel[]>;
+	documentListSentOptionsForFilter: FilterModel[];
+	contractStatusOptionsForFilter: FilterModel[];
 
 	languagesForFilter: FilterModel[] = [];
 	filteredLanguages: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
@@ -140,12 +135,12 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 				//	select(selectProfessionalById(id))
 				//).subscribe(result => {
 				//	if (!result) {
-						
+
 				//		return;
 				//	}
-					this.loadProfessionalFromService(id);
+				this.loadProfessionalFromService(id);
 
-					//this.loadProfessional(result);
+				//this.loadProfessional(result);
 				//});
 			} else {
 				const newProfessional = new ProfessionalModel();
@@ -171,17 +166,9 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		this.professionalId$ = of(_professional.id);
 		this.oldProfessional = Object.assign({}, _professional);
 		this.initProfessional();
-		this.loadLanguagesForFilter();
-		this.loadTitlesForFilter();
-		this.loadAccountCodesForFilter();
-		this.loadCountiesForFilter();
-		this.loadCitiesForFilter();
-		this.loadClinicCitiesForFilter();
-		this.loadActiveCollaborationsForFilter();
-		this.loadApplicationMethodsForFilter();
-		this.loadApplicationMeansForFilter();
+		this.loadResources();
 
-	
+
 		if (fromService) {
 			this.cdr.detectChanges();
 		}
@@ -293,24 +280,75 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 
 		});
 
-		this.staticService.getDocumentListSentForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((res) => {
-			this.documentListSentOptions$ = of(res);
-			var data = res;
-			if (this.professional.documentListSentId) {
-				this.professionalForm.get('documentListSentId').setValue(data.find((el) => {return el.id == this.professional.documentListSentId }));
-			}
-
-		});
-		this.staticService.getContractStatusOptions().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((res) => {
-			this.contractStatusOptions$ = of(res);
-			var data = res;
-			if (this.professional.contractStatusId) {
-				this.professionalForm.get('contractStatusId').setValue(data.find((el) => { return el.id == this.professional.contractStatusId }));
-			}
-		});
-
-		
 	}
+	loadResources() {
+		this.loadLanguagesForFilter();
+		this.loadCountiesForFilter();
+		this.loadCitiesForFilter();
+		this.loadClinicCitiesForFilter();
+
+
+		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
+			this.titlesForFilter = data.map((el) => { return { id: el.id, value: el.titles }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.professional.titleId) {
+				var obj = data.find((e) => { return e.id == this.professional.titleId });
+				if (obj)
+					this.professionalForm.get('titleId').setValue(obj.id);
+			}
+
+			// accound codes for filter
+			this.accountCodesForFilter = data.map((el) => { return { id: el.id, value: el.accountingCodes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.professional.accountingCodeId) {
+				var obj = data.find((e) => { return e.id == this.professional.accountingCodeId });
+				if (obj)
+					this.professionalForm.get('accountingCodeId').setValue(obj.id);
+			}
+
+			// collaboration codes for filter
+			this.collaborationCodesForFilter = data.map((el) => { return { id: el.id, value: el.collaborationCodes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.professional.activeCollaborationId) {
+				var obj = data.find((e) => { return e.id == this.professional.activeCollaborationId });
+				if (obj)
+					this.professionalForm.get('activeCollaborationId').setValue(obj.id);
+			}
+
+			// application methods for filter
+			this.applicationMethodsForFilter = data.map((el) => { return { id: el.id, value: el.applicationMethods }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.professional.applicationMethodId) {
+				var obj = data.find((e) => { return e.id == this.professional.applicationMethodId });
+				if (obj)
+					this.professionalForm.get('applicationMethodId').setValue(obj.id);
+			}
+			// application means for filter
+			this.applicationMeansForFilter = data.map((el) => { return { id: el.id, value: el.applicationMeans }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.professional.applicationMethodId) {
+				var obj = data.find((e) => { return e.id == this.professional.applicationMethodId });
+				if (obj)
+					this.professionalForm.get('applicationMethodId').setValue(obj.id);
+			}
+
+			// contract status for filter
+			this.contractStatusForFilter = data.map((el) => { return { id: el.id, value: el.contractStatus }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.professional.contractStatusId) {
+				var obj = data.find((e) => { return e.id == this.professional.contractStatusId });
+				if (obj)
+					this.professionalForm.get('contractStatusId').setValue(obj.id);
+			}
+
+			// document list sent for filter
+			this.documentListSentOptionsForFilter = data.map((el) => { return { id: el.id, value: el.documentListSentOptions }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.professional.documentListSentId) {
+				var obj = data.find((e) => { return e.id == this.professional.documentListSentId });
+				if (obj)
+					this.professionalForm.get('documentListSentId').setValue(obj.id);
+			}
+
+			
+		});
+
+	}
+
+
 
 	goBack(id) {
 		this.loadingSubject.next(false);
@@ -373,9 +411,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		const controls = this.professionalForm.controls;
 		const _professional = new ProfessionalModel();
 		_professional.id = this.professional.id;
-
-		if (controls.titleId.value)
-			_professional.titleId = controls.titleId.value.id;
+		_professional.titleId = controls.titleId.value;
 		_professional.name = controls.name.value;
 		_professional.email = controls.email.value;
 		_professional.email2 = controls.email2.value;
@@ -410,26 +446,20 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		_professional.accountName = controls.accountName.value;
 		_professional.accountNumber = controls.accountNumber.value;
 		_professional.sortCode = controls.sortCode.value;
-		if (controls.accountingCodeId.value)
-			_professional.accountingCodeId = controls.accountingCodeId.value.id;
-		if (controls.activeCollaborationId.value)
-			_professional.activeCollaborationId = controls.activeCollaborationId.value.id;
+		_professional.accountingCodeId = controls.accountingCodeId.value;
+		_professional.activeCollaborationId = controls.activeCollaborationId.value;
 		_professional.contractDate = controls.contractDate.value;
 		_professional.contractEndDate = controls.contractEndDate.value;
 		_professional.clinicAgreement = +controls.clinicAgreement.value;
 		_professional.firstContactDate = controls.firstContactDate.value;
 		_professional.lastContactDate = controls.lastContactDate.value;
-		if (controls.applicationMethodId.value)
-			_professional.applicationMethodId = controls.applicationMethodId.value.id;
-		if (controls.applicationMeansId.value)
-			_professional.applicationMeansId = controls.applicationMeansId.value.id;
+		_professional.applicationMethodId = +controls.applicationMethodId.value;
+		_professional.applicationMeansId = +controls.applicationMeansId.value;
 		_professional.colleagueReferring = controls.colleagueReferring.value;
 		_professional.workPlace = controls.workPlace.value;
 		_professional.insuranceExpiryDate = controls.insuranceExpiryDate.value;
-		if (controls.contractStatusId.value)
-			_professional.contractStatusId = controls.contractStatusId.value.id;
-		if (controls.documentListSentId.value)
-			_professional.documentListSentId = controls.documentListSentId.value.id;
+		_professional.contractStatusId = +controls.contractStatusId.value;
+		_professional.documentListSentId = controls.documentListSentId.value;
 		_professional.calendarActivation = +controls.calendarActivation.value;
 		_professional.protaxCode = controls.protaxCode.value;
 
@@ -574,30 +604,6 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 
 	// end languages fitler
 
-	// account code id filter
-	loadAccountCodesForFilter() {
-		this.staticService.getAccountingCodesForFilter().subscribe(res => {
-			this.accountCodesForFilter = res.data;
-
-			this.filteredAccountCodes = this.professionalForm.get('accountingCodeId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterAccountingCodes(value))
-				);
-			if (this.professional.accountingCodeId > 0) {
-				var elem = this.accountCodesForFilter.find(x => x.id == this.professional.accountingCodeId);
-				if (elem) {
-					this.professionalForm.patchValue({ 'accountingCodeId': { id: elem.id, value: elem.value } });
-				}
-			}
-		});
-
-	}
-	private _filterAccountingCodes(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.accountCodesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end account code id filter
 
 	// cities
 	loadCitiesForFilter() {
@@ -675,84 +681,6 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		return this.countriesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
 	}
 	// end account code id filter
-
-	// active collaboration
-	loadActiveCollaborationsForFilter() {
-		this.staticService.getCollaborationCodes().subscribe(res => {
-			this.collaborationCodesForFilter = res.data;
-
-			this.filteredCollaborationCodes = this.professionalForm.get('activeCollaborationId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterCollaborationCodes(value))
-				);
-			if (this.professional.countryId > 0) {
-				var elem = this.countriesForFilter.find(x => x.id == this.professional.activeCollaborationId);
-				if (elem) {
-					this.professionalForm.patchValue({ 'activeCollaborationId': { id: elem.id, value: elem.value } });
-				}
-			}
-		});
-
-	}
-	private _filterCollaborationCodes(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.collaborationCodesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end account code id filter
-
-	// applicaitonMethods
-	loadApplicationMethodsForFilter() {
-		this.staticService.getApplicationMethodsForFilter().subscribe(res => {
-			this.applicationMethodsForFilter = res.data;
-
-			this.filteredApplicationMethods = this.professionalForm.get('applicationMethodId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterApplicationMethods(value))
-				);
-			if (this.professional.applicationMethodId > 0) {
-				var elem = this.countriesForFilter.find(x => x.id == this.professional.applicationMethodId);
-				if (elem) {
-					this.professionalForm.patchValue({ 'applicationMethodId': { id: elem.id, value: elem.value } });
-				}
-			}
-		});
-
-	}
-	private _filterApplicationMethods(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.applicationMethodsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end account code id filter
-
-	// applicaitonMeans
-	loadApplicationMeansForFilter() {
-		this.staticService.getApplicationMeansForFilter().subscribe(res => {
-			this.applicationMeansForFilter = res.data;
-
-			this.filteredApplicationMeans = this.professionalForm.get('applicationMeansId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterApplicationMeans(value))
-				);
-			if (this.professional.applicationMeansId > 0) {
-				var elem = this.countriesForFilter.find(x => x.id == this.professional.applicationMeansId);
-				if (elem) {
-					this.professionalForm.patchValue({ 'applicationMeansId': { id: elem.id, value: elem.value } });
-				}
-			}
-		});
-
-	}
-	private _filterApplicationMeans(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.applicationMeansForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end account code id filter
-
-
-
 
 
 

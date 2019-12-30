@@ -41,13 +41,11 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Pick title" aria-label="Number" matInput [matAutocomplete]="titleAuto" [formControlName]="'titleId'">
-									<mat-autocomplete autoActiveFirstOption #titleAuto="matAutocomplete"
-													  [displayWith]="displayFn">
-										<mat-option *ngFor="let t of filteredTitles | async" [value]="t">
-											{{t.value}}
+									<mat-select [formControlName]="'titleId'">
+										<mat-option *ngFor="let val of titlesForFilter" [value]="val.id">
+											{{ val.value }}
 										</mat-option>
-									</mat-autocomplete>
+									</mat-select>
 									<mat-hint align="start">
 										Select a <strong>Title </strong>
 									</mat-hint>
@@ -354,7 +352,7 @@
 									<h5>Notes</h5>
 								</div>
 							</div>
-							<div class="col-md-6 kt-margin-bottom-10-mobile">
+							<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<textarea matInput rows="7" placeholder="Enter description" formControlName="description"></textarea>
 									<mat-hint align="start">
@@ -366,7 +364,7 @@
 									</mat-error>
 								</mat-form-field>
 							</div>
-							<div class="col-md-6 kt-margin-bottom-10-mobile">
+							<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<textarea matInput rows="7" placeholder="Enter invoicing notes" formControlName="invoicingNotes"></textarea>
 									<mat-hint align="start">
@@ -476,13 +474,11 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Pick accounting code" aria-label="Number" matInput [matAutocomplete]="accountingCodeIdAuto" [formControlName]="'accountingCodeId'">
-									<mat-autocomplete autoActiveFirstOption #accountingCodeIdAuto="matAutocomplete"
-													  [displayWith]="displayFn">
-										<mat-option *ngFor="let t of filteredAccountCodes | async" [value]="t">
-											{{t.value}}
+									<mat-select [formControlName]="'accountingCodeId'">
+										<mat-option *ngFor="let val of accountCodesForFilter" [value]="val.id">
+											{{ val.value }}
 										</mat-option>
-									</mat-autocomplete>
+									</mat-select>
 									<mat-hint align="start">
 										Select a <strong>Accounting Code </strong>
 									</mat-hint>
@@ -500,15 +496,13 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Pick collaboration code" aria-label="Number" matInput [matAutocomplete]="activeCollaborationIdAuto" [formControlName]="'activeCollaborationId'">
-									<mat-autocomplete autoActiveFirstOption #activeCollaborationIdAuto="matAutocomplete"
-													  [displayWith]="displayFn">
-										<mat-option *ngFor="let t of filteredCollaborationCodes | async" [value]="t">
-											{{t.value}}
+									<mat-select [formControlName]="'activeCollaborationId'">
+										<mat-option *ngFor="let val of collaborationCodesForFilter" [value]="val.id">
+											{{ val.value }}
 										</mat-option>
-									</mat-autocomplete>
+									</mat-select>
 									<mat-hint align="start">
-										Select a <strong>active collaboration </strong>
+										Select an <strong>active collaboration </strong>
 									</mat-hint>
 									<mat-error>
 										Active Collaboration is
@@ -600,13 +594,11 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Pick application method" aria-label="Number" matInput [matAutocomplete]="appMethodAuto" [formControlName]="'applicationMethodId'">
-									<mat-autocomplete autoActiveFirstOption #appMethodAuto="matAutocomplete"
-													  [displayWith]="displayFn">
-										<mat-option *ngFor="let t of filteredApplicationMethods | async" [value]="t">
-											{{t.value}}
+									<mat-select [formControlName]="'applicationMethodId'">
+										<mat-option *ngFor="let val of applicationMethodsForFilter" [value]="val.id">
+											{{ val.value }}
 										</mat-option>
-									</mat-autocomplete>
+									</mat-select>
 									<mat-hint align="start">
 										Select a <strong>application method </strong>
 									</mat-hint>
@@ -618,13 +610,11 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Pick application mean" aria-label="Number" matInput [matAutocomplete]="applicationMeansAuto" [formControlName]="'applicationMeansId'">
-									<mat-autocomplete autoActiveFirstOption #applicationMeansAuto="matAutocomplete"
-													  [displayWith]="displayFn">
-										<mat-option *ngFor="let t of filteredApplicationMeans | async" [value]="t">
-											{{t.value}}
+									<mat-select [formControlName]="'applicationMeansId'">
+										<mat-option *ngFor="let val of applicationMeansForFilter" [value]="val.id">
+											{{ val.value }}
 										</mat-option>
-									</mat-autocomplete>
+									</mat-select>
 									<mat-hint align="start">
 										Select a <strong>Application Means </strong>
 									</mat-hint>
@@ -683,7 +673,7 @@
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">									
 									<mat-select [formControlName]="'contractStatusId'">
-										<mat-option *ngFor="let val of (contractStatusOptions$ | async)" [value]="val">
+										<mat-option *ngFor="let val of contractStatusForFilter" [value]="val.id">
 											{{ val.value }}
 										</mat-option>
 									</mat-select>
@@ -699,7 +689,7 @@
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="common-form-field">
 									<mat-select [formControlName]="'documentListSentId'">
-										<mat-option *ngFor="let val of (documentListSentOptions$ | async)" [value]="val">
+										<mat-option *ngFor="let val of documentListSentOptionsForFilter" [value]="val.id">
 											{{ val.value }}
 										</mat-option>
 									</mat-select>

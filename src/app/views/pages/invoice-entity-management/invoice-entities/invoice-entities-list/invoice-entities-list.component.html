@@ -13,7 +13,7 @@
 			<!-- start::FILTERS -->
 			<div class="kt-form__filtration">
 				<div class="row align-items-center">
-					<div class="col-md-3 kt-margin-bottom-10-mobile">
+					<div class="col-md-4 kt-margin-bottom-10-mobile">
 						<mat-form-field class="example-full-width">
 							<input type="text" placeholder="Pick status" aria-label="Number" matInput [matAutocomplete]="status" [formControl]="statusControl">
 							<mat-autocomplete autoActiveFirstOption #status="matAutocomplete"
@@ -39,11 +39,7 @@
 					</div>
 				</div>
 			</div>
-			<!-- end::FILTERS -->
 
-			<!-- start::GROUP ACTIONS -->
-			<!-- Group actions list: 'Delete selected' | 'Fetch selected' | 'Update status for selected' -->
-			<!-- Group actions are shared for all LISTS | See '../../_shared' folder -->
 			<div class="row align-items-center collapse kt-form__group-actions kt-margin-top-20 kt-margin-bottom-20" [ngClass]="{'show' : selection.selected.length > 0}">
 				<div class="col-xl-12">
 					<div class="kt-form__group kt-form__group--inline">
@@ -69,10 +65,7 @@
 			</div>
 			<!-- end::GROUP ACTIONS -->
 		</div>
-		<!-- end::FILTERS & GROUP ACTIONS -->
 
-		<!-- MATERIAL TABLE | Binded to datasources -->
-		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
 		<div class="mat-table__wrapper">
 			<!-- Checkbox Column -->
 			<!-- Table with selection -->
@@ -83,7 +76,7 @@
 					   matSort
 					   #sort1="matSort"
 					   matSortActive="id"
-					   matSortDirection="asc"
+					   matSortDirection="desc"
 					   matSortDisableClear>
 				<!-- Checkbox Column -->
 				<ng-container matColumnDef="select">
@@ -104,8 +97,8 @@
 				</ng-container>
 
 				<ng-container matColumnDef="id">
-					<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-vinCode">Id</mat-header-cell>
-					<mat-cell *matCellDef="let invoiceEntity" class="mat-column-vinCode">{{invoiceEntity.id}}</mat-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Id</mat-header-cell>
+					<mat-cell *matCellDef="let invoiceEntity">{{invoiceEntity.id}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="name">
@@ -130,7 +123,7 @@
 
 				<ng-container matColumnDef="vat">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>VAT Number</mat-header-cell>
-					<mat-cell *matCellDef="let invoiceEntity">{{invoiceEntity.vat}}</mat-cell>
+					<mat-cell *matCellDef="let invoiceEntity">{{invoiceEntity.vatNumber}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="bank">

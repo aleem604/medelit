@@ -19,8 +19,11 @@ import { LayoutUtilsService, MessageType, QueryParamsModel } from '../../../../.
 import { FormControl } from '@angular/forms';
 import { transcode } from 'buffer';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { BookingDataSource, FilterModel, BookingModel, StaticDataService, BookingService, BookingsPageRequested, OneBookingDeleted, ManyBookingsDeleted, BookingsStatusUpdated } from '../../../../../core/medelit';
+import { BookingDataSource, FilterModel, BookingModel, StaticDataService, BookingService, BookingsPageRequested, OneBookingDeleted, ManyBookingsDeleted, BookingsStatusUpdated, InvoicesService } from '../../../../../core/medelit';
 import { selectBookingsPageLastQuery } from '../../../../../core/medelit/_selectors/booking.selectors';
+import { BookingCloneDialog } from '../booking-clone-dialog/booking-clone-dialog';
+import { ResourceLoader } from '@angular/compiler';
+import { BookingCycleDialog } from '../booking-cycle-dialog/booking-cycle-dialog';
 
 
 @Component({
@@ -76,6 +79,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 		private layoutUtilsService: LayoutUtilsService,
 		private spinner: NgxSpinnerService,
 		private bookingService: BookingService,
+		private invoiceService: InvoicesService,
 		private cdr: ChangeDetectorRef,
 		private store: Store<AppState>) { }
 
@@ -248,6 +252,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 		this.layoutUtilsService.fetchElements(messages);
 	}
 
+	
+
+	
+
+
+	
+
 	updateStatusForBookings() {
 		const _title = 'Update status for selected bookings';
 		const _updateMessage = 'Status has been updated for selected bookings';
@@ -285,10 +296,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 		this.router.navigate(['../bookings/edit', id], { relativeTo: this.activatedRoute });
 	}
 
-
 	createInvoice(booking: BookingModel) {
 		this.spinner.show();
-		this.bookingService.createInvoice(booking.id).toPromise().then((res) => {
+		this.invoiceService.createInvoiceFromBooking(booking.id).toPromise().then((res) => {
 			this.spinner.hide();
 			const message = `New invoice created successfully.`;
 			this.layoutUtilsService.showActionNotification(message, MessageType.Create, 30000, true, true);
@@ -378,14 +388,11 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	
 
 	private _filterStatuses(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.statusesForFilter.filter(status => this._normalizeValue(status.value).includes(filterValue));
 	}
-
-	
 
 	private _normalizeValue(value: string): string {
 		if (value && value.length > 0)

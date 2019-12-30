@@ -2,7 +2,7 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~material-design-icons/iconfont/material-icons.css";
 @import "~highlight.js/styles/googlecode.css";
-
+@import "~ng-pick-datetime/assets/style/picker.min.css";
 // header base skins
 .kt-header-base-light {
 	@import "sass/global/layout/header/skins/base/light.scss";
@@ -73,4 +73,7 @@
 }
 .font-500{
 	font-weight:500 !important;
+}
+.cursor-pointer{
+	cursor:pointer;
 }

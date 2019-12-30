@@ -13,7 +13,7 @@
 			<!-- start::FILTERS -->
 			<div class="kt-form__filtration">
 				<div class="row align-items-center">
-					<div class="col-md-2 kt-margin-bottom-10-mobile">
+					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field class="example-full-width">
 							<input type="text" placeholder="Pick status" aria-label="Number" matInput [matAutocomplete]="status" [formControl]="statusControl">
 							<mat-autocomplete autoActiveFirstOption #status="matAutocomplete"
@@ -31,7 +31,7 @@
 						</mat-form-field>
 					</div>
 					
-					<div class="col-md-4 kt-margin-bottom-10-mobile">
+					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field>
 							<input matInput placeholder="Search service" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
@@ -69,16 +69,10 @@
 					</div>
 				</div>
 			</div>
-			<!-- end::GROUP ACTIONS -->
 		</div>
-		<!-- end::FILTERS & GROUP ACTIONS -->
 
-		<!-- MATERIAL TABLE | Binded to datasources -->
-		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
 		<div class="mat-table__wrapper">
-			<!-- Checkbox Column -->
-			<!-- Table with selection -->
-			<!-- https://run.stackblitz.com/api/angular/v1?file=app%2Ftable-selection-example.ts -->
+
 			<mat-table class="lmat-elevation-z8"
 					   #table
 					   [dataSource]="dataSource"
@@ -87,7 +81,6 @@
 					   matSortActive="id"
 					   matSortDirection="asc"
 					   matSortDisableClear>
-				<!-- Checkbox Column -->
 				<ng-container matColumnDef="select">
 					<mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
 						<mat-checkbox (change)="$event ? masterToggle() : null"
@@ -106,8 +99,8 @@
 				</ng-container>
 
 				<ng-container matColumnDef="id">
-					<mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-vinCode">ID</mat-header-cell>
-					<mat-cell *matCellDef="let service" class="mat-column-vinCode">{{service.id}}</mat-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+					<mat-cell *matCellDef="let service">{{service.id}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="name">
@@ -122,12 +115,12 @@
 
 				<ng-container matColumnDef="ptFees">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>PT Fees</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.ptFees}}</mat-cell>
+					<mat-cell *matCellDef="let service">{{service.ptFee}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="proFees">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>PRO Fees</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.proFees}}</mat-cell>
+					<mat-cell *matCellDef="let service">{{service.proFee}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="coverMap">

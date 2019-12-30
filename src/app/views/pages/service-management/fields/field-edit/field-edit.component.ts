@@ -20,19 +20,11 @@ import {
 	selectLastCreatedProductId,
 	selectProductById,
 	SPECIFICATIONS_DICTIONARY,
-	ProductModel,
 	ProductOnServerCreated,
 	ProductUpdated,
-	ProductsService
+	ProductsService,
+    ProductModel
 } from '../../../../../core/medelit';
-
-const AVAILABLE_COLORS: string[] =
-	['Red', 'CadetBlue', 'Gold', 'LightSlateGrey', 'RoyalBlue', 'Crimson', 'Blue', 'Sienna', 'Indigo', 'Green', 'Violet',
-		'GoldenRod', 'OrangeRed', 'Khaki', 'Teal', 'Purple', 'Orange', 'Pink', 'Black', 'DarkTurquoise'];
-
-const AVAILABLE_MANUFACTURES: string[] =
-	['Pontiac', 'Subaru', 'Mitsubishi', 'Oldsmobile', 'Chevrolet', 'Chrysler', 'Suzuki', 'GMC', 'Cadillac', 'Mercury', 'Dodge',
-		'Ram', 'Lexus', 'Lamborghini', 'Honda', 'Nissan', 'Ford', 'Hyundai', 'Saab', 'Toyota'];
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -174,43 +166,10 @@ export class FieldEditComponent implements OnInit, OnDestroy {
 			VINCode: [this.product.VINCode, Validators.required]
 		});
 
-		this.filteredManufactures = this.productForm.controls.manufacture.valueChanges
-			.pipe(
-				startWith(''),
-				map(val => this.filterManufacture(val.toString()))
-			);
-		this.filteredColors = this.productForm.controls.color.valueChanges
-			.pipe(
-				startWith(''),
-				map(val => this.filterColor(val.toString()))
-			);
+		
 	}
 
-	/**
-	 * Filter manufacture
-	 *
-	 * @param val: string
-	 */
-	filterManufacture(val: string): string[] {
-		return AVAILABLE_MANUFACTURES.filter(option =>
-			option.toLowerCase().includes(val.toLowerCase()));
-	}
-
-	/**
-	 * Filter color
-	 *
-	 * @param val: string
-	 */
-	filterColor(val: string): string[] {
-		return AVAILABLE_COLORS.filter(option =>
-			option.toLowerCase().includes(val.toLowerCase()));
-	}
-
-	/**
-	 * Go back to the list
-	 *
-	 * @param id: any
-	 */
+	
 	goBack(id) {
 		this.loadingSubject.next(false);
 		const url = `/service-management/fields?id=${id}`;
@@ -221,12 +180,6 @@ export class FieldEditComponent implements OnInit, OnDestroy {
 		this.router.navigateByUrl('/service-management/fields', { relativeTo: this.activatedRoute });
 	}
 
-	/**
-	 * Refresh product
-	 *
-	 * @param isNew: boolean
-	 * @param id: number
-	 */
 	refreshProduct(isNew: boolean = false, id = 0) {
 		this.loadingSubject.next(false);
 		let url = this.router.url;

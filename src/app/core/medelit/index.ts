@@ -11,16 +11,18 @@ export { MyFilterPipe } from './_filters/mFilter';
 export * from './_adapter/app-date.adapter';
 
 // Models and Consts
+export { DashboardModel } from './_models/dashboard.model';
 export { FeeModel } from './_models/fee.model';
-export { InvoiceModel, InvoiceServicesModel } from './_models/invoice.model';
+export { InvoiceModel, BookingViewModel, InvoiceBookings } from './_models/invoice.model';
 export { InvoiceEntityModel } from './_models/invoice-entity.model';
+export { InvoiceView } from './_models/invoice-view.model';
 export { ProfessionalModel } from './_models/professional.model';
 export { StaticDataModel, MedelitStaticData } from './_models/static/static-data.model';
 export { FieldModel } from './_models/field.model';
 export { CustomerModel, CustomerServicesModel } from './_models/customer.model';
 export { CustomerModelOld } from './_models/customer-old.model';
 export { LeadModel, LeadServicesModel } from './_models/lead.model';
-export { BookingModel, BookingServicesModel } from './_models/booking.model';
+export { BookingModel } from './_models/booking.model';
 export { ServiceModel } from './_models/service.model';
 export { FilterModel } from './_models/filter.model';
 export { ApiResponse } from './_models/apireponse.model';
@@ -393,11 +395,12 @@ export {
 } from './_selectors/product-specification.selectors';
 
 // Services
+export { DashboardService } from './_services/';
+export { LeadsService } from './_services/';
 export { InvoicesService } from './_services/';
 export { InvoiceEntitiesService } from './_services/';
 export { FeesService } from './_services/';
 export { ProfessionalsService } from './_services/';
-export { LeadsService } from './_services/';
 export { BookingService } from './_services/';
 export { CustomersService } from './_services/';
 export { ServicesService } from './_services/';

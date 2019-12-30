@@ -75,6 +75,8 @@ import {WidgetModule} from './content/widgets/widget.module';
 import {InlineSVGModule} from 'ng-inline-svg';
 import {CartComponent} from './layout/topbar/cart/cart.component';
 import { MultipleSelectioComponent } from './mat-select-search/mat-select-search.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { SingleSelectioComponent } from './mat-single-select-search/mat-single-select-search.component';
 
 @NgModule({
 	declarations: [
@@ -85,6 +87,7 @@ import { MultipleSelectioComponent } from './mat-select-search/mat-select-search
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
 		AlertComponent,
+		ConfirmDialogComponent,
 
 		// topbar components
 		ContextMenu2Component,
@@ -110,7 +113,7 @@ import { MultipleSelectioComponent } from './mat-select-search/mat-select-search
 		UserProfile3Component,
 		CartComponent,
 		MultipleSelectioComponent,
-
+		SingleSelectioComponent,
 		ErrorComponent,
 	],
 	exports: [
@@ -124,6 +127,7 @@ import { MultipleSelectioComponent } from './mat-select-search/mat-select-search
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
 		AlertComponent,
+		ConfirmDialogComponent,
 
 		// topbar components
 		ContextMenu2Component,
@@ -149,6 +153,7 @@ import { MultipleSelectioComponent } from './mat-select-search/mat-select-search
 		UserProfile3Component,
 		CartComponent,
 		MultipleSelectioComponent,
+		SingleSelectioComponent,
 
 		ErrorComponent,
 	],

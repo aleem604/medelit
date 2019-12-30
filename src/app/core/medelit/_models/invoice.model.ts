@@ -11,11 +11,7 @@ export class InvoiceModel extends BaseModel {
 	invoiceNumber: string;
 	dueDate: Date;
 	invoiceDate: Date;
-	subTotal?: number;
-	taxCodeId?: number;
-	taxAmount?: number;
-	discount?: number;
-	totalInvoice?: number;
+	
 	statusId?: number;
 	paymentDue?: Date;
 	invoiceDeliveryDate: Date;
@@ -38,12 +34,18 @@ export class InvoiceModel extends BaseModel {
 	termsAndConditions: string;
 	invoiceDescription: string;
 	itemNameOnInvoice: string;
-	quantity?: number;
 	paymentArrivalDate?: Date;
 	proInvoiceDate?: Date;
-	assignedToId?: number;
-	services: InvoiceServicesModel[];
 
+	subTotal?: number;
+	discount?: number;
+	totalInvoice?: number;
+	
+
+
+	invoiceBookings: InvoiceBookings[];
+
+	assignedToId?: number;
 	status: eRecordStatus;
 	createDate: Date;
 	createdById?: number;
@@ -57,23 +59,28 @@ export class InvoiceModel extends BaseModel {
 		this.invoiceSentByEmailId = 0;
 		this.invoiceSentByMailId = 0;
 		this.statusId = 2;
-		this.services = [];
-
-
+		
 	}
 }
 
-export class InvoiceServicesModel {
+export class InvoiceBookings {
 	id: number;
 	invoiceId: number;
-	serviceId: number;
-	professionalId: number;
-	ptFeeId: number;
-	ptFeeA1: number;
-	ptFeeA2: number;
-	ptFeeCustom: number;
-	proFeeId: number;
-	proFeeA1: number;
-	proFeeA2: number;
-	proFeeCustomer: number;
+	bookingId: number;
+	booking:  BookingViewModel;
 }
+
+export class BookingViewModel {
+	id: number;
+	name: string;
+	customerId: number;
+	customerName: string;
+	invoiceEntityId: number;
+	invoiceEntity: string;
+	cycle: number;
+	cycleNumber: number;
+	subTotal: number;
+	taxCodeId?: number;
+	taxAmount?: number;
+}
+

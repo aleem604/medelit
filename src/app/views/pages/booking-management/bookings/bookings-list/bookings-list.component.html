@@ -13,7 +13,7 @@
 			<!-- start::FILTERS -->
 			<div class="kt-form__filtration">
 				<div class="row align-items-center">
-					<div class="col-md-4 kt-margin-bottom-10-mobile">
+					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field class="example-full-width">
 							<input type="text" placeholder="Pick status" aria-label="Number" matInput [matAutocomplete]="status" [formControl]="statusControl">
 							<mat-autocomplete autoActiveFirstOption #status="matAutocomplete"
@@ -31,7 +31,7 @@
 						</mat-form-field>
 					</div>
 					
-					<div class="col-md-4 kt-margin-bottom-10-mobile">
+					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field>
 							<input matInput placeholder="Search booking" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
@@ -60,6 +60,7 @@
 								<mat-icon>update</mat-icon>
 								Update Status
 							</button>
+
 						</div>
 					</div>
 				</div>
@@ -115,13 +116,13 @@
 
 				<ng-container matColumnDef="createdDate">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Created At</mat-header-cell>
-					<mat-cell *matCellDef="let booking">{{booking.createDate | date: 'yyyy/MM/dd hh:mm:ss a'}}</mat-cell>
+					<mat-cell *matCellDef="let booking">{{booking.createDate  | date: 'yyyy-MM-dd'}}</mat-cell>
 				</ng-container>
 
 
 				<ng-container matColumnDef="updateDate">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Last Change</mat-header-cell>
-					<mat-cell *matCellDef="let booking">{{booking.updateDate | date:'yyyy/MM/dd hh:mm:ss a'}}</mat-cell>
+					<mat-cell *matCellDef="let booking">{{booking.updateDate  | date: 'yyyy-MM-dd'}}</mat-cell>
 				</ng-container>
 				<ng-container matColumnDef="status">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
@@ -143,15 +144,20 @@
 						<button mat-icon-button color="warn" type="button" (click)="deleteBooking(booking)" matTooltip="Delete booking">
 							<mat-icon>delete</mat-icon>
 						</button>&nbsp;
-						<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
+						<!--<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
 							<mat-icon>more_vert</mat-icon>
-						</button>
+						</button>-->
 						<mat-menu #menu="matMenu">
-							<button mat-menu-item type="button" (click)="createInvoice(booking)">
-								<mat-icon>subject</mat-icon>
-								<span>Convert to Invoice</span>
+												
+							<button mat-menu-item type="button" (click)="cloneBooking(booking)">
+								<i class="la la-clone"></i>
+								<span class="ml-2">Clone this Booking</span>
 							</button>
-
+						
+							<button mat-menu-item type="button" (click)="createCycle(booking)">
+								<i class="la la-recycle"></i>
+								<span class="ml-2">Create a Cycle</span>
+							</button>
 						</mat-menu>
 					</mat-cell>
 				</ng-container>

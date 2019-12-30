@@ -72,6 +72,7 @@ import { InvoicesComponent } from './invoices.component';
 import { InvoicesListComponent } from './invoices/invoices-list/invoices-list.component';
 import { InvoiceEditComponent } from './invoices/invoice-edit/invoice-edit.component';
 import { InvoiceViewComponent } from './invoices/invoice-view/invoice-view.component';
+import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
 
 
 // tslint:disable-next-line:class-name
@@ -176,7 +177,8 @@ const routes: Routes = [
 		ActionNotificationComponent,
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
-		UpdateStatusDialogComponent
+		UpdateStatusDialogComponent,
+		ConfirmDialogComponent
 	],
 	declarations: [
 		InvoicesComponent,

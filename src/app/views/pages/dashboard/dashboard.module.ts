@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { CoreModule } from '../../../core/core.module';
 import { PartialsModule } from '../../partials/partials.module';
 import { DashboardComponent } from './dashboard.component';
+import { DashboardService } from '../../../core/medelit';
 
 @NgModule({
 	imports: [
@@ -19,7 +20,9 @@ import { DashboardComponent } from './dashboard.component';
 			},
 		]),
 	],
-	providers: [],
+	providers: [
+	DashboardService
+	],
 	declarations: [
 		DashboardComponent,
 	]

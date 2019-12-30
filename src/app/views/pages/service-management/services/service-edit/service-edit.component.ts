@@ -29,6 +29,7 @@ import {
 	ApiResponse,
 } from '../../../../../core/medelit';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 export interface Fruit {
 	name: string;
@@ -109,6 +110,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		private layoutConfigService: LayoutConfigService,
 		private serviceService: ServicesService,
 		private staticService: StaticDataService,
+		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
 	}
 
@@ -122,12 +124,12 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 				this.store.pipe(
 					select(selectServiceById(id))
 				).subscribe(result => {
-					if (!result) {
+					//if (!result) {
 						this.loadServiceFromService(id);
 						return;
-					}
+					//}
 
-					this.loadService(result);
+					//this.loadService(result);
 				});
 			} else {
 				const newService = new ServiceModel();
@@ -164,8 +166,13 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	}
 
 	loadServiceFromService(serviceId) {
-		this.serviceService.getServiceById(serviceId).subscribe(res => {
+		this.spinner.show();
+		this.serviceService.getServiceById(serviceId).toPromise().then(res => {
 			this.loadService((res as unknown as ApiResponse).data, true);
+		}).catch(() => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
 		});
 	}
 
@@ -325,8 +332,8 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	}
 
 	addService(_service: ServiceModel, withBack: boolean = false) {
-		this.loadingSubject.next(true);
-		this.serviceService.createService(_service).subscribe((res) => {
+		this.spinner.show();
+		this.serviceService.createService(_service).toPromise().then((res) => {
 			this.loadingSubject.next(false);
 			var resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
@@ -341,6 +348,10 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 				const message = `An error occured while processing your reques. Please try again later.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Read, 10000, true, true);
 			}
+		}).catch(() => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
 		});
 
 
@@ -369,8 +380,8 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	}
 
 	updateService(_service: ServiceModel, withBack: boolean = false) {
-		this.loadingSubject.next(true);
-		this.serviceService.createService(_service).subscribe((res) => {
+		this.spinner.show();
+		this.serviceService.createService(_service).toPromise().then((res) => {
 			this.loadingSubject.next(false);
 			var resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
@@ -381,7 +392,11 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 				const message = `An error occured while processing your reques. Please try again later.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Read, 10000, true, true);
 			}
-		});
+		}).catch(() => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
+		});;
 
 
 
@@ -613,8 +628,10 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			if (this.service.ptFeeId > 0) {
 				var vat = this.ptFeesForFilter.find(x => x.id == this.service.ptFeeId);
 				if (vat) {
-					this.serviceForm.patchValue({ 'ptFeeId': { id: vat.id, value: vat.value } });
+					// @ts-ignore
+					this.serviceForm.patchValue({ 'ptFeeId': { id: vat.id, value: vat.value, a1: vat.a1, a2: vat.a2 } });
 				}
+				this.ptFeeDrpClosed();
 			}
 		});
 	}
@@ -631,7 +648,6 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			this.serviceForm.get('ptFeeA1').setValue('');
 			this.serviceForm.get('ptFeeA2').setValue('');
 		}
-
 	}
 
 	/// End PT Fees for filter
@@ -649,8 +665,10 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			if (this.service.vatId > 0) {
 				var vat = this.proFeesForFilter.find(x => x.id == this.service.proFeeId);
 				if (vat) {
-					this.serviceForm.patchValue({ 'proFeeId': { id: vat.id, value: vat.value } });
+					// @ts-ignore
+					this.serviceForm.patchValue({ 'proFeeId': { id: vat.id, value: vat.value, a1: vat.a1, a2: vat.a2 } });
 				}
+				this.proFeeDrpClosed();
 			}
 		});
 	}

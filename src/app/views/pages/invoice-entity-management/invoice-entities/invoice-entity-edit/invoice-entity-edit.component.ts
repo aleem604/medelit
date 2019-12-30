@@ -18,7 +18,6 @@ import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../
 import {
 	selectLastCreatedInvoiceEntityId,
 	selectInvoiceEntityById,
-	SPECIFICATIONS_DICTIONARY,
 	InvoiceEntityModel,
 	InvoiceEntityOnServerCreated,
 	InvoiceEntityUpdated,
@@ -30,7 +29,9 @@ import {
 	ApiResponse,
 
 	AppDateAdapter,
-	APP_DATE_FORMATS
+	APP_DATE_FORMATS,
+
+    MedelitStaticData
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -464,49 +465,44 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 		this.loadCountriesFilter();
 		this.loadCitiesForFilter();
 
-		this.staticService.getRelationshipsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.relationshipsForFilter = data;
+		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
+			this.relationshipsForFilter = data.map((el) => { return { id: el.id, value: el.relationships }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.invoiceEntity.relationshipWithCustomerId) {
 				var obj = data.find((e) => { return e.id == this.invoiceEntity.relationshipWithCustomerId });
 				if (obj)
 					this.invoiceEntityForm.get('relationshipWithCustomerId').setValue(obj.id);
 			}
-		});
 
-		this.staticService.getPaymentMethodsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.paymentMethodOptions = data;
+			// payment methods
+			this.paymentMethodOptions = data.map((el) => { return { id: el.id, value: el.paymentMethods }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.invoiceEntity.paymentMethodId) {
 				var obj = data.find((e) => { return e.id == this.invoiceEntity.paymentMethodId });
 				if (obj)
 					this.invoiceEntityForm.get('paymentMethodId').setValue(obj.id);
 			}
-		});
 
-		this.staticService.getRatingOptions().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.ratingOptions = data;
+			// rating options
+
+			this.ratingOptions = data.map((el) => { return { id: el.id, value: el.ieRatings }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.invoiceEntity.ratingId) {
 				var obj = data.find((e) => { return e.id == this.invoiceEntity.ratingId });
 				if (obj)
 					this.invoiceEntityForm.get('ratingId').setValue(obj.id);
 			}
-		});
-
-		this.staticService.getInvoiceEntityTypesForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.ieTypeOptions = data;
+		
+			this.ieTypeOptions = data.map((el) => { return { id: el.id, value: el.ieTypes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.invoiceEntity.ieTypeId) {
 				var obj = data.find((e) => { return e.id == this.invoiceEntity.ieTypeId });
 				if (obj)
 					this.invoiceEntityForm.get('ieTypeId').setValue(obj.id);
 			}
-		});
 
-
-		this.staticService.getDiscountNetworksForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.discountNetworkOptions = data;
+			// discount networks
+			this.discountNetworkOptions = data.map((el) => { return { id: el.id, value: el.discountNetworks }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.invoiceEntity.discountNetworkId) {
 				var obj = data.find((e) => { return e.id == this.invoiceEntity.discountNetworkId });

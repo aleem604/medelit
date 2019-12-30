@@ -298,22 +298,7 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		this.router.navigateByUrl('/lead-management/leads/add');
 	}
 
-	convertToBooking(lead: LeadModel) {
-		this.spinner.show();
-		this.leadService.convertToBooking(lead.id).toPromise().then((res) => {
-			this.spinner.hide();
-			const message = `Booking created successfully.`;
-			this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
-			this.loadLeadsList();
 
-		}).catch((e) => {
-			this.spinner.hide();
-			const message = `An error occured. Please try again later.`;
-			this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
-		});
-
-
-	}
 
 	isAllSelected() {
 		const numSelected = this.selection.selected.length;

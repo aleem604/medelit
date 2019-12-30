@@ -11,7 +11,7 @@ import { BookingModel } from '../_models/booking.model';
 import { ApiResponse } from '..';
 
 
-const API_LEADS_URL = `${environment.apiEndpoint}/bookings`;
+const API_BOOKINGS_URL = `${environment.apiEndpoint}/bookings`;
 
 @Injectable()
 export class BookingService {
@@ -21,23 +21,23 @@ export class BookingService {
 	createBooking(booking: BookingModel): Observable<BookingModel> {
 		// Note: Add headers if needed (tokens/bearer)
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
-		return this.http.post<BookingModel>(API_LEADS_URL, booking, { headers: httpHeaders});
+		return this.http.post<BookingModel>(API_BOOKINGS_URL, booking, { headers: httpHeaders});
 	}
 
 	// READ
 	getAllBookings(): Observable<BookingModel[]> {
-		return this.http.get<BookingModel[]>(API_LEADS_URL);
+		return this.http.get<BookingModel[]>(API_BOOKINGS_URL);
 	}
 
 	getBookingById(bookingId: number): Observable<BookingModel> {
-		return this.http.get<BookingModel>(API_LEADS_URL + `/${bookingId}`);
+		return this.http.get<BookingModel>(API_BOOKINGS_URL + `/${bookingId}`);
 	}
 
 	findBookings(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		const httpParams = this.httpUtils.getFindHTTPParams(queryParams);
 
-		const url = API_LEADS_URL + '/find';
+		const url = API_BOOKINGS_URL + '/find';
 		return this.http.post<QueryResultsModel>(url, queryParams, {
 			headers: httpHeaders
 		});
@@ -46,7 +46,7 @@ export class BookingService {
 	// UPDATE => PUT: update the booking on the server
 	updateBooking(booking: BookingModel): Observable<any> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.put(API_LEADS_URL, booking, { headers: httpHeader });
+		return this.http.put(API_BOOKINGS_URL, booking, { headers: httpHeader });
 	}
 
 	// UPDATE Status
@@ -56,30 +56,36 @@ export class BookingService {
 			bookingsForUpdate: bookings,
 			newStatus: status
 		};
-		const url = API_LEADS_URL + '/update-status/'+ status;
+		const url = API_BOOKINGS_URL + '/update-status/'+ status;
 		return this.http.put(url, bookings, { headers: httpHeaders });
 	}
 
 	// DELETE => delete the booking from the server
 	deleteBooking(bookingId: number): Observable<BookingModel> {
-		const url = `${API_LEADS_URL}/${bookingId}`;
+		const url = `${API_BOOKINGS_URL}/${bookingId}`;
 		return this.http.delete<BookingModel>(url);
 	}
 
 	deleteBookings(ids: number[] = []): Observable<any> {
-		const url = API_LEADS_URL + '/delete';
+		const url = API_BOOKINGS_URL + '/delete';
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		const body = { bookingIdsForDelete: ids };
 		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders} );
 	}
 
 	convertToBooking(bookingId: number): Observable<BookingModel> {
-		const url = `${API_LEADS_URL}/convert-booking/${bookingId}`;
+		const url = `${API_BOOKINGS_URL}/convert-booking/${bookingId}`;
 		return this.http.get<BookingModel>(url);
 	}
 
-	createInvoice(bookingId: number): Observable<ApiResponse> {
-		const url = `${API_LEADS_URL}/create-invoice/${bookingId}`;
+	
+	createClone(bookingId: number, bookings:number): Observable<ApiResponse> {
+		const url = `${API_BOOKINGS_URL}/create-clones/${bookingId}/${bookings}`;
+		return this.http.get<ApiResponse>(url);
+	}
+
+	createCycle(bookingId: number, cycles: number): Observable<ApiResponse> {
+		const url = `${API_BOOKINGS_URL}/create-cycle/${bookingId}/${cycles}`;
 		return this.http.get<ApiResponse>(url);
 	}
 

@@ -6,6 +6,7 @@ export interface ApiResponse {
 	items: any;
 	totalCount: number;
 	errorRepsonse: any;
+	errors: string[];
 }
 
 export interface GridResponse {

@@ -1,11 +1,13 @@
 import { BaseModel } from '../../_base/crud';
 import { eRecordStatus } from '../_enums/e-record-status.enum';
-import { NumericDictionary } from 'lodash';
 
 export class BookingModel extends BaseModel {
 	id: number;
+	customerId?: number;
+	customerName: string;
 	name: string;
 	invoiceEntityId: number;
+	invoiceEntityName: string;
 	bookingStatusId?: number;
 	bookingDate?: Date;
 	bookingTypeId?: number;
@@ -60,6 +62,7 @@ export class BookingModel extends BaseModel {
 	proAvailabilityAskedId?: number;
 	labCostsForMedelit?: number;
 	dateOnPrescription?: Date;
+	labId: number;
 	lab: string;
 	vials?: number;
 	repeadPrescriptionNumber?: number;
@@ -69,26 +72,32 @@ export class BookingModel extends BaseModel {
 	ticketFee?: number;
 	excemptionCode: string;
 	nhsOrPrivateId?: number;
-	taxType?: number;
-	subTotal?: number;
+	
 	taxAmount?: number;
 	patientDiscount?: number;
 	grossTotal?: number;
-	visitDate?: Date;
-	visitTime?: any;
+	isAllDayVisit: number;
+	visitStartDate?: Date;
+	visitEndDate?: Date;
+
+
 	proDiscount?: number;
 	cashConfirmationMailId?: number;
-	quantityHours?: number;
-	discountNetworkId?: number;
+	
+	//discountNetworkId?: number;
 	patientAge?: number;
 	cycle?: number;
 	cycleNumber?: number;
 	proInvoiceNumber: string;
-	bookingTime?: Date;
+	serviceId: number;
+	professionalId: number;
+	ptFee: number;
+	proFee: number;
+	quantityHours?: number;
+	taxType?: number;
+	subTotal?: number;
 	totalDue?: number;
 	totalPaid?: number;
-	customerId?: number;
-	services: BookingServicesModel[];
 
 	status: eRecordStatus;
 	createDate: Date;
@@ -101,25 +110,10 @@ export class BookingModel extends BaseModel {
 	deletedById: number;
 	deletedBy: string;
     
-
 	clear() {
+		this.mailToPtId = 0;
 		this.imToProId = 0;
-
-		this.services = [];
-
 	}
 
 }
 
-export class BookingServicesModel {
-	id: number;
-	bookingId: number;
-	serviceId: number;
-	professionalId: number;
-	ptFeeId: number;
-	ptFeeA1: number;
-	ptFeeA2: number;
-	proFeeId: number;
-	proFeeA1: number;
-	proFeeA2: number;
-}

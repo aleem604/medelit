@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@ang
 import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
 // RxJS
 import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
-import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
+import { map, startWith, delay, first, takeUntil, filter } from 'rxjs/operators';
 // NGRX
 import { Store, select } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
@@ -16,25 +16,22 @@ import { SubheaderService, LayoutConfigService } from '../../../../../core/_base
 import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Services and Models
 import {
-	selectLastCreatedBookingId,
-	selectBookingById,
-	SPECIFICATIONS_DICTIONARY,
 	BookingModel,
-	BookingOnServerCreated,
-	BookingUpdated,
 	BookingService,
 	StaticDataModel,
 
 	StaticDataService,
 	FilterModel,
 	ApiResponse,
+	MedelitStaticData,
 
-	AppDateAdapter,
-	APP_DATE_FORMATS,
-
-	BookingServicesModel
+	InvoicesService
 } from '../../../../../core/medelit';
+import * as moment from 'moment';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { BookingToInvoiceDialog } from '../booking-to-invoice/booking-to-invoice-dialog';
+import { BookingCloneDialog } from '../booking-clone-dialog/booking-clone-dialog';
+import { BookingCycleDialog } from '../booking-cycle-dialog/booking-cycle-dialog';
 
 
 @Component({
@@ -84,6 +81,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	professionalsForFilter: FilterModel[] = [];
 	filteredProfessionals: Observable<FilterModel[]>;
 
+	bookingTypesForFilter: FilterModel[];
 	addedToAccountOptions: FilterModel[];
 	relationshipsForFilter: FilterModel[];
 	paymentMethodsOptions: FilterModel[];
@@ -97,7 +95,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	bookingSourceOptions: FilterModel[];
 	contactMethodOptions: FilterModel[];
 	bookingCategoryOptions: FilterModel[];
-	proAccountOptions: FilterModel[];    // BE
+	proAccountOptions: FilterModel[];
+	labsForFilter: FilterModel[];
 
 	invoiceEntitiesForFilter: FilterModel[] = [];
 	filteredInvoiceEntities: Observable<FilterModel[]>;
@@ -122,6 +121,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		private layoutConfigService: LayoutConfigService,
 		private bookingService: BookingService,
 		private staticService: StaticDataService,
+		private invoiceService: InvoicesService,
 		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
 	}
@@ -166,12 +166,11 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		this.bookingId$ = of(_booking.id);
 		this.oldBooking = Object.assign({}, _booking);
 		this.initBooking();
-
+		this.loadStaticResources();
 
 		if (fromService) {
 			this.cdr.detectChanges();
 		}
-		this.loadStaticResources();
 	}
 
 	loadBookingFromService(bookingId) {
@@ -215,11 +214,13 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	createForm() {
 		this.bookingForm = this.bookingFB.group({
 
-			name: [this.booking.name, Validators.required],
-			bookingStatusId: [this.booking.bookingStatusId, []],
-			bookingDate: [this.booking.bookingDate],
-			bookingTime: [this.booking.bookingTime, [Validators.required]],
-			bookingTypeId: [this.booking.bookingTypeId, []],
+			customerName: [this.booking.customerName, Validators.required],
+			invoiceEntityName: [this.booking.invoiceEntityName, []],
+			name: [this.booking.name, [Validators.required]],
+			bookingStatusId: [this.booking.bookingStatusId, [Validators.required]],
+			bookingDate: [this.booking.bookingDate, [Validators.required]],
+
+			bookingTypeId: [this.booking.bookingTypeId, [Validators.required]],
 			visitLanguageId: [this.booking.visitLanguageId, [Validators.required]],
 			visitVenueId: [this.booking.visitVenueId, [Validators.required]],
 			visitVenueDetail: [this.booking.visitVenueDetail, [Validators.required]],
@@ -248,7 +249,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			details: [this.booking.details, [Validators.required]],
 			diagnosis: [this.booking.diagnosis, [Validators.required]],
 			reasonForVisit: [this.booking.reasonForVisit, [Validators.required]],
-			imToProId: [this.booking.imToProId, []],
+			imToProId: [this.booking.imToProId, [Validators.required]],
 			mailToPtId: [this.booking.mailToPtId, []],
 			ptCalledForAppointmentId: [this.booking.ptCalledForAppointmentId, []],
 			paymentConcludedId: [this.booking.paymentConcludedId, []],
@@ -271,7 +272,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			proAvailabilityAskedId: [this.booking.proAvailabilityAskedId, []],
 			labCostsForMedelit: [this.booking.labCostsForMedelit, []],
 			dateOnPrescription: [this.booking.dateOnPrescription, []],
-			lab: [this.booking.lab, []],
+			labId: [this.booking.labId, []],
 			vials: [this.booking.vials, []],
 			repeadPrescriptionNumber: [this.booking.repeadPrescriptionNumber, []],
 			prescriptionNumber: [this.booking.prescriptionNumber, []],
@@ -280,88 +281,87 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			ticketFee: [this.booking.ticketFee, []],
 			excemptionCode: [this.booking.excemptionCode, []],
 			nhsOrPrivateId: [this.booking.nhsOrPrivateId, []],
-			taxType: [this.booking.taxType, []],
-			subTotal: [this.booking.subTotal, []],
-			taxAmount: [this.booking.taxAmount, []],
-			patientDiscount: [this.booking.patientDiscount, []],
-			grossTotal: [this.booking.grossTotal, []],
-			visitDate: [this.booking.visitDate, []],
-			visitTime: [this.booking.visitTime, []],
+
+
+			isAllDayVisit: [this.booking.isAllDayVisit, []],
+			visitStartDate: [this.booking.visitStartDate, [Validators.required]],
+			visitEndDate: [this.booking.visitEndDate, [Validators.required]],
+
 			proDiscount: [this.booking.proDiscount, []],
 			cashConfirmationMailId: [this.booking.cashConfirmationMailId, []],
-			quantityHours: [this.booking.quantityHours, []],
-			discountNetworkId: [this.booking.discountNetworkId, []],
+			quantityHours: [this.booking.quantityHours, [Validators.required]],
+
+			serviceId: [this.booking.serviceId, [Validators.required]],
+			professionalId: [this.booking.professionalId, [Validators.required]],
+			ptFee: [this.booking.ptFee, [Validators.required]],
+			proFee: [this.booking.proFee, [Validators.required]],
 
 			patientAge: [this.booking.patientAge, []],
 			cycle: [this.booking.cycle, []],
 			cycleNumber: [this.booking.cycleNumber, []],
 			proInvoiceNumber: [this.booking.proInvoiceNumber, []],
+
+			taxType: [this.booking.taxType, []],
+			subTotal: [this.booking.subTotal, []],
+			taxAmount: [this.booking.taxAmount, []],
+			patientDiscount: [this.booking.patientDiscount, []],
+			grossTotal: [this.booking.grossTotal, []],
 			totalDue: [this.booking.totalDue, []],
 			totalPaid: [this.booking.totalPaid, []],
 
-			services: this.bookingFB.array([]),
 		});
-		this.initServicesForm();
-
+		this.setConstants();
 	}
 
-	initServicesForm() {
-
-		if (this.booking.services.length > 0) {
-
-			this.booking.services.forEach((service) => {
-				const group = this.bookingFB.group({
-					id: [service.id, []],
-					serviceId: [service.serviceId, [Validators.required]],
-					professionalId: [service.professionalId, [Validators.required]],
-					ptFeeId: [service.ptFeeId, [Validators.required]],
-					ptFeeA1: [service.ptFeeA1, [Validators.required]],
-					ptFeeA2: [service.ptFeeA2, [Validators.required]],
-					proFeeId: [service.proFeeId, [Validators.required]],
-					proFeeA1: [service.proFeeA1, [Validators.required]],
-					proFeeA2: [service.proFeeA2, [Validators.required]],
-				});
-				(<FormArray>this.bookingForm.get('services')).push(group);
-			});
-
-		} else {
-			this.addService();
-		}
-	}
-
-	addService() {
-
-		var newModel = new BookingServicesModel();
-		newModel.id = null;
-		newModel.serviceId = null;
-		newModel.professionalId = null;
-		this.booking.services.push(newModel);
-
-		const group = this.bookingFB.group({
-			id: [null, []],
-			serviceId: [null, [Validators.required]],
-			professionalId: [null, [Validators.required]],
-			ptFeeId: [null, [Validators.required]],
-			ptFeeA1: [null, [Validators.required]],
-			ptFeeA2: [null, [Validators.required]],
-			proFeeId: [null, [Validators.required]],
-			proFeeA1: [null, [Validators.required]],
-			proFeeA2: [null, [Validators.required]],
-		});
-		(<FormArray>this.bookingForm.get('services')).push(group);
-		this.selected.setValue(this.booking.services.length - 1);
-	}
-
-	removeService(index) {
-		if (index > 0) {
-			this.booking.services.splice(index, 1);
-			const control = <FormArray>this.bookingForm.controls['services'];
-			for (let i = control.length - 1; i >= 0; i--) {
-				control.removeAt(i)
+	setConstants() {
+		this.bookingForm.get('visitStartDate').valueChanges.subscribe((d) => {
+			if (d) {
+				var years = Math.floor(moment(new Date(d)).diff(moment(new Date(this.bookingForm.get('dateOfBirth').value), "MM/DD/YYYY"), 'years', true));
+				this.bookingForm.get('patientAge').setValue(years);
+				return years;
 			}
-			this.initServicesForm();
-			this.loadServicesForFilter();
+		});
+
+		this.bookingForm.get('dateOfBirth').valueChanges.subscribe((d) => {
+			if (d) {
+				var years = Math.floor(moment(new Date(this.bookingForm.get('visitStartDate').value)).diff(moment(new Date(d), "MM/DD/YYYY"), 'years', true));
+				this.bookingForm.get('patientAge').setValue(years);
+				return years;
+			}
+		});
+
+		this.bookingForm.get('ptFee').valueChanges.subscribe((d) => {
+			this.bookingForm.get('cashReturn').setValue(d);
+		});
+
+
+		this.updateAccountings();
+	}
+
+	updateAccountings() {
+		var ptFee = this.bookingForm.get('ptFee').value;
+		var quantity = this.bookingForm.get('quantityHours').value;
+		var taxType = this.bookingForm.get('taxType').value;
+		var subTotal = parseInt(ptFee) * parseInt(quantity);
+		var taxAmount = subTotal * parseInt(taxType) * 0.01;
+
+
+		if (!isNaN(subTotal)) {
+			this.bookingForm.get('subTotal').setValue(subTotal);
 		}
+		else {
+			this.bookingForm.get('subTotal').setValue('');
+		}
+
+		if (!isNaN(taxAmount)) {
+			this.bookingForm.get('taxAmount').setValue(taxAmount);
+		} else {
+			this.bookingForm.get('taxAmount').setValue('');
+		}
+
+		this.bookingForm.get('grossTotal').setValue(subTotal + taxAmount);
+
+
 	}
 
 
@@ -404,11 +404,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
-			(<FormArray>this.bookingForm.get('services')).controls.forEach((group: FormGroup) => {
-				(<any>Object).values(group.controls).forEach((control: FormControl) => {
-					control.markAsTouched();
-				})
-			});
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
@@ -434,7 +429,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		_booking.name = controls.name.value;
 		_booking.bookingStatusId = +controls.bookingStatusId.value;
 		_booking.bookingDate = controls.bookingDate.value;
-		_booking.bookingTime = controls.bookingTime.value;
+
 		_booking.bookingTypeId = +controls.bookingTypeId.value;
 		if (controls.visitLanguageId.value)
 			_booking.visitLanguageId = +controls.visitLanguageId.value.id;
@@ -494,7 +489,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		_booking.proAvailabilityAskedId = controls.proAvailabilityAskedId.value;
 		_booking.labCostsForMedelit = controls.labCostsForMedelit.value;
 		_booking.dateOnPrescription = controls.dateOnPrescription.value;
-		_booking.lab = controls.lab.value;
+		_booking.labId = controls.labId.value;
 		_booking.vials = controls.vials.value;
 		_booking.repeadPrescriptionNumber = controls.repeadPrescriptionNumber.value;
 		_booking.prescriptionNumber = controls.prescriptionNumber.value;
@@ -508,12 +503,21 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		_booking.taxAmount = controls.taxAmount.value;
 		_booking.patientDiscount = controls.patientDiscount.value;
 		_booking.grossTotal = controls.grossTotal.value;
-		_booking.visitDate = controls.visitDate.value;
-		_booking.visitTime = controls.visitTime.value;
+
+		_booking.isAllDayVisit = controls.isAllDayVisit.value;
+		_booking.visitStartDate = controls.visitStartDate.value;
+		_booking.visitEndDate = controls.visitEndDate.value;
+
 		_booking.proDiscount = controls.proDiscount.value;
 		_booking.cashConfirmationMailId = controls.cashConfirmationMailId.value;
 		_booking.quantityHours = controls.quantityHours.value;
-		_booking.discountNetworkId = controls.discountNetworkId.value;
+
+		if (controls.serviceId.value)
+			_booking.serviceId = controls.serviceId.value.id;
+		if (controls.professionalId.value)
+			_booking.professionalId = controls.professionalId.value.id;
+		_booking.ptFee = controls.ptFee.value;
+		_booking.proFee = controls.proFee.value;
 
 		_booking.patientAge = controls.patientAge.value;
 		_booking.cycle = controls.cycle.value;
@@ -522,25 +526,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		_booking.totalDue = controls.totalDue.value;
 		_booking.totalPaid = controls.totalPaid.value;
 
-		_booking.services = [];
-
-		const control = <FormArray>this.bookingForm.controls['services'];
-		for (let i = 0; i < control.length; i++) {
-			var s = new BookingServicesModel();
-			if (control.controls[i].get('serviceId').value)
-				s.serviceId = +control.controls[i].get('serviceId').value.id;
-			s.professionalId = +control.controls[i].get('professionalId').value
-
-			s.ptFeeId = +control.controls[i].get('ptFeeId').value
-			s.ptFeeA1 = +control.controls[i].get('ptFeeA1').value
-			s.ptFeeA2 = +control.controls[i].get('ptFeeA2').value
-
-			s.proFeeId = +control.controls[i].get('proFeeId').value
-			s.proFeeA1 = +control.controls[i].get('proFeeA1').value
-			s.proFeeA2 = +control.controls[i].get('proFeeA2').value
-
-			_booking.services.push(s);
-		}
 		return _booking;
 	}
 
@@ -590,11 +575,11 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
 				const _booking = resp.data as unknown as BookingModel;
-				this.loadBooking(_booking, true);
+				this.loadBookingFromService(_booking.id);
 
 				const message = `Booking successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-				this.refreshBooking(false);
+				//this.refreshBooking(false);
 			} else {
 				const message = `An error occured while processing your request. Please try again later.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
@@ -625,6 +610,213 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		//}); 
 	}
 
+	createInvoice() {
+
+		this.hasFormErrors = false;
+		const controls = this.bookingForm.controls;
+		/** check form */
+		if (this.bookingForm.invalid) {
+			Object.keys(controls).forEach(controlName =>
+				controls[controlName].markAsTouched()
+			);
+
+			this.hasFormErrors = true;
+			this.selectedTab = 0;
+			return;
+		}
+		let editedBooking = this.prepareBooking();
+
+		this.spinner.show();
+		this.bookingService.updateBooking(editedBooking).toPromise().then((res) => {
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
+				const _booking = resp.data as unknown as BookingModel;
+
+				this.invoiceService.createInvoiceFromBooking(this.booking.id).toPromise().then((res) => {
+					this.spinner.hide();
+					if (res.success) {
+						this.layoutUtilsService.showActionNotification("Invoice is created successfully.", MessageType.Create, 5000, true);
+
+					} else {
+						this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
+					}
+				}).catch((e) => {
+					this.spinner.hide();
+					this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
+				});
+
+
+
+			} else {
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+			}
+		}).catch((e) => {
+			this.spinner.hide();
+		});
+
+	}
+
+	addToExistingInvoice(): void {
+		this.hasFormErrors = false;
+		const controls = this.bookingForm.controls;
+		/** check form */
+		if (this.bookingForm.invalid) {
+			Object.keys(controls).forEach(controlName =>
+				controls[controlName].markAsTouched()
+			);
+
+			this.hasFormErrors = true;
+			this.selectedTab = 0;
+			return;
+		}
+		let editedBooking = this.prepareBooking();
+
+		this.spinner.show();
+		this.bookingService.updateBooking(editedBooking).toPromise().then((res) => {
+			this.spinner.hide();
+
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
+				const _booking = resp.data as unknown as BookingModel;
+				const dialogRef = this.dialog.open(BookingToInvoiceDialog, {
+					width: '500px',
+					height: '300px',
+					data: this.booking
+				});
+
+				dialogRef.afterClosed().subscribe(result => {
+					if (result) {
+						console.log(result);
+					}
+				});
+			} else {
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+			}
+		}).catch((e) => {
+			this.spinner.hide();
+			const message = `An error occured while processing your request. Please try again later.`;
+			this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+		});;
+
+
+	}
+
+	cloneBooking() {
+
+		this.hasFormErrors = false;
+		const controls = this.bookingForm.controls;
+		/** check form */
+		if (this.bookingForm.invalid) {
+			Object.keys(controls).forEach(controlName =>
+				controls[controlName].markAsTouched()
+			);
+
+			this.hasFormErrors = true;
+			this.selectedTab = 0;
+			return;
+		}
+		let editedBooking = this.prepareBooking();
+
+		this.spinner.show();
+		this.bookingService.updateBooking(editedBooking).toPromise().then((res) => {
+			this.spinner.hide();
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data.id > 0) {
+
+				const dialogRef = this.dialog.open(BookingCloneDialog, {
+					width: '250px',
+					data: { copies: 1 }
+				});
+
+				dialogRef.afterClosed().subscribe(result => {
+					if (result) {
+						this.spinner.show();
+						this.bookingService.createClone(this.booking.id, result).toPromise().then((res) => {
+							this.spinner.hide();
+							if (res.success) {
+								this.layoutUtilsService.showActionNotification("Clone process completed successfully.", MessageType.Create, 3000, true);
+
+							} else {
+								this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
+							}
+
+						}).catch((error) => {
+							this.spinner.hide();
+							this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
+						});
+					}
+				});
+
+			} else {
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+			}
+		}).catch((e) => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
+		});
+	}
+
+	createCycle() {
+
+		this.hasFormErrors = false;
+		const controls = this.bookingForm.controls;
+		/** check form */
+		if (this.bookingForm.invalid) {
+			Object.keys(controls).forEach(controlName =>
+				controls[controlName].markAsTouched()
+			);
+
+			this.hasFormErrors = true;
+			this.selectedTab = 0;
+			return;
+		}
+		let editedBooking = this.prepareBooking();
+
+		this.spinner.show();
+		this.bookingService.updateBooking(editedBooking).toPromise().then((res) => {
+			this.spinner.hide();
+			const resp = res as unknown as ApiResponse;
+			if (resp.success) {
+
+				const dialogRef = this.dialog.open(BookingCycleDialog, {
+					width: '250px',
+					data: { cycles: 5 }
+				});
+
+				dialogRef.afterClosed().subscribe(result => {
+					if (result) {
+						this.spinner.show();
+						this.bookingService.createCycle(this.booking.id, result).toPromise().then((res) => {
+							this.spinner.hide();
+							if (res.success) {
+								this.layoutUtilsService.showActionNotification("Clone process completed successfully.", MessageType.Create, 3000, true);
+
+							} else {
+								this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
+							}
+
+						}).catch((error) => {
+							this.spinner.hide();
+							this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
+						});
+					}
+				});
+
+			} else {
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+			}
+		}).catch((e) => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
+		});
+	}
+
 	getComponentTitle() {
 		let result = 'Create booking';
 		if (!this.booking || !this.booking.id) {
@@ -642,97 +834,87 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 	/*Fitlers Section*/
 	loadStaticResources() {
+		this.detectChanges();
 		this.loadLanguagesForFilter();
 		this.loadCountriesFilter();
 		this.loadCitiesForFilter();
 		this.loadCountiesForFilter();
 		this.loadServicesForFilter();
-		this.loadProfessionalsForFilter(1);
 
-		this.staticService.getAddedToAccountOptions().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.addedToAccountOptions = data;
 
+		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
+
+			this.addedToAccountOptions = data.map((el) => { return { id: el.id, value: el.addToAccountOptions }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 			if (this.booking.addToAccountingId) {
 				var obj = data.find((e) => { return e.id == this.booking.addToAccountingId });
 				if (obj)
 					this.bookingForm.get('addToAccountingId').setValue(obj.id);
 			}
-		});
 
-		this.staticService.getReportDeliveryOptions().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.reportDeliveredOptions = data;
+			// booking types
+			this.bookingTypesForFilter = data.map((el) => { return { id: el.id, value: el.bookingTypes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.booking.bookingTypeId) {
+				var obj = data.find((e) => { return e.id == this.booking.bookingTypeId });
+				if (obj)
+					this.bookingForm.get('bookingTypeId').setValue(obj.id);
+			}
+
+			// report delivered options
+			this.reportDeliveredOptions = data.map((el) => { return { id: el.id, value: el.reportDeliveryOptions }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.booking.reportDeliveredId) {
 				var obj = data.find((e) => { return e.id == this.booking.reportDeliveredId });
 				if (obj)
 					this.bookingForm.get('reportDeliveredId').setValue(obj.id);
 			}
-		});
 
-
-		this.staticService.getDiscountNetworksForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.discountNetworkOptions = data;
-
-			if (this.booking.discountNetworkId) {
-				var obj = data.find((e) => { return e.id == this.booking.discountNetworkId });
-				if (obj)
-					this.bookingForm.get('discountNetworkId').setValue(obj.id);
-			}
-		});
-
-		this.staticService.getPaymentStatusForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.paymentStatusOptions = data;
+			// payment status options
+			this.paymentStatusOptions = data.map((el) => { return { id: el.id, value: el.paymentStatus }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.booking.paymentStatusId) {
 				var obj = data.find((e) => { return e.id == this.booking.paymentStatusId });
 				if (obj)
 					this.bookingForm.get('paymentStatusId').setValue(obj.id);
 			}
-		});
 
-		this.staticService.getRelationshipsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.relationshipsForFilter = data;
+			// relationship for filter
+			this.relationshipsForFilter = data.map((el) => { return { id: el.id, value: el.reportDeliveryOptions }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.booking.visitRequestingPersonRelationId) {
 				var obj = data.find((e) => { return e.id == this.booking.visitRequestingPersonRelationId });
 				if (obj)
 					this.bookingForm.get('visitRequestingPersonRelationId').setValue(obj.id);
 			}
-		});
 
-		this.staticService.getPaymentMethodsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.paymentMethodsOptions = data;
+			// payment method 
+			this.paymentMethodsOptions = data.map((el) => { return { id: el.id, value: el.paymentMethods }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.booking.paymentMethodId) {
 				var obj = data.find((e) => { return e.id == this.booking.paymentMethodId });
 				if (obj)
 					this.bookingForm.get('paymentMethodId').setValue(obj.id);
 			}
-		});
 
-
-		this.staticService.getBuildingTypesForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.buildingTypeOptions = data;
+			// building types
+			this.buildingTypeOptions = data.map((el) => { return { id: el.id, value: el.buildingTypes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.booking.buildingTypeId) {
 				var obj = data.find((e) => { return e.id == this.booking.buildingTypeId });
 				if (obj)
 					this.bookingForm.get('buildingTypeId').setValue(obj.id);
 			}
-		});
 
-		this.staticService.getVisitVenuesForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.visitVenueOptions = data;
+			// visit venue
+			this.visitVenueOptions = data.map((el) => { return { id: el.id, value: el.visitVenues }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.booking.visitVenueId) {
 				const obj = data.find((e) => { return e.id == this.booking.visitVenueId });
 				if (obj)
 					this.bookingForm.get('visitVenueId').setValue(obj.id);
 			}
-		});
 
-		this.staticService.getBookingStatusesForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.bookingStatusOptions = data;
+			// booking status 
+			this.bookingStatusOptions = data.map((el) => { return { id: el.id, value: el.bookingStatus }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.booking.bookingStatusId) {
 				const obj = data.find((e) => { return e.id == this.booking.bookingStatusId });
@@ -741,49 +923,58 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			}
 		});
 
+		this.staticService.getLabsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
+			this.labsForFilter = data;
+
+			if (this.booking.labId) {
+				const obj = data.find((e) => { return e.id == this.booking.labId });
+				if (obj)
+					this.bookingForm.get('labId').setValue(obj.id);
+			}
+		});
+
 
 		if (this.booking.insuranceCoverId) {
 			this.bookingForm.get('insuranceCoverId').setValue(this.booking.insuranceCoverId.toString());
 		}
 
-		if (this.booking.paymentConcludedId !== undefined) {
+		if (this.booking.paymentConcludedId != undefined) {
 			this.bookingForm.get('paymentConcludedId').setValue(this.booking.paymentConcludedId.toString());
 		}
 
-		if (this.booking.ccAuthorizationId !== undefined) {
+		if (this.booking.ccAuthorizationId != undefined) {
 			this.bookingForm.get('ccAuthorizationId').setValue(this.booking.ccAuthorizationId.toString());
 		}
 
-		if (this.booking.cashConfirmationMailId !== undefined) {
+		if (this.booking.cashConfirmationMailId != undefined) {
 			this.bookingForm.get('cashConfirmationMailId').setValue(this.booking.cashConfirmationMailId.toString());
 		}
 
-		if (this.booking.bankTransfterReceiptId !== undefined) {
+		if (this.booking.bankTransfterReceiptId != undefined) {
 			this.bookingForm.get('bankTransfterReceiptId').setValue(this.booking.bankTransfterReceiptId.toString());
 		}
 
-		if (this.booking.proAvailabilityAskedId !== undefined) {
+		if (this.booking.proAvailabilityAskedId != undefined) {
 			this.bookingForm.get('proAvailabilityAskedId').setValue(this.booking.proAvailabilityAskedId.toString());
 		}
 
-		if (this.booking.ptCalledForAppointmentId !== undefined) {
+		if (this.booking.ptCalledForAppointmentId != undefined) {
 			this.bookingForm.get('ptCalledForAppointmentId').setValue(this.booking.ptCalledForAppointmentId.toString());
 		}
 
-		if (this.booking.imToProId !== undefined) {
+		if (this.booking.imToProId != undefined) {
 			this.bookingForm.get('imToProId').setValue(this.booking.imToProId.toString());
 		}
 
-		if (this.booking.mailToPtId !== undefined) {
+		if (this.booking.mailToPtId != undefined) {
 			this.bookingForm.get('mailToPtId').setValue(this.booking.mailToPtId.toString());
 		}
 
-		if (this.booking.nhsOrPrivateId !== undefined) {
+		if (this.booking.nhsOrPrivateId != undefined) {
 			this.bookingForm.get('nhsOrPrivateId').setValue(this.booking.nhsOrPrivateId.toString());
 		}
 
 	}
-
 
 	//// Languages
 	loadLanguagesForFilter() {
@@ -867,30 +1058,21 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		this.staticService.getServicesForFilter().subscribe(res => {
 			this.servicesForFilter = res.data;
 
-			//this.filteredServices = this.bookingForm.get('serviceId').valueChanges
-			//	.pipe(
-			//		startWith(''),
-			//		map(value => this._filterServices(value))
-			//	);
-			//if (this.booking.requestedServiceId > 0) {
-			//	var service = this.servicesForFilter.find(x => x.id == this.booking.requestedServiceId);
-			//	if (service) {
-			//		this.bookingForm.patchValue({ 'requestedServiceId': { id: service.id, value: service.value } });
-			//	}
-			//}
-
-			const control = <FormArray>this.bookingForm.controls['services'];
-			for (let i = 0; i < control.length; i++) {
-				const serviceObj = control.controls[i].get('serviceId').value;
-				if (serviceObj) {
-					const sobj = this.servicesForFilter.filter((ele) => {
-						return ele.id == serviceObj;
-					});
-					if (sobj)
-						control.controls[i].patchValue({ 'serviceId': sobj[0] });
+			this.filteredServices = this.bookingForm.get('serviceId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterServices(value))
+				);
+			if (this.booking.serviceId > 0) {
+				var service = this.servicesForFilter.find(x => x.id == this.booking.serviceId);
+				if (service) {
+					// @ts-ignore
+					this.bookingForm.patchValue({ 'serviceId': { id: service.id, value: service.value, vat: service.vat } });
 				}
+				this.loadProfessionalsForFilter(this.booking.serviceId);
 			}
 		});
+
 
 	}
 	private _filterServices(value: string): FilterModel[] {
@@ -899,52 +1081,28 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	}
 
 	serviceDrpClosed() {
-		var service = this.bookingForm.get('requestedServiceId').value;
+		this.bookingForm.get('professionalId').setValue('');
+		var service = this.bookingForm.get('serviceId').value;
 		if (service) {
 			this.loadProfessionalsForFilter(service.id);
+			this.bookingForm.get('ptFee').setValue(service.ptFeeA1);
+			this.bookingForm.get('proFee').setValue(service.proFeeA1);
+			this.bookingForm.get('taxType').setValue(service.vat);
 
-			this.bookingForm.get('ptFeeId').setValue(service.ptFeeId);
-			this.bookingForm.get('ptFeeA1').setValue(service.ptFeeA1);
-			this.bookingForm.get('ptFeeA2').setValue(service.ptFeeA2);
-
-			this.bookingForm.get('proFeeId').setValue(service.proFeeId);
-			this.bookingForm.get('proFeeA1').setValue(service.proFeeA1);
-			this.bookingForm.get('proFeeA2').setValue(service.proFeeA2);
-
+			if (!service.timeService)
+				this.bookingForm.get('quantityHours').setValue(1);
 
 		} else {
 			this.professionalsForFilter = [];
 			this.filteredProfessionals = new Observable<FilterModel[]>();
 			this.bookingForm.patchValue({ 'professionalId': '' });
-			this.bookingForm.get('ptFeeId').setValue('');
-			this.bookingForm.get('ptFeeA1').setValue('');
-			this.bookingForm.get('ptFeeA2').setValue('');
-			this.bookingForm.get('ptFeeCustom').setValue('');
-
-			this.bookingForm.get('proFeeId').setValue('');
-			this.bookingForm.get('proFeeA1').setValue('');
-			this.bookingForm.get('proFeeA2').setValue('');
-			this.bookingForm.get('proFeeCustom').setValue('');
+			this.bookingForm.get('ptFee').setValue('');
+			this.bookingForm.get('proFee').setValue('');
+			this.bookingForm.get('taxType').setValue('');
 		}
+		this.updateAccountings();
+
 	}
-
-
-
-
-
-	getProfessionals(index: number) {
-		// @ts-ignore:
-		var serviceControls = this.bookingForm.get('services').controls[index];
-		if (serviceControls.get('serviceId').value) {
-
-			var serviceId = serviceControls.get('serviceId').value.id;
-			return this.professionalsForFilter.filter((el) => {
-				var elm = el as unknown as any;
-				return elm.sid === serviceId
-			});
-		}
-	}
-
 
 
 	serviceSelected(event, index) {
@@ -954,55 +1112,48 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		if (serviceObj) {
 			this.loadProfessionalsForFilter(serviceObj.id);
 
-			serviceControls.get('ptFeeId').setValue(serviceObj.ptFeeId);
-			serviceControls.get('ptFeeA1').setValue(serviceObj.ptFeeA1);
-			serviceControls.get('ptFeeA2').setValue(serviceObj.ptFeeA2);
-			serviceControls.get('proFeeId').setValue(serviceObj.proFeeId);
-			serviceControls.get('proFeeA1').setValue(serviceObj.proFeeA1);
-			serviceControls.get('proFeeA2').setValue(serviceObj.proFeeA2);
-
+			serviceControls.get('ptFee').setValue(serviceObj.ptFeeA1);
+			serviceControls.get('proFee').setValue(serviceObj.proFeeA1);
 
 		} else {
 			this.professionalsForFilter = [];
 			this.filteredProfessionals = new Observable<FilterModel[]>();
 			serviceControls.patchValue({ 'professionalId': '' });
-			serviceControls.get('ptFeeId').setValue('');
-			serviceControls.get('ptFeeA1').setValue('');
-			serviceControls.get('ptFeeA2').setValue('');
-			serviceControls.get('ptFeeCustom').setValue('');
-			serviceControls.get('proFeeId').setValue('');
-			serviceControls.get('proFeeA1').setValue('');
-			serviceControls.get('proFeeA2').setValue('');
-			serviceControls.get('proFeeCustom').setValue('');
+			serviceControls.get('ptFee').setValue('');
+			serviceControls.get('proFee').setValue('');
 		}
 
 	}
-
 
 	// end services
 
 	// Service Professionals
 	loadProfessionalsForFilter(serviceId?: number) {
 		this.staticService.getProfessionalsForFilter(serviceId).subscribe(res => {
-			this.professionalsForFilter = res.data;
+			this.professionalsForFilter = res.data.filter(m => m.sid == serviceId);
 
-			//this.filteredProfessionals = this.bookingForm.get('professionalId').valueChanges
-			//	.pipe(
-			//		startWith(''),
-			//		map(value => this._filterProfessionals(value))
-			//	);
-			//if (this.booking.professionalId > 0) {
-			//	var professional = this.professionalsForFilter.find(x => x.id == this.booking.professionalId);
-			//	if (professional) {
-			//		this.bookingForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value } });
-			//	}
-			//}
+			this.filteredProfessionals = this.bookingForm.get('professionalId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterProfessionals(value))
+				);
+			if (this.booking.professionalId > 0) {
+				var professional = this.professionalsForFilter.find(x => x.id == this.booking.professionalId);
+				if (professional) {
+					this.bookingForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value } });
+				}
+			}
 		});
 
 	}
 	private _filterProfessionals(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.professionalsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+		try {
+			const filterValue = this._normalizeValue(value);
+
+			return this.professionalsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+		} catch (e) {
+			return [];
+		}
 	}
 
 	// Service Professionals
@@ -1123,4 +1274,13 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	}
 
 	/*End Filters Section*/
+
+	detectChanges() {
+		try {
+			this.cdr.detectChanges();
+		} catch (e) {
+
+		}
+	}
+
 }

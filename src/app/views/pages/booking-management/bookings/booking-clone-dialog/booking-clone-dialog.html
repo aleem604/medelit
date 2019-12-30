@@ -1,0 +1,22 @@
+<div class="p-4">
+	<div mat-dialog-content>
+		<p><strong>How many booking copies?</strong></p>
+		<mat-form-field>
+			<input type="number" matInput [(ngModel)]="data.copies" min="1">
+			<mat-error>
+				Number of Bookings to Create is
+				<strong>required</strong>
+			</mat-error>
+			<mat-hint align="start">
+				Please enter
+				<strong>Booking Copies</strong>
+			</mat-hint>
+
+
+		</mat-form-field>
+	</div>
+	<div mat-dialog-actions>
+		<button mat-button (click)="onCancel()">Cancel</button>
+		<button mat-button [mat-dialog-close]="data.copies" cdkFocusInitial>Ok</button>
+	</div>
+</div>

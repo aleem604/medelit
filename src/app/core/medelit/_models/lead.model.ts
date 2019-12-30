@@ -108,12 +108,14 @@ export class LeadServicesModel {
 	leadId: number;
 	serviceId: number;
 	professionalId: number;
+	isPtFeeA1: number = 1;
 	ptFeeId: number;
 	ptFeeA1: number;
 	ptFeeA2: number;
-	ptFeeCustom: number;
+	
 	proFeeId: number;
+	isProFeeA1: number = 1;
 	proFeeA1: number;
 	proFeeA2: number;
-	proFeeCustomer: number;
+
 }

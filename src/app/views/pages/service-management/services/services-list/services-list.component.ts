@@ -33,6 +33,7 @@ import { StaticDataService } from '../../../../../core/medelit/_services';
 	// tslint:disable-next-line:component-selector
 	selector: 'kt-services-list',
 	templateUrl: './services-list.component.html',
+	styleUrls: ['./services-list.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ServicesListComponent implements OnInit, OnDestroy {

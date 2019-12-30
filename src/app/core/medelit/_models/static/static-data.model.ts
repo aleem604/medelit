@@ -19,8 +19,8 @@ export class MedelitStaticData {
 	durations?: number;
 	durationUnits: string;
 	fieldCategories: string;
-	iERatings: string;
-	iETypes: string;
+	ieRatings: string;
+	ieTypes: string;
 	invoiceStatus: string;
 	leadCategories: string;
 	leadSources: string;

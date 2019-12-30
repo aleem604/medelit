@@ -6,23 +6,41 @@ import { Observable } from 'rxjs';
 // CRUD
 import { HttpUtilsService, QueryParamsModel, QueryResultsModel } from '../../_base/crud';
 // Models
-import { InvoiceModel } from '..';
+import { InvoiceModel, InvoiceBookings } from '..';
 import { environment } from '../../../../environments/environment';
+import { ApiResponse } from '../_models/apireponse.model';
 
 
 const API_INVOICE_ENTITIES_URL = `${environment.apiEndpoint}/invoices`;
 
 @Injectable()
 export class InvoicesService {
+    
 	constructor(private http: HttpClient, private httpUtils: HttpUtilsService) { }
+
+	//
+	addBookingToInvoice(bookingId: number, invoiceId: number): Observable<ApiResponse> {
+		const url = `${API_INVOICE_ENTITIES_URL}/add-booking-to-invoice/${bookingId}/${invoiceId}`;
+		const httpHeaders = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(url, {}, { headers: httpHeaders });
+	}
+
+	//
+	createInvoiceFromBooking(bookingId: number): Observable<ApiResponse> {
+		const url = `${API_INVOICE_ENTITIES_URL}/add-booking-to-invoice/${bookingId}`;
+		const httpHeaders = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(url, {}, { headers: httpHeaders });
+	}
+
 
 	// CREATE =>  POST: add a new entity to the server
 	createInvoice(entity: InvoiceModel): Observable<InvoiceModel> {
 		// Note: Add headers if needed (tokens/bearer)
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
-		return this.http.post<InvoiceModel>(API_INVOICE_ENTITIES_URL, entity, { headers: httpHeaders});
+		return this.http.post<InvoiceModel>(API_INVOICE_ENTITIES_URL, entity, { headers: httpHeaders });
 	}
 
+	
 	// READ
 	getAllInvoices(): Observable<InvoiceModel[]> {
 		return this.http.get<InvoiceModel[]>(API_INVOICE_ENTITIES_URL);
@@ -69,6 +87,17 @@ export class InvoicesService {
 		const url = API_INVOICE_ENTITIES_URL + '/delete-invoices';
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		//const body = { leadIdsForDelete: ids };
-		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders} );
+		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders });
+	}
+
+	deleteInvoiceBooking(ib: InvoiceBookings): Observable<ApiResponse> {
+		const url = API_INVOICE_ENTITIES_URL + '/delete-invoice-booking/'+ ib.id;
+		const httpHeaders = this.httpUtils.getHTTPHeaders();
+		//const body = { leadIdsForDelete: ids };
+		return this.http.delete<ApiResponse>(url, { headers: httpHeaders });
+	}
+
+	getInvoiceView(invoiceId: number): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + `/view/${invoiceId}`);
 	}
 }

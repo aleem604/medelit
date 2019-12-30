@@ -165,14 +165,7 @@
 					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.tags}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="fields">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Fields</mat-header-cell>
-					<mat-cell *matCellDef="let fee">{{fee.fields}}</mat-cell>
-				</ng-container>
-				<ng-container matColumnDef="subCategories">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Subcategories</mat-header-cell>
-					<mat-cell *matCellDef="let fee">{{fee.subCategories}}</mat-cell>
-				</ng-container>
+				
 				<ng-container matColumnDef="a1">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>A1</mat-header-cell>
 					<mat-cell *matCellDef="let fee">{{fee.a1}}</mat-cell>

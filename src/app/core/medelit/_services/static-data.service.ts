@@ -21,6 +21,10 @@ export class StaticDataService {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/customers');
 	}
 
+	getInvoicesForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/invoices');
+	}
+
 	getApplicationMethodsForFilter(): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/application-methods');
 	}
@@ -170,6 +174,10 @@ export class StaticDataService {
 
 	getStaticDataForFitler(): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/static-data');
+	}
+
+	getLabsForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/labs');
 	}
 
 }

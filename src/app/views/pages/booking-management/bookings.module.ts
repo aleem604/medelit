@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 // Fake API Angular-in-memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 // Translate Module
@@ -70,11 +71,14 @@ import { environment } from '../../../../environments/environment';
 import { CoreModule } from '../../../core/core.module';
 import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
-import { StaticDataService } from '../../../core/medelit/_services';
+import { StaticDataService, InvoicesService } from '../../../core/medelit/_services';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { BookingsComponent } from './bookings.component';
 import { BookingsListComponent } from './bookings/bookings-list/bookings-list.component';
 import { BookingEditComponent } from './bookings/booking-edit/booking-edit.component';
+import { BookingCloneDialog } from './bookings/booking-clone-dialog/booking-clone-dialog';
+import { BookingCycleDialog } from './bookings/booking-cycle-dialog/booking-cycle-dialog';
+import { BookingToInvoiceDialog } from './bookings/booking-to-invoice/booking-to-invoice-dialog';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -140,6 +144,9 @@ const routes: Routes = [
 		MatTooltipModule,
 		NgbProgressbarModule,
 		NgxMatSelectSearchModule,
+		OwlDateTimeModule,
+		OwlNativeDateTimeModule,
+
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false
@@ -168,6 +175,7 @@ const routes: Routes = [
 		LayoutUtilsService,
 		HttpUtilsService,
 		BookingService,
+		InvoicesService,
 		StaticDataService,
 		TypesUtilsService,
 		LayoutUtilsService
@@ -176,12 +184,18 @@ const routes: Routes = [
 		ActionNotificationComponent,
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
-		UpdateStatusDialogComponent
+		UpdateStatusDialogComponent,
+		BookingCloneDialog,
+		BookingCycleDialog,
+		BookingToInvoiceDialog
 	],
 	declarations: [
 		BookingsComponent,
 		BookingsListComponent,
-		BookingEditComponent
+		BookingEditComponent,
+		BookingCloneDialog,
+		BookingCycleDialog,
+		BookingToInvoiceDialog
 	]
 })
 export class BookingsModule { }

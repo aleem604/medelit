@@ -1,0 +1,26 @@
+<div class="p-4">
+	<div mat-dialog-content>
+		<p><strong>How many booking cycles?</strong></p>
+		<mat-form-field>
+			<input type="number" matInput [formControl]="cloneControl" min="0">
+			<mat-error *ngIf="cloneControl.errors?.required">
+				Number of cycles is
+				<strong>required</strong>
+			</mat-error>
+			<mat-error *ngIf="cloneControl.errors?.min">
+				Number of cycles 
+				<strong>min value shoule be 5</strong>
+			</mat-error>
+			<mat-hint align="start">
+				Please enter
+				<strong>Booking cycles (min 5)</strong>
+			</mat-hint>
+
+
+		</mat-form-field>
+	</div>
+	<div mat-dialog-actions>
+		<button mat-button (click)="onCancel()">Cancel</button>
+		<button mat-button [mat-dialog-close]="cloneControl.value" cdkFocusInitial [disabled]="cloneControl.invalid">Ok</button>
+	</div>
+</div>

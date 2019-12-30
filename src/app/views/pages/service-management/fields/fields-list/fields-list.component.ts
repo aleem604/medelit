@@ -39,7 +39,7 @@ import { StaticDataService } from '../../../../../core/medelit/_services';
 export class FieldsListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: FieldDataSource;
-	displayedColumns = ['select', 'id', 'name', 'professionals', 'ptFees','proFees', 'createDate', 'status', 'actions'];
+	displayedColumns = ['select', 'id','code', 'fields', 'subCategory', 'createDate', 'status', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields

@@ -38,11 +38,12 @@
 				"src/assets/plugins/flaticon2/flaticon.css",
 				"src/assets/sass/style.angular.scss"
             ],
-            "scripts": [
+			"scripts": [
 				"node_modules/popper.js/dist/umd/popper.js",
+				"node_modules/print-js/dist/print.js",
 				"node_modules/tooltip.js/dist/umd/tooltip.min.js",
 				"node_modules/perfect-scrollbar/dist/perfect-scrollbar.js"
-            ],
+			],
 		  	"stylePreprocessorOptions": {
 			  "includePaths": [
 				  "src/assets"

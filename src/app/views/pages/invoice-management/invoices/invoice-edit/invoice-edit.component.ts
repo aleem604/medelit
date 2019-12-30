@@ -29,9 +29,12 @@ import {
 	StaticDataService,
 	FilterModel,
 	ApiResponse,
-	InvoiceServicesModel,
+
+    BookingViewModel,
+    InvoiceBookings
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { ConfirmDialogModel, ConfirmDialogComponent } from '../../../../partials/confirm-dialog/confirm-dialog.component';
 
 
 @Component({
@@ -215,76 +218,16 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			mailingPostCode: [this.invoice.mailingPostCode, [Validators.required]],
 			mailingCityId: [this.invoice.mailingCityId, [Validators.required]],
 			mailingCountryId: [this.invoice.mailingCountryId, [Validators.required]],
+
 			// payment and invoicing
 			paymentMethodId: [this.invoice.paymentMethodId, [Validators.required]],
 			insuranceCoverId: [this.invoice.insuranceCoverId, [Validators.required]],
 			invoiceNotes: [this.invoice.invoiceNotes, [Validators.required]],
 			invoiceDiagnosis: [this.invoice.invoiceDiagnosis, [Validators.required]],
-
-			services: this.invoiceFB.array([]),
+	
 		});
-		this.initServicesForm();
-
+		
 	}
-
-	initServicesForm() {
-
-		if (this.invoice.services.length > 0) {
-
-			this.invoice.services.forEach((service) => {
-				const group = this.invoiceFB.group({
-					id: [service.id, []],
-					serviceId: [service.serviceId, [Validators.required]],
-					professionalId: [service.professionalId, [Validators.required]],
-					ptFeeId: [service.ptFeeId, [Validators.required]],
-					ptFeeA1: [service.ptFeeA1, [Validators.required]],
-					ptFeeA2: [service.ptFeeA2, [Validators.required]],
-					proFeeId: [service.proFeeId, [Validators.required]],
-					proFeeA1: [service.proFeeA1, [Validators.required]],
-					proFeeA2: [service.proFeeA2, [Validators.required]],
-				});
-				(<FormArray>this.invoiceForm.get('services')).push(group);
-			});
-
-		} else {
-			this.addService();
-		}
-	}
-
-	addService() {
-
-		var newModel = new InvoiceServicesModel();
-		newModel.id = null;
-		newModel.serviceId = null;
-		newModel.professionalId = null;
-		//this.invoice.services.push(newModel);
-
-		const group = this.invoiceFB.group({
-			id: [null, []],
-			serviceId: [null, [Validators.required]],
-			professionalId: [null, [Validators.required]],
-			ptFeeId: [null, [Validators.required]],
-			ptFeeA1: [null, [Validators.required]],
-			ptFeeA2: [null, [Validators.required]],
-			proFeeId: [null, [Validators.required]],
-			proFeeA1: [null, [Validators.required]],
-			proFeeA2: [null, [Validators.required]],
-		});
-		(<FormArray>this.invoiceForm.get('services')).push(group);
-		//this.selected.setValue(this.invoice.services.length - 1);
-	}
-
-	removeService(index) {
-		if (index > 0) {
-			this.invoice.services.splice(index, 1);
-			const control = <FormArray>this.invoiceForm.controls['services'];
-			for (let i = control.length - 1; i >= 0; i--) {
-				control.removeAt(i)
-			}
-			this.initServicesForm();
-		}
-	}
-
 
 	goBack(id) {
 		this.loadingSubject.next(false);
@@ -326,12 +269,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
-			(<FormArray>this.invoiceForm.get('services')).controls.forEach((group: FormGroup) => {
-				(<any>Object).values(group.controls).forEach((control: FormControl) => {
-					control.markAsTouched();
-				})
-			});
-
+			
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
 			return;
@@ -377,33 +315,41 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			_invoice.mailingCityId = controls.mailingCityId.value.id;
 		if (controls.mailingCountryId.value)
 			_invoice.mailingCountryId = controls.mailingCountryId.value.id;
+
 		//payment and invoicing
 		_invoice.paymentMethodId = controls.paymentMethodId.value;
 		_invoice.insuranceCoverId = controls.insuranceCoverId.value;
 		_invoice.invoiceNotes = controls.invoiceNotes.value;
 		_invoice.invoiceDiagnosis = controls.invoiceDiagnosis.value;
-
-
-		_invoice.services = [];
-
-		const control = <FormArray>this.invoiceForm.controls['services'];
-		for (let i = 0; i < control.length; i++) {
-			var s = new InvoiceServicesModel();
-			if (control.controls[i].get('serviceId').value)
-				s.serviceId = +control.controls[i].get('serviceId').value.id;
-			s.professionalId = +control.controls[i].get('professionalId').value
-
-			s.ptFeeId = +control.controls[i].get('ptFeeId').value
-			s.ptFeeA1 = +control.controls[i].get('ptFeeA1').value
-			s.ptFeeA2 = +control.controls[i].get('ptFeeA2').value
-
-			s.proFeeId = +control.controls[i].get('proFeeId').value
-			s.proFeeA1 = +control.controls[i].get('proFeeA1').value
-			s.proFeeA2 = +control.controls[i].get('proFeeA2').value
-
-			_invoice.services.push(s);
-		}
+		
 		return _invoice;
+	}
+
+	deleteService(invoiceBooking: InvoiceBookings) {
+		let result: string;
+		const message = `Are you sure you want to do this?`;
+		const dialogData = new ConfirmDialogModel("Confirm Action", message);
+
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			maxWidth: "300px",
+			data: dialogData
+		});
+
+		dialogRef.afterClosed().subscribe(dialogResult => {
+			if (dialogResult) {
+				this.spinner.show();
+				this.invoiceService.deleteInvoiceBooking(invoiceBooking).toPromise().then((res) => {
+					if (res.success) {
+						this.layoutUtilsService.showActionNotification('Booking removed successfully.', MessageType.Create, 3000, true);
+						this.loadInvoiceFromService(this.invoice.id);
+					}
+				}).catch(() => {
+					this.spinner.hide();
+				}).finally(() => {
+					this.spinner.hide();
+				});
+			}
+		});
 	}
 
 	addInvoice(_invoice: InvoiceModel, withBack: boolean = false) {
@@ -450,13 +396,11 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		this.invoiceService.updateInvoice(_invoice).toPromise().then((res) => {
 			this.spinner.hide();
 			const resp = res as unknown as ApiResponse;
-			if (resp.success && resp.data.id > 0) {
-				const _invoice = resp.data as unknown as InvoiceModel;
-				this.loadInvoice(_invoice, true);
-
+			if (resp.success) {
+				
 				const message = `Invoice successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-				this.refreshInvoice(false);
+				this.loadInvoiceFromService(this.invoice.id);
 			} else {
 				const message = `An error occured while processing your request. Please try again later.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
@@ -507,8 +451,6 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		this.loadInvoiceEntitiesForFilter();
 		this.loadCitiesForFilter();
 		this.loadCountiesForFilter();
-		this.loadServicesForFilter();
-		this.loadProfessionalsForFilter(1);
 
 		this.staticService.getInvoiceStatusOptions().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
 			this.invoiceStatusOptions = data;
@@ -531,7 +473,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		});
 
 
-		if (this.invoice.insuranceCoverId) {
+		if (this.invoice.insuranceCoverId !== undefined) {
 			this.invoiceForm.get('insuranceCoverId').setValue(this.invoice.insuranceCoverId.toString());
 		}
 
@@ -545,151 +487,6 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 
 	}
 
-
-	//// services
-	loadServicesForFilter() {
-		this.staticService.getServicesForFilter().subscribe(res => {
-			this.servicesForFilter = res.data;
-
-			//this.filteredServices = this.invoiceForm.get('serviceId').valueChanges
-			//	.pipe(
-			//		startWith(''),
-			//		map(value => this._filterServices(value))
-			//	);
-			//if (this.invoice.requestedServiceId > 0) {
-			//	var service = this.servicesForFilter.find(x => x.id == this.invoice.requestedServiceId);
-			//	if (service) {
-			//		this.invoiceForm.patchValue({ 'requestedServiceId': { id: service.id, value: service.value } });
-			//	}
-			//}
-
-			const control = <FormArray>this.invoiceForm.controls['services'];
-			for (let i = 0; i < control.length; i++) {
-				const serviceObj = control.controls[i].get('serviceId').value;
-				if (serviceObj) {
-					const sobj = this.servicesForFilter.filter((ele) => {
-						return ele.id == serviceObj;
-					});
-					if (sobj)
-						control.controls[i].patchValue({ 'serviceId': sobj[0] });
-				}
-			}
-		});
-
-	}
-	private _filterServices(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.servicesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-
-	serviceDrpClosed() {
-		var service = this.invoiceForm.get('requestedServiceId').value;
-		if (service) {
-			this.loadProfessionalsForFilter(service.id);
-
-			this.invoiceForm.get('ptFeeId').setValue(service.ptFeeId);
-			this.invoiceForm.get('ptFeeA1').setValue(service.ptFeeA1);
-			this.invoiceForm.get('ptFeeA2').setValue(service.ptFeeA2);
-
-			this.invoiceForm.get('proFeeId').setValue(service.proFeeId);
-			this.invoiceForm.get('proFeeA1').setValue(service.proFeeA1);
-			this.invoiceForm.get('proFeeA2').setValue(service.proFeeA2);
-
-
-		} else {
-			this.professionalsForFilter = [];
-			this.filteredProfessionals = new Observable<FilterModel[]>();
-			this.invoiceForm.patchValue({ 'professionalId': '' });
-			this.invoiceForm.get('ptFeeId').setValue('');
-			this.invoiceForm.get('ptFeeA1').setValue('');
-			this.invoiceForm.get('ptFeeA2').setValue('');
-			this.invoiceForm.get('ptFeeCustom').setValue('');
-
-			this.invoiceForm.get('proFeeId').setValue('');
-			this.invoiceForm.get('proFeeA1').setValue('');
-			this.invoiceForm.get('proFeeA2').setValue('');
-			this.invoiceForm.get('proFeeCustom').setValue('');
-		}
-	}
-
-
-
-
-
-	getProfessionals(index: number) {
-		// @ts-ignore:
-		var serviceControls = this.invoiceForm.get('services').controls[index];
-		if (serviceControls.get('serviceId').value) {
-
-			var serviceId = serviceControls.get('serviceId').value.id;
-			return this.professionalsForFilter.filter((el) => {
-				var elm = el as unknown as any;
-				return elm.sid === serviceId
-			});
-		}
-	}
-
-
-
-	serviceSelected(event, index) {
-		// @ts-ignore:
-		var serviceControls = this.invoiceForm.get('services').controls[index];
-		var serviceObj = serviceControls.get('serviceId').value;
-		if (serviceObj) {
-			this.loadProfessionalsForFilter(serviceObj.id);
-
-			serviceControls.get('ptFeeId').setValue(serviceObj.ptFeeId);
-			serviceControls.get('ptFeeA1').setValue(serviceObj.ptFeeA1);
-			serviceControls.get('ptFeeA2').setValue(serviceObj.ptFeeA2);
-			serviceControls.get('proFeeId').setValue(serviceObj.proFeeId);
-			serviceControls.get('proFeeA1').setValue(serviceObj.proFeeA1);
-			serviceControls.get('proFeeA2').setValue(serviceObj.proFeeA2);
-
-
-		} else {
-			this.professionalsForFilter = [];
-			this.filteredProfessionals = new Observable<FilterModel[]>();
-			serviceControls.patchValue({ 'professionalId': '' });
-			serviceControls.get('ptFeeId').setValue('');
-			serviceControls.get('ptFeeA1').setValue('');
-			serviceControls.get('ptFeeA2').setValue('');
-			serviceControls.get('ptFeeCustom').setValue('');
-			serviceControls.get('proFeeId').setValue('');
-			serviceControls.get('proFeeA1').setValue('');
-			serviceControls.get('proFeeA2').setValue('');
-			serviceControls.get('proFeeCustom').setValue('');
-		}
-
-	}
-
-
-	// end services
-
-	// Service Professionals
-	loadProfessionalsForFilter(serviceId?: number) {
-		this.staticService.getProfessionalsForFilter(serviceId).subscribe(res => {
-			this.professionalsForFilter = res.data;
-
-			//this.filteredProfessionals = this.invoiceForm.get('professionalId').valueChanges
-			//	.pipe(
-			//		startWith(''),
-			//		map(value => this._filterProfessionals(value))
-			//	);
-			//if (this.invoice.professionalId > 0) {
-			//	var professional = this.professionalsForFilter.find(x => x.id == this.invoice.professionalId);
-			//	if (professional) {
-			//		this.invoiceForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value } });
-			//	}
-			//}
-		});
-
-	}
-	private _filterProfessionals(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.professionalsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-
-	// Service Professionals
 
 	//// Invoice Entities
 	loadInvoiceEntitiesForFilter() {
@@ -708,7 +505,6 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 				}
 			}
 		});
-
 	}
 	private _filterInvoiceEntities(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);

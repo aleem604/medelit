@@ -11,6 +11,7 @@ from './product-remarks.service.fake'; // You have to comment this, when your re
 export { ProductSpecificationsService }
 from './product-specifications.service.fake'; // You have to comment this, when your real back-end is done
 
+export { DashboardService } from './dashboard.service';
 export { LeadsService } from './lead.service';
 export { BookingService } from './booking.service';
 export { CustomersService } from './customer.service'; 
