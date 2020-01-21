@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 // CRUD
 import { HttpUtilsService, QueryParamsModel, QueryResultsModel } from '../../_base/crud';
 // Models
-import { InvoiceEntityModel } from '..';
+import { InvoiceEntityModel, ApiResponse } from '..';
 import { environment } from '../../../../environments/environment';
 
 
@@ -71,4 +71,35 @@ export class InvoiceEntitiesService {
 		//const body = { leadIdsForDelete: ids };
 		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders} );
 	}
+
+	getInvoiceEntityConnectedServices(ieId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + '/invoice-entity-connected-services/' + ieId, { headers: httpHeader });
+	}
+
+	getInvoiceEntityConnectedCustomers(ieId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + '/invoice-entity-connected-customers/' + ieId, { headers: httpHeader });
+	}
+
+	getInvoiceEntityConnectedProfessionals(ieId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + '/invoice-entity-connected-professionals/' + ieId, { headers: httpHeader });
+	}
+
+	getInvoiceEntityConnectedBookings(ieId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + '/invoice-entity-connected-bookings/' + ieId, { headers: httpHeader });
+	}
+
+	getInvoiceEntityConnectedInvoices(ieId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + '/invoice-entity-connected-invoices/' + ieId, { headers: httpHeader });
+	}
+
+	getInvoiceEntityConnectedLeads(ieId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + '/invoice-entity-connected-leads/' + ieId, { headers: httpHeader });
+	}
+
 }

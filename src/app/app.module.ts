@@ -62,6 +62,7 @@ import * as typescript from 'highlight.js/lib/languages/typescript';
 import * as scss from 'highlight.js/lib/languages/scss';
 import * as xml from 'highlight.js/lib/languages/xml';
 import * as json from 'highlight.js/lib/languages/json';
+import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
 
 // tslint:disable-next-line:class-name
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -70,6 +71,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 	minScrollbarLength: 40,
 	maxScrollbarLength: 300,
 };
+
 
 export function initializeLayoutConfig(appConfig: LayoutConfigService) {
 	// initialize app by loading default demo layout config
@@ -88,6 +90,7 @@ export function hljsLanguages(): HighlightLanguage[] {
 		{name: 'json', func: json}
 	];
 }
+
 
 @NgModule({
 	declarations: [AppComponent],
@@ -113,6 +116,11 @@ export function hljsLanguages(): HighlightLanguage[] {
 		TranslateModule.forRoot(),
 		MatProgressSpinnerModule,
 		InlineSVGModule.forRoot(),
+		JwtModule.forRoot({
+			config: {
+				skipWhenExpired: true
+			}
+		}),
 		NgxSpinnerModule,
 		ThemeModule
 	],

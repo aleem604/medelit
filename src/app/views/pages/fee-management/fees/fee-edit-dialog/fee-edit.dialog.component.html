@@ -1,0 +1,106 @@
+<div class="kt-portlet"
+	 [ngClass]="{ 'kt-portlet--body-progress kt-portlet--body-progress-overlay' : viewLoading }">
+	<div class="kt-portlet__head kt-portlet__head__custom">
+		<div class="kt-portlet__head-label">
+			<h3 class="kt-portlet__head-title">{{getTitle()}}</h3>
+		</div>
+	</div>
+	<form class="kt-form" [formGroup]="feeForm">
+		<div class="kt-portlet__body">
+
+			<div class="kt-portlet__body-progress">
+				<mat-spinner [diameter]="20"></mat-spinner>
+			</div>
+
+			<kt-alert *ngIf="hasFormErrors" type="warn" [duration]="30000" [showCloseButton]="true" (close)="onAlertClose($event)">
+				Oh snap! Change a few things up and try submitting again.
+			</kt-alert>
+			<div class="form-group kt-form__group row" *ngIf="fee.id">
+				<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+					<label>Created : </label> {{fee.createDate | date:'dd/MM/yyyy'}}
+				</div>
+				<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+					<label>Last Changed : </label> {{fee.updateDate | date:'dd/MM/yyyy'}}
+				</div>
+				<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+					<label>Assigned To : </label> <span class="text-capitalize">{{fee.assignedTo}}</span>
+				</div>
+				<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+					<label>Fee Code: </label> {{fee.feeCode}}
+				</div>
+			</div>
+
+			<div class="form-group kt-form__group row">
+				<div class="col-lg-6 kt-margin-bottom-20-mobile">
+					<mat-form-field class="mat-form-field-fluid">
+						<mat-select formControlName="feeTypeId">
+							<mat-option value="0">PT Fee</mat-option>
+							<mat-option value="1">PRO Fee</mat-option>
+						</mat-select>
+						<mat-error>
+							Fee Type is
+							<strong>required</strong>
+						</mat-error>
+						<mat-hint align="start">
+							<strong>Fee Type</strong>
+						</mat-hint>
+					</mat-form-field>
+				</div>
+				<div class="col-lg-6 kt-margin-bottom-20-mobile">
+					<mat-form-field class="mat-form-field-fluid">
+						<input matInput placeholder="Enter Fee Name" formControlName="feeName" maxlength="250" />
+						<mat-error>
+							Fee Name is
+							<strong>required</strong>
+						</mat-error>
+						<mat-hint align="start">
+							<strong>Fee Name</strong>
+						</mat-hint>
+					</mat-form-field>
+				</div>
+
+				<div class="col-lg-6 kt-margin-bottom-20-mobile">
+					<mat-form-field class="mat-form-field-fluid">
+						<input matInput type="number" placeholder="Enter Fee A1 value" formControlName="a1" maxlength="5" />
+						<span matPrefix>£&nbsp;</span>
+						<mat-error>
+							Fee A1 is
+							<strong>required</strong>
+						</mat-error>
+						<mat-hint align="start">
+							<strong>Fee A1</strong>
+						</mat-hint>
+					</mat-form-field>
+				</div>
+				<div class="col-lg-6 kt-margin-bottom-20-mobile">
+					<mat-form-field class="mat-form-field-fluid">
+						<input matInput type="number" placeholder="Enter Fee A2 value" formControlName="a2" maxlength="5" />
+						<span matPrefix>£&nbsp;</span>
+						<mat-error>
+							Fee A2 is
+							<strong>required</strong>
+						</mat-error>
+						<mat-hint align="start">
+							<strong>Fee A2</strong>
+						</mat-hint>
+					</mat-form-field>
+				</div>
+			</div>
+
+		</div>
+		<div class="kt-portlet__foot kt-portlet__no-border kt-portlet__foot--fit">
+			<div class="kt-form__actions kt-form__actions--solid">
+				<div class="row text-right">
+					<div class="col-lg-12">
+						<button type="button" mat-raised-button [mat-dialog-close]="data.animal" cdkFocusInitial matTooltip="Cancel changes">
+							Cancel
+						</button>&nbsp;
+						<button type="button" mat-raised-button color="primary" (click)="onSubmit()" [disabled]="viewLoading" matTooltip="Save changes">
+							Save
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

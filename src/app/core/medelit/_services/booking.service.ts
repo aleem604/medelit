@@ -89,4 +89,19 @@ export class BookingService {
 		return this.http.get<ApiResponse>(url);
 	}
 
+	getBookingConnectedBookings(bookingId: number): Observable<ApiResponse> {
+		const url = `${API_BOOKINGS_URL}/booking-cycle-connected-bookings/${bookingId}`;
+		return this.http.get<ApiResponse>(url);
+	}
+
+	getBookingConnectedProfessionals(bookingId: number): Observable<ApiResponse> {
+		const url = `${API_BOOKINGS_URL}/booking-connected-professionals/${bookingId}`;
+		return this.http.get<ApiResponse>(url);
+	}
+
+	getBookingConnectedInvoices(bookingId: number): Observable<ApiResponse> {
+		const url = `${API_BOOKINGS_URL}/booking-connected-invoices/${bookingId}`;
+		return this.http.get<ApiResponse>(url);
+	}
+
 }

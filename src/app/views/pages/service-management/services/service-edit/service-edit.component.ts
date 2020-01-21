@@ -3,7 +3,7 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRe
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 // Material
-import { MatDialog, MatChipInputEvent, MatSelect } from '@angular/material';
+import { MatDialog, MatChipInputEvent, MatSelect, MatTabChangeEvent } from '@angular/material';
 // RxJS
 import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
 import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
@@ -49,18 +49,14 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	removable = true;
 	addOnBlur = true;
 	readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-	fruits: Fruit[] = [
-		{ name: 'Lemon' },
-		{ name: 'Lime' },
-		{ name: 'Apple' },
-	];
-
 
 	// Public properties
 	service: ServiceModel;
+	serviceId: number;
 	serviceId$: Observable<number>;
 	oldService: ServiceModel;
 	selectedTab = 0;
+	tabTitle: string = '';
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;
 	serviceForm: FormGroup;
@@ -95,7 +91,6 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	@ViewChild('multiSelect', { static: true }) multiSelect: MatSelect;
 	protected _onDestroy = new Subject<void>();
 
-
 	tagsArray: string[];
 
 	constructor(
@@ -120,13 +115,13 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.activatedRoute.params.subscribe(params => {
 			const id = params.id;
 			if (id && id > 0) {
-
+				this.serviceId = id;
 				this.store.pipe(
 					select(selectServiceById(id))
 				).subscribe(result => {
 					//if (!result) {
-						this.loadServiceFromService(id);
-						return;
+					this.loadServiceFromService(id);
+					return;
 					//}
 
 					//this.loadService(result);
@@ -282,6 +277,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
+			window.scroll(0, 0);
 			return;
 		}
 
@@ -426,11 +422,14 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 	getComponentTitle() {
 		let result = 'Create service';
-		if (!this.service || !this.service.id) {
-			return result;
+		if (this.selectedTab == 0) {
+			if (!this.service || !this.service.id) {
+				return result;
+			}
+			result = `Edit service - ${this.service.serviceCode} ${this.service.name}`;
+		} else {
+			result = this.tabTitle;
 		}
-
-		result = `Edit service - ${this.service.serviceCode} ${this.service.name}`;
 		return result;
 	}
 
@@ -703,9 +702,16 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			return value.toLowerCase().replace(/\s/g, '');
 		return value;
 	}
-
-
-
 	// End Fitler Section
+	tabChanged(event: MatTabChangeEvent) {
+		this.tabTitle = event.tab.textLabel;
+	}
+
+
+	//// fee section
+	createFee(feeType: number) {
+		console.log(feeType);
+	}
+
 
 }

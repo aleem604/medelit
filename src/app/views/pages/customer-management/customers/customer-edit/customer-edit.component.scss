@@ -2,12 +2,19 @@
 	width: 100%;
 }
 
+.no-option {
+	color: #ff4081 !important;
+}
+.clear-customer, .new-ie {
+	margin-left: 1.5em;
+	font-size: larger;
+	cursor: pointer;
+	color: #5867dd;
+}
+
 .table-wrapper {
 	width: 100%;
 	position: relative;
-
-	
-
 
 	table {
 		tr {

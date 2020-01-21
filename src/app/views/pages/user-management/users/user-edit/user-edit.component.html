@@ -1,7 +1,7 @@
 <kt-portlet>
 	<kt-portlet-header [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
 		<ng-container ktPortletTools>
-			<a [routerLink]="['../../']" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the users list">
+			<a [routerLink]="['/user-management/users']" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the users list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
@@ -12,9 +12,9 @@
 			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
-			<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+			<!--<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
 				<mat-icon>more_vert</mat-icon>
-			</button>
+			</button>-->
 			<mat-menu #menu="matMenu">
 				<button mat-menu-item color="primary" (click)="onSumbit(true)">Save & Exit</button>
 				<button mat-menu-item color="primary">Save & Duplicate</button>
@@ -24,126 +24,155 @@
 	</kt-portlet-header>
 
 	<kt-portlet-body>
-		<mat-tab-group [(selectedIndex)]="selectedTab">
-			<mat-tab>
-				<ng-template mat-tab-label>
-					<i class="mat-tab-label-icon fa fa-user"></i>
-					Basic info
-				</ng-template>
-				<ng-template matTabContent>
-					<!--begin::Form-->
-					<div *ngIf="user">
-						<form [formGroup]="userForm" class="kt-form kt-form--group-seperator-dashed">
+		<div *ngIf="user">
+			<form [formGroup]="userForm" class="kt-form kt-form--group-seperator-dashed">
 
-							<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
-								Oh snap! Change a few things up and try submitting again.
-							</kt-alert>
-							<div class="kt-form__section kt-form__section--first">
-								<div class="form-group kt-form__group row">
-									<div class="col-lg-4 kt-margin-bottom-20-mobile">
-										<mat-form-field class="mat-form-field-fluid">
-											<input matInput placeholder="Enter Username" formControlName="username"/>
-											<mat-error>Username is
-												<strong>required</strong>
-											</mat-error>
-											<mat-hint align="start">Please enter
-												<strong>Username</strong>
-											</mat-hint>
-										</mat-form-field>
-									</div>
-									<div class="col-lg-4 kt-margin-bottom-20-mobile">
-										<mat-form-field class="mat-form-field-fluid">
-											<input matInput placeholder="Enter Full Name" formControlName="fullname"/>
-											<mat-error>Full Name is
-												<strong>required</strong>
-											</mat-error>
-											<mat-hint align="start">Please enter
-												<strong>Full Name</strong>
-											</mat-hint>
-										</mat-form-field>
-									</div>
+				<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+					Oh snap! Change a few things up and try submitting again.
+				</kt-alert>
+				<div class="kt-form__section kt-form__section--first">
+					<div class="form-group kt-form__group row">
+						<!--<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
+							<mat-form-field class="mat-form-field-fluid">
+								<input matInput placeholder="Enter Username" formControlName="userName" />
+								<mat-error>
+									Username is
+									<strong>required</strong>
+								</mat-error>
+								<mat-hint align="start">
+									Please enter
+									<strong>Username</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>-->
+						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
+							<mat-form-field class="mat-form-field-fluid">
+								<input matInput placeholder="Enter First Name" formControlName="firstName" />
+								<mat-error>
+									First Name is
+									<strong>required</strong>
+								</mat-error>
+								<mat-hint align="start">
+									Please enter
+									<strong>First Name</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>
+						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
+							<mat-form-field class="mat-form-field-fluid">
+								<input matInput placeholder="Enter Last Name" formControlName="lastName" />
+								<mat-error>
+									Last Name is
+									<strong>required</strong>
+								</mat-error>
+								<mat-hint align="start">
+									Please enter
+									<strong>Last Name</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>
 
-									<div class="col-lg-4 kt-margin-bottom-20-mobile">
-										<mat-form-field class="mat-form-field-fluid">
-											<input type="email" matInput placeholder="Enter Email" formControlName="email"/>
-											<mat-error>Email is
-												<strong>required</strong>
-											</mat-error>
-											<mat-hint align="start">Please enter
-												<strong>Email</strong>
-											</mat-hint>
-										</mat-form-field>
-									</div>
-								</div>
-								<div class="form-group kt-form__group row">
-									<div class="col-lg-4 kt-margin-bottom-20-mobile">
-										<mat-form-field class="mat-form-field-fluid">
-											<input matInput placeholder="Enter Occupation" formControlName="occupation"/>
-											<mat-hint align="start">Please enter
-												<strong>Occupation</strong>
-											</mat-hint>
-										</mat-form-field>
-									</div>
-									<div class="col-lg-4 kt-margin-bottom-20-mobile">
-										<mat-form-field class="mat-form-field-fluid">
-											<input matInput placeholder="Enter Company Name" formControlName="companyName"/>
-											<mat-hint align="start">Please enter
-												<strong>Company Name</strong>
-											</mat-hint>
-										</mat-form-field>
-									</div>
+						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
+							<mat-form-field class="mat-form-field-fluid">
+								<input type="email" matInput placeholder="Enter Email" formControlName="email" />
+								<mat-error *ngIf="userForm.get('email').errors?.required">
+									Email is
+									<strong>required</strong>
+								</mat-error>
+								<mat-error *ngIf="userForm.get('email').errors?.isEmailUnique">
+									Email is
+									<strong>already taken</strong>
+								</mat-error>
+								<mat-hint align="start">
+									Please enter
+									<strong>Email</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>
 
-									<div class="col-lg-4 kt-margin-bottom-20-mobile">
-										<mat-form-field class="mat-form-field-fluid">
-											<input matInput placeholder="Enter Phone" formControlName="phone"/>
-											<mat-hint align="start">Please enter
-												<strong>Phone</strong>
-											</mat-hint>
-										</mat-form-field>
-									</div>
-								</div>
-							</div>
-						</form>
+						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
+							<mat-form-field class="mat-form-field-fluid">
+								<input type="text" matInput placeholder="Enter temporary password" formControlName="password" maxlength="20" />
+
+								<mat-error *ngIf="userForm.get('password').errors?.required">
+									Temporary Password is
+									<strong>required</strong>
+								</mat-error>
+								<mat-error *ngIf="userForm.get('password').errors?.minlength">
+									Temporary Password must be at lead
+									<strong>5 charactes in length</strong>
+								</mat-error>
+								<mat-hint align="start">
+									Please enter
+									<strong>Temporary Password</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>
+
+						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
+							<mat-form-field class="mat-form-field-fluid">
+								<input matInput placeholder="Enter Phone" formControlName="phoneNumber" maxlength="20" />
+
+								<mat-error *ngIf="userForm.get('phoneNumber').errors?.minlength">
+									Please Enter a valid
+									<strong>phone </strong>
+								</mat-error>
+								<mat-hint align="start">
+									Please enter
+									<strong>Phone</strong>
+								</mat-hint>
+							</mat-form-field>
+						</div>
 					</div>
-					<!--end::Form-->
-				</ng-template>
-			</mat-tab>
-			<mat-tab [disabled]="!user || !user.id">
-				<ng-template mat-tab-label>
-					<i class="mat-tab-label-icon fa fa-address-book"></i>
-					User address
-				</ng-template>
-				<ng-template matTabContent>
-					<kt-address [(addressSubject)]="addressSubject"></kt-address>
-				</ng-template>
-			</mat-tab>
-			<mat-tab [disabled]="!user || !user.id">
-				<ng-template mat-tab-label>
-					<i class="mat-tab-label-icon fab fa-facebook"></i>
-					Social Nerworks
-				</ng-template>
-				<ng-template matTabContent>
-					<kt-social-networks [(socialNetworksSubject)]="soicialNetworksSubject"></kt-social-networks>
-				</ng-template>
-			</mat-tab>
-			<mat-tab *ngIf="user" [disabled]="!user || !user.id">
-				<ng-template mat-tab-label>
-					<i class="mat-tab-label-icon fa fa-unlock"></i>
-					User roles
-				</ng-template>
-				<ng-template matTabContent>
-					<kt-user-roles-list [(rolesSubject)]="rolesSubject"></kt-user-roles-list>
-				</ng-template>
-			</mat-tab>
-			<mat-tab *ngIf="user" [disabled]="!user || !user.id">
-				<ng-template mat-tab-label>
-					<i class="mat-tab-label-icon fa fa-exchange-alt"></i>
-					Change password
-				</ng-template>
-				<ng-template matTabContent>
-					<kt-change-password [userId]="user.id"></kt-change-password>
-				</ng-template>
-			</mat-tab>
-		</mat-tab-group>
+				</div>
+
+			</form>
+			<div class="kt-form__section kt-form__section--first" *ngIf="user && user.id">
+
+				<div class="form-group kt-form__group row">
+					<div class="col-lg-12 kt-margin-bottom-20-mobile mt-3">
+						<strong>Select User Roles</strong>
+					</div>
+
+					<div class="col-lg-12 kt-margin-bottom-20-mobile mt-3">
+						<table class="table" mat-table [dataSource]="rolesDataSource" matSort>
+							<ng-container matColumnDef="select">
+								<th mat-header-cell *matHeaderCellDef>
+									<mat-checkbox (change)="$event ? masterToggle() : null"
+												  [checked]="selection.hasValue() && isAllSelected()"
+												  [indeterminate]="selection.hasValue() && !isAllSelected()"
+												  [aria-label]="checkboxLabel()">
+									</mat-checkbox>
+								</th>
+								<td mat-cell *matCellDef="let row">
+									<mat-checkbox (click)="$event.stopPropagation()"
+												  (change)="$event ? selection.toggle(row) : null"
+												  [checked]="selection.isSelected(row)"
+												  [aria-label]="checkboxLabel(row)">
+									</mat-checkbox>
+								</td>
+							</ng-container>
+
+							<ng-container matColumnDef="id">
+								<th mat-header-cell *matHeaderCellDef mat-sort-header>Id </th>
+								<td mat-cell *matCellDef="let element"> {{element.id}} </td>
+							</ng-container>
+
+							<ng-container matColumnDef="name">
+								<th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+								<td mat-cell *matCellDef="let element"> {{element.name}} </td>
+							</ng-container>
+
+							<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+							<tr mat-row *matRowDef="let row; columns: displayedColumns;"
+								(click)="selection.toggle(row)"></tr>
+						</table>
+						<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
 	</kt-portlet-body>
 </kt-portlet>

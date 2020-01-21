@@ -71,6 +71,13 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { CustomersComponent } from './customers.component';
 import { CustomersListComponent } from './customers/customers-list/customers-list.component';
 import { CustomerEditComponent } from './customers/customer-edit/customer-edit.component';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { CustomerConnectedCustomersComponent } from './customers/customer-connected-customers/customer-connected-customers.component';
+import { CustomerConnectedServicesComponent } from './customers/customer-connected-services/customer-connected-services.component';
+import { CustomerConnectedProfessinalsComponent } from './customers/customer-connected-professionals/customer-connected-professionals.component';
+import { CustomerConnectedBookingsComponent } from './customers/customer-connected-bookings/customer-connected-bookings.component';
+import { CustomerConnectedInvoicesComponent } from './customers/customer-connected-invoices/customer-connected-invoices.component';
+import { CustomerConnectedLeadsComponent } from './customers/customer-connected-leads/customer-connected-leads.component';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -128,6 +135,7 @@ const routes: Routes = [
 		MatTabsModule,
 		MatTooltipModule,
 		NgbProgressbarModule,
+		NgxMatSelectSearchModule,
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false
@@ -169,7 +177,13 @@ const routes: Routes = [
 	declarations: [
 		CustomersComponent,
 		CustomersListComponent,
-		CustomerEditComponent
+		CustomerEditComponent,
+		CustomerConnectedCustomersComponent,
+		CustomerConnectedServicesComponent,
+		CustomerConnectedProfessinalsComponent,
+		CustomerConnectedBookingsComponent,
+		CustomerConnectedInvoicesComponent,
+		CustomerConnectedLeadsComponent
 	]
 })
 export class CustomersModule { }

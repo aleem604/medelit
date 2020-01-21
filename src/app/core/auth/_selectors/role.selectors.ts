@@ -11,7 +11,7 @@ import { each } from 'lodash';
 
 export const selectRolesState = createFeatureSelector<RolesState>('roles');
 
-export const selectRoleById = (roleId: number) => createSelector(
+export const selectRoleById = (roleId: string) => createSelector(
     selectRolesState,
     rolesState => rolesState.entities[roleId]
 );
@@ -52,6 +52,18 @@ export const selectRolesShowInitWaitingMessage = createSelector(
     rolesState => rolesState.showInitWaitingMessage
 );
 
+export const selectRolesInStore = createSelector(
+	selectRolesState,
+	rolesState => {
+		const items: Role[] = [];
+		each(rolesState.entities, element => {
+			items.push(element);
+		});
+		const httpExtension = new HttpExtenstionsModel();
+		const result: Role[] = httpExtension.sortArray(items, rolesState.lastQuery.sortField, rolesState.lastQuery.sortOrder);
+		return new QueryResultsModel(result, rolesState.queryRowsCount, '');
+	}
+);
 
 export const selectQueryResult = createSelector(
     selectRolesState,

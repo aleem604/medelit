@@ -10,7 +10,6 @@ import { CustomerModel } from '..';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../_models/apireponse.model';
 
-
 const API_LEADS_URL = `${environment.apiEndpoint}/customers`;
 
 @Injectable()
@@ -21,7 +20,7 @@ export class CustomersService {
 	createCustomer(customer: CustomerModel): Observable<CustomerModel> {
 		// Note: Add headers if needed (tokens/bearer)
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
-		return this.http.post<CustomerModel>(API_LEADS_URL, customer, { headers: httpHeaders});
+		return this.http.post<CustomerModel>(API_LEADS_URL, customer, { headers: httpHeaders });
 	}
 
 	// READ
@@ -70,12 +69,42 @@ export class CustomersService {
 		const url = API_LEADS_URL + '/delete';
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		const body = { customerIdsForDelete: ids };
-		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders} );
+		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders });
 	}
 
 	convertToBooking(customer: CustomerModel): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.post<ApiResponse>(API_LEADS_URL+'/create-booking', customer, { headers: httpHeader });
+		return this.http.post<ApiResponse>(API_LEADS_URL + '/create-booking', customer, { headers: httpHeader });
+	}
+
+	getCustomerConnectedCustomers(customerId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_LEADS_URL + '/customer-connected-customers/' + customerId, { headers: httpHeader });
+	}
+
+	getCustomerConnectedServices(customerId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_LEADS_URL + '/customer-requested-services/' + customerId, { headers: httpHeader });
+	}
+
+	getCustomerConnectedProfessionals(customerId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_LEADS_URL + '/customer-connected-professionals/' + customerId, { headers: httpHeader });
+	}
+
+	getCustomerConnectedBookings(customerId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_LEADS_URL + '/customer-connected-bookings/' + customerId, { headers: httpHeader });
+	}
+
+	getCustomerConnectedInvoices(customerId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_LEADS_URL + '/customer-connected-invoices/' + customerId, { headers: httpHeader });
+	}
+
+	getCustomerConnectedLeads(customerId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_LEADS_URL + '/customer-connected-leads/' + customerId, { headers: httpHeader });
 	}
 
 }

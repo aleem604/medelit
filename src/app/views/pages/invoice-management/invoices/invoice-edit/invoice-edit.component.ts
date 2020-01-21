@@ -3,7 +3,7 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRe
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 // Material
-import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
+import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS, MatTabChangeEvent } from '@angular/material';
 // RxJS
 import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
 import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
@@ -30,8 +30,8 @@ import {
 	FilterModel,
 	ApiResponse,
 
-    BookingViewModel,
-    InvoiceBookings
+	BookingViewModel,
+	InvoiceBookings
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmDialogModel, ConfirmDialogComponent } from '../../../../partials/confirm-dialog/confirm-dialog.component';
@@ -56,6 +56,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 	services: Observable<StaticDataModel>;
 	oldInvoice: InvoiceModel;
 	selectedTab = 0;
+	tabTitle: string = '';
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;
 	invoiceForm: FormGroup;
@@ -224,9 +225,9 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			insuranceCoverId: [this.invoice.insuranceCoverId, [Validators.required]],
 			invoiceNotes: [this.invoice.invoiceNotes, [Validators.required]],
 			invoiceDiagnosis: [this.invoice.invoiceDiagnosis, [Validators.required]],
-	
+
 		});
-		
+
 	}
 
 	goBack(id) {
@@ -269,9 +270,10 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
-			
+
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
+			window.scroll(0, 0);
 			return;
 		}
 
@@ -321,7 +323,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		_invoice.insuranceCoverId = controls.insuranceCoverId.value;
 		_invoice.invoiceNotes = controls.invoiceNotes.value;
 		_invoice.invoiceDiagnosis = controls.invoiceDiagnosis.value;
-		
+
 		return _invoice;
 	}
 
@@ -397,7 +399,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			this.spinner.hide();
 			const resp = res as unknown as ApiResponse;
 			if (resp.success) {
-				
+
 				const message = `Invoice successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
 				this.loadInvoiceFromService(this.invoice.id);
@@ -432,12 +434,16 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 	}
 
 	getComponentTitle() {
-		let result = 'Create invoice';
-		if (!this.invoice || !this.invoice.id) {
-			return result;
-		}
 
-		result = `Edit invoice - ${this.invoice.invoiceNumber} ${this.invoice.subject}`;
+		let result = 'Create invoice';
+		if (this.selectedTab == 0) {
+			if (!this.invoice || !this.invoice.id) {
+				return result;
+			}
+			result = `Edit customer - ${this.invoice.subject}`;
+		} else {
+			result = this.tabTitle;
+		}
 		return result;
 	}
 
@@ -511,7 +517,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		return this.invoiceEntitiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
 	}
 
-	
+
 	// end Invoice Entities
 
 	// cities
@@ -584,6 +590,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		});
 
 	}
+
 	private _filterCountries(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.countriesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
@@ -604,4 +611,8 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 	}
 
 	/*End Filters Section*/
+
+	tabChanged(event: MatTabChangeEvent) {
+		this.tabTitle = event.tab.textLabel;
+	}
 }

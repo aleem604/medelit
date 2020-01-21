@@ -114,6 +114,30 @@ export class BookingModel extends BaseModel {
 		this.mailToPtId = 0;
 		this.imToProId = 0;
 	}
-
 }
 
+
+export interface BookingConnectedBookings {
+	bookingName: string;
+	service: string;
+	professional: string;
+	cycleNumber: number;
+	fee: string;
+	subTotalFee: number;
+}
+
+export interface BookingConnectedProfessionals {
+	professional: string;
+	phone: string;
+	email: string;
+	lastVisitDate: Date;
+	activeNonActive: string;
+}
+
+export interface BookingConnectedInvoices {
+	invoiceName: string
+	invoiceNumber: string;
+	invoiceEntity: string;
+	invoiceDate: string;
+	totalInvoice: number;
+}

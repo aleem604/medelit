@@ -8,8 +8,7 @@ import { tap, map } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 // Module reducers and selectors
 import { AppState} from '../../../core/reducers/';
-import { currentUserPermissions } from '../_selectors/auth.selectors';
-import { Permission } from '../_models/permission.model';
+import { currentUserRoleIds } from '../_selectors/auth.selectors';
 import { find } from 'lodash';
 
 @Injectable()
@@ -25,12 +24,12 @@ export class ModuleGuard implements CanActivate {
 
         return this.store
             .pipe(
-                select(currentUserPermissions),
-                map((permissions: Permission[]) => {
-                    const _perm = find(permissions, (elem: Permission) => {
-                        return elem.title.toLocaleLowerCase() === moduleName.toLocaleLowerCase();
+				select(currentUserRoleIds),
+                map((role: string[]) => {
+                    const _role = find(role, (elem: string) => {
+                        return elem.toLocaleLowerCase() === moduleName.toLocaleLowerCase();
                     });
-                    return _perm ? true : false;
+					return _role ? true : false;
                 }),
                 tap(hasAccess => {
                     if (!hasAccess) {

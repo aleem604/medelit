@@ -8,9 +8,11 @@ import { HttpUtilsService, QueryParamsModel, QueryResultsModel } from '../../_ba
 // Models
 import { ServiceModel } from '..';
 import { environment } from '../../../../environments/environment';
+import { ApiResponse } from '../_models/apireponse.model';
+import { FeeDialogModel } from '../_models/fee.model';
 
 
-const API_LEADS_URL = `${environment.apiEndpoint}/services`;
+const API_SERVICES_URL = `${environment.apiEndpoint}/services`;
 
 @Injectable()
 export class ServicesService {
@@ -20,23 +22,23 @@ export class ServicesService {
 	createService(service: ServiceModel): Observable<ServiceModel> {
 		// Note: Add headers if needed (tokens/bearer)
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
-		return this.http.post<ServiceModel>(API_LEADS_URL, service, { headers: httpHeaders });
+		return this.http.post<ServiceModel>(API_SERVICES_URL, service, { headers: httpHeaders });
 	}
 
 	// READ
 	getAllServices(): Observable<ServiceModel[]> {
-		return this.http.get<ServiceModel[]>(API_LEADS_URL);
+		return this.http.get<ServiceModel[]>(API_SERVICES_URL);
 	}
 
 	getServiceById(serviceId: number): Observable<ServiceModel> {
-		return this.http.get<ServiceModel>(API_LEADS_URL + `/${serviceId}`);
+		return this.http.get<ServiceModel>(API_SERVICES_URL + `/${serviceId}`);
 	}
 
 	findServices(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		const httpParams = this.httpUtils.getFindHTTPParams(queryParams);
 
-		const url = API_LEADS_URL + '/find';
+		const url = API_SERVICES_URL + '/find';
 		return this.http.post<QueryResultsModel>(url, queryParams, {
 			headers: httpHeaders
 		});
@@ -45,7 +47,7 @@ export class ServicesService {
 	// UPDATE => PUT: update the service on the server
 	updateService(service: ServiceModel): Observable<any> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.put(API_LEADS_URL, service, { headers: httpHeader });
+		return this.http.put(API_SERVICES_URL, service, { headers: httpHeader });
 	}
 
 	// UPDATE Status
@@ -55,20 +57,77 @@ export class ServicesService {
 			servicesForUpdate: services,
 			newStatus: status
 		};
-		const url = API_LEADS_URL + '/update-status/' + status;
+		const url = API_SERVICES_URL + '/update-status/' + status;
 		return this.http.put(url, services, { headers: httpHeaders });
 	}
 
 	// DELETE => delete the service from the server
 	deleteService(serviceId: number): Observable<ServiceModel> {
-		const url = `${API_LEADS_URL}/${serviceId}`;
+		const url = `${API_SERVICES_URL}/${serviceId}`;
 		return this.http.delete<ServiceModel>(url);
 	}
 
 	deleteServices(ids: number[] = []): Observable<any> {
-		const url = API_LEADS_URL + '/delete-services';
+		const url = API_SERVICES_URL + '/delete-services';
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		const body = { serviceIdsForDelete: ids };
 		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders });
 	}
+
+	// attach fee to service on fly or create new fee and attach to service in service table
+	addUpdateFeeToService(model: FeeDialogModel): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/services-add-update-fees', model, { headers: httpHeader });
+	}
+
+	getProfessionalServices(proId: number, fieldId?:number, categoryId?:number, tag?: string ): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/professionals-services', {professionalId: proId,FieldId: fieldId, SubCategoryId: categoryId, Tag: tag }, { headers: httpHeader });
+	}
+
+	addProfessionalToServices(entities, proId: number): Observable<ApiResponse> {
+		const httpHeaders = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(`${API_SERVICES_URL}/save-professional-services/${proId}`, entities, { headers: httpHeaders });
+	}
+
+	detachProfessioal(serviceId: number, proId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/detach-professional/' + serviceId + '/' + proId, { headers: httpHeader });
+	}
+
+	getProfessionalRelations(proId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/professionals-relations/' + proId, { headers: httpHeader });
+	}
+
+	getProfessionalFeesInfo(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/professionals-fees-detail/' + serviceId, { headers: httpHeader });
+	}
+
+	getServiceProfessionals(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-professionals/' + serviceId, { headers: httpHeader });
+	}
+
+	getConnectedCustomersInvoicingEntities(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/connected-customers-invoicing-entities/' + serviceId, { headers: httpHeader });
+	}
+
+	getConnectedBookings(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-bookings/' + serviceId, { headers: httpHeader });
+	}
+
+	getConnectedCustomerInvoice(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-customers-invoices/' + serviceId, { headers: httpHeader });
+	}
+
+	getConnectedLeads(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-leads/' + serviceId, { headers: httpHeader });
+	}
+
 }

@@ -38,7 +38,7 @@ export class PasswordValidation {
 })
 export class ChangePasswordComponent implements OnInit {
 	// Public properties
-	@Input() userId: number;
+	@Input() userId: string;
 	@Input() loadingSubject = new BehaviorSubject<boolean>(false);
 	hasFormErrors = false;
 	user: User;

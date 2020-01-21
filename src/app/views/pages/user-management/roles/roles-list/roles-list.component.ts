@@ -16,25 +16,18 @@ import { Role, RolesDataSource, RoleDeleted, RolesPageRequested  } from '../../.
 import { AppState } from '../../../../../core/reducers';
 import { QueryParamsModel } from '../../../../../core/_base/crud';
 
-// Components
 import { RoleEditDialogComponent } from '../role-edit/role-edit.dialog.component';
 
-// Table with EDIT item in MODAL
-// ARTICLE for table with sort/filter/paginator
-// https://blog.angular-university.io/angular-material-data-table/
-// https://v5.material.angular.io/components/table/overview
-// https://v5.material.angular.io/components/sort/overview
-// https://v5.material.angular.io/components/table/overview#sorting
-// https://www.youtube.com/watch?v=NSt9CI3BXv4
 @Component({
 	selector: 'kt-roles-list',
 	templateUrl: './roles-list.component.html',
+	styleUrls:['./roles-list.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RolesListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: RolesDataSource;
-	displayedColumns = ['select', 'id', 'title', 'actions'];
+	displayedColumns = ['select', 'id', 'name'];
 	@ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 	@ViewChild('sort1', {static: true}) sort: MatSort;
 	// Filter fields
@@ -46,36 +39,18 @@ export class RolesListComponent implements OnInit, OnDestroy {
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
 
-	/**
-	 * Component constructor
-	 *
-	 * @param store: Store<AppState>
-	 * @param dialog: MatDialog
-	 * @param snackBar: MatSnackBar
-	 * @param layoutUtilsService: LayoutUtilsService
-	 */
+
 	constructor(
 		private store: Store<AppState>,
 		public dialog: MatDialog,
 		public snackBar: MatSnackBar,
 		private layoutUtilsService: LayoutUtilsService) {}
 
-	/**
-	 * @ Lifecycle sequences => https://angular.io/guide/lifecycle-hooks
-	 */
-
-	/**
-	 * On init
-	 */
 	ngOnInit() {
 		// If the user changes the sort order, reset back to the first page.
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		this.subscriptions.push(sortSubscription);
 
-		/* Data load will be triggered in two cases:
-		- when a pagination event occurs => this.paginator.page
-		- when a sort event occurs => this.sort.sortChange
-		**/
 		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page).pipe(
 			tap(() => {
 				this.loadRolesList();
@@ -142,17 +117,17 @@ export class RolesListComponent implements OnInit, OnDestroy {
 	 */
 	filterConfiguration(): any {
 		const filter: any = {};
-		const searchText: string = this.searchInput.nativeElement.value;
-		filter.title = searchText;
+		try {
+			const searchText = this.searchInput.nativeElement.value;
+
+			if (searchText)
+				filter.search = searchText;
+		} catch{
+
+		}
 		return filter;
 	}
 
-	/** ACTIONS */
-	/**
-	 * Delete role
-	 *
-	 * @param _item: Role
-	 */
 	deleteRole(_item: Role) {
 		const _title = 'User Role';
 		const _description = 'Are you sure to permanently delete this role?';
@@ -179,7 +154,7 @@ export class RolesListComponent implements OnInit, OnDestroy {
 		const messages = [];
 		this.selection.selected.forEach(elem => {
 			messages.push({
-				text: `${elem.title}`,
+				text: `${elem.name}`,
 				id: elem.id.toString(),
 				// status: elem.username
 			});

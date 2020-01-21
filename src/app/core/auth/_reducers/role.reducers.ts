@@ -10,7 +10,7 @@ export interface RolesState extends EntityState<Role> {
     isAllRolesLoaded: boolean;
     queryRowsCount: number;
     queryResult: Role[];
-    lastCreatedRoleId: number;
+    lastCreatedRoleId: string;
     listLoading: boolean;
     actionsloading: boolean;
     lastQuery: QueryParamsModel;

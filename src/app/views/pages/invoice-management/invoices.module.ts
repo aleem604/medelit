@@ -73,6 +73,10 @@ import { InvoicesListComponent } from './invoices/invoices-list/invoices-list.co
 import { InvoiceEditComponent } from './invoices/invoice-edit/invoice-edit.component';
 import { InvoiceViewComponent } from './invoices/invoice-view/invoice-view.component';
 import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
+import { InvoiceConnectedProfessinalsComponent } from './invoices/invoice-connected-professionals/invoice-connected-professionals.component';
+import { InvoiceConnectedCustomersComponent } from './invoices/invoice-connected-customers/invoice-connected-customers.component';
+import { InvoiceConnectedInvoieEntitiesComponent } from './invoices/invoice-connected-invoice-entities/invoice-connected-invoice-entities.component';
+import { InvoiceConnectedBookingsComponent } from './invoices/invoice-connected-bookings/invoice-connected-bookings.component';
 
 
 // tslint:disable-next-line:class-name
@@ -184,7 +188,11 @@ const routes: Routes = [
 		InvoicesComponent,
 		InvoicesListComponent,
 		InvoiceEditComponent,
-		InvoiceViewComponent
+		InvoiceViewComponent,
+		InvoiceConnectedProfessinalsComponent,
+		InvoiceConnectedCustomersComponent,
+		InvoiceConnectedInvoieEntitiesComponent,
+		InvoiceConnectedBookingsComponent
 	]
 })
 export class InvoicesModule { }

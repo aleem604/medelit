@@ -42,7 +42,7 @@ import { LeadServicesModel } from '../../../../../core/medelit/_models/lead.mode
 export class LeadsListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: LeadDataSource;
-	displayedColumns = ['select', 'id', 'title', 'surName', 'name', 'language', 'phone', 'services', 'professionals', 'updateDate','status', 'actions'];
+	displayedColumns = ['select', 'surName', 'name', 'language', 'phone', 'createDate', 'assignedTo', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -52,25 +52,7 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 	lastQuery: QueryParamsModel;
 	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
 
-	statusesForFilter: FilterModel[] = [];
-	statusControl = new FormControl({ id: -1 }, []);
-	filteredStatuses: Observable<FilterModel[]>;
-
-	countriesForFilter: FilterModel[] = [];
-	countryControl = new FormControl();
-	filteredCountries: Observable<FilterModel[]>;
-
-	regionsForFilter: FilterModel[] = [];
-	regionControl = new FormControl();
-	filteredRegions: Observable<FilterModel[]>;
-
-	citiesForFilter: FilterModel[] = [];
-	cityControl = new FormControl();
-	filteredCities: Observable<FilterModel[]>;
-
-	neighborhoodsForFilter: FilterModel[] = [];
-	neighborhoodControl = new FormControl();
-	filteredNeighborhoods: Observable<FilterModel[]>;
+	filterControl = new FormControl('0', []);
 
 	// Selection
 	selection = new SelectionModel<LeadModel>(true, []);
@@ -90,17 +72,17 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 
 
 	ngOnInit() {
-		this.loadStatusesForFilter();
 		// If the user changes the sort order, reset back to the first page.
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		this.subscriptions.push(sortSubscription);
 
-		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page).pipe(
+		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page, this.filterControl.valueChanges).pipe(
 			tap(() => this.loadLeadsList())
 		)
 			.subscribe();
 		this.subscriptions.push(paginatorSubscriptions);
 
+		
 		// Filtration, bind to searchInput
 		const searchSubscription = fromEvent(this.searchInput.nativeElement, 'keyup').pipe(
 			debounceTime(150),
@@ -171,10 +153,9 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		const filter: any = {};
 		try {
 			const searchText = this.searchInput.nativeElement.value;
-			const status = this.statusControl.value;
-
-			if (status) {
-				filter.status = status.id;
+			const mfilter = this.filterControl.value;
+			if (mfilter) {
+				filter.filter = mfilter;
 			}
 
 			if (searchText)
@@ -358,60 +339,6 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		return '';
 	}
 
-	/* Top Filters */
-
-	loadStatusesForFilter() {
-		this.utilService.getStatuses().subscribe(res => {
-			this.statusesForFilter = res.data;
-			this.filteredStatuses = this.statusControl.valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterStatuses(value))
-				);
-		},
-			(error) => { console.log(error); },
-			() => {
-				this.statusControl.setValue({ id: -1, name: 'All' });
-				this.detectChanges();
-			});
-	}
-
-	
-
-	private _filterStatuses(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.statusesForFilter.filter(status => this._normalizeValue(status.value).includes(filterValue));
-	}
-
-	
-
-	private _normalizeValue(value: string): string {
-		if (value && value.length > 0)
-			return value.toLowerCase().replace(/\s/g, '');
-		return value;
-	}
-
-	displayFn(option: FilterModel): string {
-		if (option)
-			return option.value;
-		return '';
-	}
-
-	statusDrpClosed() {
-		this.loadLeadsList();
-	}
-
-	countryDrpClosed() {
-		if (!this.countryControl.value) {
-			this.regionControl.setValue('');
-			this.cityControl.setValue('');
-			this.neighborhoodControl.setValue('');
-
-		}
-		this.loadLeadsList();
-	}
-
-	/*End top Fitlers*/
 	detectChanges() {
 		try {
 			this.cdr.detectChanges();

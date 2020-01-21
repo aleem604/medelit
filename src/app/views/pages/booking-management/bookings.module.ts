@@ -79,6 +79,9 @@ import { BookingEditComponent } from './bookings/booking-edit/booking-edit.compo
 import { BookingCloneDialog } from './bookings/booking-clone-dialog/booking-clone-dialog';
 import { BookingCycleDialog } from './bookings/booking-cycle-dialog/booking-cycle-dialog';
 import { BookingToInvoiceDialog } from './bookings/booking-to-invoice/booking-to-invoice-dialog';
+import { BookingConnectedBookingsComponent } from './bookings/booking-connected-bookings/booking-connected-bookings.component';
+import { BookingConnectedProfessinalsComponent } from './bookings/booking-connected-professionals/booking-connected-professionals.component';
+import { BookingConnectedInvoicesComponent } from './bookings/booking-connected-invoices/booking-connected-invoices.component';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -195,7 +198,10 @@ const routes: Routes = [
 		BookingEditComponent,
 		BookingCloneDialog,
 		BookingCycleDialog,
-		BookingToInvoiceDialog
+		BookingToInvoiceDialog,
+		BookingConnectedBookingsComponent,
+		BookingConnectedProfessinalsComponent,
+		BookingConnectedInvoicesComponent
 	]
 })
 export class BookingsModule { }

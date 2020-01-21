@@ -52,22 +52,6 @@ const routes: Routes = [
 				loadChildren: () => import('./views/pages/service-management/services.module').then(m => m.ServicesModule),
 			},
 			{
-				path: 'mail',
-				loadChildren: () => import('./views/pages/apps/mail/mail.module').then(m => m.MailModule),
-			},
-			{
-				path: 'ecommerce',
-				loadChildren: () => import('./views/pages/apps/e-commerce/e-commerce.module').then(m => m.ECommerceModule),
-			},
-			{
-				path: 'ngbootstrap',
-				loadChildren: () => import('./views/pages/ngbootstrap/ngbootstrap.module').then(m => m.NgbootstrapModule),
-			},
-			{
-				path: 'material',
-				loadChildren: () => import('./views/pages/material/material.module').then(m => m.MaterialModule),
-			},
-			{
 				path: 'user-management',
 				loadChildren: () => import('./views/pages/user-management/user-management.module').then(m => m.UserManagementModule),
 			},

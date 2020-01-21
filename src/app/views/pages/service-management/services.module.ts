@@ -78,6 +78,11 @@ import { FieldsListComponent } from './fields/fields-list/fields-list.component'
 import { FieldEditComponent } from './fields/field-edit/field-edit.component';
 import { StaticDataService, ServicesService } from '../../../core/medelit/_services';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { ServiceFeesComponent } from './services/service-fees/service-fees.component';
+import { ServiceProfessionalsComponent } from './services/service-professionals/service-professionals.component';
+import { ServiceConnectedBookingsComponent } from './services/service-connected-bookings/service-connected-bookings.component';
+import { ServiceConnectedInvoicesComponent } from './services/service-connected-invoices/service-connected-invoies.component';
+import { ServiceConnectedLeadsComponent } from './services/service-connected-leads/service-connected-leads.component';
 
 
 
@@ -205,7 +210,12 @@ const routes: Routes = [
 		ServiceEditComponent,
 
 		FieldsListComponent,
-		FieldEditComponent
+		FieldEditComponent,
+		ServiceFeesComponent,
+		ServiceProfessionalsComponent,
+		ServiceConnectedBookingsComponent,
+		ServiceConnectedInvoicesComponent,
+		ServiceConnectedLeadsComponent
 	]
 })
 export class ServicesModule { }

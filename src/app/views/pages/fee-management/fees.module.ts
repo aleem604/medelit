@@ -61,15 +61,19 @@ import {
 	MatAutocompleteModule,
 	MAT_DIALOG_DEFAULT_OPTIONS,
 	MatSnackBarModule,
-	MatTooltipModule
+	MatTooltipModule,
+    MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
 import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { FeesListComponent } from './fees/fees-list/fees-list.component';
 import { FeesComponent } from './fees.component';
-import { FeeEditDialogComponent } from './fees/fee-edit/fee-edit.dialog.component';
-
+import { FeeEditDialogComponent } from './fees/fee-edit-dialog/fee-edit.dialog.component';
+import { FeeEditComponent } from './fees/fee-edit/fee-edit.component';
+import { ConnectedProfCustomerComponent } from './fees/connected-prof-customer/connected-prof-customer.component';
+import { AttachServiceToFeeDialogComponent } from './fees/attach-service-to-fee-dialog/attach-service-to-fee.dialog.component';
+import { FeeConnectedServicesComponent } from './fees/fee-connected-services/fee-connected-services.component';
 
 
 // tslint:disable-next-line:class-name
@@ -88,6 +92,14 @@ const routes: Routes = [
 			{
 				path: 'fees',
 				component: FeesListComponent
+			},
+			{
+				path: 'fees/add',
+				component: FeeEditComponent
+			},
+			{
+				path: 'fees/edit/:id',
+				component: FeeEditComponent
 			}
 		]
 	}
@@ -124,6 +136,7 @@ const routes: Routes = [
 		MatTabsModule,
 		MatTooltipModule,
 		NgbProgressbarModule,
+		MatChipsModule,
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false
@@ -161,12 +174,17 @@ const routes: Routes = [
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
-		FeeEditDialogComponent
+		FeeEditDialogComponent,
+		AttachServiceToFeeDialogComponent
 	],
 	declarations: [
 		FeesComponent,
 		FeesListComponent,
-		FeeEditDialogComponent
+		FeeEditDialogComponent,
+		FeeEditComponent,
+		FeeConnectedServicesComponent,
+		ConnectedProfCustomerComponent,
+		AttachServiceToFeeDialogComponent
 	]
 })
 export class FeesModule { }

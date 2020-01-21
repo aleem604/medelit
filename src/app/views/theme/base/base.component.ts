@@ -12,9 +12,9 @@ import { MenuConfig } from '../../../core/_config/menu.config';
 import { PageConfig } from '../../../core/_config/page.config';
 // User permissions
 import { NgxPermissionsService } from 'ngx-permissions';
-import { currentUserPermissions, Permission } from '../../../core/auth';
 import { select, Store } from '@ngrx/store';
 import { AppState } from '../../../core/reducers';
+import { currentUserRoleIds } from '../../../core/auth';
 
 @Component({
 	selector: 'kt-base',
@@ -34,19 +34,8 @@ export class BaseComponent implements OnInit, OnDestroy {
 
 	// Private properties
 	private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
-	private currentUserPermissions$: Observable<Permission[]>;
+	private currentUserRoles$: Observable<string[]>;
 
-
-	/**
-	 * Component constructor
-	 *
-	 * @param layoutConfigService: LayoutConfigService
-	 * @param menuConfigService: MenuConfifService
-	 * @param pageConfigService: PageConfigService
-	 * @param htmlClassService: HtmlClassService
-	 * @param store
-	 * @param permissionsService
-	 */
 	constructor(
 		private layoutConfigService: LayoutConfigService,
 		private menuConfigService: MenuConfigService,
@@ -72,13 +61,6 @@ export class BaseComponent implements OnInit, OnDestroy {
 		this.unsubscribe.push(subscr);
 	}
 
-	/**
-	 * @ Lifecycle sequences => https://angular.io/guide/lifecycle-hooks
-	 */
-
-	/**
-	 * On init
-	 */
 	ngOnInit(): void {
 		const config = this.layoutConfigService.getConfig();
 		this.selfLayout = objectPath.get(config, 'self.layout');
@@ -108,14 +90,15 @@ export class BaseComponent implements OnInit, OnDestroy {
 	 * NGX Permissions, init roles
 	 */
 	loadRolesWithPermissions() {
-		this.currentUserPermissions$ = this.store.pipe(select(currentUserPermissions));
-		const subscr = this.currentUserPermissions$.subscribe(res => {
+		this.currentUserRoles$ = this.store.pipe(select(currentUserRoleIds));
+		const subscr = this.currentUserRoles$.subscribe(res => {
 			if (!res || res.length === 0) {
 				return;
 			}
 
 			this.permissionsService.flushPermissions();
-			res.forEach((pm: Permission) => this.permissionsService.addPermission(pm.name));
+			//this.permissionsService.loadPermissions(res);
+			res.forEach((pm: string) => this.permissionsService.addPermission(pm.toLowerCase()));
 		});
 		this.unsubscribe.push(subscr);
 	}

@@ -3,13 +3,12 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRe
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 // Material
-import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
+import { MatDialog, MatSelect, MatTabChangeEvent } from '@angular/material';
 // RxJS
 import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
 import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
 // NGRX
 import { Store, select } from '@ngrx/store';
-import { Dictionary, Update } from '@ngrx/entity';
 import { AppState } from '../../../../../core/reducers';
 // Layout
 import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
@@ -17,12 +16,7 @@ import { SubheaderService, LayoutConfigService } from '../../../../../core/_base
 import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Services and Models
 import {
-	selectLastCreatedCustomerId,
-	selectCustomerById,
-	SPECIFICATIONS_DICTIONARY,
 	CustomerModel,
-	CustomerOnServerCreated,
-	CustomerUpdated,
 	CustomersService,
 	StaticDataModel,
 
@@ -30,11 +24,12 @@ import {
 	FilterModel,
 	ApiResponse,
 
-	AppDateAdapter,
-	APP_DATE_FORMATS,
-    CustomerServicesModel,
+    InvoiceEntityModel,
+    MedelitStaticData,
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { CreateInvoiceEntityDialogComponent } from '../../../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -56,6 +51,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	services: Observable<StaticDataModel>;
 	oldCustomer: CustomerModel;
 	selectedTab = 0;
+	tabTitle: string = '';
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;
 	customerForm: FormGroup;
@@ -89,9 +85,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	servicesForFilter: FilterModel[] = [];
 	filteredServices: Observable<FilterModel[]>;
 
-	professionalsForFilter: FilterModel[] = [];
-	filteredProfessionals: Observable<FilterModel[]>;
-
+	
 	paymentMethodsOptions: FilterModel[];
 	listedDiscountNetworkOptions: FilterModel[];
 	buildingTypeOptions: FilterModel[];
@@ -99,6 +93,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	customerStatusOptions: FilterModel[];
 	customerSourceOptions: FilterModel[];
 	contactMethodOptions: FilterModel[];
+	leadSourceOptions: FilterModel[];
 	customerCategoryOptions: FilterModel[];
 
 	invoiceEntitiesForFilter: FilterModel[] = [];
@@ -111,6 +106,16 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	countriesForFilter: FilterModel[] = [];
 	visitFilteredCountries: Observable<FilterModel[]>;
 	homeFilteredCountries: Observable<FilterModel[]>;
+
+	professionalsForFilter: FilterModel[] = [];
+	filteredProfessionals: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
+	public profMultiCtrl: FormControl = new FormControl();
+	public profMultiFilterCtrl: FormControl = new FormControl();
+	public filteredLangsMulti: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
+	@ViewChild('multiSelect', { static: true }) multiSelect: MatSelect;
+	protected _onDestroy = new Subject<void>();
+
+
 
 	constructor(
 		private store: Store<AppState>,
@@ -125,6 +130,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		private customerService: CustomersService,
 		private staticService: StaticDataService,
 		private spinner: NgxSpinnerService,
+		private translate: TranslateService,
 		private cdr: ChangeDetectorRef) {
 	}
 
@@ -132,7 +138,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		this.loading$ = this.loadingSubject.asObservable();
 		this.loadingSubject.next(true);
 		this.activatedRoute.params.subscribe(params => {
-			const id = params.id;
+			const id = parseInt(params.id);
 			if (id && id > 0) {
 
 				//this.store.pipe(
@@ -218,29 +224,30 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		this.customerForm = this.customerFB.group({
 			titleId: [this.customer.titleId, Validators.required],
 			surName: [this.customer.surName, [Validators.required, Validators.min(4)]],
-			name: [this.customer.name, Validators.required],
+			name: [this.customer.name, [Validators.required]],
 			languageId: [this.customer.languageId, [Validators.required]],
-			mainPhone: [this.customer.mainPhone, []],
-			mainPhoneOwner: [this.customer.mainPhoneOwner],
-			contactPhone: [this.customer.contactPhone, []],
+			leadSourceId: [this.customer.leadSourceId, [Validators.required]],
+
+			mainPhone: [this.customer.mainPhone, [Validators.required]],
+			mainPhoneOwner: [this.customer.mainPhoneOwner, []],
+			contactPhone: [this.customer.contactPhone, [Validators.required]],
 			phone2: [this.customer.phone2, []],
 			phone2Owner: [this.customer.phone2Owner, []],
 			phone3: [this.customer.phone3, []],
 			phone3Owner: [this.customer.phone3Owner, []],
 			email: [this.customer.email, [Validators.required, Validators.email,]],
-			email2: [this.customer.email2, [Validators.email,]],
+			email2: [this.customer.email2, [Validators.email]],
 			fax: [this.customer.fax, []],
-			dateOfBirth: [this.customer.dateOfBirth, []],
+			dateOfBirth: [this.customer.dateOfBirth, [Validators.required]],
 			countryOfBirthId: [this.customer.countryOfBirthId, []],
 			visitRequestingPerson: [this.customer.visitRequestingPerson, []],
 			visitRequestingPersonRelationId: [this.customer.visitRequestingPersonRelationId, []],
 			gpCode: [this.customer.gpCode, []],
 
-			services: this.customerFB.array([]),
-
-			paymentMethodId: [this.customer.paymentMethodId, []],
+			paymentMethodId: [this.customer.paymentMethodId, [Validators.required]],
 			listedDiscountNetworkId: [this.customer.listedDiscountNetworkId, []],
-			invoiceEntityId: [this.customer.invoiceEntityId, []],
+			haveDifferentIEId: [this.customer.haveDifferentIEId, []],
+			invoiceEntityId: [this.customer.invoiceEntityId, [Validators.required]],
 			invoicingNotes: [this.customer.invoicingNotes, []],
 			// address info
 			visitStreetName: [this.customer.visitStreetName, [Validators.required]],
@@ -251,26 +258,23 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			homeCityId: [this.customer.homeCityId, [Validators.required]],
 			visitCountryId: [this.customer.visitCountryId, [Validators.required]],
 			homeCountryId: [this.customer.homeCountryId, [Validators.required]],
-			buildingTypeId: [this.customer.buildingTypeId, []],
-			contactMethodId: [this.customer.contactMethodId, []],
+			buildingTypeId: [this.customer.buildingTypeId, [Validators.required]],
+			contactMethodId: [this.customer.contactMethodId, [Validators.required]],
 			buzzer: [this.customer.buzzer, []],
 			flatNumber: [this.customer.flatNumber, []],
 			floor: [this.customer.floor, []],
-			visitVenueId: [this.customer.visitVenueId, []],
+			visitVenueId: [this.customer.visitVenueId, [Validators.required]],
 			addressNotes: [this.customer.addressNotes, []],
 			visitVenueDetail: [this.customer.visitVenueDetail, []],
 
-			
 			// bank info
 			bankName: [this.customer.bankName, []],
 			accountNumber: [this.customer.accountNumber, []],
 			sortCode: [this.customer.sortCode, []],
 			iban: [this.customer.iban, []],
-			insuranceCoverId: [this.customer.insuranceCoverId, []],
-			haveDifferentIEId: [this.customer.haveDifferentIEId, []],
+			insuranceCoverId: [this.customer.insuranceCoverId, [Validators.required]],
 
 			blacklistId: [this.customer.blacklistId.toString(), []],
-
 		});
 
 	}
@@ -314,9 +318,10 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
-			
+
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
+			window.scroll(0, 0);
 			return;
 		}
 
@@ -341,6 +346,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		_customer.name = controls.name.value;
 		if (controls.languageId.value)
 			_customer.languageId = +controls.languageId.value.id;
+		_customer.leadSourceId = controls.leadSourceId.value;
 		_customer.mainPhone = controls.mainPhone.value;
 		_customer.mainPhoneOwner = controls.mainPhoneOwner.value;
 		_customer.contactPhone = controls.contactPhone.value;
@@ -397,25 +403,6 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		_customer.insuranceCoverId = +controls.insuranceCoverId.value;
 		_customer.haveDifferentIEId = +controls.haveDifferentIEId.value;
 
-		_customer.services = [];
-
-		const control = <FormArray>this.customerForm.controls['services'];
-		for (let i = 0; i < control.length; i++) {
-			var s = new CustomerServicesModel();
-			if (control.controls[i].get('serviceId').value)
-				s.serviceId = +control.controls[i].get('serviceId').value.id;
-			s.professionalId = +control.controls[i].get('professionalId').value
-
-			s.ptFeeId = +control.controls[i].get('ptFeeId').value
-			s.ptFeeA1 = +control.controls[i].get('ptFeeA1').value
-			s.ptFeeA2 = +control.controls[i].get('ptFeeA2').value
-
-			s.proFeeId = +control.controls[i].get('proFeeId').value
-			s.proFeeA1 = +control.controls[i].get('proFeeA1').value
-			s.proFeeA2 = +control.controls[i].get('proFeeA2').value
-
-			_customer.services.push(s);
-		}
 		return _customer;
 	}
 
@@ -501,12 +488,16 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	}
 
 	getComponentTitle() {
-		let result = 'Create customer';
-		if (!this.customer || !this.customer.id) {
-			return result;
+		
+		let result = 'Create service';
+		if (this.selectedTab == 0) {
+			if (!this.customer || !this.customer.id) {
+				return result;
+			}
+			result = `Edit customer - ${this.customer.surName} ${this.customer.name}`;
+		} else {
+			result = this.tabTitle;
 		}
-
-		result = `Edit customer - ${this.customer.surName} ${this.customer.name}`;
 		return result;
 	}
 
@@ -517,6 +508,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
 	/*Fitlers Section*/
 	loadStaticResources() {
+		this.loadInvoiceEntitiesForFilter();
 		this.loadTitlesForFilter();
 		this.loadLanguagesForFilter();
 		this.loadCountriesForCountryOfBirthFilter();
@@ -524,67 +516,64 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		this.subscribeInvoiceEntity();
 		this.loadVisitCitiesForFilter();
 		this.loadCountiesForFilter();
+		this.loadProfessionalsForFilter();
 
-
-		this.staticService.getPaymentMethodsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.paymentMethodsOptions = data;
-
+		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
+			this.paymentMethodsOptions = data.map((el) => { return { id: el.id, value: el.paymentMethods }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 			if (this.customer.paymentMethodId) {
 				var obj = data.find((e) => { return e.id == this.customer.paymentMethodId });
 				if (obj)
 					this.customerForm.get('paymentMethodId').setValue(obj.id);
 			}
-		});
-
-		this.staticService.getDiscountNetworksForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.listedDiscountNetworkOptions = data;
+		
+			this.listedDiscountNetworkOptions = data.map((el) => { return { id: el.id, value: el.discountNetworks }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });;
 
 			if (this.customer.listedDiscountNetworkId) {
 				var obj = data.find((e) => { return e.id == this.customer.listedDiscountNetworkId });
 				if (obj)
 					this.customerForm.get('listedDiscountNetworkId').setValue(obj.id);
 			}
-		});
-
-		this.staticService.getBuildingTypesForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.buildingTypeOptions = data;
+		
+			this.buildingTypeOptions = data.map((el) => { return { id: el.id, value: el.buildingTypes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.customer.buildingTypeId) {
 				var obj = data.find((e) => { return e.id == this.customer.buildingTypeId });
 				if (obj)
 					this.customerForm.get('buildingTypeId').setValue(obj.id);
 			}
-		});
-
-		this.staticService.getVisitVenuesForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.visitVenueOptions = data;
+		
+			this.visitVenueOptions = data.map((el) => { return { id: el.id, value: el.visitVenues }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.customer.visitVenueId) {
 				const obj = data.find((e) => { return e.id == this.customer.visitVenueId });
 				if (obj)
 					this.customerForm.get('visitVenueId').setValue(obj.id);
 			}
-		});
-
 		
-
-		this.staticService.getContactMethodsForFilter().pipe(map(n => n.data as unknown as FilterModel[])).toPromise().then((data) => {
-			this.contactMethodOptions = data;
+			this.contactMethodOptions = data.map((el) => { return { id: el.id, value: el.contactMethods }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.customer.contactMethodId) {
 				const obj = data.find((e) => { return e.id == this.customer.contactMethodId });
 				if (obj)
 					this.customerForm.get('contactMethodId').setValue(obj.id);
 			}
+
+			this.leadSourceOptions = data.map((el) => { return { id: el.id, value: el.leadSources }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+
+			if (this.customer.leadSourceId) {
+				const obj = data.find((e) => { return e.id == this.customer.leadSourceId });
+				if (obj)
+					this.customerForm.get('leadSourceId').setValue(obj.id);
+			}
 		});
-		if (this.customer.insuranceCoverId) {
+
+
+		if (this.customer.insuranceCoverId !== null) {
 			this.customerForm.get('insuranceCoverId').setValue(this.customer.insuranceCoverId.toString());
 		}
 		if (this.customer.haveDifferentIEId !== null) {
 			this.customerForm.get('haveDifferentIEId').setValue(this.customer.haveDifferentIEId.toString());
 		}
-
-
 	}
 
 	//// Customers
@@ -700,7 +689,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 					map(value => this._filterInvoiceEntities(value))
 				);
 			if (this.customer.invoiceEntityId > 0) {
-				var ie = this.invoiceEntitiesForFilter.find(x => x.id == this.customer.titleId);
+				var ie = this.invoiceEntitiesForFilter.find(x => x.id == this.customer.invoiceEntityId);
 				if (ie) {
 					this.customerForm.patchValue({ 'invoiceEntityId': { id: ie.id, value: ie.value } });
 				}
@@ -724,7 +713,6 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			this.loadInvoiceEntitiesForFilter();
 		}
 
-
 		differetIdControl.valueChanges
 			.subscribe((v) => {
 				if (v == 0) {
@@ -740,6 +728,67 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			});
 	}
 
+	createNewIE() {
+		let saveMessageTranslateParam = 'MEDELIT.LEADS.INVOICE_ENTITY_CREATED_SUCCESS';
+		//saveMessageTranslateParam += this.lead.id > 0 ? 'UPDATE_MESSAGE' : 'ADD_MESSAGE';
+		const _saveMessage = this.translate.instant(saveMessageTranslateParam);
+		const _messageType = this.customer.id > 0 ? MessageType.Update : MessageType.Create;
+		var ieModel = new InvoiceEntityModel();
+		const controls = this.customerForm.controls;
+		ieModel.mainPhoneNumber = controls.mainPhone.value;
+		ieModel.mainPhoneNumberOwner = controls.mainPhoneOwner.value;
+		ieModel.phone2 = controls.phone2.value;
+		ieModel.phone2Owner = controls.phone2Owner.value;
+		ieModel.phone3 = controls.phone3.value;
+		ieModel.phone3Owner = controls.phone3Owner.value;
+		ieModel.email = controls.email.value;
+		ieModel.email2 = controls.email2.value;
+		ieModel.relationshipWithCustomerId = controls.visitRequestingPersonRelationId.value;
+		ieModel.fax = controls.fax.value;
+		ieModel.dateOfBirth = controls.dateOfBirth.value;
+		if (controls.countryOfBirthId.value)
+			ieModel.countryOfBirthId = controls.countryOfBirthId.value.id;
+		ieModel.billingAddress = controls.addressStreetName.value;
+		ieModel.mailingAddress = controls.addressStreetName.value;
+		ieModel.billingPostCode = controls.postalCode.value;
+		ieModel.mailingPostCode = controls.postalCode.value;
+		if (controls.cityId.value)
+			ieModel.billingCityId = controls.cityId.value.id;
+		if (controls.cityId.value)
+			ieModel.mailingCityId = controls.cityId.value.id;
+		if (controls.countryId.value)
+			ieModel.billingCountryId = controls.countryId.value.id;
+		if (controls.countryId.value)
+			ieModel.mailingCountryId = controls.countryId.value.id;
+		ieModel.description = controls.leadDescription.value;
+		ieModel.paymentMethodId = controls.preferredPaymentMethodId.value;
+		ieModel.bank = controls.bankName.value;
+		ieModel.accountNumber = controls.accountNumber.value;
+		ieModel.sortCode = controls.sortCode.value;
+		ieModel.iban = controls.iban.value;
+		ieModel.insuranceCoverId = controls.insuranceCoverId.value;
+		ieModel.invoicingNotes = controls.invoicingNotes.value;
+		ieModel.discountNetworkId = controls.listedDiscountNetworkId.value;
+		ieModel.personOfReference = controls.visitRequestingPerson.value;
+		ieModel.personOfReferenceEmail = controls.email.value;
+		ieModel.personOfReferencePhone = controls.mainPhone.value;
+		ieModel.blackListId = controls.blacklistId.value;
+		ieModel.discountPercent = controls.discount.value;
+
+		const dialogRef = this.dialog.open(CreateInvoiceEntityDialogComponent, { data: ieModel });
+		dialogRef.afterClosed().subscribe(res => {
+			if (!res) {
+				return;
+			}
+
+			this.loadInvoiceEntitiesForFilter();
+
+			this.layoutUtilsService.showActionNotification(_saveMessage, _messageType);
+			this.detectChanges();
+			//this.refreshLead(false, this.lead.id);
+		});
+
+	}
 
 	// end Invoice Entities
 
@@ -752,7 +801,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 				.pipe(
 					startWith(''),
 					map(value => this._filterCities(value))
-			);
+				);
 			this.homeFilteredCities = this.customerForm.get('homeCityId').valueChanges
 				.pipe(
 					startWith(''),
@@ -790,7 +839,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 				.pipe(
 					startWith(''),
 					map(value => this._filterCountries(value))
-			);
+				);
 			this.homeFilteredCountries = this.customerForm.get('homeCountryId').valueChanges
 				.pipe(
 					startWith(''),
@@ -819,6 +868,54 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	// end account code id filter
 
 
+	// Professionals Filter
+	loadProfessionalsForFilter() {
+		this.staticService.getProfessionalsForFilter().subscribe(res => {
+			this.professionalsForFilter = res.data;
+			this.filteredProfessionals.next(this.professionalsForFilter.slice());
+
+			if (this.customer.id) {
+				var profs = this.customer.connectedProfessionals as unknown as FilterModel[];
+				var select: FilterModel[] = [];
+				profs && profs.forEach((x) => {
+					var findIndex = this.professionalsForFilter.findIndex((el) => { return el.id == x.id });
+					if (findIndex > -1)
+						select.push(this.professionalsForFilter[findIndex]);
+
+				});
+				this.customerForm.patchValue({ 'connectedProfessionals': select });
+			}
+
+
+			this.profMultiFilterCtrl.valueChanges
+				.pipe(takeUntil(this._onDestroy))
+				.subscribe(() => {
+					this.filterLangsMulti();
+				});
+		});
+	}
+
+	private filterLangsMulti() {
+		if (!this.professionalsForFilter) {
+			return;
+		}
+		// get the search keyword
+		let search = this.profMultiFilterCtrl.value;
+		if (!search) {
+			this.filteredProfessionals.next(this.professionalsForFilter.slice());
+			return;
+		} else {
+			search = search.toLowerCase();
+		}
+		// filter the banks
+		this.filteredProfessionals.next(
+			this.professionalsForFilter.filter(bank => bank.value.toLowerCase().indexOf(search) > -1)
+		);
+	}
+	// end professionals fitler
+
+
+
 	displayFn(option: FilterModel): string {
 		if (option)
 			return option.value;
@@ -832,4 +929,16 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	}
 
 	/*End Filters Section*/
+
+	detectChanges() {
+		try {
+			this.cdr.detectChanges();
+		} catch {
+
+		}
+	}
+
+	tabChanged(event: MatTabChangeEvent) {
+		this.tabTitle = event.tab.textLabel;
+	}
 }

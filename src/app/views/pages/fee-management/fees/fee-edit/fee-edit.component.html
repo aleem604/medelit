@@ -1,0 +1,173 @@
+<kt-portlet>
+	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
+		<ng-container ktPortletTools>
+			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the services list">
+				<i class="la la-arrow-left"></i>
+				<span class="kt-hidden-mobile">Back</span>
+			</a>
+			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()" [disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
+				<i class="la la-cog"></i>
+				<span class="kt-hidden-mobile">Reset</span>
+			</a>
+			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" *ngIf="selectedTab === 0" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
+				<span class="kt-hidden-mobile">Save</span>
+			</a>
+			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="onSumbit(false)" *ngIf="selectedTab === 1" mat-raised-button matTooltip="Save & Continue">
+				<span class="kt-hidden-mobile">Add New Service</span>
+			</a>
+
+			<!--<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
+				<mat-icon>more_vert</mat-icon>
+			</button>-->
+			<mat-menu #menu="matMenu">
+				<button mat-menu-item color="primary" (click)="onSumbit(true)">Save & Exit</button>
+				<button mat-menu-item color="primary">Save & Duplicate</button>
+				<button mat-menu-item color="primary" (click)="onSumbit(false)">Save & Continue</button>
+			</mat-menu>
+		</ng-container>
+	</kt-portlet-header>
+	<mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="tabChanged($event)">
+		<mat-tab label="Fee Info">
+			<ng-template matTabContent>
+				<kt-portlet-body>
+
+					<div *ngIf="fee">
+						<!--begin::Form-->
+						<form [formGroup]="feeForm" class="kt-form kt-form--group-seperator-dashed">
+
+							<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+								Oh snap! Change a few things up and try submitting again.
+							</kt-alert>
+
+							<div class="kt-form__section kt-form__section--first">
+								<div class="kt-form__group pt-0">
+									<div class="form-group kt-form__group row" *ngIf="fee.id">
+										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+											<label>Created : </label> {{fee.createDate | date:'dd/Mm/yyyy'}}
+										</div>
+										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+											<label>Last Changed : </label> {{fee.updateDate | date:'dd/Mm/yyyy'}}
+										</div>
+										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+											<label class="pr-2">Assigned To : </label> <span class="text-capitalize">{{fee.assignedTo}}</span>
+										</div>
+										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+											<label class="pr-2">Fee Code : </label> <span class="text-capitalize">{{fee.feeCode}}</span>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3" *ngIf="!(fee && fee.id)">
+											<mat-form-field class="mat-form-field-fluid">
+												<mat-select formControlName="feeTypeId">
+													<mat-option value="0">PT Fee</mat-option>
+													<mat-option value="1">PRO Fee</mat-option>
+												</mat-select>
+												<mat-error>
+													Fee Type is
+													<strong>required</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong>Fee Type</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3" *ngIf="(fee && fee.id)">
+											<mat-form-field class="mat-form-field-fluid">
+												<input matInput placeholder="Enter Fee Name" maxlength="250" readonly="readonly" [value]="fee.feeType" />
+												<mat-hint align="start">
+													<strong>Fee Type</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="mat-form-field-fluid">
+												<input matInput placeholder="Enter Fee Name" formControlName="feeName" maxlength="250" />
+												<mat-error>
+													Fee Name is
+													<strong>required</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong>Fee Name</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="mat-form-field-fluid">
+												<input matInput type="number" placeholder="Enter Fee A1 value" formControlName="a1" maxlength="5" />
+												<span matPrefix>£&nbsp;</span>
+												<mat-error *ngIf="feeForm.get('a1')?.errors?.required">
+													Fee A1 is
+													<strong>required</strong>
+												</mat-error>
+												<mat-error *ngIf="feeForm.get('a1')?.errors?.min">
+													Fee A1 value should be greated than
+													<strong>zero</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong>Fee A1</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="mat-form-field-fluid">
+												<input matInput type="number" placeholder="Enter Fee A2 value" formControlName="a2" maxlength="5" />
+												<span matPrefix>£&nbsp;</span>
+												<mat-error *ngIf="feeForm.get('a2')?.errors?.required">
+													Fee A2 is
+													<strong>required</strong>
+												</mat-error>
+												<mat-error *ngIf="feeForm.get('a2')?.errors?.min">
+													Fee A2 value should be greated than
+													<strong>zero</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong>Fee A2</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="example-chip-list">
+												<mat-chip-list #chipList aria-label="Fruit selection">
+													<mat-chip *ngFor="let tag of tagsArray" [selectable]="selectable"
+															  [removable]="removable" (removed)="remove(tag)">
+														{{tag}}
+														<mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+													</mat-chip>
+													<input placeholder="Insert tags"
+														   [formControlName]="'tags'"
+														   [matChipInputFor]="chipList"
+														   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+														   [matChipInputAddOnBlur]="addOnBlur"
+														   (matChipInputTokenEnd)="add($event)">
+												</mat-chip-list>
+												<mat-hint align="start">
+													Create <strong>Tags </strong> by hitting enter or separated by comma
+												</mat-hint>
+												<mat-error>
+													Tag(s) are
+													<strong>required</strong>
+												</mat-error>
+											</mat-form-field>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<br />
+					<connected-prof-customer [hidden]="!(fee && fee.id)" [feeId]="feeId"></connected-prof-customer>
+				</kt-portlet-body>
+			</ng-template>
+		</mat-tab>
+		<mat-tab label="Connected Services" [disabled]='!(fee && fee.id)'>
+			<ng-template matTabContent>
+				<fee-connected-services [feeId]="fee.id"></fee-connected-services>
+			</ng-template>
+		</mat-tab>
+
+	</mat-tab-group>
+</kt-portlet>

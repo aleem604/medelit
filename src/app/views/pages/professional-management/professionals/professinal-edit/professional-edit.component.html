@@ -1,7 +1,7 @@
 <kt-portlet>
 	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
 		<ng-container ktPortletTools>
-			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10"  mat-raised-button matTooltip="Back to the professionals list">
+			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the professionals list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
@@ -22,723 +22,872 @@
 			</mat-menu>
 		</ng-container>
 	</kt-portlet-header>
-	<kt-portlet-body class="pt-3">
-		<div *ngIf="professionalForm">
-			<!--begin::Form-->
-			<form [formGroup]="professionalForm" class="kt-form kt-form--group-seperator-dashed">
+	<kt-portlet-body>
+		<mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="tabChanged($event)">
+			<mat-tab label="Professional Info">
+				<ng-template matTabContent>
+					<kt-portlet>
+						<div *ngIf="professionalForm" class="tab-wrapper">
+							<!--begin::Form-->
+							<form [formGroup]="professionalForm" class="kt-form kt-form--group-seperator-dashed">
+								<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+									Oh snap! Change a few things up and try submitting again.
+								</kt-alert>
 
-				<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
-					Oh snap! Change a few things up and try submitting again.
-				</kt-alert>
+								<div class="kt-form__section kt-form__section--first">
+									<div class="kt-form__group pt-1">
+										<div class="form-group kt-form__group row" *ngIf="professional.id">
+											<!--<div class="col-md-12 heading-wrapper mt-0">
+												<div class="title-wrapper">
+													<h5>Lead Info</h5>
+												</div>
+											</div>-->
+											<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+												<label>Nr. Pro.: </label> {{professional.code}}
+											</div>
+											<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+												<label>Created : </label> <span class="ml-2">{{professional.createDate | date:'dd/MM/yyyy h:mm a'}}</span>
+											</div>
+											<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+												<label>Last Changed : </label> <span class="ml-2">{{professional.updateDate | date:'dd/MM/yyyy h:mm a'}}</span>
+											</div>
+											<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
+												<label>Assigned To : </label> <span class="text-capitalize ml-2">{{professional.assignedTo}}</span>
+											</div>
 
-				<div class="kt-form__section kt-form__section--first">
-					<div class="kt-form__group pt-1">
-						<div class="row">
-							<div class="col-md-12 heading-wrapper mt-0">
-								<div class="title-wrapper">
-									<h5>Personal Information</h5>
-								</div>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="example-full-width">
-									<mat-select [formControlName]="'titleId'">
-										<mat-option *ngFor="let val of titlesForFilter" [value]="val.id">
-											{{ val.value }}
-										</mat-option>
-									</mat-select>
-									<mat-hint align="start">
-										Select a <strong>Title </strong>
-									</mat-hint>
-									<mat-error>
-										Title is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter name" formControlName="name">
-									<mat-error>
-										Name is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Name</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter email" formControlName="email">
-									<mat-error *ngIf="professionalForm.get('email').errors?.required">
-										Email is
-										<strong>required</strong>
-									</mat-error>
-									<mat-error *ngIf="professionalForm.get('email').errors?.email">
-										Email is
-										<strong>invalid</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Email</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter email 2" formControlName="email2">
-									<mat-error *ngIf="professionalForm.get('email2').errors?.required">
-										Email 2 is
-										<strong>required</strong>
-									</mat-error>
-									<mat-error *ngIf="professionalForm.get('email2').errors?.email">
-										Email 2 is
-										<strong>invalid</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Email 2</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput [matDatepicker]="dateOfBirthPicker" placeholder="Choose a date of birth" [formControlName]="'dateOfBirth'" readonly="readonly">
-									<mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
-									<mat-datepicker #dateOfBirthPicker></mat-datepicker>
-									<mat-error>
-										Date of birth
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Date of Birth</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
+										</div>
+
+										<div class="row mt-3">
+											<div class="col-md-12 heading-wrapper mt-0">
+												<div class="title-wrapper">
+													<h5>Personal Information</h5>
+												</div>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<mat-select [formControlName]="'titleId'">
+														<mat-option *ngFor="let val of titlesForFilter" [value]="val.id">
+															{{ val.value }}
+														</mat-option>
+													</mat-select>
+													<mat-hint align="start">
+														Select a <strong class="required-star">Title</strong>
+													</mat-hint>
+													<mat-error>
+														Title is
+														<strong>required</strong>
+													</mat-error>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Name" formControlName="name">
+													<mat-error>
+														Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong class="required-star">Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Mobile phone" formControlName="mobilePhone" maxlength="50">
+													<mat-error>
+														Mobile Phone is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong class="required-star">Mobile Phone</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Main telephone" formControlName="telephone" maxlength="50">
+													<mat-error>
+														Main Telephone is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong class="required-star">Main Telephone</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Home phone" formControlName="homePhone" maxlength="50">
+													<mat-error>
+														Home Phone is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Home Phone</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Clinic phone" formControlName="clinicPhoneNumber" maxlength="50">
+													<mat-error>
+														Clinic Phone is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Clinic Phone</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Enter email" formControlName="email">
+													<mat-error *ngIf="professionalForm.get('email').errors?.required">
+														Email is
+														<strong>required</strong>
+													</mat-error>
+													<mat-error *ngIf="professionalForm.get('email').errors?.email">
+														Email is
+														<strong>invalid</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong class="required-star">Email</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Email 2" formControlName="email2">
+													<mat-error *ngIf="professionalForm.get('email2').errors?.required">
+														Email 2 is
+														<strong>required</strong>
+													</mat-error>
+													<mat-error *ngIf="professionalForm.get('email2').errors?.email">
+														Email 2 is
+														<strong>invalid</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Email 2</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<input type="text" placeholder="Field" aria-label="Number" matInput [matAutocomplete]="fieldAuto" formControlName="fieldId">
+													<mat-autocomplete autoActiveFirstOption #fieldAuto="matAutocomplete"
+																	  [displayWith]="displayFn">
+														<mat-option *ngFor="let t of filteredFields | async" [value]="t">
+															{{t.value}}
+														</mat-option>
+													</mat-autocomplete>
+													<mat-error>
+														Field is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select a <strong class="required-star">Field </strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<input type="text" placeholder="Subcategory" aria-label="Number" matInput [matAutocomplete]="subCategoryAuto" formControlName="subCategoryId">
+													<mat-autocomplete autoActiveFirstOption #subCategoryAuto="matAutocomplete"
+																	  [displayWith]="displayFn">
+														<mat-option *ngFor="let t of filteredSubCategories | async" [value]="t">
+															{{t.value}}
+														</mat-option>
+													</mat-autocomplete>
+													<mat-error>
+														Subcategory is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select a <strong class="required-star">Subcategory </strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Fax" maxlength="250" formControlName="fax">
+													<mat-error>
+														Fax is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Fax</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field>
+													<mat-select [formControlName]="'languages'" placeholder="Languages" [multiple]="true" #multiSelect>
+														<ngx-mat-select-search placeholderLabel="Search Language" type="text" [formControl]="langMultiFilterCtrl"></ngx-mat-select-search>
+														<mat-option *ngFor="let lang of filteredLanguages | async" [value]="lang">
+															{{lang.value}}
+														</mat-option>
+													</mat-select>
+													<mat-error>
+														Language(S) are
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please select
+														<strong class="required-star">Language(S)</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Website" formControlName="website" maxlength="250">
+													<mat-error>
+														Website is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Website</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Online CV link" maxlength="4000" formControlName="proOnlineCV">
+													<mat-error>
+														Online CV link is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong class="required-star">Online CV link</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput [matDatepicker]="dateOfBirthPicker" placeholder="Date of birth" [formControlName]="'dateOfBirth'">
+													<mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
+													<mat-datepicker #dateOfBirthPicker></mat-datepicker>
+													<mat-error>
+														Date of birth
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong class="required-star">Date of Birth</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-12 heading-wrapper">
+												<div class="title-wrapper">
+													<h5>Cover Maps</h5>
+												</div>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Covermap" formControlName="coverMap" maxlength="250">
+													<mat-error>
+														Covermap is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Covermap</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
 
 
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter telephone" formControlName="telephone" maxlength="50">
-									<mat-error>
-										Telephone is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Telephone</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter mobile phone" formControlName="mobilePhone" maxlength="50">
-									<mat-error>
-										Mobile Phone is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Mobile Phone</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter home phone" formControlName="homePhone" maxlength="50">
-									<mat-error>
-										Home Phone is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Home Phone</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter website" formControlName="website" maxlength="250">
-									<mat-error>
-										Website is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Website</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter online CV link" maxlength="4000" formControlName="proOnlineCV">
-									<mat-error>
-										Online CV link is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Online CV link</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter fax" maxlength="250" formControlName="fax">
-									<mat-error>
-										Fax is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Fax</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field>
-									<mat-select [formControlName]="'languages'" placeholder="Languages" [multiple]="true" #multiSelect>
-										<ngx-mat-select-search [formControl]="langMultiFilterCtrl"></ngx-mat-select-search>
-										<mat-option *ngFor="let lang of filteredLanguages | async" [value]="lang">
-											{{lang.value}}
-										</mat-option>
-									</mat-select>
-								</mat-form-field>
-							</div>
-							<div class="col-md-12 heading-wrapper">
-								<div class="title-wrapper">
-									<h5>Cover Maps</h5>
-								</div>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter Covermap" formControlName="coverMap" maxlength="250">
-									<mat-error>
-										Covermap is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Covermap</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
+											<div class="col-md-12 heading-wrapper">
+												<div class="title-wrapper">
+													<h5 class="pb-2">Addresses</h5>
+													<h6>Home Address:</h6>
+												</div>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Street name" formControlName="streetName" maxlength="250">
+													<mat-error>
+														Street Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong class="required-star">Street Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Enter post code" formControlName="postCode" maxlength="250">
+													<mat-error>
+														Post Code Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong class="required-star">Post Code</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<input type="text" placeholder="City" aria-label="Number" matInput [matAutocomplete]="cityAuto" formControlName="cityId">
+													<mat-autocomplete autoActiveFirstOption #cityAuto="matAutocomplete"
+																	  [displayWith]="displayFn">
+														<mat-option *ngFor="let t of filteredCities | async" [value]="t">
+															{{t.value}}
+														</mat-option>
+													</mat-autocomplete>
+													<mat-error>
+														City is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select a <strong class="required-star">City </strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<input type="text" placeholder="Country" aria-label="Number" matInput [matAutocomplete]="countryAuto" formControlName="countryId">
+													<mat-autocomplete autoActiveFirstOption #countryAuto="matAutocomplete"
+																	  [displayWith]="displayFn">
+														<mat-option *ngFor="let t of filteredCountries | async" [value]="t">
+															{{t.value}}
+														</mat-option>
+													</mat-autocomplete>
+													<mat-error>
+														Country is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select a <strong class="required-star">Country </strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
 
 
-							<div class="col-md-12 heading-wrapper">
-								<div class="title-wrapper">
-									<h5 class="pb-2">Addresses</h5>
-									<h6>Home Address:</h6>
-								</div>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter street name" formControlName="streetName" maxlength="250">
-									<mat-error>
-										Street Name is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Street Name</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Pick a city" aria-label="Number" matInput [matAutocomplete]="cityAuto" formControlName="cityId">
-									<mat-autocomplete autoActiveFirstOption #cityAuto="matAutocomplete"
-													  [displayWith]="displayFn">
-										<mat-option *ngFor="let t of filteredCities | async" [value]="t">
-											{{t.value}}
-										</mat-option>
-									</mat-autocomplete>
-									<mat-hint align="start">
-										Select a <strong>City </strong>
-									</mat-hint>
-									<mat-error>
-										City is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Pick a country" aria-label="Number" matInput [matAutocomplete]="countryAuto" formControlName="countryId">
-									<mat-autocomplete autoActiveFirstOption #countryAuto="matAutocomplete"
-													  [displayWith]="displayFn">
-										<mat-option *ngFor="let t of filteredCountries | async" [value]="t">
-											{{t.value}}
-										</mat-option>
-									</mat-autocomplete>
-									<mat-hint align="start">
-										Select a <strong>Country </strong>
-									</mat-hint>
-									<mat-error>
-										Country is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter post code" formControlName="postCode" maxlength="250">
-									<mat-error>
-										Post Code Name is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Post Code</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
+											<div class="col-md-12 heading-wrapper">
+												<div class="title-wrapper">
+													<h6>Work / Clinic  Address:</h6>
+												</div>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Clinic street name" formControlName="clinicStreetName" maxlength="250">
+													<mat-error>
+														Clinic Street Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Clinic Street Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Clinic post code" formControlName="clinicPostCode" maxlength="250">
+													<mat-error>
+														Clinic Post Code is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Clinic Post Code</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<input type="text" placeholder="Clinic city" aria-label="Number" matInput [matAutocomplete]="clinicCityAuto" [formControlName]="'clinicCityId'">
+													<mat-autocomplete autoActiveFirstOption #clinicCityAuto="matAutocomplete"
+																	  [displayWith]="displayFn">
+														<mat-option *ngFor="let t of filteredClinicCities | async" [value]="t">
+															{{t.value}}
+														</mat-option>
+													</mat-autocomplete>
+													<mat-hint align="start">
+														Select a <strong>Clinic City </strong>
+													</mat-hint>
+													<mat-error>
+														Clinic City is
+														<strong>required</strong>
+													</mat-error>
+												</mat-form-field>
+											</div>
 
-							<div class="col-md-12 heading-wrapper">
-								<div class="title-wrapper">
-									<h6>Work / Clinic  Address:</h6>
-								</div>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter clinic street name" formControlName="clinicStreetName" maxlength="250">
-									<mat-error>
-										Clinic Street Name is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Clinic Street Name</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter clinic street name" formControlName="clinicPostCode" maxlength="250">
-									<mat-error>
-										Clinic Post Code is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Clinic Post Code</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Pick clinic city" aria-label="Number" matInput [matAutocomplete]="clinicCityAuto" [formControlName]="'clinicCityId'">
-									<mat-autocomplete autoActiveFirstOption #clinicCityAuto="matAutocomplete"
-													  [displayWith]="displayFn">
-										<mat-option *ngFor="let t of filteredClinicCities | async" [value]="t">
-											{{t.value}}
-										</mat-option>
-									</mat-autocomplete>
-									<mat-hint align="start">
-										Select a <strong>Clinic City </strong>
-									</mat-hint>
-									<mat-error>
-										Clinic City is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
+											<div class="col-md-12 heading-wrapper">
+												<div class="title-wrapper">
+													<h5>Notes</h5>
+												</div>
+											</div>
+											<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<textarea matInput rows="7" placeholder="Description" formControlName="description"></textarea>
+													<mat-hint align="start">
+														Enter a <strong>Description </strong>
+													</mat-hint>
+													<mat-error>
+														Description is
+														<strong>required</strong>
+													</mat-error>
+												</mat-form-field>
+											</div>
 
-							<div class="col-md-12 heading-wrapper">
-								<div class="title-wrapper">
-									<h5>Notes</h5>
+											<div class="col-md-12 heading-wrapper">
+												<div class="title-wrapper">
+													<h5>Payments and Invocing</h5>
+												</div>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Company name" formControlName="companyName" maxlength="250">
+													<mat-error>
+														Company Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Company Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Company number" formControlName="companyNumber" maxlength="250">
+													<mat-error>
+														Company Number is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Company Number</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Bank name" formControlName="bank" maxlength="250">
+													<mat-error>
+														Bank Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Bank Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Bank branch name" formControlName="branch" maxlength="250">
+													<mat-error>
+														Bank Branch Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Bank Branch Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Account name" formControlName="accountName" maxlength="250">
+													<mat-error>
+														Account Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Account Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Account number" formControlName="accountNumber" maxlength="250">
+													<mat-error>
+														Account Number is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Account Number</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Sort code" formControlName="sortCode" maxlength="250">
+													<mat-error>
+														Sort Code is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Sort Code</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<mat-select [formControlName]="'accountingCodeId'">
+														<mat-option *ngFor="let val of accountCodesForFilter" [value]="val.id">
+															{{ val.value }}
+														</mat-option>
+													</mat-select>
+													<mat-error>
+														Accounting Code is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select a <strong class="required-star">Accounting Code </strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<textarea matInput rows="7" placeholder="Invoicing notes" formControlName="invoicingNotes"></textarea>
+													<mat-hint align="start">
+														Enter a <strong>Invoicing Notes </strong>
+													</mat-hint>
+													<mat-error>
+														Invoicing Notes is
+														<strong>required</strong>
+													</mat-error>
+												</mat-form-field>
+											</div>
+											<div class="col-md-12 heading-wrapper">
+												<div class="title-wrapper">
+													<h5 class="pb-2">HR Information</h5>
+													<h6>Contract Information:</h6>
+												</div>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<mat-select [formControlName]="'activeCollaborationId'">
+														<mat-option *ngFor="let val of collaborationCodesForFilter" [value]="val.id">
+															{{ val.value }}
+														</mat-option>
+													</mat-select>
+													<mat-error>
+														Active Collaboration is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select an <strong class="required-star">Active Collaboration </strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput [matDatepicker]="contractDatePicker" placeholder="Contract date" [formControlName]="'contractDate'">
+													<mat-datepicker-toggle matSuffix [for]="contractDatePicker"></mat-datepicker-toggle>
+													<mat-datepicker #contractDatePicker></mat-datepicker>
+													<mat-error>
+														Contract Date is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select
+														<strong class="required-star"> Contract Date</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput [matDatepicker]="contractEndDatePicker" placeholder="Contract end date" [formControlName]="'contractEndDate'">
+													<mat-datepicker-toggle matSuffix [for]="contractEndDatePicker"></mat-datepicker-toggle>
+													<mat-datepicker #contractEndDatePicker></mat-datepicker>
+													<mat-error>
+														Contract End Date is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select
+														<strong> Contract End Date</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field>
+													<mat-select class="mat-form-field mat-form-field-fluid" [formControlName]="'clinicAgreement'">
+														<mat-option value="">Pick an option</mat-option>
+														<mat-option value="0">No</mat-option>
+														<mat-option value="1">Yes</mat-option>
+													</mat-select>
+													<mat-error>
+														Clinic Agreement is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select a
+														<strong>Clinic Agreement </strong>option
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput [matDatepicker]="firstContractDatePicker" placeholder="First contract date" [formControlName]="'firstContactDate'" />
+													<mat-datepicker-toggle matSuffix [for]="firstContractDatePicker"></mat-datepicker-toggle>
+													<mat-datepicker #firstContractDatePicker></mat-datepicker>
+													<mat-error>
+														First Contract Date is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select
+														<strong>First Contract Date</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput [matDatepicker]="lastContactDatePicker" placeholder="Contract end date" [formControlName]="'lastContactDate'" />
+													<mat-datepicker-toggle matSuffix [for]="lastContactDatePicker"></mat-datepicker-toggle>
+													<mat-datepicker #lastContactDatePicker></mat-datepicker>
+													<mat-error>
+														Last Contract Date is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select
+														<strong> Last Contract Date</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-12 heading-wrapper">
+												<div class="title-wrapper">
+													<h6>Application:</h6>
+												</div>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<mat-select [formControlName]="'applicationMethodId'">
+														<mat-option *ngFor="let val of applicationMethodsForFilter" [value]="val.id">
+															{{ val.value }}
+														</mat-option>
+													</mat-select>
+													<mat-error>
+														Application Method is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select a <strong>application method </strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<mat-select [formControlName]="'applicationMeansId'">
+														<mat-option *ngFor="let val of applicationMeansForFilter" [value]="val.id">
+															{{ val.value }}
+														</mat-option>
+													</mat-select>
+													<mat-error>
+														Application Means is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select a <strong class="required-star">Application Means </strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Referring colleage" formControlName="colleagueReferring" maxlength="250">
+													<mat-error>
+														Referring colleage name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Referring Colleage Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-12 heading-wrapper">
+												<div class="title-wrapper">
+													<h6>HR Status:</h6>
+												</div>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Work place info" formControlName="workPlace" maxlength="250">
+													<mat-error>
+														Work place info is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Work Place Info</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput [matDatepicker]="insuranceExpiryDatePicker" placeholder="Insurance expiry date" [formControlName]="'insuranceExpiryDate'">
+													<mat-datepicker-toggle matSuffix [for]="insuranceExpiryDatePicker"></mat-datepicker-toggle>
+													<mat-datepicker #insuranceExpiryDatePicker></mat-datepicker>
+													<mat-error>
+														Insurance Expiry Date is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select
+														<strong> Insurance Expiry Date</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="example-full-width">
+													<mat-select [formControlName]="'contractStatusId'">
+														<mat-option *ngFor="let val of contractStatusForFilter" [value]="val.id">
+															{{ val.value }}
+														</mat-option>
+													</mat-select>
+													<mat-hint align="start">
+														Select a <strong>Contract Status </strong>
+													</mat-hint>
+													<mat-error>
+														Contract Status is
+														<strong>required</strong>
+													</mat-error>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="common-form-field">
+													<mat-select [formControlName]="'documentListSentId'">
+														<mat-option *ngFor="let val of documentListSentOptionsForFilter" [value]="val.id">
+															{{ val.value }}
+														</mat-option>
+													</mat-select>
+													<mat-hint align="start">
+														Select a <strong class="required-star">Document List Sent </strong>
+													</mat-hint>
+													<mat-error>
+														Document List Sent is
+														<strong>required</strong>
+													</mat-error>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field>
+													<mat-select class="mat-form-field mat-form-field-fluid" [formControlName]="'calendarActivation'">
+														<mat-option value="0">No</mat-option>
+														<mat-option value="1">Yes</mat-option>
+													</mat-select>
+													<mat-error>
+														Calendar activation is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Select a
+														<strong>Calendar Actication Option </strong>option
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Professional code info" formControlName="protaxCode" maxlength="250">
+													<mat-error>
+														Professional tax code is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														Please enter
+														<strong>Professional Tax Code</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+
+											<div class="col-md-12 heading-wrapper" *ngIf="professional && professional.id">
+												<div class="title-wrapper">
+													<h5>
+														Professional Services
+														<a href="javascript:;" class="btn btn-default kt-margin-r-10 pull-right add-service" (click)="addService()" mat-raised-button matTooltip="Save & Continue">
+															<span class="kt-hidden-mobile">Add Service</span>
+														</a>
+													</h5>
+												</div>
+											</div>
+											<div class="col-md-12 kt-margin-bottom-10-mobile pt-3" *ngIf="professional && professional.id">
+												<table class="table table-bordered tbl-service">
+													<thead>
+														<tr>
+															<th rowspan="2"></th>
+															<th rowspan="2">Service</th>
+															<th rowspan="2">Field</th>
+															<th rowspan="2">Category</th>
+															<th colspan="2">Pt Fee</th>
+															<th colspan="2">Pro Fee</th>
+														</tr>
+														<tr>
+															<th>A1</th>
+															<th>A2</th>
+															<th>A1</th>
+															<th>A2</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr *ngFor="let s of professional.professionalServices">
+															<td class="text-center">
+																<i (click)="removeService(s.service.id)" class="la la-trash-o font-1-half cursor-pointer"></i>
+																<i (click)="editServiceFee(s.service)" class="la la-pencil-square font-1-half ml-1 cursor-pointer"></i>
+															</td>
+															<td>{{s.service.name}}</td>
+															<td>{{s.service.field?.field}}</td>
+															<td>{{s.service?.subCategory?.subCategory}}</td>
+															<td>{{s.service.ptFee?.a1}}</td>
+															<td>{{s.service.ptFee?.a2}}</td>
+															<td>{{s.service.proFee?.a1}}</td>
+															<td>{{s.service.proFee?.a2}}</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
 								</div>
-							</div>
-							<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<textarea matInput rows="7" placeholder="Enter description" formControlName="description"></textarea>
-									<mat-hint align="start">
-										Enter a <strong>Description </strong>
-									</mat-hint>
-									<mat-error>
-										Description is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<textarea matInput rows="7" placeholder="Enter invoicing notes" formControlName="invoicingNotes"></textarea>
-									<mat-hint align="start">
-										Enter a <strong>Invoicing Notes </strong>
-									</mat-hint>
-									<mat-error>
-										Invoicing Notes is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-12 heading-wrapper">
-								<div class="title-wrapper">
-									<h5>Payments and Invocing</h5>
-								</div>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter company name" formControlName="companyName" maxlength="250">
-									<mat-error>
-										Company Name is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Company Name</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter company number" formControlName="companyNumber" maxlength="250">
-									<mat-error>
-										Company Number is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Company Number</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter bank name" formControlName="bank" maxlength="250">
-									<mat-error>
-										Bank Name is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Bank Name</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter bank branch name" formControlName="branch" maxlength="250">
-									<mat-error>
-										Bank Branch Name is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Bank Branch Name</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter account name" formControlName="accountName" maxlength="250">
-									<mat-error>
-										Account Name is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Account Name</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter account number" formControlName="accountNumber" maxlength="250">
-									<mat-error>
-										Account Number is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Account Number</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter sort code" formControlName="sortCode" maxlength="250">
-									<mat-error>
-										Sort Code is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Sort Code</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="example-full-width">
-									<mat-select [formControlName]="'accountingCodeId'">
-										<mat-option *ngFor="let val of accountCodesForFilter" [value]="val.id">
-											{{ val.value }}
-										</mat-option>
-									</mat-select>
-									<mat-hint align="start">
-										Select a <strong>Accounting Code </strong>
-									</mat-hint>
-									<mat-error>
-										Accounting Code is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-12 heading-wrapper">
-								<div class="title-wrapper">
-									<h5 class="pb-2">HR Information</h5>
-									<h6>Contract Information:</h6>
-								</div>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="example-full-width">
-									<mat-select [formControlName]="'activeCollaborationId'">
-										<mat-option *ngFor="let val of collaborationCodesForFilter" [value]="val.id">
-											{{ val.value }}
-										</mat-option>
-									</mat-select>
-									<mat-hint align="start">
-										Select an <strong>active collaboration </strong>
-									</mat-hint>
-									<mat-error>
-										Active Collaboration is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput [matDatepicker]="contractDatePicker" placeholder="Choose a contract date" [formControlName]="'contractDate'" readonly="readonly">
-									<mat-datepicker-toggle matSuffix [for]="contractDatePicker"></mat-datepicker-toggle>
-									<mat-datepicker #contractDatePicker></mat-datepicker>
-									<mat-error>
-										Contract Date is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Select
-										<strong> Contract Date</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput [matDatepicker]="contractEndDatePicker" placeholder="Choose a contract end date" [formControlName]="'contractEndDate'" readonly="readonly">
-									<mat-datepicker-toggle matSuffix [for]="contractEndDatePicker"></mat-datepicker-toggle>
-									<mat-datepicker #contractEndDatePicker></mat-datepicker>
-									<mat-error>
-										Contract End Date is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Select
-										<strong> Contract End Date</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field>
-									<mat-select class="mat-form-field mat-form-field-fluid" [formControlName]="'clinicAgreement'">
-										<mat-option value="">Pick an option</mat-option>
-										<mat-option value="0">No</mat-option>
-										<mat-option value="1">Yes</mat-option>
-									</mat-select>
-									<mat-error>
-										Clinic Agreement is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Select a
-										<strong>Clinic Agreement </strong>option
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput [matDatepicker]="firstContractDatePicker" placeholder="Choose a first contract date" [formControlName]="'firstContactDate'" readonly="readonly">
-									<mat-datepicker-toggle matSuffix [for]="firstContractDatePicker"></mat-datepicker-toggle>
-									<mat-datepicker #firstContractDatePicker></mat-datepicker>
-									<mat-error>
-										First Contract Date is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Select
-										<strong>First Contract Date</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput [matDatepicker]="lastContactDatePicker" placeholder="Choose a contract end date" [formControlName]="'lastContactDate'" readonly="readonly">
-									<mat-datepicker-toggle matSuffix [for]="lastContactDatePicker"></mat-datepicker-toggle>
-									<mat-datepicker #lastContactDatePicker></mat-datepicker>
-									<mat-error>
-										Last Contract Date is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Select
-										<strong> Last Contract Date</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-12 heading-wrapper">
-								<div class="title-wrapper">
-									<h6>Application:</h6>
-								</div>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="example-full-width">
-									<mat-select [formControlName]="'applicationMethodId'">
-										<mat-option *ngFor="let val of applicationMethodsForFilter" [value]="val.id">
-											{{ val.value }}
-										</mat-option>
-									</mat-select>
-									<mat-hint align="start">
-										Select a <strong>application method </strong>
-									</mat-hint>
-									<mat-error>
-										Application Method is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="example-full-width">
-									<mat-select [formControlName]="'applicationMeansId'">
-										<mat-option *ngFor="let val of applicationMeansForFilter" [value]="val.id">
-											{{ val.value }}
-										</mat-option>
-									</mat-select>
-									<mat-hint align="start">
-										Select a <strong>Application Means </strong>
-									</mat-hint>
-									<mat-error>
-										Application Means is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter referring colleage" formControlName="colleagueReferring" maxlength="250">
-									<mat-error>
-										Referring colleage name is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Referring Colleage Name</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-12 heading-wrapper">
-								<div class="title-wrapper">
-									<h6>HR Status:</h6>
-								</div>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter work place info" formControlName="workPlace" maxlength="250">
-									<mat-error>
-										Work place info is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Work Place Info</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput [matDatepicker]="insuranceExpiryDatePicker" placeholder="Choose a insurance expiry date" readonly="readonly" [formControlName]="'insuranceExpiryDate'">
-									<mat-datepicker-toggle matSuffix [for]="insuranceExpiryDatePicker"></mat-datepicker-toggle>
-									<mat-datepicker #insuranceExpiryDatePicker></mat-datepicker>
-									<mat-error>
-										Insurance Expiry Date is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Select
-										<strong> Insurance Expiry Date</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="example-full-width">									
-									<mat-select [formControlName]="'contractStatusId'">
-										<mat-option *ngFor="let val of contractStatusForFilter" [value]="val.id">
-											{{ val.value }}
-										</mat-option>
-									</mat-select>
-									<mat-hint align="start">
-										Select a <strong>Contract Status </strong>
-									</mat-hint>
-									<mat-error>
-										Contract Status is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="common-form-field">
-									<mat-select [formControlName]="'documentListSentId'">
-										<mat-option *ngFor="let val of documentListSentOptionsForFilter" [value]="val.id">
-											{{ val.value }}
-										</mat-option>
-									</mat-select>
-									<mat-hint align="start">
-										Select a <strong>Document List Sent </strong>
-									</mat-hint>
-									<mat-error>
-										Document List Sent is
-										<strong>required</strong>
-									</mat-error>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field>
-									<mat-select class="mat-form-field mat-form-field-fluid" [formControlName]="'calendarActivation'">
-										<mat-option value="0">No</mat-option>
-										<mat-option value="1">Yes</mat-option>
-									</mat-select>
-									<mat-error>
-										Calendar activation is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Select a
-										<strong>Calendar Actication Option </strong>option
-									</mat-hint>
-								</mat-form-field>
-							</div>
-							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Enter professional code info" formControlName="protaxCode" maxlength="250">
-									<mat-error>
-										Professional tax code is
-										<strong>required</strong>
-									</mat-error>
-									<mat-hint align="start">
-										Please enter
-										<strong>Professional Tax Code</strong>
-									</mat-hint>
-								</mat-form-field>
-							</div>
+							</form>
 						</div>
-					</div>
+					</kt-portlet>
+				</ng-template>
+			</mat-tab>
 
-					
-
-					
-				</div>
-			</form>
-		</div>
+			<mat-tab label="Connected Customers" [disabled]='professional && professional.id ===0 '>
+				<ng-template matTabContent>
+					<connected-customers [proId]="proId"></connected-customers>
+				</ng-template>
+			</mat-tab>
+			<mat-tab label="Connected Bookings" [disabled]='professional && professional.id ===0 '>
+				<ng-template matTabContent>
+					<connected-bookings [proId]="proId"></connected-bookings>
+				</ng-template>
+			</mat-tab>
+			<mat-tab label="Connected Invoices" [disabled]='professional && professional.id ===0 '>
+				<ng-template matTabContent>
+					<connected-invoices [proId]="proId"></connected-invoices>
+				</ng-template>
+			</mat-tab>
+			<mat-tab label="Leads" [disabled]='professional && professional.id ===0 '>
+				<ng-template matTabContent>
+					<connected-leads [proId]="proId"></connected-leads>
+				</ng-template>
+			</mat-tab>
+		</mat-tab-group>
 	</kt-portlet-body>
 </kt-portlet>

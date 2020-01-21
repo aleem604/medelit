@@ -7,10 +7,7 @@ import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 // AppState
 import { AppState } from '../../../core/reducers';
-// Auth
-import { Permission } from '../../../core/auth';
 
-const userManagementPermissionId = 2;
 @Component({
 	selector: 'kt-user-management',
 	templateUrl: './user-management.component.html',
@@ -19,24 +16,12 @@ const userManagementPermissionId = 2;
 export class UserManagementComponent implements OnInit {
 	// Public properties
 	// hasUserAccess$: Observable<boolean>;
-	currentUserPermission$: Observable<Permission[]>;
+	currentUserRoles$: Observable<string[]>;
 
-	/**
-	 * Component constructor
-	 *
-	 * @param store: Store<AppState>
-	 * @param router: Router
-	 */
 	constructor(private store: Store<AppState>, private router: Router) {
 	}
 
-	/**
-	 * @ Lifecycle sequences => https://angular.io/guide/lifecycle-hooks
-	 */
 
-	/**
-	 * On init
-	 */
 	ngOnInit() {
 		// this.currentUserPermission$ = this.store.pipe(select(currentUserPermissions));
 		// this.currentUserPermission$.subscribe(permissions => {

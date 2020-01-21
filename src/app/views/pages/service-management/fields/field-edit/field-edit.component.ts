@@ -33,7 +33,6 @@ import {
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FieldEditComponent implements OnInit, OnDestroy {
-	// Public properties
 	product: ProductModel;
 	productId$: Observable<number>;
 	oldProduct: ProductModel;
@@ -45,9 +44,7 @@ export class FieldEditComponent implements OnInit, OnDestroy {
 	availableYears: number[] = [];
 	filteredColors: Observable<string[]>;
 	filteredManufactures: Observable<string[]>;
-	// Private password
 	private componentSubscriptions: Subscription;
-	// sticky portlet header margin
 	private headerMargin: number;
 
 	constructor(
@@ -65,9 +62,6 @@ export class FieldEditComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		for (let i = 2019; i > 1945; i--) {
-			this.availableYears.push(i);
-		}
 		this.loading$ = this.loadingSubject.asObservable();
 		this.loadingSubject.next(true);
 		this.activatedRoute.params.subscribe(params => {
@@ -164,12 +158,9 @@ export class FieldEditComponent implements OnInit, OnDestroy {
 			condition: [this.product.condition.toString(), [Validators.required, Validators.min(0), Validators.max(1)]],
 			status: [this.product.status.toString(), [Validators.required, Validators.min(0), Validators.max(1)]],
 			VINCode: [this.product.VINCode, Validators.required]
-		});
-
-		
+		});		
 	}
 
-	
 	goBack(id) {
 		this.loadingSubject.next(false);
 		const url = `/service-management/fields?id=${id}`;
@@ -220,6 +211,7 @@ export class FieldEditComponent implements OnInit, OnDestroy {
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
+			window.scroll(0, 0);
 			return;
 		}
 

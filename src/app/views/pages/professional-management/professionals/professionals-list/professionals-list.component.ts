@@ -23,29 +23,28 @@ import {
 	ManyProfessionalsDeleted,
 	ProfessionalsStatusUpdated,
 	selectProfessionalsPageLastQuery,
-
-	FilterModel
 } from '../../../../../core/medelit';
 import { FormControl } from '@angular/forms';
-import { StaticDataService } from '../../../../../core/medelit/_services';
+import { NgxSpinnerService } from 'ngx-spinner';
+
 
 @Component({
 	// tslint:disable-next-line:component-selector
 	selector: 'kt-professionals-list',
 	templateUrl: './professionals-list.component.html',
+	styleUrls: ['./professionals-list.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfessionalsListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: ProfessionalDataSource;
-	displayedColumns = ['select', 'id', 'name', 'mobilePhone', 'email', 'fields', 'subCategories', 'languages', 'status', 'actions'];
+	displayedColumns = ['select', 'name', 'telephone', 'email','coverMap', 'fields', 'subCategories', 'services', 'city','contractDate','contractEndDate', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields
 	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
-	statusesForFilter: FilterModel[] = [];
-	statusControl = new FormControl({ id: -1 }, []);
-	filteredStatuses: Observable<FilterModel[]>;
+
+	statusControl = new FormControl('0', []);
 
 	lastQuery: QueryParamsModel;
 	// Selection
@@ -59,18 +58,17 @@ export class ProfessionalsListComponent implements OnInit, OnDestroy {
 		private router: Router,
 		private subheaderService: SubheaderService,
 		private layoutUtilsService: LayoutUtilsService,
-		private staticService: StaticDataService,
 		private cdr: ChangeDetectorRef,
+		private spinner: NgxSpinnerService,
 		private store: Store<AppState>) { }
 
 
 	ngOnInit() {
-		this.loadStatusesForFilter();
 		// If the user changes the sort order, reset back to the first page.
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		this.subscriptions.push(sortSubscription);
 
-		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page).pipe(
+		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page, this.statusControl.valueChanges).pipe(
 			tap(() => this.loadProfessionalsList())
 		)
 			.subscribe();
@@ -149,10 +147,10 @@ export class ProfessionalsListComponent implements OnInit, OnDestroy {
 		const filter: any = {};
 		try {
 			const searchText = this.searchInput.nativeElement.value;
-			const status = this.statusControl.value;
+			const proFilter = this.statusControl.value;
 
-			if (status) {
-				filter.status = status.id;
+			if (proFilter) {
+				filter.professionalFilter = proFilter;
 			}
 
 			if (searchText)
@@ -340,60 +338,8 @@ export class ProfessionalsListComponent implements OnInit, OnDestroy {
 		return '';
 	}
 
-	getItemCssClassByCondition(condition: number = 0): string {
-		switch (condition) {
-			case 0:
-				return 'accent';
-			case 1:
-				return 'primary';
-		}
-		return '';
-	}
 
-	/* Top Filters */
-
-	loadStatusesForFilter() {
-		this.staticService.getStatuses().subscribe(res => {
-			this.statusesForFilter = res.data;
-			this.filteredStatuses = this.statusControl.valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterStatuses(value))
-				);
-		},
-			(error) => { console.log(error); },
-			() => {
-				this.statusControl.setValue({ id: -1, name: 'All' });
-				this.detectChanges();
-			});
-	}
-
-
-	private _filterStatuses(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.statusesForFilter.filter(status => this._normalizeValue(status.name).includes(filterValue));
-	}
-
-
-	private _normalizeValue(value: string): string {
-		if (value && value.length > 0)
-			return value.toLowerCase().replace(/\s/g, '');
-		return value;
-	}
-
-	displayFn(option: FilterModel): string {
-		if (option)
-			return option.name;
-		return '';
-	}
-
-	statusDrpClosed() {
-		this.loadProfessionalsList();
-	}
-
-
-	/*End top Fitlers*/
-
+	
 	detectChanges() {
 		try {
 			this.cdr.detectChanges();

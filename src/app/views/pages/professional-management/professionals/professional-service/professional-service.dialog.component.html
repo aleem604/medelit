@@ -1,0 +1,130 @@
+<div class="kt-portlet"
+	 [ngClass]="{ 'kt-portlet--body-progress kt-portlet--body-progress-overlay' : viewLoading }">
+	<div class="kt-portlet__head kt-portlet__head__custom">
+		<div class="kt-portlet__head-label">
+			<h3 class="kt-portlet__head-title">Attach Professional to Services</h3>
+		</div>
+	</div>
+
+	<div class="kt-portlet__body">
+
+		<div class="form-group kt-form__group row" *ngIf="!viewLoading">
+			<div class="col-sm-3 kt-margin-bottom-20-mobile">
+				<mat-form-field class="example-full-width">
+					<input type="text" placeholder="Field" aria-label="Number" matInput [matAutocomplete]="codeAuto" [formControl]="fieldControl">
+					<mat-autocomplete autoActiveFirstOption #codeAuto="matAutocomplete"
+									  (optionSelected)="loadDialogData()"
+									  [displayWith]="displayFn">
+						<mat-option *ngFor="let t of filteredFields | async" [value]="t">
+							{{t.value}}
+						</mat-option>
+					</mat-autocomplete>
+					<mat-hint align="start">
+						Select a <strong>Field </strong>
+					</mat-hint>
+				</mat-form-field>
+			</div>
+			<div class="col-sm-3 kt-margin-bottom-20-mobile">
+				<mat-form-field class="example-full-width">
+					<input type="text" placeholder="Subcategory" aria-label="Number" matInput [matAutocomplete]="categoryAuto" [formControl]="categoryControl">
+					<mat-autocomplete autoActiveFirstOption #categoryAuto="matAutocomplete"
+									  (optionSelected)="loadDialogData()"
+									  [displayWith]="displayFn">
+						<mat-option *ngFor="let t of filteredCategories | async" [value]="t">
+							{{t.value}}
+						</mat-option>
+					</mat-autocomplete>
+					<mat-hint align="start">
+						Select a <strong>Subcategory </strong>
+					</mat-hint>
+				</mat-form-field>
+			</div>
+			<div class="col-sm-3 kt-margin-bottom-20-mobile">
+				<mat-form-field class="example-full-width">
+					<input type="text" placeholder="Tag" aria-label="Number" matInput [formControl]="tagControl" (keyup.enter)="loadDialogData()">
+					<mat-hint align="start">
+						Search by <strong>Tag and hit enter key </strong>
+					</mat-hint>
+				</mat-form-field>
+			</div>
+			<div class="col-sm-3 kt-margin-bottom-20-mobile p-0">
+				<a href="javascript:;" class="btn btn-secondary kt-margin-r-10 m-2" clor="warning" (click)="loadDialogData()" mat-raised-button matTooltip="Search">
+					<span class="kt-hidden-mobile">Search</span>
+				</a>
+
+				<a href="javascript:;" class="btn btn-primary kt-margin-r-10 m-2" color="primary" [disabled]="this.selection.selected.length === 0" (click)="selection.selected.length && save()" mat-raised-button matTooltip="Save & Continue">
+					<span class="kt-hidden-mobile">Save</span>
+				</a>
+			</div>
+
+			<div class="col-sm-12 kt-margin-bottom-20-mobile">
+				<table mat-table [dataSource]="dataSource" matSort>
+
+					<!-- Checkbox Column -->
+					<ng-container matColumnDef="select">
+						<th mat-header-cell *matHeaderCellDef>
+							<mat-checkbox (change)="$event ? masterToggle() : null"
+										  [checked]="selection.hasValue() && isAllSelected()"
+										  [indeterminate]="selection.hasValue() && !isAllSelected()"
+										  [aria-label]="checkboxLabel()">
+							</mat-checkbox>
+						</th>
+						<td mat-cell *matCellDef="let row">
+							<mat-checkbox (click)="$event.stopPropagation()"
+										  (change)="$event ? selection.toggle(row) : null"
+										  [checked]="selection.isSelected(row)"
+										  [aria-label]="checkboxLabel(row)">
+							</mat-checkbox>
+						</td>
+					</ng-container>
+
+					<ng-container matColumnDef="id">
+						<th mat-header-cell *matHeaderCellDef mat-sort-header>Id </th>
+						<td mat-cell *matCellDef="let element"> {{element.id}} </td>
+					</ng-container>
+
+					<ng-container matColumnDef="name">
+						<th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+						<td mat-cell *matCellDef="let element"> {{element.name}} </td>
+					</ng-container>
+
+					<ng-container matColumnDef="ptFeeA1">
+						<th mat-header-cell *matHeaderCellDef mat-sort-header> PT Fee A1 </th>
+						<td mat-cell *matCellDef="let element"> {{element.ptFeeA1}} </td>
+					</ng-container>
+
+					<ng-container matColumnDef="ptFeeA2">
+						<th mat-header-cell *matHeaderCellDef mat-sort-header> PT Fee A2 </th>
+						<td mat-cell *matCellDef="let element"> {{element.ptFeeA2}} </td>
+					</ng-container>
+
+					<ng-container matColumnDef="proFeeA1">
+						<th mat-header-cell *matHeaderCellDef mat-sort-header> Pro Fee A1 </th>
+						<td mat-cell *matCellDef="let element"> {{element.proFeeA1}} </td>
+					</ng-container>
+
+					<ng-container matColumnDef="proFeeA2">
+						<th mat-header-cell *matHeaderCellDef mat-sort-header> Pro Fee A2 </th>
+						<td mat-cell *matCellDef="let element"> {{element.proFeeA2}} </td>
+					</ng-container>
+
+					<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+					<tr mat-row *matRowDef="let row; columns: displayedColumns;"
+						(click)="selection.toggle(row)"></tr>
+				</table>
+				<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+			</div>
+
+		</div>
+
+		<div class="form-group kt-form__group row" *ngIf="viewLoading">
+			<div class="col-xl-12 p-5">
+				<mat-spinner [diameter]="20"></mat-spinner>
+			</div>
+		</div>
+
+
+		</div>
+
+
+</div>

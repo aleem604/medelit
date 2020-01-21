@@ -1,5 +1,6 @@
 import { BaseModel } from '../../_base/crud';
 import { eRecordStatus } from '../_enums/e-record-status.enum';
+import { DateTimeAdapter } from 'ng-pick-datetime';
 
 export class InvoiceModel extends BaseModel {
 	id: number;
@@ -11,7 +12,7 @@ export class InvoiceModel extends BaseModel {
 	invoiceNumber: string;
 	dueDate: Date;
 	invoiceDate: Date;
-	
+
 	statusId?: number;
 	paymentDue?: Date;
 	invoiceDeliveryDate: Date;
@@ -40,7 +41,7 @@ export class InvoiceModel extends BaseModel {
 	subTotal?: number;
 	discount?: number;
 	totalInvoice?: number;
-	
+
 
 
 	invoiceBookings: InvoiceBookings[];
@@ -59,7 +60,7 @@ export class InvoiceModel extends BaseModel {
 		this.invoiceSentByEmailId = 0;
 		this.invoiceSentByMailId = 0;
 		this.statusId = 2;
-		
+
 	}
 }
 
@@ -67,7 +68,7 @@ export class InvoiceBookings {
 	id: number;
 	invoiceId: number;
 	bookingId: number;
-	booking:  BookingViewModel;
+	booking: BookingViewModel;
 }
 
 export class BookingViewModel {
@@ -84,3 +85,38 @@ export class BookingViewModel {
 	taxAmount?: number;
 }
 
+export interface InvoiceConnectedProfessionals {
+	proName: string;
+	phone: string;
+	email: string;
+	visitStartDate: Date;
+	activeCollaborationId: number;
+	status: string;
+}
+
+export interface InvoiceConnectedCustomers {
+	customer: string;
+	phoneNumber: string;
+	email: string;
+	service: string;
+	visitDate: Date;
+	professional: string;
+}
+
+export interface InvoiceConnectedInvoiceEntities {
+	invoiceEntity: string;
+	customer: string;
+	phoneNumber: string;
+	email: string;
+	service: string;
+	visitDate: Date;
+	professional: string;
+}
+
+export interface InvoiceConnectedBookings {
+	bookingName: string;
+	service: string;
+	professional: string;
+	proFee: number;
+	visitDate: Date;
+}

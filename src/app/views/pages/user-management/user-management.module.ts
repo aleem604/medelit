@@ -52,7 +52,10 @@ import {
 } from '@angular/material';
 import {
 	usersReducer,
-	UserEffects
+	UserEffects,
+
+    rolesReducer,
+    RoleEffects
 } from '../../../core/auth';
 
 const routes: Routes = [
@@ -104,7 +107,9 @@ const routes: Routes = [
 		PartialsModule,
 		RouterModule.forChild(routes),
 		StoreModule.forFeature('users', usersReducer),
-        EffectsModule.forFeature([UserEffects]),
+		EffectsModule.forFeature([UserEffects]),
+		StoreModule.forFeature('roles', rolesReducer),
+		EffectsModule.forFeature([RoleEffects]),
 		FormsModule,
 		ReactiveFormsModule,
 		TranslateModule.forChild(),

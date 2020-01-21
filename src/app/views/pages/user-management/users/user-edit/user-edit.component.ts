@@ -1,7 +1,7 @@
 // Angular
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 // RxJS
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 // NGRX
@@ -21,66 +21,60 @@ import {
 	selectUserById,
 	UserOnServerCreated,
 	selectLastCreatedUserId,
-	selectUsersActionLoading
+	selectUsersActionLoading,
+
+	AuthService,
+	Role
 } from '../../../../../core/auth';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ApiResponse } from '../../../../../core/medelit';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
 	selector: 'kt-user-edit',
 	templateUrl: './user-edit.component.html',
 })
 export class UserEditComponent implements OnInit, OnDestroy {
-	// Public properties
+	debouncer: any;
+	intercepting = false;
 	user: User;
 	userId$: Observable<number>;
 	oldUser: User;
 	selectedTab = 0;
 	loading$: Observable<boolean>;
-	rolesSubject = new BehaviorSubject<number[]>([]);
-	addressSubject = new BehaviorSubject<Address>(new Address());
-	soicialNetworksSubject = new BehaviorSubject<SocialNetworks>(new SocialNetworks());
+
+	@ViewChild(MatSort, { static: true }) sort: MatSort;
+	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+	displayedColumns: string[] = ['select', 'id', 'name'];
+	rolesDataSource = new MatTableDataSource<Role>();
+	selection = new SelectionModel<Role>(true, []);
 	userForm: FormGroup;
 	hasFormErrors = false;
 	// Private properties
 	private subscriptions: Subscription[] = [];
 
-	/**
-	 * Component constructor
-	 *
-	 * @param activatedRoute: ActivatedRoute
-	 * @param router: Router
-	 * @param userFB: FormBuilder
-	 * @param subheaderService: SubheaderService
-	 * @param layoutUtilsService: LayoutUtilsService
-	 * @param store: Store<AppState>
-	 * @param layoutConfigService: LayoutConfigService
-	 */
 	constructor(private activatedRoute: ActivatedRoute,
-		           private router: Router,
-		           private userFB: FormBuilder,
-		           private subheaderService: SubheaderService,
-		           private layoutUtilsService: LayoutUtilsService,
-		           private store: Store<AppState>,
-		           private layoutConfigService: LayoutConfigService) { }
+		private router: Router,
+		private userFB: FormBuilder,
+		private subheaderService: SubheaderService,
+		private layoutUtilsService: LayoutUtilsService,
+		private store: Store<AppState>,
+		private userService: AuthService,
+		private spinner: NgxSpinnerService,
+		private cdr: ChangeDetectorRef,
+		private layoutConfigService: LayoutConfigService) { }
 
-	/**
-	 * @ Lifecycle sequences => https://angular.io/guide/lifecycle-hooks
-	 */
-
-	/**
-	 * On init
-	 */
 	ngOnInit() {
 		this.loading$ = this.store.pipe(select(selectUsersActionLoading));
 
-		const routeSubscription =  this.activatedRoute.params.subscribe(params => {
+		const routeSubscription = this.activatedRoute.params.subscribe(params => {
 			const id = params.id;
-			if (id && id > 0) {
+			if (id) {
+				this.loadUserFromService(id);
 				this.store.pipe(select(selectUserById(id))).subscribe(res => {
 					if (res) {
 						this.user = res;
-						this.rolesSubject.next(this.user.roles);
-						this.addressSubject.next(this.user.address);
-						this.soicialNetworksSubject.next(this.user.socialNetworks);
 						this.oldUser = Object.assign({}, this.user);
 						this.initUser();
 					}
@@ -88,14 +82,50 @@ export class UserEditComponent implements OnInit, OnDestroy {
 			} else {
 				this.user = new User();
 				this.user.clear();
-				this.rolesSubject.next(this.user.roles);
-				this.addressSubject.next(this.user.address);
-				this.soicialNetworksSubject.next(this.user.socialNetworks);
 				this.oldUser = Object.assign({}, this.user);
 				this.initUser();
 			}
 		});
 		this.subscriptions.push(routeSubscription);
+	}
+
+
+	loadUserFromService(id: string) {
+		this.spinner.show();
+		this.userService.getUserById(id).toPromise().then((res) => {
+			this.user = (res as unknown as ApiResponse).data;
+			this.loadRoles(this.user.roles);
+			this.oldUser = Object.assign({}, this.user);
+			this.initUser();
+		}).catch((e) => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
+
+		});
+	}
+	loadRoles(userRoles: string[]) {
+		this.spinner.show();
+		this.userService.getAllRoles().toPromise().then((res) => {
+			var roles = res as unknown as ApiResponse;
+			this.rolesDataSource = new MatTableDataSource<Role>(roles.data);
+			this.rolesDataSource.paginator = this.paginator;
+			this.rolesDataSource.sort = this.sort;
+
+			if (userRoles.length > 0) {
+				var selected = userRoles;
+				this.rolesDataSource.data.forEach((row) => {
+					if (selected.indexOf(row.id) > -1)
+						this.selection.select(row);
+				});
+			}
+			this.cdr.detectChanges();
+
+		}).catch(() => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
+		})
 	}
 
 	ngOnDestroy() {
@@ -111,7 +141,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
 			this.subheaderService.setTitle('Create user');
 			this.subheaderService.setBreadcrumbs([
 				{ title: 'User Management', page: `user-management` },
-				{ title: 'Users',  page: `user-management/users` },
+				{ title: 'Users', page: `user-management/users` },
 				{ title: 'Create user', page: `user-management/users/add` }
 			]);
 			return;
@@ -119,7 +149,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
 		this.subheaderService.setTitle('Edit user');
 		this.subheaderService.setBreadcrumbs([
 			{ title: 'User Management', page: `user-management` },
-			{ title: 'Users',  page: `user-management/users` },
+			{ title: 'Users', page: `user-management/users` },
 			{ title: 'Edit user', page: `user-management/users/edit`, queryParams: { id: this.user.id } }
 		]);
 	}
@@ -129,31 +159,46 @@ export class UserEditComponent implements OnInit, OnDestroy {
 	 */
 	createForm() {
 		this.userForm = this.userFB.group({
-			username: [this.user.username, Validators.required],
-			fullname: [this.user.fullname, Validators.required],
-			email: [this.user.email, Validators.email],
-			phone: [this.user.phone],
-			companyName: [this.user.companyName],
-			occupation: [this.user.occupation]
+			userName: [this.user.userName, [Validators.pattern(/^([A-z0-9!@#$%^&*().,<>{}[\]<>?_=+\-|;:\'\"\/])*[^\s]\1*$/)]],
+			firstName: [this.user.firstName, [Validators.required]],
+			lastName: [this.user.lastName, [Validators.required]],
+			password: [this.user.password, [Validators.minLength(5), Validators.maxLength(20)]],
+			email: [this.user.email, Validators.compose([Validators.required, Validators.email]), this.isEmailUnique.bind(this)],
+			phoneNumber: [this.user.phoneNumber, [Validators.minLength(5), Validators.maxLength(20)]]
 		});
+
+		if (this.user.id == null)
+			this.userForm.get('password').setValidators([Validators.required]);
+
 	}
 
-	/**
-	 * Redirect to list
-	 *
-	 */
+	isEmailUnique(control: FormControl) {
+		clearTimeout(this.debouncer);
+		this.intercepting = true;
+		const q = new Promise((resolve, reject) => {
+			setTimeout(() => {
+				this.userService.isEmailRegisterd(control.value, this.user.id).subscribe((res: ApiResponse) => {
+					if (res.data == 0) {
+						resolve(null);
+					} else {
+						resolve({ 'isEmailUnique': true });
+					}
+				}, (err) => {
+					resolve({ 'isEmailUnique': true });
+				}, () => {
+					this.intercepting = false;
+				});
+			}, 1000);
+		});
+		return q;
+	}
+
 	goBackWithId() {
 		const url = `/user-management/users`;
 		this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 	}
 
-	/**
-	 * Refresh user
-	 *
-	 * @param isNew: boolean
-	 * @param id: number
-	 */
-	refreshUser(isNew: boolean = false, id = 0) {
+	refreshUser(isNew: boolean = false, id = '') {
 		let url = this.router.url;
 		if (!isNew) {
 			this.router.navigate([url], { relativeTo: this.activatedRoute });
@@ -164,23 +209,15 @@ export class UserEditComponent implements OnInit, OnDestroy {
 		this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 	}
 
-	/**
-	 * Reset
-	 */
 	reset() {
 		this.user = Object.assign({}, this.oldUser);
 		this.createForm();
 		this.hasFormErrors = false;
 		this.userForm.markAsPristine();
-  this.userForm.markAsUntouched();
-  this.userForm.updateValueAndValidity();
+		this.userForm.markAsUntouched();
+		this.userForm.updateValueAndValidity();
 	}
 
-	/**
-	 * Save data
-	 *
-	 * @param withBack: boolean
-	 */
 	onSumbit(withBack: boolean = false) {
 		this.hasFormErrors = false;
 		const controls = this.userForm.controls;
@@ -197,7 +234,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
 		const editedUser = this.prepareUser();
 
-		if (editedUser.id > 0) {
+		if (editedUser.id) {
 			this.updateUser(editedUser, withBack);
 			return;
 		}
@@ -205,95 +242,147 @@ export class UserEditComponent implements OnInit, OnDestroy {
 		this.addUser(editedUser, withBack);
 	}
 
-	/**
-	 * Returns prepared data for save
-	 */
 	prepareUser(): User {
 		const controls = this.userForm.controls;
 		const _user = new User();
 		_user.clear();
-		_user.roles = this.rolesSubject.value;
-		_user.address = this.addressSubject.value;
-		_user.socialNetworks = this.soicialNetworksSubject.value;
-		_user.accessToken = this.user.accessToken;
-		_user.refreshToken = this.user.refreshToken;
+		_user.roles = this.selection.selected.map((e) => { return e.name; });
 		_user.pic = this.user.pic;
 		_user.id = this.user.id;
-		_user.username = controls.username.value;
+		//_user.userName = controls.userName.value;
 		_user.email = controls.email.value;
-		_user.fullname = controls.fullname.value;
-		_user.occupation = controls.occupation.value;
-		_user.phone = controls.phone.value;
-		_user.companyName = controls.companyName.value;
-		_user.password = this.user.password;
+		_user.firstName = controls.firstName.value;
+		_user.lastName = controls.lastName.value;
+		_user.phoneNumber = controls.phoneNumber.value;
+		_user.password = controls.password.value;
 		return _user;
 	}
 
-	/**
-	 * Add User
-	 *
-	 * @param _user: User
-	 * @param withBack: boolean
-	 */
 	addUser(_user: User, withBack: boolean = false) {
-		this.store.dispatch(new UserOnServerCreated({ user: _user }));
-		const addSubscription = this.store.pipe(select(selectLastCreatedUserId)).subscribe(newId => {
-			const message = `New user successfully has been added.`;
-			this.layoutUtilsService.showActionNotification(message, MessageType.Create, 5000, true, true);
-			if (newId) {
-				if (withBack) {
-					this.goBackWithId();
+		this.spinner.show();
+		this.userService.createUser(_user).toPromise()
+			.then((res) => {
+				var resp = res as unknown as ApiResponse;
+				if (resp.success) {
+					const message = `New user successfully has been added.`;
+					this.layoutUtilsService.showActionNotification(message, MessageType.Create, 5000, true, true);
+
+					const newId = resp.data.id;
+					if (newId) {
+						if (withBack) {
+							this.goBackWithId();
+						} else {
+							this.refreshUser(true, newId);
+						}
+					}
 				} else {
-					this.refreshUser(true, newId);
+					const message = resp.errors.join('<br/>');
+					this.layoutUtilsService.showActionNotification(message, MessageType.Create, 5000, true, true);
 				}
-			}
-		});
-		this.subscriptions.push(addSubscription);
+
+
+			}).catch(() => {
+				this.spinner.hide();
+				this.layoutUtilsService.showActionNotification('A network error occured while processing your request. Please try again later.', MessageType.Create, 5000, true, true);
+
+			}).finally(() => {
+				this.spinner.hide();
+			});
+
+
+
+		//this.store.dispatch(new UserOnServerCreated({ user: _user }));
+		//const addSubscription = this.store.pipe(select(selectLastCreatedUserId)).subscribe(newId => {
+		//	const message = `New user successfully has been added.`;
+		//	this.layoutUtilsService.showActionNotification(message, MessageType.Create, 5000, true, true);
+		//	if (newId) {
+		//		if (withBack) {
+		//			this.goBackWithId();
+		//		} else {
+		//			this.refreshUser(true, newId);
+		//		}
+		//	}
+		//});
+		//this.subscriptions.push(addSubscription);
 	}
 
-	/**
-	 * Update user
-	 *
-	 * @param _user: User
-	 * @param withBack: boolean
-	 */
 	updateUser(_user: User, withBack: boolean = false) {
-		// Update User
-		// tslint:disable-next-line:prefer-const
+		this.spinner.show();
+		this.userService.updateUser(_user).toPromise()
+			.then((res) => {
+				var resp = res as unknown as ApiResponse;
+				if (resp.success) {
+					const message = `User updated successfully.`;
+					this.layoutUtilsService.showActionNotification(message, MessageType.Create, 5000, true, true);
 
-		const updatedUser: Update<User> = {
-			id: _user.id,
-			changes: _user
-		};
-		this.store.dispatch(new UserUpdated( { partialUser: updatedUser, user: _user }));
-		const message = `User successfully has been saved.`;
-		this.layoutUtilsService.showActionNotification(message, MessageType.Update, 5000, true, true);
-		if (withBack) {
-			this.goBackWithId();
-		} else {
-			this.refreshUser(false);
-		}
+					if (withBack) {
+						this.goBackWithId();
+					} else {
+						this.refreshUser(true, this.user.id);
+					}
+
+				} else {
+					const message = resp.errors.join('<br/>');
+					this.layoutUtilsService.showActionNotification(message, MessageType.Create, 5000, true, true);
+				}
+
+			}).catch(() => {
+				this.spinner.hide();
+				this.layoutUtilsService.showActionNotification('A network error occured while processing your request. Please try again later.', MessageType.Create, 5000, true, true);
+
+			}).finally(() => {
+				this.spinner.hide();
+			});
+
+		// Update User
+
+		// tslint:disable-next-line:prefer-const
+		//const updatedUser: Update<User> = {
+		//	id: _user.id,
+		//	changes: _user
+		//};
+		//this.store.dispatch(new UserUpdated({ partialUser: updatedUser, user: _user }));
+		//const message = `User successfully has been saved.`;
+		//this.layoutUtilsService.showActionNotification(message, MessageType.Update, 5000, true, true);
+		//if (withBack) {
+		//	this.goBackWithId();
+		//} else {
+		//	this.refreshUser(false);
+		//}
 	}
 
-	/**
-	 * Returns component title
-	 */
 	getComponentTitle() {
 		let result = 'Create user';
 		if (!this.user || !this.user.id) {
 			return result;
 		}
 
-		result = `Edit user - ${this.user.fullname}`;
+		result = `Edit user - ${this.user.firstName} ${this.user.lastName}`;
 		return result;
 	}
 
-	/**
-	 * Close Alert
-	 *
-	 * @param $event: Event
-	 */
 	onAlertClose($event) {
 		this.hasFormErrors = false;
 	}
+
+
+	isAllSelected() {
+		const numSelected = this.selection.selected.length;
+		const numRows = this.rolesDataSource.data.length;
+		return numSelected === numRows;
+	}
+
+	masterToggle() {
+		this.isAllSelected() ?
+			this.selection.clear() :
+			this.rolesDataSource.data.forEach(row => this.selection.select(row));
+	}
+
+	checkboxLabel(row?: Role): string {
+		if (!row) {
+			return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+		}
+		return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+	}
+
 }

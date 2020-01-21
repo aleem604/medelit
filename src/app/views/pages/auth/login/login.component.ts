@@ -2,6 +2,7 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { JwtHelperService } from "@auth0/angular-jwt";
 // RxJS
 import { Observable, Subject } from 'rxjs';
 import { finalize, takeUntil, tap } from 'rxjs/operators';
@@ -11,7 +12,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../../core/reducers';
 // Auth
-import { AuthNoticeService, AuthService, Login } from '../../../../core/auth';
+import { AuthNoticeService, AuthService, Login, UserLoaded, Logout } from '../../../../core/auth';
+import { environment } from '../../../../../environments/environment';
+import { ApiResponse } from '../../../../core/medelit';
 
 /**
  * ! Just example => Should be removed in development
@@ -24,6 +27,7 @@ const DEMO_PARAMS = {
 	EMAIL: '',
 	PASSWORD: ''
 };
+
 
 @Component({
 	selector: 'kt-login',
@@ -49,9 +53,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 		private store: Store<AppState>,
 		private fb: FormBuilder,
 		private cdr: ChangeDetectorRef,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		private helper: JwtHelperService
 	) {
 		this.unsubscribe = new Subject();
+		if (!environment.production) {
+			DEMO_PARAMS.EMAIL = 'medelitadmin@gmail.com';
+			DEMO_PARAMS.PASSWORD = 'Password!1';
+		}
 	}
 
 	ngOnInit(): void {
@@ -84,7 +93,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 				Validators.required,
 				Validators.email,
 				Validators.minLength(3),
-				Validators.maxLength(320) // https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address
+				Validators.maxLength(320)
 			])
 			],
 			password: [DEMO_PARAMS.PASSWORD, Validators.compose([
@@ -118,10 +127,26 @@ export class LoginComponent implements OnInit, OnDestroy {
 		this.auth
 			.login(authData.email, authData.password)
 			.pipe(
-				tap(user => {
-					if (user) {
-						this.store.dispatch(new Login({authToken: user.accessToken}));
-						this.router.navigateByUrl(this.returnUrl); // Main page
+				tap(res => {
+					const resp = (res as unknown as ApiResponse);
+
+					if (resp.success && resp.data) {
+						this.store.dispatch(new Login({ authToken: resp.data.accessToken }));
+						var token = this.helper.decodeToken(resp.data.accessToken);
+						var userInfo = token.user_info;
+						if (userInfo) {
+							var currentUser = JSON.parse(userInfo);
+							this.store.dispatch(new UserLoaded({ user: currentUser }));
+						} else {
+							this.store.dispatch(new Logout());
+						}
+
+						if (this.returnUrl) {
+							var parts = this.returnUrl.split('returnUrl');
+							const newUrl = parts[0] + 'returnUrl' + parts[1];
+							this.returnUrl = newUrl;
+						}
+						this.router.navigateByUrl(this.returnUrl);
 					} else {
 						this.authNoticeService.setNotice(this.translate.instant('AUTH.VALIDATION.INVALID_LOGIN'), 'danger');
 					}
@@ -135,12 +160,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 			.subscribe();
 	}
 
-	/**
-	 * Checking control validation
-	 *
-	 * @param controlName: string => Equals to formControlName
-	 * @param validationType: string => Equals to valitors name
-	 */
 	isControlHasError(controlName: string, validationType: string): boolean {
 		const control = this.loginForm.controls[controlName];
 		if (!control) {

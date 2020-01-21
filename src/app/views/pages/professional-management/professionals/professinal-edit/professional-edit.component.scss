@@ -2,6 +2,31 @@
 	width: 100%;
 }
 
+.tab-wrapper{
+	.row{
+		margin:0;
+	}
+}
+
+.mat-tab-body {
+	overflow: hidden !important;
+}
+
+.font-1-half {
+	font-size: 1.3em;
+}
+
+.add-service {
+	position: relative;
+	bottom: 0.5em;
+}
+
+.tbl-service {
+	th {
+		vertical-align: middle;
+	}
+}
+
 .heading-wrapper {
 	border-top: solid 1px #ddd;
 	border-bottom: solid 1px #ddd;

@@ -7,7 +7,8 @@ export class CustomerModel extends BaseModel {
 	title: string;
 	surName: string;
 	name: string;
-	languageId: number;
+	languageId: number = 1015;
+	leadSourceId: number;
 	mainPhone: string;
 	mainPhoneOwner: string;
 	phone2: string;
@@ -19,17 +20,17 @@ export class CustomerModel extends BaseModel {
 	email2: string;
 	fax: string;
 	dateOfBirth?: Date;
-	countryOfBirthId?: number;
+	countryOfBirthId?: number = 1003;
 	visitRequestingPerson: string;
 	visitRequestingPersonRelationId?: number;
 	homeStreetName: string;
 	visitStreetName: string;
-	homeCityId: number;
-	visitCityId: number;
+	homeCityId: number = 1002;
+	visitCityId: number = 1002;
 	homePostCode: string;
 	visitPostCode: string;
-	homeCountryId?: number;
-	visitCountryId?: number;
+	homeCountryId?: number = 1003;
+	visitCountryId?: number = 1003;
 	gpCode: string;
 	visitVenueId?: number;
 	visitVenueDetail: string;
@@ -52,6 +53,8 @@ export class CustomerModel extends BaseModel {
 	invoicingNotes: string;
 	blacklistId?: number;
 	leadId?: number;
+	connectedProfessionals: string[] = [];
+	connectedCustomers: string[] = [];
 
 
 	status: eRecordStatus;

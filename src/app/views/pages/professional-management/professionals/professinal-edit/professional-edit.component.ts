@@ -1,37 +1,31 @@
-// Angular
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-// Material
-import { MatDialog, MatAutocomplete, MatChipInputEvent, MatAutocompleteSelectedEvent, MatSelect } from '@angular/material';
-// RxJS
+import { MatDialog, MatSelect, MatTabChangeEvent } from '@angular/material';
 import { Observable, BehaviorSubject, Subscription, of, Subject, ReplaySubject } from 'rxjs';
 import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
-// NGRX
+import * as _ from 'lodash';
 import { Store, select } from '@ngrx/store';
-import { Dictionary, Update } from '@ngrx/entity';
 import { AppState } from '../../../../../core/reducers';
-// Layout
 import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
-// CRUD
 import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Services and Models
 import {
-	selectLastCreatedProfessionalId,
-	selectProfessionalById,
-	SPECIFICATIONS_DICTIONARY,
 	ProfessionalModel,
-	ProfessionalOnServerCreated,
-	ProfessionalUpdated,
 	ProfessionalsService,
-
 	FilterModel,
 	StaticDataService,
-	ApiResponse,
-	MedelitStaticData
+	ApiResponse,
+	MedelitStaticData,
+	ServicesService,
+    ServiceModel
 } from '../../../../../core/medelit';
-import { ENTER, COMMA, CONTROL } from '@angular/cdk/keycodes';
-import { lang } from 'moment';
+import { ENTER, COMMA } from '@angular/cdk/keycodes';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ProfessionalServiceDialogComponent } from '../professional-service/professional-service.dialog.component';
+import { ConfirmDialogComponent } from '../../../../partials/confirm-dialog/confirm-dialog.component';
+import { __rest } from 'tslib';
+import { ProfessionalServiceFeeDialogComponent } from '../professional-service-fee-dialog/professional-service-fee.dialog.component';
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -41,19 +35,19 @@ import { lang } from 'moment';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfessionalEditComponent implements OnInit, OnDestroy {
-	/// chipset propertier
+	proId: number;
 	visible = true;
 	selectable = true;
 	removable = true;
 	addOnBlur = true;
 	separatorKeysCodes: number[] = [ENTER, COMMA];
 
-
 	// Public properties
 	professional: ProfessionalModel;
 	professionalId$: Observable<number>;
 	oldProfessional: ProfessionalModel;
 	selectedTab = 0;
+	tabTitle: string = '';
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;
 	professionalForm: FormGroup;
@@ -68,6 +62,13 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 
 	titlesForFilter: FilterModel[] = [];
 	filteredTitles: Observable<FilterModel[]>;
+
+	fieldsForFilter: FilterModel[] = [];
+	filteredFields: Observable<FilterModel[]>;
+
+	subCategoriesForFilter: FilterModel[] = [];
+	filteredSubCategories: Observable<FilterModel[]>;
+
 
 	accCodesForFilter: FilterModel[] = [];
 
@@ -96,16 +97,12 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	languagesForFilter: FilterModel[] = [];
 	filteredLanguages: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
 
-
 	public langMultiCtrl: FormControl = new FormControl();
 	public langMultiFilterCtrl: FormControl = new FormControl();
 	public filteredLangsMulti: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
 	@ViewChild('multiSelect', { static: true }) multiSelect: MatSelect;
 	protected _onDestroy = new Subject<void>();
 
-
-	//@ViewChild('langInput', { static: false }) langInput: ElementRef<HTMLInputElement>;
-	//@ViewChild('langAuto', { static: false }) matAutocomplete: MatAutocomplete;
 
 	constructor(
 		private store: Store<AppState>,
@@ -118,19 +115,19 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		private layoutUtilsService: LayoutUtilsService,
 		private layoutConfigService: LayoutConfigService,
 		private professionalService: ProfessionalsService,
+		private servicesService: ServicesService,
 		private staticService: StaticDataService,
-
+		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
 	}
 
 	ngOnInit() {
 
 		this.loading$ = this.loadingSubject.asObservable();
-		this.loadingSubject.next(true);
 		this.activatedRoute.params.subscribe(params => {
 			const id = params.id;
 			if (id && id > 0) {
-
+				this.proId = +id;
 				//this.store.pipe(
 				//	select(selectProfessionalById(id))
 				//).subscribe(result => {
@@ -176,8 +173,11 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 
 	// If professional didn't find in store
 	loadProfessionalFromService(professionalId) {
-		this.professionalService.getProfessionalById(professionalId).subscribe(res => {
+		this.spinner.show();
+		this.professionalService.getProfessionalById(professionalId).toPromise().then(res => {
 			this.loadProfessional((res as unknown as ApiResponse).data, true);
+		}).finally(() => {
+			this.spinner.hide();
 		});
 	}
 
@@ -214,6 +214,8 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			name: [this.professional.name, [Validators.required]],
 			email: [this.professional.email, [Validators.required, Validators.email]],
 			email2: [this.professional.email2, [Validators.email]],
+			fieldId: [this.professional.fieldId, [Validators.required]],
+			subCategoryId: [this.professional.subCategoryId, [Validators.required]],
 			dateOfBirth: [this.professional.dateOfBirth, [Validators.required]],
 			mobilePhone: [this.professional.mobilePhone, [Validators.required]],
 			telephone: [this.professional.telephone, [Validators.required]],
@@ -237,7 +239,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			// work clinic address
 			clinicStreetName: [this.professional.clinicStreetName],
 			clinicPostCode: [this.professional.clinicPostCode],
-			clinicCityId: [this.professional.clinicCityId],
+			clinicCityId: [this.professional.clinicCityId, Validators.required],
 
 			// notes
 			description: [this.professional.description],
@@ -281,12 +283,14 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		});
 
 	}
+
 	loadResources() {
 		this.loadLanguagesForFilter();
 		this.loadCountiesForFilter();
 		this.loadCitiesForFilter();
 		this.loadClinicCitiesForFilter();
-
+		this.loadFieldsForFilter();
+		this.loadSubCategoriesForFilter();
 
 		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
 			this.titlesForFilter = data.map((el) => { return { id: el.id, value: el.titles }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
@@ -342,13 +346,8 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 				if (obj)
 					this.professionalForm.get('documentListSentId').setValue(obj.id);
 			}
-
-			
 		});
-
 	}
-
-
 
 	goBack(id) {
 		this.loadingSubject.next(false);
@@ -363,13 +362,14 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	refreshProfessional(isNew: boolean = false, id = 0) {
 		this.loadingSubject.next(false);
 		let url = this.router.url;
-		if (!isNew) {
-			this.router.navigate([url], { relativeTo: this.activatedRoute });
-			return;
-		}
+		//if (!isNew) {
+		//	this.router.navigate([url], { relativeTo: this.activatedRoute });
+		//	return;
+		//}
 
 		url = `/professional-management/professionals/edit/${id}`;
-		this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
+		this.router.navigate([url]);
+
 	}
 
 	reset() {
@@ -393,6 +393,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
+			window.scroll(0, 0);
 			return;
 		}
 
@@ -415,6 +416,12 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		_professional.name = controls.name.value;
 		_professional.email = controls.email.value;
 		_professional.email2 = controls.email2.value;
+
+		if (controls.fieldId.value)
+			_professional.fieldId = controls.fieldId.value.id;
+		if (controls.subCategoryId.value)
+			_professional.subCategoryId = controls.subCategoryId.value.id;
+
 		_professional.dateOfBirth = controls.dateOfBirth.value;
 		_professional.mobilePhone = controls.mobilePhone.value;
 		_professional.telephone = controls.telephone.value;
@@ -467,58 +474,75 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	}
 
 	addProfessional(_professional: ProfessionalModel, withBack: boolean = false) {
-		this.loadingSubject.next(true);
-		this.store.dispatch(new ProfessionalOnServerCreated({ professional: _professional }));
-		this.componentSubscriptions = this.store.pipe(
-			delay(1000),
-			select(selectLastCreatedProfessionalId)
-		).subscribe(newId => {
-			if (!newId) {
-				return;
-			}
-
-			this.loadingSubject.next(false);
-			if (withBack) {
-				this.goBack(newId);
-			} else {
+		this.spinner.show();
+		this.professionalService.createProfessional(_professional).toPromise().then((res) => {
+			this.spinner.hide();
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data > 0) {
 				const message = `New professional successfully has been added.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
-				this.refreshProfessional(true, newId);
+				this.refreshProfessional(true, resp.data);
+			} else {
+				const message = resp.errors.join('<br/>');
+				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
 			}
+		}).catch((e) => {
+			this.spinner.hide();
 		});
+
+
+		//this.loadingSubject.next(true);
+		//this.store.dispatch(new ProfessionalOnServerCreated({ professional: _professional }));
+		//this.componentSubscriptions = this.store.pipe(
+		//	delay(1000),
+		//	select(selectLastCreatedProfessionalId)
+		//).subscribe(newId => {
+		//	if (!newId) {
+		//		return;
+		//	}
+
+		//	this.loadingSubject.next(false);
+		//	if (withBack) {
+		//		this.goBack(newId);
+		//	} else {
+		//		const message = `New professional successfully has been added.`;
+		//		this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+		//		this.refreshProfessional(true, newId);
+		//	}
+		//});
 	}
 
 	updateProfessional(_professional: ProfessionalModel, withBack: boolean = false) {
-		this.loadingSubject.next(true);
-
-		const updateProfessional: Update<ProfessionalModel> = {
-			id: _professional.id,
-			changes: _professional
-		};
-
-		this.store.dispatch(new ProfessionalUpdated({
-			partialProfessional: updateProfessional,
-			professional: _professional
-		}));
-
-		of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
-			if (withBack) {
-				this.goBack(_professional.id);
-			} else {
+		this.spinner.show();
+		this.professionalService.updateProfessional(_professional).toPromise().then((res) => {
+			const resp = res as unknown as ApiResponse;
+			if (resp.success && resp.data > 0) {
 				const message = `Professional successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-				this.refreshProfessional(false);
+				this.loadProfessionalFromService(this.professional.id);
+			} else {
+				const message = resp.errors.join('<br/>');
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
 			}
-		}); // Remove this line
+		}).catch((e) => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
+		});
 	}
 
 	getComponentTitle() {
 		let result = 'Create professional';
-		if (!this.professional || !this.professional.id) {
-			return result;
+		if (this.selectedTab == 0) {
+
+			if (!this.professional || !this.professional.id) {
+				return result;
+			}
+			result = `Edit professional - ${this.professional.name}`;
+		} else{
+			result = this.tabTitle;
 		}
 
-		result = `Edit professional - ${this.professional.name}, ${this.professional.email}`;
 		return result;
 	}
 
@@ -544,8 +568,8 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 				}
 			}
 		});
-
 	}
+
 	private _filterTitles(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.titlesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
@@ -598,12 +622,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		);
 	}
 
-
-
-
-
 	// end languages fitler
-
 
 	// cities
 	loadCitiesForFilter() {
@@ -630,6 +649,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	}
 	// end clinic cities
 	//clinic  cities
+
 	loadClinicCitiesForFilter() {
 		this.staticService.getCitiesForFilter().subscribe(res => {
 			this.clinicCitiesForFilter = res.data;
@@ -648,14 +668,12 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		});
 
 	}
+
 	private _filterClinicCities(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.clinicCitiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
 	}
 	// end account code id filter
-
-
-
 
 	// countries
 	loadCountiesForFilter() {
@@ -682,6 +700,61 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	}
 	// end account code id filter
 
+	// fiels for filter
+
+	loadFieldsForFilter() {
+		this.staticService.getFieldsForFilter().subscribe(res => {
+			this.fieldsForFilter = res.data;
+
+			this.filteredFields = this.professionalForm.get('fieldId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterFields(value))
+				);
+			if (this.professional.fieldId > 0) {
+				var elem = this.fieldsForFilter.find(x => x.id == this.professional.fieldId);
+				if (elem) {
+					this.professionalForm.patchValue({ 'fieldId': { id: elem.id, value: elem.value } });
+				}
+			}
+		});
+
+	}
+
+	private _filterFields(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.fieldsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end fields for filter
+
+	// subcategories for filter
+
+	loadSubCategoriesForFilter() {
+		this.staticService.getCategoriesForFilter().subscribe(res => {
+			this.subCategoriesForFilter = res.data;
+
+			this.filteredSubCategories = this.professionalForm.get('subCategoryId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterSubCategories(value))
+				);
+			if (this.professional.subCategoryId > 0) {
+				var elem = this.subCategoriesForFilter.find(x => x.id == this.professional.subCategoryId);
+				if (elem) {
+					this.professionalForm.patchValue({ 'subCategoryId': { id: elem.id, value: elem.value } });
+				}
+			}
+		});
+
+	}
+
+	private _filterSubCategories(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.subCategoriesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end fields for filter
+
+
 
 
 	displayFn(option: FilterModel): string {
@@ -696,9 +769,91 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		return value;
 	}
 
-
-
 	// End Fitler Section
 
+	addService() {
 
+		const dialogRef = this.dialog.open(ProfessionalServiceDialogComponent, { data: this.professional.id });
+		dialogRef.afterClosed().subscribe(res => {
+			if (!res) {
+				return;
+			}
+			this.spinner.show();
+			this.servicesService.getProfessionalRelations(this.professional.id).toPromise().then((res) => {
+				if (res.success) {
+					this.professional.professionalServices = res.data;
+					this.cdr.detectChanges();
+				}
+
+			}).finally(() => {
+				this.spinner.hide();
+
+			});
+
+			this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
+		});
+	}
+
+
+	removeService(serviceId: number) {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			width: '250px',
+			data: { title: 'Professional detach', message: 'Are you sure to detach professional from this service?' }
+		});
+
+		dialogRef.afterClosed().subscribe(result => {
+			if (result) {
+				this.spinner.show();
+				this.servicesService.detachProfessioal(serviceId, this.professional.id).toPromise().then((res) => {
+					if (res.success) {
+						this.professional.professionalServices = res.data;
+						this.cdr.detectChanges();
+						this.layoutUtilsService.showActionNotification("Request processed successfully", MessageType.Delete, 3000);
+					} else {
+						if (res.errors)
+							this.layoutUtilsService.showActionNotification(_.join(res.errors, "<br/>"), MessageType.Delete, 3000);
+					}
+				}).catch((err) => {
+					this.spinner.hide();
+					this.layoutUtilsService.showActionNotification("An error occured while porcessing your request. Please try again later.", MessageType.Update, 3000);
+				}).finally(() => {
+					this.spinner.hide();
+				});
+			}
+		});
+	}
+
+	editServiceFee(service: ServiceModel) {
+		const dialogRef = this.dialog.open(ProfessionalServiceFeeDialogComponent, { data: service });
+		dialogRef.afterClosed().subscribe(res => {
+			if (!res) {
+				return;
+			}
+			this.spinner.show();
+			this.servicesService.getProfessionalRelations(this.professional.id).toPromise().then((res) => {
+				if (res.success) {
+					this.professional.professionalServices = res.data;
+					this.detectChanges();
+				}
+			}).finally(() => {
+				this.spinner.hide();
+			});
+
+			this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
+			this.detectChanges();
+		});
+	}
+
+	detectChanges() {
+		try {
+			this.cdr.detectChanges();
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
+
+	tabChanged(event: MatTabChangeEvent) {
+		this.tabTitle = event.tab.textLabel;
+	}
 }

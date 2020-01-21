@@ -2,10 +2,10 @@
 import { Injectable } from '@angular/core';
 // RxJS
 import { mergeMap, map, tap } from 'rxjs/operators';
-import { Observable, defer, of, forkJoin } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 // NGRX
 import { Effect, Actions, ofType } from '@ngrx/effects';
-import { Store, select, Action } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 // CRUD
 import { QueryResultsModel, QueryParamsModel } from '../../_base/crud';
 // Services
@@ -43,7 +43,7 @@ export class UserEffects {
                 return forkJoin(requestToServer, lastQuery);
             }),
             map(response => {
-                const result: QueryResultsModel = response[0];
+                const result: QueryResultsModel = response[0].data;
                 const lastQuery: QueryParamsModel = response[1];
                 return new UsersPageLoaded({
                     users: result.items,

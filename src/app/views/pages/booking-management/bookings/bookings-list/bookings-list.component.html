@@ -13,27 +13,28 @@
 			<!-- start::FILTERS -->
 			<div class="kt-form__filtration">
 				<div class="row align-items-center">
-					<div class="col-md-3 kt-margin-bottom-10-mobile">
+					<div class="col-md-5 kt-margin-bottom-10-mobile">
 						<mat-form-field class="example-full-width">
-							<input type="text" placeholder="Pick status" aria-label="Number" matInput [matAutocomplete]="status" [formControl]="statusControl">
-							<mat-autocomplete autoActiveFirstOption #status="matAutocomplete"
-											  (optionSelected)="loadBookingsList()"
-											  (closed)="statusDrpClosed()"
-											  [displayWith]="displayFn">
-								<mat-option *ngFor="let c of filteredStatuses | async" [value]="c">
-									{{c.value}}
-								</mat-option>
-							</mat-autocomplete>
+							<mat-select [formControl]="statusControl">
+								<mat-option [value]="'0'">All</mat-option>
+								<mat-option [value]="'1'">Pending</mat-option>
+								<mat-option [value]="'2'">Awaiting Payment</mat-option>
+								<mat-option [value]="'3'">Today's Visits</mat-option>
+								<mat-option [value]="'4'">Future Visits</mat-option>
+								<mat-option [value]="'5'">Delivered</mat-option>
+								<mat-option [value]="'6'">To Be Invoiced (payment status paid, payment method not insurance, empty invoice number )</mat-option>
+								<mat-option [value]="'7'">To Be Invoiced (payment status not paid, payment method insurance, empty invoice number )</mat-option>
+							</mat-select>
 							<mat-hint align="start">
-								Select a
-								<strong>Status</strong>
+								Select an
+								<strong>Option</strong>
 							</mat-hint>
 						</mat-form-field>
 					</div>
-					
-					<div class="col-md-3 kt-margin-bottom-10-mobile">
+
+					<div class="col-md-4 kt-margin-bottom-10-mobile">
 						<mat-form-field>
-							<input matInput placeholder="Search booking" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
+							<input matInput #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
 								<strong>Search in all fields</strong>
 							</mat-hint>
@@ -48,15 +49,15 @@
 							<label class="kt--font-bold kt-font-danger-">Selected records count: {{ selection.selected.length }}</label>
 						</div>
 						<div class="kt-form__control kt-form__group--inline">
-							<button mat-raised-button color="accent" (click)="deleteBookings()" matTooltip="Delete selected bookings"  class="mat-button-mt-4">
+							<button mat-raised-button color="accent" (click)="deleteBookings()" matTooltip="Delete selected bookings" class="mat-button-mt-4">
 								<mat-icon>delete</mat-icon>
 								Delete All
 							</button>&nbsp;
-							<button mat-raised-button (click)="fetchBookings()" matTooltip="Fetch selected bookings"  class="mat-button-mt-4">
+							<button mat-raised-button (click)="fetchBookings()" matTooltip="Fetch selected bookings" class="mat-button-mt-4">
 								<mat-icon>clear_all</mat-icon>
 								Fetch Selected Records
 							</button>&nbsp;
-							<button mat-raised-button (click)="updateStatusForBookings()" matTooltip="Update status for selected bookings"  class="mat-button-mt-4">
+							<button mat-raised-button (click)="updateStatusForBookings()" matTooltip="Update status for selected bookings" class="mat-button-mt-4">
 								<mat-icon>update</mat-icon>
 								Update Status
 							</button>
@@ -73,7 +74,7 @@
 					   [dataSource]="dataSource"
 					   matSort
 					   #sort1="matSort"
-					   matSortActive="id"
+					   matSortActive="bookingDate"
 					   matSortDirection="desc"
 					   matSortDisableClear>
 				<!-- Checkbox Column -->
@@ -94,43 +95,55 @@
 					</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="id">
-					<mat-header-cell *matHeaderCellDef mat-sort-header style="width:50px;" class="">ID</mat-header-cell>
-					<mat-cell *matCellDef="let booking" style="width:50px;" class="">{{booking.id}}</mat-cell>
-				</ng-container>
-
 				<ng-container matColumnDef="name">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.name}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="customerName">
+				<ng-container matColumnDef="customer">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Customer Name</mat-header-cell>
-					<mat-cell *matCellDef="let booking">{{booking.customerName}}</mat-cell>
+					<mat-cell *matCellDef="let booking">{{booking.customer}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="assignedTo">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Assigned To</mat-header-cell>
-					<mat-cell *matCellDef="let booking">{{booking.assignedTo}}</mat-cell>
+				<ng-container matColumnDef="invoicingEntity">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Invoicing Entity</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.invoicingEntity}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="createdDate">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Created At</mat-header-cell>
+				<ng-container matColumnDef="service">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Service</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.service}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="professional">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Professional</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.professional}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="bookingDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Booking Date</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.createDate  | date: 'yyyy-MM-dd'}}</mat-cell>
 				</ng-container>
 
-
-				<ng-container matColumnDef="updateDate">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Last Change</mat-header-cell>
-					<mat-cell *matCellDef="let booking">{{booking.updateDate  | date: 'yyyy-MM-dd'}}</mat-cell>
-				</ng-container>
-				<ng-container matColumnDef="status">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-					<mat-cell *matCellDef="let booking">
-						<span class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{ getItemCssClassByStatus(booking.status) }} kt-badge--wide">{{ getItemStatusString(booking.status) }}</span>
-					</mat-cell>
+				<ng-container matColumnDef="visitDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Date of Visit</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.visitDate  | date: 'yyyy-MM-dd'}}</mat-cell>
 				</ng-container>
 
+				<ng-container matColumnDef="visitTime">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Time of Visit</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.visitDate  | date: 'h:mm:ss a'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="paymentMethod">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Payment Method</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.paymentMethod}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="ptFee">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>PT Fee</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.ptFee}}</mat-cell>
+				</ng-container>
 
 				<ng-container matColumnDef="actions">
 					<mat-header-cell *matHeaderCellDef>
@@ -141,19 +154,19 @@
 						<button type="button" (click)="editBooking(booking.id)" mat-icon-button color="primary" matTooltip="Edit booking">
 							<mat-icon>create</mat-icon>
 						</button>&nbsp;
-						<button mat-icon-button color="warn" type="button" (click)="deleteBooking(booking)" matTooltip="Delete booking">
+						<!--<button mat-icon-button color="warn" type="button" (click)="deleteBooking(booking)" matTooltip="Delete booking">
 							<mat-icon>delete</mat-icon>
-						</button>&nbsp;
+						</button>&nbsp;-->
 						<!--<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
 							<mat-icon>more_vert</mat-icon>
 						</button>-->
 						<mat-menu #menu="matMenu">
-												
+
 							<button mat-menu-item type="button" (click)="cloneBooking(booking)">
 								<i class="la la-clone"></i>
 								<span class="ml-2">Clone this Booking</span>
 							</button>
-						
+
 							<button mat-menu-item type="button" (click)="createCycle(booking)">
 								<i class="la la-recycle"></i>
 								<span class="ml-2">Create a Cycle</span>

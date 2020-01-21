@@ -44,9 +44,6 @@ export class ServicesListComponent implements OnInit, OnDestroy {
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields
 	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
-	statusesForFilter: FilterModel[] = [];
-	statusControl = new FormControl({ id: -1 }, []);
-	filteredStatuses: Observable<FilterModel[]>;
 
 	lastQuery: QueryParamsModel;
 	// Selection
@@ -63,9 +60,7 @@ export class ServicesListComponent implements OnInit, OnDestroy {
 		private cdr: ChangeDetectorRef,
 		private store: Store<AppState>) { }
 
-
 	ngOnInit() {
-		this.loadStatusesForFilter();
 		// If the user changes the sort order, reset back to the first page.
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		this.subscriptions.push(sortSubscription);
@@ -149,14 +144,7 @@ export class ServicesListComponent implements OnInit, OnDestroy {
 		const filter: any = {};
 		try {
 			const searchText = this.searchInput.nativeElement.value;
-			const status = this.statusControl.value;
-
-			if (status) {
-				filter.status = status.id;
-			}
-
-
-
+			
 			if (searchText)
 				filter.search = searchText;
 		} catch{
@@ -171,21 +159,11 @@ export class ServicesListComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		if ('status' in queryParams.filter) {
-			this.statusControl = queryParams.filter.status.toString();
-		}
-
 		if (queryParams.filter.model) {
 			this.searchInput.nativeElement.value = queryParams.filter.model;
 		}
 	}
 
-	/** ACTIONS */
-	/**
-	 * Delete service
-	 *
-	 * @param _item: ServiceModel
-	 */
 	deleteService(_item: ServiceModel) {
 		const _title = 'Service Delete';
 		const _description = 'Are you sure to permanently delete this service?';
@@ -203,9 +181,6 @@ export class ServicesListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	/**
-	 * Delete services
-	 */
 	deleteServices() {
 		const _title = 'Services Delete';
 		const _description = 'Are you sure to permanently delete selected services?';
@@ -358,49 +333,6 @@ export class ServicesListComponent implements OnInit, OnDestroy {
 		return '';
 	}
 
-	/* Top Filters */
-
-	loadStatusesForFilter() {
-		this.dataService.getStatuses().subscribe(res => {
-			this.statusesForFilter = res.data;
-			this.filteredStatuses = this.statusControl.valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterStatuses(value))
-				);
-		},
-			(error) => { console.log(error); },
-			() => {
-				this.statusControl.setValue({ id: -1, name: 'All' });
-				this.detectChanges();
-			});
-	}
-
-
-	private _filterStatuses(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.statusesForFilter.filter(status => this._normalizeValue(status.name).includes(filterValue));
-	}
-
-
-
-	private _normalizeValue(value: string): string {
-		if (value && value.length > 0)
-			return value.toLowerCase().replace(/\s/g, '');
-		return value;
-	}
-
-	displayFn(option: FilterModel): string {
-		if (option)
-			return option.name;
-		return '';
-	}
-
-	statusDrpClosed() {
-		this.loadServicesList();
-	}
-
-	/*End top Fitlers*/
 	detectChanges() {
 		try {
 			this.cdr.detectChanges();

@@ -1,0 +1,23 @@
+.connect-header {
+	display: table;
+	width: 100%;
+
+	span:first-of-type {
+		position: relative;
+		bottom: 0;
+		left: 0;
+		float: left;
+		top: 0em;
+	}
+}
+
+strong{
+	font-weight:500;
+}
+.make-green {
+	background-color: #dafacd
+}
+
+.make-blue {
+	background-color: #acd7fa;
+}

@@ -652,9 +652,10 @@ export class MenuConfig {
 				//	]
 				//},
 				{
-					title: 'User Management',
+					title: 'Users',
 					root: true,
 					bullet: 'dot',
+					permission:'userManagementModule',
 					icon: 'flaticon2-user-outline-symbol',
 					submenu: [
 						{
@@ -669,11 +670,11 @@ export class MenuConfig {
 				},
 				{section: 'Applications'},
 				{
-					title: 'Lead Management',
+					title: 'Leads',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
-					permission: 'accessToECommerceModule',
+					permission: 'leadManagementModule',
 					submenu: [
 						{
 							title: 'Leads',
@@ -686,11 +687,11 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Customer Management',
+					title: 'Customers',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
-					permission: 'accessToECommerceModule',
+					permission: 'customerManagementModule',
 					submenu: [
 						{
 							title: 'Customers',
@@ -703,28 +704,24 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Booking Management',
+					title: 'Bookings',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
-					permission: 'accessToECommerceModule',
+					permission: 'bookingManagementModule',
 					submenu: [
 						{
 							title: 'Bookings',
 							page: '/booking-management/bookings'
-						},
-						//{
-						//	title: 'Add Booking',
-						//	page: '/booking-management/bookings/add'
-						//},
+						}
 					]
 				},
 				{
-					title: 'Invoice Management',
+					title: 'Invoices',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
-					permission: 'accessToECommerceModule',
+					permission: 'invoiceManagementModule',
 					submenu: [
 						{
 							title: 'Invoices',
@@ -737,11 +734,11 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Invoice Entity Management',
+					title: 'Invoicing Entities',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
-					permission: 'accessToECommerceModule',
+					permission: 'invoiceEntityManagementModule',
 					submenu: [
 						{
 							title: 'Invoice Entities',
@@ -754,11 +751,11 @@ export class MenuConfig {
 					]
 				},				
 				{
-					title: 'Fee Management',
+					title: 'Fees',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
-					permission: 'accessToECommerceModule',
+					permission: 'feeManagementModule',
 					submenu: [
 						{
 							title: 'Fees',
@@ -771,11 +768,11 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Professional Management',
+					title: 'Professionals',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
-					permission: 'accessToECommerceModule',
+					permission: 'professionalManagementModule',
 					submenu: [
 						{
 							title: 'Professionals',
@@ -788,11 +785,11 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Service Management',
+					title: 'Services',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
 					root: true,
-					permission: 'accessToECommerceModule',
+					permission: 'serviceManagementModule',
 					submenu: [
 						{
 							title: 'Services',
@@ -807,64 +804,7 @@ export class MenuConfig {
 							page: '/service-management/fields'
 						},
 					]
-				},
-				//{section: 'Custom'},
-				//{
-				//	title: 'Error Pages',
-				//	root: true,
-				//	bullet: 'dot',
-				//	icon: 'flaticon2-list-2',
-				//	submenu: [
-				//		{
-				//			title: 'Error 1',
-				//			page: '/error/error-v1'
-				//		},
-				//		{
-				//			title: 'Error 2',
-				//			page: '/error/error-v2'
-				//		},
-				//		{
-				//			title: 'Error 3',
-				//			page: '/error/error-v3'
-				//		},
-				//		{
-				//			title: 'Error 4',
-				//			page: '/error/error-v4'
-				//		},
-				//		{
-				//			title: 'Error 5',
-				//			page: '/error/error-v5'
-				//		},
-				//		{
-				//			title: 'Error 6',
-				//			page: '/error/error-v6'
-				//		},
-				//	]
-				//},
-				//{
-				//	title: 'Wizard',
-				//	root: true,
-				//	bullet: 'dot',
-				//	icon: 'flaticon2-mail-1',
-				//	submenu: [
-				//		{
-				//			title: 'Wizard 1',
-				//			page: '/wizard/wizard-1'
-				//		},
-				//		{
-				//			title: 'Wizard 2',
-				//			page: '/wizard/wizard-2'
-				//		},
-				//		{
-				//			title: 'Wizard 3',
-				//			page: '/wizard/wizard-3'
-				//		},
-				//		{
-				//			title: 'Wizard 4',
-				//			page: '/wizard/wizard-4'
-				//		},
-				//	]
-				//},
+				}
 			]
 		},
 	};

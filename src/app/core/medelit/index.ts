@@ -1,29 +1,68 @@
-// Context
 export { ECommerceDataContext } from './_server/_e-commerce.data-context';
-
-/// Enumbs
 export { eFeeType } from './_enums/e-fee-type.enum';
-
-//filters
 export { MyFilterPipe } from './_filters/mFilter';
-
-// adapters
 export * from './_adapter/app-date.adapter';
 
-// Models and Consts
 export { DashboardModel } from './_models/dashboard.model';
-export { FeeModel } from './_models/fee.model';
-export { InvoiceModel, BookingViewModel, InvoiceBookings } from './_models/invoice.model';
-export { InvoiceEntityModel } from './_models/invoice-entity.model';
+export {
+	FeeModel,
+	FeeDialogModel,
+	ConnectedProfessionalsCustomersModel,
+	ConnectedServicesModel,
+	AttachServiceToFeeDialogModel
+} from './_models/fee.model';
+export {
+	InvoiceModel,
+	BookingViewModel,
+	InvoiceBookings,
+	InvoiceConnectedBookings,
+	InvoiceConnectedCustomers,
+	InvoiceConnectedInvoiceEntities,
+	InvoiceConnectedProfessionals
+} from './_models/invoice.model';
+export {
+	InvoiceEntityModel,
+	InvoiceEntityConnectedBookings,
+	InvoiceEntityConnectedCustomers,
+	InvoiceEntityConnectedInvoices,
+	InvoiceEntityConnectedProfessionals,
+	InvoiceEntityConnectedServices,
+	InvoiceEntityConnectedLeads
+} from './_models/invoice-entity.model';
 export { InvoiceView } from './_models/invoice-view.model';
-export { ProfessionalModel } from './_models/professional.model';
+export { ProfessionalModel } from './_models/professional/professional.model';
+export {
+	ConnectedCustomers,
+	ConnectedInvoices,
+	ConnectedLeads,
+	CustomerConnectedCustomers,
+	CustomerConnectedBookings,
+	CustomerConnectedInvocies,
+	CustomerConnectedLeads,
+	CustomerConnectedProfessionals,
+	CustomerConnectedServices
+} from './_models/professional/connected-customers.model';
+export { ConnectedBookings } from './_models/professional/connected-bookings.model';
 export { StaticDataModel, MedelitStaticData } from './_models/static/static-data.model';
 export { FieldModel } from './_models/field.model';
 export { CustomerModel, CustomerServicesModel } from './_models/customer.model';
 export { CustomerModelOld } from './_models/customer-old.model';
 export { LeadModel, LeadServicesModel } from './_models/lead.model';
-export { BookingModel } from './_models/booking.model';
-export { ServiceModel } from './_models/service.model';
+export {
+	BookingModel,
+	BookingConnectedBookings,
+	BookingConnectedProfessionals,
+	BookingConnectedInvoices
+} from './_models/booking.model';
+export {
+	ServiceModel,
+	ServiceProfessionalFeesModels,
+	ServiceProfessionals,
+	ServiceConnectedCustomerInvoices,
+	ServiceConnectedBookings,
+	ConnectedCustomersInvoicingEntities,
+	ServiceConnectedLeads
+} from './_models/service.model';
 export { FilterModel } from './_models/filter.model';
 export { ApiResponse } from './_models/apireponse.model';
 export { ProductRemarkModel } from './_models/product-remark.model';

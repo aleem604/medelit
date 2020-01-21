@@ -13,27 +13,10 @@
 			<!-- start::FILTERS -->
 			<div class="kt-form__filtration">
 				<div class="row align-items-center">
-					<div class="col-md-3 kt-margin-bottom-10-mobile">
-						<mat-form-field class="example-full-width">
-							<input type="text" placeholder="Pick status" aria-label="Number" matInput [matAutocomplete]="status" [formControl]="statusControl">
-							<mat-autocomplete autoActiveFirstOption #status="matAutocomplete"
-											  (optionSelected)="loadServicesList()"
-											  (closed)="statusDrpClosed()"
-											  [displayWith]="displayFn">
-								<mat-option *ngFor="let c of filteredStatuses | async" [value]="c">
-									{{c.name}}
-								</mat-option>
-							</mat-autocomplete>
-							<mat-hint align="start">
-								Select a
-								<strong>Status</strong>
-							</mat-hint>
-						</mat-form-field>
-					</div>
-					
-					<div class="col-md-3 kt-margin-bottom-10-mobile">
+				
+					<div class="col-md-4 kt-margin-bottom-10-mobile">
 						<mat-form-field>
-							<input matInput placeholder="Search service" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
+							<input matInput placeholder="Search" #searchInput class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
 								<strong>Search in all fields</strong>
 							</mat-hint>
@@ -72,7 +55,6 @@
 		</div>
 
 		<div class="mat-table__wrapper">
-
 			<mat-table class="lmat-elevation-z8"
 					   #table
 					   [dataSource]="dataSource"
@@ -105,12 +87,12 @@
 
 				<ng-container matColumnDef="name">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.name}}</mat-cell>
+					<mat-cell *matCellDef="let service" class="text-capitalize">{{service.name}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="professionals">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Professionals</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.professionals}}</mat-cell>
+					<mat-cell *matCellDef="let service" class="text-capitalize">{{service.professionals}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="ptFees">

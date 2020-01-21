@@ -3,7 +3,7 @@
 		<div class="col-lg-4 kt-margin-bottom-20-mobile">
 			<mat-form-field class="mat-form-field-fluid">
 				<mat-select placeholder="Select Role" [(ngModel)]="roleIdForAdding">
-					<mat-option *ngFor="let role of unassignedRoles" value="{{ role.id }}">{{role.title}}</mat-option>
+					<mat-option *ngFor="let role of unassignedRoles" value="{{ role.id }}">{{role.name}}</mat-option>
 				</mat-select>
 				<mat-hint align="start">
 					<strong>Select Role</strong>
@@ -26,7 +26,7 @@
 				<div class="kt-list-timeline__items">
 					<div class="kt-list-timeline__item m-0 p-0" *ngFor="let _role of assignedRoles">
 						<span class="kt-list-timeline__badge kt-list-timeline__badge--primary"></span>
-						<span class="kt-list-timeline__text">{{ _role.title }}</span>
+						<span class="kt-list-timeline__text">{{ _role.name }}</span>
 						<span class="kt-list-timeline__time">
 							<button mat-icon-button color="warn" matTooltip="Remove role" type="button" (click)="unassingRole(_role)">
 								<mat-icon>delete</mat-icon>

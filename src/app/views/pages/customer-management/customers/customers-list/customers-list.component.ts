@@ -23,7 +23,7 @@ import {
 	ManyCustomersDeleted,
 	CustomersStatusUpdated,
 	FilterModel,
-    CustomerServicesModel,
+	CustomerServicesModel,
 } from '../../../../../core/medelit';
 
 import { FormControl } from '@angular/forms';
@@ -42,7 +42,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class CustomersListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: CustomersDataSource;
-	displayedColumns = ['select', 'id', 'title', 'surName', 'name', 'language', 'phone', 'services', 'professionals', 'updateDate','status', 'actions'];
+	displayedColumns = ['select', 'id', 'surName', 'name', 'phone', 'email', 'age', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields
@@ -51,29 +51,22 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 	lastQuery: QueryParamsModel;
 	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
 
-	statusesForFilter: FilterModel[] = [];
-	statusControl = new FormControl({ id: -1 }, []);
-	filteredStatuses: Observable<FilterModel[]>;
-
-	// Selection
 	selection = new SelectionModel<CustomerModel>(true, []);
 	customersResult: CustomerModel[] = [];
 	private subscriptions: Subscription[] = [];
 
 	constructor(public dialog: MatDialog,
+		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
 		private subheaderService: SubheaderService,
-		private utilService: StaticDataService,
 		private layoutUtilsService: LayoutUtilsService,
 		private cdr: ChangeDetectorRef,
 		private customerService: CustomersService,
-		private spinner: NgxSpinnerService,
-		private store: Store<AppState>) { }
-
+		private spinner: NgxSpinnerService
+	) { }
 
 	ngOnInit() {
-		this.loadStatusesForFilter();
 		// If the user changes the sort order, reset back to the first page.
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		this.subscriptions.push(sortSubscription);
@@ -86,7 +79,7 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 
 		// Filtration, bind to searchInput
 		const searchSubscription = fromEvent(this.searchInput.nativeElement, 'keyup').pipe(
-			debounceTime(150),
+			debounceTime(300),
 			distinctUntilChanged(),
 			tap(() => {
 				this.paginator.pageIndex = 0;
@@ -150,12 +143,6 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 		const filter: any = {};
 		try {
 			const searchText = this.searchInput.nativeElement.value;
-			const status = this.statusControl.value;
-
-			if (status) {
-				filter.status = status.id;
-			}
-
 			if (searchText)
 				filter.search = searchText;
 		} catch{
@@ -366,47 +353,6 @@ export class CustomersListComponent implements OnInit, OnDestroy {
 		return '';
 	}
 
-	/* Top Filters */
-
-	loadStatusesForFilter() {
-		this.utilService.getStatuses().subscribe(res => {
-			this.statusesForFilter = res.data;
-			this.filteredStatuses = this.statusControl.valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterStatuses(value))
-				);
-		},
-			(error) => { console.log(error); },
-			() => {
-				this.statusControl.setValue({ id: -1, name: 'All' });
-				this.detectChanges();
-			});
-	}
-
-	
-
-	private _filterStatuses(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.statusesForFilter.filter(status => this._normalizeValue(status.value).includes(filterValue));
-	}
-
-	
-
-	private _normalizeValue(value: string): string {
-		if (value && value.length > 0)
-			return value.toLowerCase().replace(/\s/g, '');
-		return value;
-	}
-
-	displayFn(option: FilterModel): string {
-		if (option)
-			return option.value;
-		return '';
-	}
-
-
-	/*End top Fitlers*/
 	detectChanges() {
 		try {
 			this.cdr.detectChanges();

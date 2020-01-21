@@ -100,4 +100,21 @@ export class InvoicesService {
 	getInvoiceView(invoiceId: number): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + `/view/${invoiceId}`);
 	}
+
+	getInvoiceConnectedProfessionals(invoiceId: number): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + `/invoice-connected-professionals/${invoiceId}`);
+	}
+
+	getInvoiceConnectedCustomers(invoiceId: number): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + `/invoice-connected-customers/${invoiceId}`);
+	}
+
+	getInvoiceConnectedInvoiceEntities(invoiceId: number): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + `/invoice-connected-invoice-entities/${invoiceId}`);
+	}
+
+	getInvoiceConnectedBookings(invoiceId: number): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + `/invoice-connected-bookings/${invoiceId}`);
+	}
+	
 }

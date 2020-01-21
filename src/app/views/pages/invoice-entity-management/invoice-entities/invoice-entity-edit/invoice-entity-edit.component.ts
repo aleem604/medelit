@@ -1,9 +1,9 @@
 // Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 // Material
-import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
+import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS, MatTabChangeEvent } from '@angular/material';
 // RxJS
 import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
 import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
@@ -31,7 +31,7 @@ import {
 	AppDateAdapter,
 	APP_DATE_FORMATS,
 
-    MedelitStaticData
+	MedelitStaticData
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -45,6 +45,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 })
 export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 	// Public properties
+
 	invoiceEntity: InvoiceEntityModel;
 	invoiceEntityId$: Observable<number>;
 	titles: Observable<StaticDataModel>;
@@ -55,6 +56,7 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 	services: Observable<StaticDataModel>;
 	oldInvoiceEntity: InvoiceEntityModel;
 	selectedTab = 0;
+	tabTitle: string = '';
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;
 	invoiceEntityForm: FormGroup;
@@ -166,22 +168,21 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 		this.invoiceEntityId$ = of(_invoiceEntity.id);
 		this.oldInvoiceEntity = Object.assign({}, _invoiceEntity);
 		this.initInvoiceEntity();
-
+		this.detectChanges();
 		this.loadStaticResources();
-
-		if (fromService) {
-			this.cdr.detectChanges();
-		}
 	}
 
 	loadInvoiceEntityFromService(invoiceEntityId) {
-		this.loadingSubject.next(true);
+		this.spinner.show();
 		this.invoiceEntityService.getInvoiceEntityById(invoiceEntityId).toPromise().then(res => {
 			this.loadingSubject.next(false);
 			let data = res as unknown as ApiResponse;
 			this.loadInvoiceEntity(data.data, true);
+			
 		}).catch((e) => {
-			this.loadingSubject.next(false);
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
 		});
 	}
 
@@ -253,8 +254,9 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 			personOfReferenceEmail: [this.invoiceEntity.personOfReferenceEmail, [Validators.required, Validators.email]],
 			personOfReferencePhone: [this.invoiceEntity.personOfReferencePhone, []],
 			blackListId: [this.invoiceEntity.blackListId, []],
-			discountPercent: [this.invoiceEntity.discountPercent, []],		
-		});		
+			contractedId: [this.invoiceEntity.contractedId, []],
+			discountPercent: [this.invoiceEntity.discountPercent, []],
+		});
 	}
 
 	goBack(id) {
@@ -296,9 +298,10 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
 			);
-			
+
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
+			window.scroll(0, 0);
 			return;
 		}
 
@@ -361,6 +364,7 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 		_invoiceEntity.personOfReferenceEmail = controls.personOfReferenceEmail.value;
 		_invoiceEntity.personOfReferencePhone = controls.personOfReferencePhone.value;
 		_invoiceEntity.blackListId = controls.blackListId.value;
+		_invoiceEntity.contractedId = controls.contractedId.value;
 		_invoiceEntity.discountPercent = controls.discountPercent.value;
 
 		return _invoiceEntity;
@@ -446,12 +450,16 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 	}
 
 	getComponentTitle() {
-		let result = 'Create Invoice Entity';
-		if (!this.invoiceEntity || !this.invoiceEntity.id) {
-			return result;
-		}
 
-		result = `Edit Invoice Entity - ${this.invoiceEntity.name}`;
+		let result = 'Create Invoice Entity';
+		if (this.selectedTab == 0) {
+			if (!this.invoiceEntity || !this.invoiceEntity.id) {
+				return result;
+			}
+			result = `Edit customer - ${this.invoiceEntity.name}`;
+		} else {
+			result = this.tabTitle;
+		}
 		return result;
 	}
 
@@ -492,7 +500,7 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 				if (obj)
 					this.invoiceEntityForm.get('ratingId').setValue(obj.id);
 			}
-		
+
 			this.ieTypeOptions = data.map((el) => { return { id: el.id, value: el.ieTypes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.invoiceEntity.ieTypeId) {
@@ -518,6 +526,10 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 
 		if (this.invoiceEntity.blackListId !== undefined) {
 			this.invoiceEntityForm.get('blackListId').setValue(this.invoiceEntity.blackListId.toString());
+		}
+
+		if (this.invoiceEntity.contractedId !== undefined) {
+			this.invoiceEntityForm.get('contractedId').setValue(this.invoiceEntity.contractedId.toString());
 		}
 	}
 
@@ -627,4 +639,15 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 	}
 
 	/*End Filters Section*/
+	tabChanged(event: MatTabChangeEvent) {
+		this.tabTitle = event.tab.textLabel;
+	}
+
+	detectChanges() {
+		try {
+			this.cdr.detectChanges();
+		} catch {
+
+		}
+	}
 }

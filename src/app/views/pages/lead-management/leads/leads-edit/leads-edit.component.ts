@@ -29,8 +29,8 @@ import {
 	InvoiceEntityModel
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { CreateInvoiceEntityDialogComponent } from '../create-invoice-entity/create-invoice-entity.dialog.component';
 import { TranslateService } from '@ngx-translate/core';
+import { CreateInvoiceEntityDialogComponent } from '../../../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
 
 
 @Component({
@@ -124,7 +124,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.loading$ = this.loadingSubject.asObservable();
 		this.loadingSubject.next(true);
 		this.activatedRoute.queryParams.subscribe((param) => {
-			const fromCustomerId = +param.fromCustomer;
+			const fromCustomerId = parseInt(param.fromCustomer);
 
 			this.activatedRoute.params.subscribe(params => {
 				const id = params.id;
@@ -216,7 +216,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 	createForm() {
 		this.leadForm = this.leadFB.group({
-			fromCustomerId: [this.lead.fromCustomerId, []],
+			customerId: [this.lead.customerId, []],
 			titleId: [this.lead.titleId, Validators.required],
 			surName: [this.lead.surName, [Validators.required, Validators.min(4)]],
 			name: [this.lead.name, Validators.required],
@@ -228,7 +228,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			phone2Owner: [this.lead.phone2Owner, []],
 			phone3: [this.lead.phone3, []],
 			phone3Owner: [this.lead.phone3Owner, []],
-			email: [this.lead.email, [Validators.required, Validators.email,]],
+			email: [this.lead.email, [Validators.email,]],
 			email2: [this.lead.email2, [Validators.email,]],
 			fax: [this.lead.fax, []],
 			dateOfBirth: [this.lead.dateOfBirth, []],
@@ -240,7 +240,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			services: this.leadFB.array([]),
 
 			preferredPaymentMethodId: [this.lead.preferredPaymentMethodId, []],
-			insuranceCoverId: [this.lead.insuranceCoverId, []],
+			insuranceCoverId: [this.lead.insuranceCoverId, [Validators.required]],
 			listedDiscountNetworkId: [this.lead.listedDiscountNetworkId, []],
 			discount: [this.lead.discount, []],
 			haveDifferentIEId: [this.lead.haveDifferentIEId, []],
@@ -406,8 +406,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		/** check form */
 		if (this.leadForm.invalid) {
 			Object.keys(controls).forEach(controlName => {
-				if (controls[controlName].status === 'INVALID')
-					console.log('invlaid controls', controlName);
+				//if (controls[controlName].status === 'INVALID')
+				//console.log('invlaid controls', controlName);
 			}
 			);
 
@@ -418,13 +418,15 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			(<FormArray>this.leadForm.get('services')).controls.forEach((group: FormGroup) => {
 				(<any>Object).values(group.controls).forEach((control: FormControl) => {
 					control.markAsTouched();
-					if (control.status === 'INVALID')
-						console.log('invlaid controls', control.errors);
+					//if (control.status === 'INVALID')
+					//	console.log('invlaid controls', control.errors);
 				})
 			});
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
+			window.scroll(0, 0);
+			
 			return;
 		}
 
@@ -443,7 +445,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		const controls = this.leadForm.controls;
 		const _lead = new LeadModel();
 		_lead.id = this.lead.id;
-		_lead.fromCustomerId = controls.fromCustomerId.value;
+		_lead.customerId = controls.customerId.value;
 		_lead.titleId = +controls.titleId.value;
 		_lead.surName = controls.surName.value;
 		_lead.name = controls.name.value;
@@ -534,10 +536,10 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.leadService.createLead(_lead).toPromise().then((res) => {
 			this.spinner.hide();
 			const resp = res as unknown as ApiResponse;
-			if (resp.success && resp.data.id > 0) {
+			if (resp.success && resp.data > 0) {
 				const message = `New lead successfully has been added.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
-				this.refreshLead(true, resp.data.id);
+				this.refreshLead(true, resp.data);
 			} else {
 				const message = `An error occured while processing your request. Please try again later.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
@@ -573,13 +575,13 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.leadService.updateLead(_lead).toPromise().then((res) => {
 			this.spinner.hide();
 			const resp = res as unknown as ApiResponse;
-			if (resp.success && resp.data.id > 0) {
+			if (resp.success && resp.data > 0) {
 				const _lead = resp.data as unknown as LeadModel;
 				this.loadLead(_lead, true);
 
 				const message = `Lead successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-				this.refreshLead(false, resp.data.id);
+				this.refreshLead(false, resp.data);
 			} else {
 				const message = `An error occured while processing your request. Please try again later.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
@@ -753,15 +755,15 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.staticService.getCustomersForImportFilter().subscribe(res => {
 			this.customersForFilter = res.data;
 
-			this.filteredCustomers = this.leadForm.get('fromCustomerId').valueChanges
+			this.filteredCustomers = this.leadForm.get('customerId').valueChanges
 				.pipe(
 					startWith(''),
 					map(value => this._filterCustomers(value))
 				);
-			if (this.lead.fromCustomerId > 0) {
+			if (this.lead.customerId > 0) {
 				var title = this.customersForFilter.find(x => x.id == this.lead.titleId);
 				if (title) {
-					this.leadForm.patchValue({ 'fromCustomerId': { id: title.id, value: title.value } });
+					this.leadForm.patchValue({ 'customerId': { id: title.id, value: title.value } });
 				}
 			}
 		});
@@ -1110,7 +1112,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			this.loadInvoiceEntitiesForFilter();
 
 			this.layoutUtilsService.showActionNotification(_saveMessage, _messageType);
-			this.refreshLead(false, this.lead.id);
+			this.detectChanges();
+			//this.refreshLead(false, this.lead.id);
 		});
 
 	}
@@ -1181,4 +1184,13 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 
 	/*End Filters Section*/
+
+	detectChanges() {
+		try {
+			this.cdr.detectChanges();
+		} catch {
+
+		}
+	}
+
 }

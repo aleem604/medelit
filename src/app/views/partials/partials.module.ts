@@ -77,6 +77,8 @@ import {CartComponent} from './layout/topbar/cart/cart.component';
 import { MultipleSelectioComponent } from './mat-select-search/mat-select-search.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { SingleSelectioComponent } from './mat-single-select-search/mat-single-select-search.component';
+import { CreateInvoiceEntityDialogComponent } from './create-invoice-entity/create-invoice-entity.dialog.component';
+
 
 @NgModule({
 	declarations: [
@@ -115,6 +117,7 @@ import { SingleSelectioComponent } from './mat-single-select-search/mat-single-s
 		MultipleSelectioComponent,
 		SingleSelectioComponent,
 		ErrorComponent,
+		CreateInvoiceEntityDialogComponent
 	],
 	exports: [
 		WidgetModule,
@@ -156,6 +159,7 @@ import { SingleSelectioComponent } from './mat-single-select-search/mat-single-s
 		SingleSelectioComponent,
 
 		ErrorComponent,
+		CreateInvoiceEntityDialogComponent
 	],
 	imports: [
 		CommonModule,

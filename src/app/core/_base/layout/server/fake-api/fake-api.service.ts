@@ -27,8 +27,7 @@ export class FakeApiService implements InMemoryDbService {
 			// auth module
 			users: AuthDataContext.users,
 			roles: AuthDataContext.roles,
-			permissions: AuthDataContext.permissions,
-
+			
 			// e-commerce
 			// customers
 			customers: ECommerceDataContext.customers,

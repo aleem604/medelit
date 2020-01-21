@@ -1,16 +1,19 @@
-// Angular
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse } from '@angular/common/http';
-// RxJS
-import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { debug } from 'util';
+import { Observable, of } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
+import { AppState } from '../../../reducers';
+import { Store } from '@ngrx/store';
+import { Logout } from '../../../auth/_actions/auth.actions';
 
-/**
- * More information there => https://medium.com/@MetonymyQT/angular-http-interceptors-what-are-they-and-how-to-use-them-52e060321088
- */
+
 @Injectable()
 export class InterceptService implements HttpInterceptor {
+
+	constructor(private store: Store<AppState>) {
+	}
+
 	// intercept request and add token
 	intercept(
 		request: HttpRequest<any>,
@@ -18,14 +21,16 @@ export class InterceptService implements HttpInterceptor {
 	): Observable<HttpEvent<any>> {
 		// tslint:disable-next-line:no-debugger
 		// modify request
-		// request = request.clone({
-		// 	setHeaders: {
-		// 		Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-		// 	}
-		// });
-		// console.log('----request----');
-		// console.log(request);
-		// console.log('--- end of request---');
+		
+		const userToken = localStorage.getItem(environment.authTokenKey);
+		 request = request.clone({
+		 	setHeaders: {
+				 Authorization: `Bearer ${userToken}`
+		 	}
+		 });
+		 //console.log('----request----');
+		 //console.log(request);
+		 //console.log('--- end of request---');
 
 		return next.handle(request).pipe(
 			tap(
@@ -33,16 +38,20 @@ export class InterceptService implements HttpInterceptor {
 					 if (event instanceof HttpResponse) {
 						// console.log('all looks good');
 						// http response status code
-						// console.log(event.status);
+						 //console.log('status:   ',event.status);
 					}
 				},
 				error => {
+					if (error.status == '401') {
+						this.store.dispatch(new Logout());
+					}
+
 					// http response status code
 					// console.log('----response----');
 					// console.error('status code:');
 					// tslint:disable-next-line:no-debugger
-					console.error(error.status);
-					console.error(error.message);
+					//console.error('error status:   ', error.status);
+					//console.error('error message:     ',error.message);
 					// console.log('--- end of response---');
 				}
 			)

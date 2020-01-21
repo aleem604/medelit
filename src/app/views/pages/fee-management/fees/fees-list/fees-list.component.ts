@@ -15,25 +15,25 @@ import { AppState } from '../../../../../core/reducers';
 import { LayoutUtilsService, MessageType, QueryParamsModel } from '../../../../../core/_base/crud';
 // Services and Models
 import { FeeModel, FeesDataSource, FeesPageRequested, OneFeeDeleted, ManyFeesDeleted, FeesStatusUpdated } from '../../../../../core/medelit';
-import { FeeEditDialogComponent } from '../fee-edit/fee-edit.dialog.component';
 import { SubheaderService } from '../../../../../core/_base/layout';
+import { FeeEditDialogComponent } from '../fee-edit-dialog/fee-edit.dialog.component';
 
 @Component({
 	// tslint:disable-next-line:component-selector
 	selector: 'kt-fees-list',
 	templateUrl: './fees-list.component.html',
+	styleUrls: ['./fees-list.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 
 })
 export class FeesListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: FeesDataSource;
-	displayedColumns = ['select', 'feeCode', 'feeType', 'feeName', 'a1', 'a2', 'status', 'actions'];
+	displayedColumns = ['select', 'feeName', 'feeType', 'tags', 'a1', 'a2', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields
 	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
-	filterStatus = '';
 	feeType = '';
 	// Selection
 	selection = new SelectionModel<FeeModel>(true, []);
@@ -50,13 +50,6 @@ export class FeesListComponent implements OnInit, OnDestroy {
 		private store: Store<AppState>
 	) { }
 
-	/**
-	 * @ Lifecycle sequences => https://angular.io/guide/lifecycle-hooks
-	 */
-
-	/**
-	 * On init
-	 */
 	ngOnInit() {
 		// If the user changes the sort order, reset back to the first page.
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
@@ -122,24 +115,19 @@ export class FeesListComponent implements OnInit, OnDestroy {
 
 	filterConfiguration(): any {
 		const filter: any = {};
-		const searchText: string = this.searchInput.nativeElement.value;
+		try {
+			const searchText = this.searchInput.nativeElement.value;
+			const feeType = this.feeType;
 
-		if (this.filterStatus && this.filterStatus.length > 0) {
-			filter.status = +this.filterStatus;
+			if (feeType) {
+				filter.feeType = feeType;
+			}
+
+			if (searchText)
+				filter.search = searchText;
+		} catch{
+
 		}
-
-		if (this.feeType && this.feeType.length > 0) {
-			filter.feeType = +this.feeType;
-		}
-
-		filter.lastName = searchText;
-		if (!searchText) {
-			return filter;
-		}
-
-		filter.firstName = searchText;
-		filter.email = searchText;
-		filter.ipAddress = searchText;
 		return filter;
 	}
 

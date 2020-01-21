@@ -40,7 +40,7 @@ export class RoleUpdated implements Action {
 
 export class RoleDeleted implements Action {
     readonly type = RoleActionTypes.RoleDeleted;
-    constructor(public payload: { id: number }) {}
+    constructor(public payload: { id: string }) {}
 }
 
 export class RolesPageRequested implements Action {

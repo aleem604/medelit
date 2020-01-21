@@ -1,5 +1,6 @@
 import { BaseModel } from '../../_base/crud';
 import { eRecordStatus } from '../_enums/e-record-status.enum';
+import { DateTimeAdapter } from 'ng-pick-datetime';
 
 export class InvoiceEntityModel extends BaseModel {
 	id: number;
@@ -51,6 +52,7 @@ export class InvoiceEntityModel extends BaseModel {
 	personOfReference: string;
 	personOfReferenceEmail: string;
 	personOfReferencePhone: string;
+	contractedId: number;
 	blackListId: number;
 	discountPercent: number;
 
@@ -69,4 +71,54 @@ export class InvoiceEntityModel extends BaseModel {
 
 	clear() {
 	}
+}
+
+export interface InvoiceEntityConnectedServices {
+	serviceName: string;
+	ptFeeName: string;
+	proFeeName: string;
+	proFee: number;
+	professional: string;
+	service: string;
+}
+
+export interface InvoiceEntityConnectedCustomers {
+	customer: string;
+	phone: string;
+	email: string;
+	services: string;
+	visitDate: Date;
+	professional: string;
+}
+
+export interface InvoiceEntityConnectedProfessionals {
+	professional: string;
+	phone: string;
+	email: string;
+	visitDate: Date;
+	activeCollaborationId: number;
+	status: string;
+}
+
+export interface InvoiceEntityConnectedBookings {
+	bookingName: string;
+	service: string;
+	professional: string;
+	visitDate: Date;
+}
+
+export interface InvoiceEntityConnectedInvoices {
+	subject: string;
+	invoiceNumber: string;
+	ieName: string;
+	invoiceDate: Date;
+	totalInvoice: number;
+}
+
+export interface InvoiceEntityConnectedLeads {
+	services: any[];
+	invoiceNumber: Date;
+	professional: string[];
+	leadStatusId: number;
+	status: string;
 }

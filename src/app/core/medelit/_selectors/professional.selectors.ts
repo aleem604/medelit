@@ -6,7 +6,7 @@ import { each } from 'lodash';
 import { QueryResultsModel, HttpExtenstionsModel } from '../../_base/crud';
 // State
 import { ProfessionalsState } from '../_reducers/professional.reducers';
-import { ProfessionalModel } from '../_models/professional.model';
+import { ProfessionalModel } from '../_models/professional/professional.model';
 
 export const selectProfessionalsState = createFeatureSelector<ProfessionalsState>('professionals');
 

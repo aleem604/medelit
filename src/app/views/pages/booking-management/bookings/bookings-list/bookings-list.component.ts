@@ -17,13 +17,9 @@ import { LayoutUtilsService, MessageType, QueryParamsModel } from '../../../../.
 // Services and Models
 
 import { FormControl } from '@angular/forms';
-import { transcode } from 'buffer';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BookingDataSource, FilterModel, BookingModel, StaticDataService, BookingService, BookingsPageRequested, OneBookingDeleted, ManyBookingsDeleted, BookingsStatusUpdated, InvoicesService } from '../../../../../core/medelit';
 import { selectBookingsPageLastQuery } from '../../../../../core/medelit/_selectors/booking.selectors';
-import { BookingCloneDialog } from '../booking-clone-dialog/booking-clone-dialog';
-import { ResourceLoader } from '@angular/compiler';
-import { BookingCycleDialog } from '../booking-cycle-dialog/booking-cycle-dialog';
 
 
 @Component({
@@ -36,7 +32,7 @@ import { BookingCycleDialog } from '../booking-cycle-dialog/booking-cycle-dialog
 export class BookingsListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: BookingDataSource;
-	displayedColumns = ['select', 'id', 'name', 'customerName', 'assignedTo', 'createdDate', 'updateDate','status', 'actions'];
+	displayedColumns = ['select', 'name', 'invoicingEntity', 'service', 'professional', 'bookingDate', 'visitDate', 'visitTime', 'paymentMethod', 'ptFee', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -46,25 +42,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 	lastQuery: QueryParamsModel;
 	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
 
-	statusesForFilter: FilterModel[] = [];
-	statusControl = new FormControl({ id: -1 }, []);
-	filteredStatuses: Observable<FilterModel[]>;
-
-	countriesForFilter: FilterModel[] = [];
-	countryControl = new FormControl();
-	filteredCountries: Observable<FilterModel[]>;
-
-	regionsForFilter: FilterModel[] = [];
-	regionControl = new FormControl();
-	filteredRegions: Observable<FilterModel[]>;
-
-	citiesForFilter: FilterModel[] = [];
-	cityControl = new FormControl();
-	filteredCities: Observable<FilterModel[]>;
-
-	neighborhoodsForFilter: FilterModel[] = [];
-	neighborhoodControl = new FormControl();
-	filteredNeighborhoods: Observable<FilterModel[]>;
+	statusControl = new FormControl('0', []);
 
 	// Selection
 	selection = new SelectionModel<BookingModel>(true, []);
@@ -85,12 +63,11 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
 
 	ngOnInit() {
-		this.loadStatusesForFilter();
 		// If the user changes the sort order, reset back to the first page.
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		this.subscriptions.push(sortSubscription);
 
-		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page).pipe(
+		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page, this.statusControl.valueChanges).pipe(
 			tap(() => this.loadBookingsList())
 		)
 			.subscribe();
@@ -166,10 +143,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 		const filter: any = {};
 		try {
 			const searchText = this.searchInput.nativeElement.value;
-			const status = this.statusControl.value;
+			const bookingFilter = this.statusControl.value;
 
-			if (status) {
-				filter.status = status.id;
+			if (bookingFilter) {
+				filter.bookingFilter = bookingFilter;
 			}
 
 			if (searchText)
@@ -252,12 +229,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 		this.layoutUtilsService.fetchElements(messages);
 	}
 
-	
-
-	
-
-
-	
 
 	updateStatusForBookings() {
 		const _title = 'Update status for selected bookings';
@@ -370,57 +341,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 		return '';
 	}
 
-	/* Top Filters */
-
-	loadStatusesForFilter() {
-		this.utilService.getStatuses().subscribe(res => {
-			this.statusesForFilter = res.data;
-			this.filteredStatuses = this.statusControl.valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterStatuses(value))
-				);
-		},
-			(error) => { console.log(error); },
-			() => {
-				this.statusControl.setValue({ id: -1, name: 'All' });
-				this.detectChanges();
-			});
-	}
-
-
-	private _filterStatuses(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.statusesForFilter.filter(status => this._normalizeValue(status.value).includes(filterValue));
-	}
-
-	private _normalizeValue(value: string): string {
-		if (value && value.length > 0)
-			return value.toLowerCase().replace(/\s/g, '');
-		return value;
-	}
-
-	displayFn(option: FilterModel): string {
-		if (option)
-			return option.value;
-		return '';
-	}
-
-	statusDrpClosed() {
-		this.loadBookingsList();
-	}
-
-	countryDrpClosed() {
-		if (!this.countryControl.value) {
-			this.regionControl.setValue('');
-			this.cityControl.setValue('');
-			this.neighborhoodControl.setValue('');
-
-		}
-		this.loadBookingsList();
-	}
-
-	/*End top Fitlers*/
 	detectChanges() {
 		try {
 			this.cdr.detectChanges();

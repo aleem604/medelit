@@ -1,49 +1,33 @@
-import { AfterViewInit, AfterViewChecked } from '@angular/core';
-// Angular
 import { Component, OnInit, ElementRef, ViewChild, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-// Material
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, MatSnackBar } from '@angular/material';
-// RXJS
 import { debounceTime, distinctUntilChanged, tap, skip, take, delay } from 'rxjs/operators';
-import { fromEvent, merge, Observable, of, Subscription } from 'rxjs';
-// LODASH
+import { fromEvent, merge,of, Subscription } from 'rxjs';
 import { each, find } from 'lodash';
-// NGRX
 import { Store, select } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
-
-// Services
 import { LayoutUtilsService, MessageType, QueryParamsModel } from '../../../../../core/_base/crud';
-// Models
 import {
 	User,
-	Role,
 	UsersDataSource,
 	UserDeleted,
 	UsersPageRequested,
-	selectUserById,
-	selectAllRoles
+    currentUserRoleIds,
+    currentUser
 } from '../../../../../core/auth';
 import { SubheaderService } from '../../../../../core/_base/layout';
 
-// Table with EDIT item in MODAL
-// ARTICLE for table with sort/filter/paginator
-// https://blog.angular-university.io/angular-material-data-table/
-// https://v5.material.angular.io/components/table/overview
-// https://v5.material.angular.io/components/sort/overview
-// https://v5.material.angular.io/components/table/overview#sorting
-// https://www.youtube.com/watch?v=NSt9CI3BXv4
 @Component({
 	selector: 'kt-users-list',
 	templateUrl: './users-list.component.html',
+	styleUrls: ['./users-list.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: UsersDataSource;
-	displayedColumns = ['select', 'id', 'username', 'email', 'fullname', '_roles', 'actions'];
+	displayedColumns = ['select', 'id', 'email', 'firstName','lastName', '_roles', 'actions'];
 	@ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 	@ViewChild('sort1', {static: true}) sort: MatSort;
 	// Filter fields
@@ -52,19 +36,13 @@ export class UsersListComponent implements OnInit, OnDestroy {
 	// Selection
 	selection = new SelectionModel<User>(true, []);
 	usersResult: User[] = [];
-	allRoles: Role[] = [];
+	currentUser: User = new User();
+	currentUserRoles: string[] = [];
+	userRoles: string[] = [];
 
 	// Subscriptions
 	private subscriptions: Subscription[] = [];
 
-	/**
-	 *
-	 * @param activatedRoute: ActivatedRoute
-	 * @param store: Store<AppState>
-	 * @param router: Router
-	 * @param layoutUtilsService: LayoutUtilsService
-	 * @param subheaderService: SubheaderService
-	 */
 	constructor(
 		private activatedRoute: ActivatedRoute,
 		private store: Store<AppState>,
@@ -73,16 +51,10 @@ export class UsersListComponent implements OnInit, OnDestroy {
 		private subheaderService: SubheaderService,
 		private cdr: ChangeDetectorRef) {}
 
-	/**
-	 * @ Lifecycle sequences => https://angular.io/guide/lifecycle-hooks
-	 */
-
-	/**
-	 * On init
-	 */
 	ngOnInit() {
 		// load roles list
-		const rolesSubscription = this.store.pipe(select(selectAllRoles)).subscribe(res => this.allRoles = res);
+		const rolesSubscription = this.store.pipe(select(currentUserRoleIds)).subscribe(res => this.currentUserRoles = res);
+		const userSubscription = this.store.pipe(select(currentUser)).subscribe(res => this.currentUser = res);
 		this.subscriptions.push(rolesSubscription);
 
 		// If the user changes the sort order, reset back to the first page.
@@ -141,9 +113,6 @@ export class UsersListComponent implements OnInit, OnDestroy {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
 
-	/**
-	 * Load users list
-	 */
 	loadUsersList() {
 		this.selection.clear();
 		const queryParams = new QueryParamsModel(
@@ -160,22 +129,17 @@ export class UsersListComponent implements OnInit, OnDestroy {
 	/** FILTRATION */
 	filterConfiguration(): any {
 		const filter: any = {};
-		const searchText: string = this.searchInput.nativeElement.value;
+		try {
+			const searchText = this.searchInput.nativeElement.value;
 
-		filter.lastName = searchText;
+			if (searchText)
+				filter.search = searchText;
+		} catch{
 
-		filter.username = searchText;
-		filter.email = searchText;
-		filter.fillname = searchText;
+		}
 		return filter;
 	}
 
-	/** ACTIONS */
-	/**
-	 * Delete user
-	 *
-	 * @param _item: User
-	 */
 	deleteUser(_item: User) {
 		const _title = 'User Delete';
 		const _description = 'Are you sure to permanently delete this user?';
@@ -193,33 +157,24 @@ export class UsersListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	/**
-	 * Fetch selected rows
-	 */
 	fetchUsers() {
 		const messages = [];
 		this.selection.selected.forEach(elem => {
 			messages.push({
 				text: `${elem.fullname}, ${elem.email}`,
 				id: elem.id.toString(),
-				status: elem.username
+				status: elem.userName
 			});
 		});
 		this.layoutUtilsService.fetchElements(messages);
 	}
 
-	/**
-	 * Check all rows are selected
-	 */
 	isAllSelected(): boolean {
 		const numSelected = this.selection.selected.length;
 		const numRows = this.usersResult.length;
 		return numSelected === numRows;
 	}
 
-	/**
-	 * Toggle selection
-	 */
 	masterToggle() {
 		if (this.selection.selected.length === this.usersResult.length) {
 			this.selection.clear();
@@ -228,29 +183,23 @@ export class UsersListComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/* UI */
-	/**
-	 * Returns user roles string
-	 *
-	 * @param user: User
-	 */
 	getUserRolesStr(user: User): string {
 		const titles: string[] = [];
-		each(user.roles, (roleId: number) => {
-			const _role = find(this.allRoles, (role: Role) => role.id === roleId);
+		each(user.roles, (roleId: string) => {
+			const _role = find(this.currentUserRoles, (role: string) => role === roleId);
 			if (_role) {
-				titles.push(_role.title);
+				titles.push(_role);
 			}
 		});
 		return titles.join(', ');
 	}
 
-	/**
-	 * Redirect to edit page
-	 *
-	 * @param id
-	 */
 	editUser(id) {
 		this.router.navigate(['../users/edit', id], { relativeTo: this.activatedRoute });
 	}
+
+	isCurrentUser(user: User) {
+		return this.currentUser && this.currentUser.id == user.id;
+	}
+
 }

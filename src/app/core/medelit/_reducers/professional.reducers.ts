@@ -4,7 +4,7 @@ import { EntityState, EntityAdapter, createEntityAdapter, Update } from '@ngrx/e
 // Actions
 import { ProfessionalActions, ProfessionalActionTypes } from '../_actions/professional.actions';
 // Models
-import { ProfessionalModel } from '../_models/professional.model';
+import { ProfessionalModel } from '../_models/professional/professional.model';
 import { QueryParamsModel } from '../../_base/crud';
 
 export interface ProfessionalsState extends EntityState<ProfessionalModel> {

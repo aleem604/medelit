@@ -59,16 +59,6 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 		}
 	};
 
-	/**
-	 * Component Conctructor
-	 *
-	 * @param htmlClassService: HtmlClassService
-	 * @param menuAsideService
-	 * @param layoutConfigService: LayouConfigService
-	 * @param router: Router
-	 * @param render: Renderer2
-	 * @param cdr: ChangeDetectorRef
-	 */
 	constructor(
 		public htmlClassService: HtmlClassService,
 		public menuAsideService: MenuAsideService,
@@ -101,10 +91,6 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 		}
 	}
 
-	/**
-	 * Check Menu is active
-	 * @param item: any
-	 */
 	isMenuItemIsActive(item): boolean {
 		if (item.submenu) {
 			return this.isMenuRootItemIsActive(item);
@@ -117,10 +103,6 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 		return this.currentRouteUrl.indexOf(item.page) !== -1;
 	}
 
-	/**
-	 * Check Menu Root Item is active
-	 * @param item: any
-	 */
 	isMenuRootItemIsActive(item): boolean {
 		let result = false;
 
@@ -134,10 +116,6 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 		return false;
 	}
 
-	/**
-	 * Use for fixed left aside menu, to show menu on mouseenter event.
-	 * @param e Event
-	 */
 	mouseEnter(e: Event) {
 		// check if the left aside menu is fixed
 		if (document.body.classList.contains('kt-aside--fixed')) {
@@ -157,10 +135,6 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 		}
 	}
 
-	/**
-	 * Use for fixed left aside menu, to show menu on mouseenter event.
-	 * @param e Event
-	 */
 	mouseLeave(e: Event) {
 		if (document.body.classList.contains('kt-aside--fixed')) {
 			if (this.insideTm) {
@@ -179,10 +153,6 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 		}
 	}
 
-	/**
-	 * Returns Submenu CSS Class Name
-	 * @param item: any
-	 */
 	getItemCssClasses(item) {
 		let classes = 'kt-menu__item';
 
@@ -227,4 +197,10 @@ export class AsideLeftComponent implements OnInit, AfterViewInit {
 	disableScroll() {
 		return this.layoutConfigService.getConfig('aside.menu.dropdown') || false;
 	}
+
+	hasPermission(menuItem: any) {
+		console.log(menuItem.permission);
+		return true;
+	}
+
 }

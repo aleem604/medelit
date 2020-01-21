@@ -37,13 +37,13 @@ export class LeadModel extends BaseModel {
 	leadSource: string;
 	leadStatusId?: number;
 	leadStatus: string;
-	languageId?: number;
+	languageId?: number = 1015;
 	language: string;
 	leadCategoryId?: number;
 	leadCategory: string;
 	contactMethodId?: number;
 	dateOfBirth?: Date;
-	countryOfBirthId?: number;
+	countryOfBirthId?: number =1003;
 	countryOfBirth: string;
 	preferredPaymentMethodId?: number;
 	preferredPaymentMethod: string;
@@ -56,9 +56,9 @@ export class LeadModel extends BaseModel {
 	gpCode: string;
 	addressStreetName: string;
 	postalCode: string;
-	cityId?: number;
+	cityId?: number = 1002;
 	city: string;
-	countryId?: number;
+	countryId?: number = 1003;
 	country: string;
 	buildingTypeId?: number;
 	buildingType: string;
@@ -77,12 +77,8 @@ export class LeadModel extends BaseModel {
 	sortCode: string;
 	iban: string;
 	blacklistId: number;
-	fromCustomerId?: number;
-	fromCustomer: string;
 	customerId?: number;
 	customer: string;
-
-
 
 	status: eRecordStatus;
 	createDate: Date;

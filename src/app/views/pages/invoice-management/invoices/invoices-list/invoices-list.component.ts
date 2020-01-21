@@ -27,7 +27,7 @@ import {
 	FilterModel
 } from '../../../../../core/medelit';
 import { FormControl } from '@angular/forms';
-import { StaticDataService } from '../../../../../core/medelit/_services';
+
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -39,14 +39,12 @@ import { StaticDataService } from '../../../../../core/medelit/_services';
 export class InvoicesListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: InvoiceDataSource;
-	displayedColumns = ['select', 'invoiceNumber', 'createDate', 'assignedTo', 'customer', 'invoiceStatus', 'dueDate','amount', 'status', 'actions'];
+	displayedColumns = ['select', 'createDate', 'subject', 'invoiceNumber', 'customer', 'invoiceStatus', 'dueDate', 'amount', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields
 	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
-	statusesForFilter: FilterModel[] = [];
-	statusControl = new FormControl({ id: -1 }, []);
-	filteredStatuses: Observable<FilterModel[]>;
+	statusControl = new FormControl('0', []);
 
 	lastQuery: QueryParamsModel;
 	// Selection
@@ -60,18 +58,16 @@ export class InvoicesListComponent implements OnInit, OnDestroy {
 		private router: Router,
 		private subheaderService: SubheaderService,
 		private layoutUtilsService: LayoutUtilsService,
-		private staticService: StaticDataService,
 		private cdr: ChangeDetectorRef,
 		private store: Store<AppState>) { }
 
 
 	ngOnInit() {
-		this.loadStatusesForFilter();
 		// If the user changes the sort order, reset back to the first page.
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		this.subscriptions.push(sortSubscription);
 
-		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page).pipe(
+		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page, this.statusControl.valueChanges).pipe(
 			tap(() => this.loadInvoicesList())
 		)
 			.subscribe();
@@ -144,10 +140,10 @@ export class InvoicesListComponent implements OnInit, OnDestroy {
 		const filter: any = {};
 		try {
 			const searchText = this.searchInput.nativeElement.value;
-			const status = this.statusControl.value;
+			const invoiceFilter = this.statusControl.value;
 
-			if (status) {
-				filter.status = status.id;
+			if (invoiceFilter) {
+				filter.invoiceFilter = invoiceFilter;
 			}
 
 			if (searchText)
@@ -344,50 +340,6 @@ export class InvoicesListComponent implements OnInit, OnDestroy {
 		}
 		return '';
 	}
-
-	/* Top Filters */
-
-	loadStatusesForFilter() {
-		this.staticService.getStatuses().subscribe(res => {
-			this.statusesForFilter = res.data;
-			this.filteredStatuses = this.statusControl.valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterStatuses(value))
-				);
-		},
-			(error) => { console.log(error); },
-			() => {
-				this.statusControl.setValue({ id: -1, name: 'All' });
-				this.detectChanges();
-			});
-	}
-
-
-	private _filterStatuses(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.statusesForFilter.filter(status => this._normalizeValue(status.name).includes(filterValue));
-	}
-
-
-	private _normalizeValue(value: string): string {
-		if (value && value.length > 0)
-			return value.toLowerCase().replace(/\s/g, '');
-		return value;
-	}
-
-	displayFn(option: FilterModel): string {
-		if (option)
-			return option.name;
-		return '';
-	}
-
-	statusDrpClosed() {
-		this.loadInvoicesList();
-	}
-
-
-	/*End top Fitlers*/
 
 	detectChanges() {
 		try {

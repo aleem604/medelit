@@ -15,17 +15,15 @@
 				<div class="row align-items-center">
 					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field class="example-full-width">
-							<input type="text" placeholder="Pick status" aria-label="Number" matInput [matAutocomplete]="status" [formControl]="statusControl">
-							<mat-autocomplete autoActiveFirstOption #status="matAutocomplete"
-											  (closed)="statusDrpClosed()"
-											  [displayWith]="displayFn">
-								<mat-option *ngFor="let c of filteredStatuses | async" [value]="c">
-									{{c.name}}
-								</mat-option>
-							</mat-autocomplete>
+							<mat-select [formControl]="statusControl">
+								<mat-option [value]="'0'">All</mat-option>
+								<mat-option [value]="'1'">To be sent</mat-option>
+								<mat-option [value]="'3'">Refunded</mat-option>
+							</mat-select>
+
 							<mat-hint align="start">
-								Select a
-								<strong>Status</strong>
+								Select an
+								<strong>Option</strong>
 							</mat-hint>
 						</mat-form-field>
 					</div>
@@ -91,20 +89,19 @@
 						</mat-checkbox>
 					</mat-cell>
 				</ng-container>
+				<ng-container matColumnDef="createDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Date Created At</mat-header-cell>
+					<mat-cell *matCellDef="let invoice">{{invoice.createDate | date: 'dd/MM/yyyy'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="subject">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Subject</mat-header-cell>
+					<mat-cell *matCellDef="let invoice">{{invoice.subject}}</mat-cell>
+				</ng-container>
 
 				<ng-container matColumnDef="invoiceNumber">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Number</mat-header-cell>
 					<mat-cell *matCellDef="let invoice">{{invoice.invoiceNumber}}</mat-cell>
-				</ng-container>
-
-				<ng-container matColumnDef="createDate">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Date</mat-header-cell>
-					<mat-cell *matCellDef="let invoice">{{invoice.createDate | date: 'yyyy-MM-dd'}}</mat-cell>
-				</ng-container>
-
-				<ng-container matColumnDef="assignedTo">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Assigned</mat-header-cell>
-					<mat-cell *matCellDef="let invoice">{{invoice.assignedTo}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="customer">
@@ -119,7 +116,7 @@
 
 				<ng-container matColumnDef="dueDate">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Due Date</mat-header-cell>
-					<mat-cell *matCellDef="let invoice">{{invoice.dueDate | date: 'yyyy-MM-dd'}}</mat-cell>
+					<mat-cell *matCellDef="let invoice">{{invoice.dueDate | date: 'dd/MM/yyyy'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="amount">
@@ -127,21 +124,7 @@
 					<mat-cell *matCellDef="let invoice">£{{invoice.amount}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="status">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-					<mat-cell *matCellDef="let invoice">
-						<span class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{ getItemCssClassByStatus(invoice.status) }} kt-badge--wide">{{ getItemStatusString(invoice.status) }}</span>
-					</mat-cell>
-				</ng-container>
-
-				<ng-container matColumnDef="condition">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Condition</mat-header-cell>
-					<mat-cell *matCellDef="let invoice">
-						<span class="kt-badge kt-badge--{{ getItemCssClassByCondition(invoice.condition) }} kt-badge--dot"></span>&nbsp;
-						<span class="kt--font-bold kt-font-{{ getItemCssClassByCondition(invoice.condition) }}">{{ getItemConditionString(invoice.condition) }}</span>
-					</mat-cell>
-				</ng-container>
-
+			
 				<ng-container matColumnDef="actions">
 					<mat-header-cell *matHeaderCellDef>
 						Actions

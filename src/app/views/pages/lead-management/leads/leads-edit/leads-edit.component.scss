@@ -2,9 +2,11 @@
 	flex: 0 0 80px;
 }
 
+
 .example-chip-list {
 	width: 100%;
 }
+
 .clear-customer, .new-ie {
 	margin-left: 1.5em;
 	font-size: larger;
@@ -59,3 +61,31 @@
 .mat-form-field {
 	width: 100%;
 }
+
+.example-radio-button {
+	.mat-radio-label {
+		.mat-radio-container {
+			.mat-radio-outer-circle {
+				border-color: #ff4081;
+			}
+
+			.mat-radio-inner-circle {
+				background-color: #ff4081;
+			}
+		}
+	}
+}
+
+.no-option {
+	color: #ff4081 !important;
+}
+
+/*:host ::ng-deep .cancel .mat-radio-outer-circle {
+	border-color: #ff4081 !important;
+}
+
+:host ::ng-deep .cancel .mat-radio-inner-circle {
+	background-color: #ff4081 !important;
+}
+	*/
+

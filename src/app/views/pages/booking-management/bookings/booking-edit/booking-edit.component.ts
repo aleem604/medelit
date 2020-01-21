@@ -3,7 +3,7 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRe
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 // Material
-import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
+import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS, MatTabChangeEvent } from '@angular/material';
 // RxJS
 import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
 import { map, startWith, delay, first, takeUntil, filter } from 'rxjs/operators';
@@ -53,6 +53,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	services: Observable<StaticDataModel>;
 	oldBooking: BookingModel;
 	selectedTab = 0;
+	tabTitle: string = '';
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;
 	bookingForm: FormGroup;
@@ -174,13 +175,14 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	}
 
 	loadBookingFromService(bookingId) {
-		this.loadingSubject.next(true);
+		this.spinner.show();
 		this.bookingService.getBookingById(bookingId).toPromise().then(res => {
-			this.loadingSubject.next(false);
 			let data = res as unknown as ApiResponse;
 			this.loadBooking(data.data, true);
 		}).catch((e) => {
-			this.loadingSubject.next(false);
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
 		});
 	}
 
@@ -407,6 +409,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
+			window.scroll(0, 0);
 			return;
 		}
 
@@ -817,13 +820,19 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		});
 	}
 
+
 	getComponentTitle() {
 		let result = 'Create booking';
-		if (!this.booking || !this.booking.id) {
-			return result;
+		if (this.selectedTab == 0) {
+
+			if (!this.booking || !this.booking.id) {
+				return result;
+			}
+			result = `Edit booking - ${this.booking.name}`;
+		} else {
+			result = this.tabTitle;
 		}
 
-		result = `Edit booking - ${this.booking.name}`;
 		return result;
 	}
 
@@ -1281,6 +1290,10 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		} catch (e) {
 
 		}
+	}
+
+	tabChanged(event: MatTabChangeEvent) {
+		this.tabTitle = event.tab.textLabel;
 	}
 
 }

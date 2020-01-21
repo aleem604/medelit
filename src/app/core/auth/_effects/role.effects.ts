@@ -6,15 +6,12 @@ import { mergeMap, map, withLatestFrom, filter, tap } from 'rxjs/operators';
 // NGRX
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { Store, select, Action } from '@ngrx/store';
-// CRUD
 import { QueryResultsModel, QueryParamsModel } from '../../_base/crud';
-// Services
 import { AuthService } from '../_services';
-// State
 import { AppState } from '../../../core/reducers';
-// Selectors
+
 import { allRolesLoaded } from '../_selectors/role.selectors';
-// Actions
+
 import {
     AllRolesLoaded,
     AllRolesRequested,
@@ -28,6 +25,8 @@ import {
     RoleCreated,
     RolesActionToggleLoading
 } from '../_actions/role.actions';
+import { ApiResponse } from '../../medelit';
+import { Role } from '..';
 
 @Injectable()
 export class RoleEffects {
@@ -44,8 +43,9 @@ export class RoleEffects {
             withLatestFrom(this.store.pipe(select(allRolesLoaded))),
             filter(([action, isAllRolesLoaded]) => !isAllRolesLoaded),
             mergeMap(() => this.auth.getAllRoles()),
-            map(roles => {
-                return new AllRolesLoaded({roles});
+			map(roles => {
+				let r = (roles as unknown as ApiResponse).data as unknown as Role[];
+                return new AllRolesLoaded({roles: r});
             })
           );
 
@@ -60,7 +60,7 @@ export class RoleEffects {
                 return forkJoin(requestToServer, lastQuery);
             }),
             map(response => {
-                const result: QueryResultsModel = response[0];
+                const result: QueryResultsModel = response[0].data;
                 const lastQuery: QueryParamsModel = response[1];
                 this.store.dispatch(this.hidePageLoadingDistpatcher);
 

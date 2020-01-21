@@ -24,7 +24,8 @@ import {
 	professionalsReducer,
 	ProfessionalEffects,
 	ProfessionalsService,
-	StaticDataService
+	StaticDataService,
+    ServicesService
 	
 } from '../../../core/medelit';
 // Core => Utils
@@ -65,15 +66,22 @@ import {
 	MAT_DIALOG_DEFAULT_OPTIONS,
 	MatSnackBarModule,
 	MatTooltipModule,
-
     MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
-import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { ProfessionalsComponent } from './professionals.component';
 import { ProfessionalsListComponent } from './professionals/professionals-list/professionals-list.component';
 import { ProfessionalEditComponent } from './professionals/professinal-edit/professional-edit.component';
+import { ProfessionalServiceDialogComponent } from './professionals/professional-service/professional-service.dialog.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
+import { ConnectedCustomersComponent } from './professionals/connected-customers/connected-customers.component';
+import { ConnectedBookingsComponent } from './professionals/connected-bookings/connected-bookings.component';
+import { ConnectedInvoicesComponent } from './professionals/connected-invoices/connected-invoies.component';
+import { ConnectedLeadsComponent } from './professionals/connected-leads/connected-leads.component';
+import { ProfessionalServiceFeeDialogComponent } from './professionals/professional-service-fee-dialog/professional-service-fee.dialog.component';
 
 
 // tslint:disable-next-line:class-name
@@ -139,6 +147,7 @@ const routes: Routes = [
 		MatTooltipModule,
 		NgbProgressbarModule,
 		NgxMatSelectSearchModule,
+		NgxSpinnerModule,
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false
@@ -168,6 +177,7 @@ const routes: Routes = [
 		HttpUtilsService,
 		CustomersService,
 		ProfessionalsService,
+		ServicesService,
 		StaticDataService,
 		TypesUtilsService,
 		LayoutUtilsService
@@ -176,12 +186,21 @@ const routes: Routes = [
 		ActionNotificationComponent,
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
-		UpdateStatusDialogComponent
+		UpdateStatusDialogComponent,
+		ProfessionalServiceDialogComponent,
+		ConfirmDialogComponent,
+		ProfessionalServiceFeeDialogComponent
 	],
 	declarations: [
 		ProfessionalsComponent,
 		ProfessionalsListComponent,
-		ProfessionalEditComponent
+		ProfessionalEditComponent,
+		ProfessionalServiceDialogComponent,
+		ConnectedCustomersComponent,
+		ConnectedBookingsComponent,
+		ConnectedInvoicesComponent,
+		ConnectedLeadsComponent,
+		ProfessionalServiceFeeDialogComponent
 	]
 })
 export class ProfessionalsModule { }
