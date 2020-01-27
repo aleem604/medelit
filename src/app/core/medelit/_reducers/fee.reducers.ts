@@ -56,7 +56,8 @@ export function feesReducer(state = initialFeesState, action: FeeActions): FeesS
             }
             return adapter.updateMany(_partialFees, state);
         }
-        case FeeActionTypes.OneFeeDeleted: return adapter.removeOne(action.payload.id, state);
+		case FeeActionTypes.OneFeeDeleted: return adapter.removeOne(action.payload.id, state);
+		// @ts-ignore
         case FeeActionTypes.ManyFeesDeleted: return adapter.removeMany(action.payload.ids, state);
         case FeeActionTypes.FeesPageCancelled: return {
             ...state, listLoading: false, lastQuery: new QueryParamsModel({})

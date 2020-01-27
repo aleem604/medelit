@@ -62,7 +62,7 @@ export class FeeEffects {
             ofType<OneFeeDeleted>(FeeActionTypes.OneFeeDeleted),
             mergeMap(( { payload } ) => {
                     this.store.dispatch(this.showActionLoadingDistpatcher);
-                    return this.feesService.deleteFee(payload.id);
+                    return this.feesService.deleteFee(payload.id, payload.feeTypeId);
                 }
             ),
             map(() => {

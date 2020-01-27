@@ -814,17 +814,21 @@
 												</mat-form-field>
 											</div>
 
-											<div class="col-md-12 heading-wrapper" *ngIf="professional && professional.id">
+											<!--<div class="col-md-12 heading-wrapper" *ngIf="professional && professional.id">
 												<div class="title-wrapper">
 													<h5>
 														Professional Services
-														<a href="javascript:;" class="btn btn-default kt-margin-r-10 pull-right add-service" (click)="addService()" mat-raised-button matTooltip="Save & Continue">
+														<a href="javascript:;" class="btn btn-default kt-margin-r-10 pull-right add-service" (click)="addService()" mat-raised-button matTooltip="Add Service">
 															<span class="kt-hidden-mobile">Add Service</span>
 														</a>
 													</h5>
 												</div>
+											</div>-->
+											<div class="col-md-12 kt-margin-bottom-10-mobile mt-4 pl-0 pr-0" *ngIf="professional && professional.id">
+												<professional-connected-services [proId]="professional.id"></professional-connected-services>
 											</div>
-											<div class="col-md-12 kt-margin-bottom-10-mobile pt-3" *ngIf="professional && professional.id">
+
+											<!--<div class="col-md-12 kt-margin-bottom-10-mobile pt-3" *ngIf="professional && professional.id">
 												<table class="table table-bordered tbl-service">
 													<thead>
 														<tr>
@@ -858,9 +862,9 @@
 														</tr>
 													</tbody>
 												</table>
-											</div>
+											</div>-->
 										</div>
-									</div>
+									</div>										
 								</div>
 							</form>
 						</div>

@@ -71,9 +71,10 @@ import { FeesListComponent } from './fees/fees-list/fees-list.component';
 import { FeesComponent } from './fees.component';
 import { FeeEditDialogComponent } from './fees/fee-edit-dialog/fee-edit.dialog.component';
 import { FeeEditComponent } from './fees/fee-edit/fee-edit.component';
-import { ConnectedProfCustomerComponent } from './fees/connected-prof-customer/connected-prof-customer.component';
 import { AttachServiceToFeeDialogComponent } from './fees/attach-service-to-fee-dialog/attach-service-to-fee.dialog.component';
-import { FeeConnectedServicesComponent } from './fees/fee-connected-services/fee-connected-services.component';
+import { AttachProToFeeDialogComponent } from './fees/attach-pro-to-fee-dialog/attach-pro-to-fee.dialog.component';
+import { FeeConnectedProfessionalsComponent } from './fees/connected-professionals/fee-connected-professionals.component';
+import { FeeConnectedServicesComponent } from './fees/connected-services/fee-connected-services.component';
 
 
 // tslint:disable-next-line:class-name
@@ -98,7 +99,7 @@ const routes: Routes = [
 				component: FeeEditComponent
 			},
 			{
-				path: 'fees/edit/:id',
+				path: 'fees/edit/:id/:type',
 				component: FeeEditComponent
 			}
 		]
@@ -175,6 +176,7 @@ const routes: Routes = [
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
 		FeeEditDialogComponent,
+		AttachProToFeeDialogComponent,
 		AttachServiceToFeeDialogComponent
 	],
 	declarations: [
@@ -182,8 +184,9 @@ const routes: Routes = [
 		FeesListComponent,
 		FeeEditDialogComponent,
 		FeeEditComponent,
+		FeeConnectedProfessionalsComponent,
 		FeeConnectedServicesComponent,
-		ConnectedProfCustomerComponent,
+		AttachProToFeeDialogComponent,
 		AttachServiceToFeeDialogComponent
 	]
 })

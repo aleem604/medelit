@@ -9,6 +9,7 @@ import { HttpUtilsService, QueryParamsModel, QueryResultsModel } from '../../_ba
 import { FeeModel } from '..';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../_models/apireponse.model';
+import { eFeeType } from '../_enums/e-fee-type.enum';
 
 
 const API_FEES_URL = `${environment.apiEndpoint}/fees`;
@@ -21,7 +22,7 @@ export class FeesService {
 	createFee(fee: FeeModel): Observable<FeeModel> {
 		// Note: Add headers if needed (tokens/bearer)
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
-		return this.http.post<FeeModel>(API_FEES_URL, fee, { headers: httpHeaders});
+		return this.http.post<FeeModel>(API_FEES_URL, fee, { headers: httpHeaders });
 	}
 
 	// READ
@@ -29,8 +30,8 @@ export class FeesService {
 		return this.http.get<FeeModel[]>(API_FEES_URL);
 	}
 
-	getFeeById(feeId: number): Observable<FeeModel> {
-		return this.http.get<FeeModel>(API_FEES_URL + `/${feeId}`);
+	getFeeById(feeId: number, typeId?:number): Observable<FeeModel> {
+		return this.http.get<FeeModel>(API_FEES_URL + `/${feeId}/${typeId}`);
 	}
 
 	findFees(queryParams: QueryParamsModel): Observable<QueryResultsModel> {
@@ -49,7 +50,6 @@ export class FeesService {
 		return this.http.put(API_FEES_URL, fee, { headers: httpHeader });
 	}
 
-	
 
 	// UPDATE Status
 	updateStatusForFee(fees: FeeModel[], status: number): Observable<any> {
@@ -58,31 +58,27 @@ export class FeesService {
 			feesForUpdate: fees,
 			newStatus: status
 		};
-		const url = API_FEES_URL + '/update-status/'+status;
+		const url = API_FEES_URL + '/update-status/' + status;
 		return this.http.put(url, fees, { headers: httpHeaders });
 	}
 
 	// DELETE => delete the fee from the server
-	deleteFee(feeId: number): Observable<FeeModel> {
-		const url = `${API_FEES_URL}/${feeId}`;
+	deleteFee(feeId: number, feeTypeId: number): Observable<FeeModel> {
+		const url = `${API_FEES_URL}/${feeId}/${feeTypeId}`;
 		return this.http.delete<FeeModel>(url);
 	}
 
-	deleteFees(ids: number[] = []): Observable<any> {
+	deleteFees(ids: FeeModel[] = []): Observable<any> {
 		const url = API_FEES_URL + '/delete';
 		const httpHeaders = this.httpUtils.getHTTPHeaders();
 		const body = { feeIdsForDelete: ids };
-		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders} );
+		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders });
 	}
 
-	getConnectProfessionalsCustomers(feeId: number): Observable<ApiResponse> {
-		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.get<ApiResponse>(API_FEES_URL + '/connected-professionals-customers/' + feeId, { headers: httpHeader });
-	}
 
-	getFeeConnectedServices(feeId: number): Observable<ApiResponse> {
+	getFeeConnectedServices(feeId: number, feeType: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.get<ApiResponse>(API_FEES_URL + '/connected-services/' + feeId, { headers: httpHeader });
+		return this.http.get<ApiResponse>(`${API_FEES_URL}/fee-connected-services/${feeId}/${feeType}`, { headers: httpHeader });
 	}
 
 	getServicesToConnectWithFee(feeId: number): Observable<ApiResponse> {
@@ -94,5 +90,56 @@ export class FeesService {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.post<ApiResponse>(API_FEES_URL + '/services-to-connect-with-fee/' + feeId, serviceIds, { headers: httpHeader });
 	}
+
+	deleteConnectedServices(feeIds: number[], feeId: number, feeType: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(`${API_FEES_URL}/delete-connected-services/${feeId}/${feeType}`, feeIds, { headers: httpHeader });
+	}
+
+	/// fee connected professionals
+	getServicesForFeeForFilter(feeId: number, feeType:number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(`${API_FEES_URL}/services-for-filter/${feeId}/${feeType}`, { headers: httpHeader });
+	}
+
+	getProfessionalForFeeForFilter(serviceId: number, feeId: number, feeType:number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(`${API_FEES_URL}/professionals-for-filter/${serviceId}/${feeId}/${feeType}`, { headers: httpHeader });
+	}
+
+	attachNewServiceProfessionalToFee(serviceId: number, professionalId:number, feeId: number, feeType:number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(`${API_FEES_URL}/attach-new-service-professional-to-fee/${serviceId}/${professionalId}/${feeId}/${feeType}`, { headers: httpHeader });
+	}
+
+
+
+
+	getConnectedProfessionals(feeId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_FEES_URL + '/connected-professionals/' + feeId, { headers: httpHeader });
+	}
+
+	deleteConnectedProfessionals(feeIds: number[], feeId: number, feeType: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(`${API_FEES_URL}/delete-connected-professionals/${feeId}/${feeType}`, feeIds, { headers: httpHeader });
+	}
+
+	getFeeConnectedProfessionals(feeId: number, feeType:number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(`${API_FEES_URL}/fee-connected-professionals/${feeId}/${feeType}`, { headers: httpHeader });
+	}
+
+	getProfessionalToConnectWithFee(feeId: number, feeType: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(`${API_FEES_URL}/professional-to-connect-with-fee/${feeId}/${feeType}`, { headers: httpHeader });
+	}
+	
+
+	saveProfessionalToConnectWithFee(proIds: any[], feeId: number, feeType:number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(`${API_FEES_URL}/professional-to-connect-with-fee/${feeId}/${feeType}`, proIds, { headers: httpHeader });
+	}
+	// fee connected professionals
 
 }

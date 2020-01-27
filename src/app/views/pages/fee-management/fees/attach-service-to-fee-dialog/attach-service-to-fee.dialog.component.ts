@@ -13,7 +13,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FormControl } from '@angular/forms';
 import { startWith, map, tap } from 'rxjs/operators';
-import { ProfessionalServiceDialogComponent } from '../../../professional-management/professionals/professional-service/professional-service.dialog.component';
+import { AttachServiceToProDialogComponent } from '../../../professional-management/professionals/attach-service-to-pro-dialog/attach-service-to-pro.dialog.component';
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -43,7 +43,7 @@ export class AttachServiceToFeeDialogComponent implements OnInit, OnDestroy {
 	selection = new SelectionModel<AttachServiceToFeeDialogModel>(true, []);
 	private subscriptions: Subscription[] = [];
 
-	constructor(public dialogRef: MatDialogRef<ProfessionalServiceDialogComponent>,
+	constructor(public dialogRef: MatDialogRef<AttachServiceToProDialogComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any,
 		private feesService: FeesService,
 		private spinner: NgxSpinnerService,

@@ -74,14 +74,15 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { ProfessionalsComponent } from './professionals.component';
 import { ProfessionalsListComponent } from './professionals/professionals-list/professionals-list.component';
 import { ProfessionalEditComponent } from './professionals/professinal-edit/professional-edit.component';
-import { ProfessionalServiceDialogComponent } from './professionals/professional-service/professional-service.dialog.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
 import { ConnectedCustomersComponent } from './professionals/connected-customers/connected-customers.component';
 import { ConnectedBookingsComponent } from './professionals/connected-bookings/connected-bookings.component';
 import { ConnectedInvoicesComponent } from './professionals/connected-invoices/connected-invoies.component';
 import { ConnectedLeadsComponent } from './professionals/connected-leads/connected-leads.component';
-import { ProfessionalServiceFeeDialogComponent } from './professionals/professional-service-fee-dialog/professional-service-fee.dialog.component';
+import { AttachServiceToProDialogComponent } from './professionals/attach-service-to-pro-dialog/attach-service-to-pro.dialog.component';
+import { ProfessionalConnectedServicesComponent } from './professionals/professional-connected-services/professional-connected-services.component';
+import { AddFeeToServiceDialogComponent } from './professionals/add-fee-to-service-dialog/add-fee-to-service.dialog.component';
 
 
 // tslint:disable-next-line:class-name
@@ -187,20 +188,21 @@ const routes: Routes = [
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
-		ProfessionalServiceDialogComponent,
+		AttachServiceToProDialogComponent,
 		ConfirmDialogComponent,
-		ProfessionalServiceFeeDialogComponent
+		AddFeeToServiceDialogComponent
 	],
 	declarations: [
 		ProfessionalsComponent,
 		ProfessionalsListComponent,
 		ProfessionalEditComponent,
-		ProfessionalServiceDialogComponent,
+		AttachServiceToProDialogComponent,
 		ConnectedCustomersComponent,
 		ConnectedBookingsComponent,
 		ConnectedInvoicesComponent,
 		ConnectedLeadsComponent,
-		ProfessionalServiceFeeDialogComponent
+		AddFeeToServiceDialogComponent,
+		ProfessionalConnectedServicesComponent
 	]
 })
 export class ProfessionalsModule { }

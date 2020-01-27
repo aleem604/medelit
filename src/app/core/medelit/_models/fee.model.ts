@@ -34,12 +34,15 @@ export class FeeModel extends BaseModel {
 
 export class FeeDialogModel {
 	serviceId: number;
+	professionalId: number;
+	ptFeeRowId: number;
 	ptFeeId: number;
 	ptFeeName: string;
 	ptFeeA1: number;
 	ptFeeA2: number;
 	ptFeeTags: string;
 
+	proFeeRowId: number;
 	proFeeId: number;
 	proFeeName: string;
 	proFeeA1: number;
@@ -47,23 +50,33 @@ export class FeeDialogModel {
 	proFeeTags: string;
 }
 
-export interface ConnectedProfessionalsCustomersModel {
-	feeId: number;
-	feeTypeId: number;
-	feeType: string;
-	feeName: string;
-	sName: string;
-	proName: string;
-	feeA1: number;
-	feeA2: number;
-}
-
-export interface ConnectedServicesModel {
-	serviceName: string;
-	pTFeeId: number;
-	fieldId: number;
+export interface ConnectedProfessionalsModel {
+	id: number;
+	pName: string;
+	pCity: string;
+	service: string;
 	field: string;
 	subCategory: string;
+}
+
+export interface ProfessionalConnectedServicesModel {
+	id: number;
+	proId: number;
+	cService: string;
+	cField: string;
+	cSubcategory: string;
+	ptFeeRowId: number;
+	ptFeeId: number;
+	ptFeeName: string;
+	ptFeeA1: number;
+	ptFeeA2: number;
+
+	proFeeRowId: number;
+	proFeeId: number;
+	proFeeName: string;
+	proFeeA1: number;
+	proFeeA2: number;
+
 }
 
 
@@ -75,4 +88,31 @@ export interface AttachServiceToFeeDialogModel {
 	proName: [],
 	feeA1: number;
 	feeA2: number;
+}
+
+
+export interface AttachProToFeeDialogModel {
+	id: number;
+	pName: string;
+	pCity: string;
+	sName: string;
+	sField: string;
+	sSubcategory: string;
+}
+
+export class AddFeeToServiceDialogModel {
+	id: number;
+	sName: string;
+	ptFeeId: number;
+	ptFeeName: string;
+	ptFeeA1: null;
+	ptFeeA2: null;
+
+	proFeeId: number;
+	proFeeName: string;
+	proFeeA1: null;
+	proFeeA2: null;
+
+    ptFeeTags: string;
+    proFeeTags: string;
 }

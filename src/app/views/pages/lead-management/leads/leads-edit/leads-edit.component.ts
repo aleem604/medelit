@@ -45,6 +45,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	fromCustomerId: number;
 	lead: LeadModel;
 	leadId$: Observable<number>;
+	leadId: number;
 	titles: Observable<StaticDataModel>;
 	languages: Observable<StaticDataModel>;
 	countries: Observable<StaticDataModel>;
@@ -127,9 +128,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			const fromCustomerId = parseInt(param.fromCustomer);
 
 			this.activatedRoute.params.subscribe(params => {
-				const id = params.id;
+				const id = parseInt(params.id);
 				if (id && id > 0) {
-
+					this.leadId = +id;
 					//this.store.pipe(
 					//	select(selectLeadById(id))
 					//).subscribe(result => {

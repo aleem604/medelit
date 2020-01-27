@@ -32,6 +32,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 	readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
 	feeId: number = 0;
+	feeType: number = 0;
 	// Public properties
 	fee: FeeModel;
 	feeId$: Observable<number>;
@@ -69,7 +70,8 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		this.loading$ = this.loadingSubject.asObservable();
 		this.loadingSubject.next(true);
 		this.activatedRoute.params.subscribe(params => {
-			const id = params.id;
+			const id = parseInt(params.id);
+			this.feeType = parseInt(params.type);
 			if (id && id > 0) {
 				this.feeId = id;
 				this.store.pipe(
@@ -111,7 +113,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 
 	loadFeeFromFee(feeId) {
 		this.spinner.show();
-		this.feeFee.getFeeById(feeId).toPromise().then(res => {
+		this.feeFee.getFeeById(feeId, this.feeType).toPromise().then(res => {
 			this.loadFee((res as unknown as ApiResponse).data, true);
 		}).catch(() => {
 			this.spinner.hide();
@@ -173,7 +175,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		this.router.navigateByUrl('/fee-management/fees', { relativeTo: this.activatedRoute });
 	}
 
-	refreshFee(isNew: boolean = false, id = 0) {
+	refreshFee(isNew: boolean = false, id = 0, typeId = 0) {
 		this.loadingSubject.next(false);
 		let url = this.router.url;
 		if (!isNew) {
@@ -181,7 +183,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		url = `/fee-management/fees/edit/${id}`;
+		url = `/fee-management/fees/edit/${id}/${typeId}`;
 		this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 	}
 
@@ -246,7 +248,10 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 				else {
 					const message = `New fee successfully has been added.`;
 					this.layoutUtilsFee.showActionNotification(message, MessageType.Create, 10000, true, true);
-					this.refreshFee(true, resp.data.id);
+					this.feeType = resp.data.feeTypeId;
+					this.refreshFee(true, resp.data.id, resp.data.feeTypeId);
+					
+
 				}
 			} else {
 				const message = _.join(resp.errors.join('<br/>'));
@@ -270,7 +275,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 			if (resp.success && resp.data.id > 0) {
 				const message = `update fee request processed succefully`;
 				this.layoutUtilsFee.showActionNotification(message, MessageType.Update, 10000, true, true);
-				this.refreshFee(false);
+				this.loadFeeFromFee(resp.data.id);
 			} else {
 				const message = `An error occured while processing your reques. Please try again later.`;
 				this.layoutUtilsFee.showActionNotification(message, MessageType.Read, 10000, true, true);

@@ -7,9 +7,11 @@ export { DashboardModel } from './_models/dashboard.model';
 export {
 	FeeModel,
 	FeeDialogModel,
-	ConnectedProfessionalsCustomersModel,
-	ConnectedServicesModel,
-	AttachServiceToFeeDialogModel
+	ConnectedProfessionalsModel,
+	ProfessionalConnectedServicesModel,
+	AttachServiceToFeeDialogModel,
+	AttachProToFeeDialogModel,
+	AddFeeToServiceDialogModel
 } from './_models/fee.model';
 export {
 	InvoiceModel,

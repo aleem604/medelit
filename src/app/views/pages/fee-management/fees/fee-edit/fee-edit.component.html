@@ -28,8 +28,8 @@
 	</kt-portlet-header>
 	<mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="tabChanged($event)">
 		<mat-tab label="Fee Info">
-			<ng-template matTabContent>
-				<kt-portlet-body>
+			<ng-template matTabContent class="pt-0">
+				<kt-portlet-body class="pt-0">
 
 					<div *ngIf="fee">
 						<!--begin::Form-->
@@ -66,7 +66,7 @@
 												<mat-error>
 													Fee Type is
 													<strong>required</strong>
-												</mat-error>
+	 											</mat-error>
 												<mat-hint align="start">
 													<strong>Fee Type</strong>
 												</mat-hint>
@@ -159,15 +159,18 @@
 						</form>
 					</div>
 					<br />
-					<connected-prof-customer [hidden]="!(fee && fee.id)" [feeId]="feeId"></connected-prof-customer>
+					<fee-connected-professionals [hidden]="!(fee && fee.id)" [feeId]="feeId" [feeType]="feeType"></fee-connected-professionals>
+					<br />
+					<br />
+					<fee-connected-services [hidden]="!(fee && fee.id)" [feeId]="feeId" [feeType]="feeType"></fee-connected-services>
 				</kt-portlet-body>
 			</ng-template>
 		</mat-tab>
-		<mat-tab label="Connected Services" [disabled]='!(fee && fee.id)'>
+		<!--<mat-tab label="Connected Services" [disabled]='!(fee && fee.id)'>
 			<ng-template matTabContent>
-				<fee-connected-services [feeId]="fee.id"></fee-connected-services>
+				
 			</ng-template>
-		</mat-tab>
+		</mat-tab>-->
 
 	</mat-tab-group>
 </kt-portlet>

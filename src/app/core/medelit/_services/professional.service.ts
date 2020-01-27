@@ -9,6 +9,7 @@ import { HttpUtilsService, QueryParamsModel, QueryResultsModel } from '../../_ba
 import { ProfessionalModel } from '..';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../_models/apireponse.model';
+import { FeeDialogModel, ProfessionalConnectedServicesModel } from '../_models/fee.model';
 
 
 const API_PROFESSIONALS_URL = `${environment.apiEndpoint}/professionals`;
@@ -91,6 +92,48 @@ export class ProfessionalsService {
 	getConnectedLeads(proId: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.get<ApiResponse>(API_PROFESSIONALS_URL + '/connected-leads/' + proId, { headers: httpHeader });
+	}
+
+	getProfessionalConnectedServices(proId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_PROFESSIONALS_URL + '/professional-connected-services/' + proId, { headers: httpHeader });
+	}
+
+	detachProfessionalConnectedServices(serviceIds: number[], proId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(API_PROFESSIONALS_URL + '/detach-professional-connected-service/' + proId, serviceIds, { headers: httpHeader });
+	}
+
+	// start add fee to service methods
+	getProfessionalServiceDetail(ptServiceProfessionalRowId: number, proServiceProfessionalRowId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(`${API_PROFESSIONALS_URL}/professional-service-detail/${ptServiceProfessionalRowId}/${proServiceProfessionalRowId}`, { headers: httpHeader });
+	}
+
+
+	saveProfessionalServiceFee(feeDiagModel: FeeDialogModel, serviceId:number, proId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(`${API_PROFESSIONALS_URL}/professional-service-detail/${serviceId}/${proId}`, feeDiagModel, { headers: httpHeader });
+	}
+
+	getServicesToConnectWithProfessional(proId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(`${API_PROFESSIONALS_URL}/services-data-for-attach/${proId}`, { headers: httpHeader });
+	}
+
+	getServicesForConnectFilter(proId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(`${API_PROFESSIONALS_URL}/services-for-connect-filter/${proId}`, { headers: httpHeader });
+	}
+
+	attachProfessionalToService(serviceIds:number[], proId: any): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(`${API_PROFESSIONALS_URL}/attach-services-to-professional/${proId}`,serviceIds, { headers: httpHeader });
+	}
+
+	getFeesForFilter(serviceId:number, proId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(`${API_PROFESSIONALS_URL}/fees-for-filter-to-attach-with-service-professional/${serviceId}/${proId}`, { headers: httpHeader });
 	}
 
 }

@@ -1,0 +1,21 @@
+table {
+	width: 100%;
+}
+
+.mat-form-field {
+	width: 100%;
+}
+
+.mat-spinner {
+	margin: 0 auto;
+}
+
+.custom-header {
+	display: table !important;
+	width: 100%;
+	padding-top: 1em;
+
+	.btn {
+		float: right;
+	}
+}

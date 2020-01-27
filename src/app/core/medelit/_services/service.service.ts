@@ -80,9 +80,9 @@ export class ServicesService {
 		return this.http.post<ApiResponse>(API_SERVICES_URL + '/services-add-update-fees', model, { headers: httpHeader });
 	}
 
-	getProfessionalServices(proId: number, fieldId?:number, categoryId?:number, tag?: string ): Observable<ApiResponse> {
+	getAttachServiceToProData(proId: number, fieldId?:number, categoryId?:number, tag?: string ): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.post<ApiResponse>(API_SERVICES_URL + '/professionals-services', {professionalId: proId,FieldId: fieldId, SubCategoryId: categoryId, Tag: tag }, { headers: httpHeader });
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/services-data-for-attach', {professionalId: proId,FieldId: fieldId, SubCategoryId: categoryId, Tag: tag }, { headers: httpHeader });
 	}
 
 	addProfessionalToServices(entities, proId: number): Observable<ApiResponse> {
@@ -128,6 +128,24 @@ export class ServicesService {
 	getConnectedLeads(serviceId: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-leads/' + serviceId, { headers: httpHeader });
+	}
+
+
+
+	// Attach methods
+	getProfessionalsToConnectWithService(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/professionals-to-connect-with-service/' + serviceId, { headers: httpHeader });
+	}
+
+	attachProfessionalsToService(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/professionals-to-connect-with-service/' + serviceId, { headers: httpHeader });
+	}
+
+	detachProfessionalConnectedServices(proIds: number[], serviceId:number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/professionals-to-connect-with-service/' + serviceId, { headers: httpHeader });
 	}
 
 }

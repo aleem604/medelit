@@ -48,12 +48,12 @@ export class FeesStatusUpdated implements Action {
 
 export class OneFeeDeleted implements Action {
     readonly type = FeeActionTypes.OneFeeDeleted;
-    constructor(public payload: { id: number }) {}
+    constructor(public payload: { id: number, feeTypeId: number }) {}
 }
 
 export class ManyFeesDeleted implements Action {
     readonly type = FeeActionTypes.ManyFeesDeleted;
-    constructor(public payload: { ids: number[] }) {}
+    constructor(public payload: { ids: FeeModel[] }) {}
 }
 
 export class FeesPageRequested implements Action {

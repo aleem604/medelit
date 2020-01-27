@@ -22,10 +22,8 @@ import {
 } from '../../../../../core/medelit';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ProfessionalServiceDialogComponent } from '../professional-service/professional-service.dialog.component';
 import { ConfirmDialogComponent } from '../../../../partials/confirm-dialog/confirm-dialog.component';
-import { __rest } from 'tslib';
-import { ProfessionalServiceFeeDialogComponent } from '../professional-service-fee-dialog/professional-service-fee.dialog.component';
+import { AttachServiceToProDialogComponent } from '../attach-service-to-pro-dialog/attach-service-to-pro.dialog.component';
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -125,7 +123,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 
 		this.loading$ = this.loadingSubject.asObservable();
 		this.activatedRoute.params.subscribe(params => {
-			const id = params.id;
+			const id = parseInt(params.id);
 			if (id && id > 0) {
 				this.proId = +id;
 				//this.store.pipe(
@@ -164,7 +162,6 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		this.oldProfessional = Object.assign({}, _professional);
 		this.initProfessional();
 		this.loadResources();
-
 
 		if (fromService) {
 			this.cdr.detectChanges();
@@ -755,8 +752,6 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	// end fields for filter
 
 
-
-
 	displayFn(option: FilterModel): string {
 		if (option)
 			return option.value;
@@ -773,7 +768,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 
 	addService() {
 
-		const dialogRef = this.dialog.open(ProfessionalServiceDialogComponent, { data: this.professional.id });
+		const dialogRef = this.dialog.open(AttachServiceToProDialogComponent, { data: this.professional.id });
 		dialogRef.afterClosed().subscribe(res => {
 			if (!res) {
 				return;
@@ -823,26 +818,26 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	editServiceFee(service: ServiceModel) {
-		const dialogRef = this.dialog.open(ProfessionalServiceFeeDialogComponent, { data: service });
-		dialogRef.afterClosed().subscribe(res => {
-			if (!res) {
-				return;
-			}
-			this.spinner.show();
-			this.servicesService.getProfessionalRelations(this.professional.id).toPromise().then((res) => {
-				if (res.success) {
-					this.professional.professionalServices = res.data;
-					this.detectChanges();
-				}
-			}).finally(() => {
-				this.spinner.hide();
-			});
+	//editServiceFee(service: ServiceModel) {
+	//	const dialogRef = this.dialog.open(AddFeeToServiceDialogComponent, { data: service });
+	//	dialogRef.afterClosed().subscribe(res => {
+	//		if (!res) {
+	//			return;
+	//		}
+	//		this.spinner.show();
+	//		this.servicesService.getProfessionalRelations(this.professional.id).toPromise().then((res) => {
+	//			if (res.success) {
+	//				this.professional.professionalServices = res.data;
+	//				this.detectChanges();
+	//			}
+	//		}).finally(() => {
+	//			this.spinner.hide();
+	//		});
 
-			this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
-			this.detectChanges();
-		});
-	}
+	//		this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
+	//		this.detectChanges();
+	//	});
+	//}
 
 	detectChanges() {
 		try {

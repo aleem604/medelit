@@ -12,7 +12,7 @@
 			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
-			<a *ngIf="lead && lead.id" href="javascript:;" class="btn kt-margin-r-10" (click)="convertToBooking()" mat-raised-button matTooltip="Convert to Booking">
+			<a *ngIf="leadId && leadId >0" href="javascript:;" class="btn kt-margin-r-10" (click)="convertToBooking()" mat-raised-button matTooltip="Convert to Booking">
 				<span class="kt-hidden-mobile">Convert to Booking</span>
 			</a>
 			<!--<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">

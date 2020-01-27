@@ -55,10 +55,6 @@ export class FeesListComponent implements OnInit, OnDestroy {
 		const sortSubscription = this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 		this.subscriptions.push(sortSubscription);
 
-		/* Data load will be triggered in two cases:
-		- when a pagination event occurs => this.paginator.page
-		- when a sort event occurs => this.sort.sortChange
-		**/
 		const paginatorSubscriptions = merge(this.sort.sortChange, this.paginator.page).pipe(
 			tap(() => this.loadFeesList())
 		)
@@ -143,8 +139,9 @@ export class FeesListComponent implements OnInit, OnDestroy {
 				return;
 			}
 
-			this.store.dispatch(new OneFeeDeleted({ id: _item.id }));
+			this.store.dispatch(new OneFeeDeleted({ id: _item.id, feeTypeId: _item.feeTypeId }));
 			this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
+			setTimeout(() => this.loadFeesList(), 2000);
 		});
 	}
 
@@ -160,12 +157,13 @@ export class FeesListComponent implements OnInit, OnDestroy {
 				return;
 			}
 
-			const idsForDeletion: number[] = [];
+			const idsForDeletion: FeeModel[] = [];
 			for (let i = 0; i < this.selection.selected.length; i++) {
-				idsForDeletion.push(this.selection.selected[i].id);
+				idsForDeletion.push(this.selection.selected[i]);
 			}
 			this.store.dispatch(new ManyFeesDeleted({ ids: idsForDeletion }));
 			this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
+			setTimeout(() => this.loadFeesList(), 2000);
 			this.selection.clear();
 		});
 	}
@@ -192,6 +190,7 @@ export class FeesListComponent implements OnInit, OnDestroy {
 			_messages.push({
 				text: `${elem.feeCode}, ${elem.feeName}`,
 				id: elem.id.toString(),
+				feeTypeId: elem.feeTypeId,
 				status: elem.status,
 				statusTitle: this.getItemStatusString(elem.status),
 				statusCssClass: this.getItemCssClassByStatus(elem.status)
@@ -275,25 +274,4 @@ export class FeesListComponent implements OnInit, OnDestroy {
 		return '';
 	}
 
-	getItemCssClassByType(status: number = 0): string {
-		switch (status) {
-			case 0:
-				return 'accent';
-			case 1:
-				return 'primary';
-			case 2:
-				return '';
-		}
-		return '';
-	}
-
-	getItemTypeString(status: number = 0): string {
-		switch (status) {
-			case 0:
-				return 'Business';
-			case 1:
-				return 'Individual';
-		}
-		return '';
-	}
 }

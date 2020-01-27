@@ -3,7 +3,7 @@
 	<div class="kt-portlet__head kt-portlet__head__custom">
 		<div class="kt-portlet__head-label customer-header">
 			<h3 class="kt-portlet__head-title">
-				Add/Update Fee to <strong>{{serviceModel.name}}</strong>
+				Add/Update Fee to <strong>{{feeDiagModel.sName}}</strong>
 				<a *ngIf="!viewLoading" href="javascript:;" class="btn btn-primary kt-margin-r-10 pull-right" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save">
 					<span class="kt-hidden-mobile">Save</span>
 				</a>
@@ -27,7 +27,6 @@
 							<mat-hint align="start">
 								Select an<strong>Option </strong>
 							</mat-hint>
-
 						</mat-form-field>
 					</div>
 				</div>
