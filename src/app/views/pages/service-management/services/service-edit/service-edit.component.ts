@@ -44,6 +44,7 @@ export interface Fruit {
 })
 export class ServiceEditComponent implements OnInit, OnDestroy {
 	// tags input
+
 	visible = true;
 	selectable = true;
 	removable = true;
@@ -61,6 +62,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	loading$: Observable<boolean>;
 	serviceForm: FormGroup;
 	hasFormErrors = false;
+	changingValue: Subject<boolean> = new Subject();
 
 	private componentSubscriptions: Subscription;
 	private headerMargin: number;
@@ -76,20 +78,6 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 	vatsForFilter: FilterModel[] = [];
 	filteredVats: Observable<FilterModel[]>;
-
-	ptFeesForFilter: FilterModel[] = [];
-	filteredPTFees: Observable<FilterModel[]>;
-
-	proFeesForFilter: FilterModel[] = [];
-	filteredPROFees: Observable<FilterModel[]>;
-
-	professionalsForFilter: FilterModel[] = [];
-	filteredProfessionals: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
-	public profMultiCtrl: FormControl = new FormControl();
-	public profMultiFilterCtrl: FormControl = new FormControl();
-	public filteredLangsMulti: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
-	@ViewChild('multiSelect', { static: true }) multiSelect: MatSelect;
-	protected _onDestroy = new Subject<void>();
 
 	tagsArray: string[];
 
@@ -113,7 +101,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.loading$ = this.loadingSubject.asObservable();
 		this.loadingSubject.next(true);
 		this.activatedRoute.params.subscribe(params => {
-			const id = params.id;
+			const id = parseInt(params.id);
 			if (id && id > 0) {
 				this.serviceId = id;
 				this.store.pipe(
@@ -151,9 +139,6 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.loadCategoriesForFilter();
 		this.loadDurationsForFilter();
 		this.loadVatsForFilter();
-		this.loadPTFeesForFilter();
-		this.loadPROFeesForFilter();
-		this.loadProfessionalsForFilter();
 
 		if (fromService) {
 			this.cdr.detectChanges();
@@ -212,17 +197,10 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			description: [this.service.description, []],
 			durationId: [this.service.durationId, [Validators.required]],
 			vatId: [this.service.vatId, [Validators.required]],
-			ptFeeId: [this.service.ptFeeId, [Validators.required]],
-			ptFeeA1: [this.service.ptFeeA1],
-			ptFeeA2: [this.service.ptFeeA2],
-			proFeeId: [this.service.proFeeId, [Validators.required]],
-			proFeeA1: [this.service.proFeeA1],
-			proFeeA2: [this.service.proFeeA2],
-
+			
 			covermap: [this.service.covermap, []],
 			invoicingNotes: [this.service.invoicingNotes, []],
 			refundNotes: [this.service.refundNotes, []],
-			professionals: [this.service.professionals, [Validators.required]]
 		});
 		if (this.service.tags) {
 			this.tagsArray = this.service.tags.split(',');
@@ -271,9 +249,11 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		const controls = this.serviceForm.controls;
 		/** check form */
 		if (this.serviceForm.invalid) {
-			Object.keys(controls).forEach(controlName =>
-				controls[controlName].markAsTouched()
-			);
+			Object.keys(controls).forEach(controlName => {
+				controls[controlName].markAsTouched();
+				if (controls[controlName].status === 'INVALID')
+					console.log('invlaid controls', controlName);
+			});
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
@@ -315,14 +295,10 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 		if (controls.vatId.value)
 			_service.vatId = controls.vatId.value.id;
-		if (controls.ptFeeId.value)
-			_service.ptFeeId = controls.ptFeeId.value.id;
-		if (controls.proFeeId.value)
-			_service.proFeeId = controls.proFeeId.value.id;
+
 		_service.covermap = controls.covermap.value;
 		_service.invoicingNotes = controls.invoicingNotes.value;
 		_service.refundNotes = controls.refundNotes.value;
-		_service.professionals = controls.professionals.value;
 
 		return _service;
 	}
@@ -511,13 +487,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			this.tagsArray.splice(index, 1);
 		}
 	}
-
-
-
 	// End Tags
-
-
-
 
 	// Categories Filter
 	loadDurationsForFilter() {
@@ -567,130 +537,6 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	}
 	/// End vat Filter
 
-	// Professionals Filter
-	loadProfessionalsForFilter() {
-		this.staticService.getProfessionalsForFilter().subscribe(res => {
-			this.professionalsForFilter = res.data;
-			this.filteredProfessionals.next(this.professionalsForFilter.slice());
-
-			if (this.service.id) {
-				var profs = this.service.professionals as unknown as FilterModel[];
-				var select: FilterModel[] = [];
-				profs && profs.forEach((x) => {
-					var findIndex = this.professionalsForFilter.findIndex((el) => { return el.id == x.id });
-					if (findIndex > -1)
-						select.push(this.professionalsForFilter[findIndex]);
-
-				});
-				this.serviceForm.patchValue({ 'professionals': select });
-			}
-
-
-			this.profMultiFilterCtrl.valueChanges
-				.pipe(takeUntil(this._onDestroy))
-				.subscribe(() => {
-					this.filterLangsMulti();
-				});
-		});
-	}
-
-	private filterLangsMulti() {
-		if (!this.professionalsForFilter) {
-			return;
-		}
-		// get the search keyword
-		let search = this.profMultiFilterCtrl.value;
-		if (!search) {
-			this.filteredProfessionals.next(this.professionalsForFilter.slice());
-			return;
-		} else {
-			search = search.toLowerCase();
-		}
-		// filter the banks
-		this.filteredProfessionals.next(
-			this.professionalsForFilter.filter(bank => bank.value.toLowerCase().indexOf(search) > -1)
-		);
-	}
-	// end professionals fitler
-
-
-	// PT Fees Filter
-	loadPTFeesForFilter() {
-		this.staticService.getPTFeesForFilter().subscribe(res => {
-			this.ptFeesForFilter = res.data;
-
-			this.filteredPTFees = this.serviceForm.get('ptFeeId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterPTFees(value))
-				);
-			if (this.service.ptFeeId > 0) {
-				var vat = this.ptFeesForFilter.find(x => x.id == this.service.ptFeeId);
-				if (vat) {
-					// @ts-ignore
-					this.serviceForm.patchValue({ 'ptFeeId': { id: vat.id, value: vat.value, a1: vat.a1, a2: vat.a2 } });
-				}
-				this.ptFeeDrpClosed();
-			}
-		});
-	}
-	private _filterPTFees(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.ptFeesForFilter.filter(elem => this._normalizeValue(elem.value).includes(filterValue));
-	}
-	ptFeeDrpClosed() {
-		var selected = this.serviceForm.get('ptFeeId').value;
-		if (selected) {
-			this.serviceForm.get('ptFeeA1').setValue(selected.a1);
-			this.serviceForm.get('ptFeeA2').setValue(selected.a2);
-		} else {
-			this.serviceForm.get('ptFeeA1').setValue('');
-			this.serviceForm.get('ptFeeA2').setValue('');
-		}
-	}
-
-	/// End PT Fees for filter
-
-	// PRO Fees Filter
-	loadPROFeesForFilter() {
-		this.staticService.getPROFeesForFilter().subscribe(res => {
-			this.proFeesForFilter = res.data;
-
-			this.filteredPROFees = this.serviceForm.get('proFeeId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterPROFees(value))
-				);
-			if (this.service.vatId > 0) {
-				var vat = this.proFeesForFilter.find(x => x.id == this.service.proFeeId);
-				if (vat) {
-					// @ts-ignore
-					this.serviceForm.patchValue({ 'proFeeId': { id: vat.id, value: vat.value, a1: vat.a1, a2: vat.a2 } });
-				}
-				this.proFeeDrpClosed();
-			}
-		});
-	}
-	private _filterPROFees(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.proFeesForFilter.filter(elem => this._normalizeValue(elem.value).includes(filterValue));
-	}
-
-	proFeeDrpClosed() {
-		var selected = this.serviceForm.get('proFeeId').value;
-		if (selected) {
-			this.serviceForm.get('proFeeA1').setValue(selected.a1);
-			this.serviceForm.get('proFeeA2').setValue(selected.a2);
-		} else {
-			this.serviceForm.get('proFeeA1').setValue('');
-			this.serviceForm.get('proFeeA2').setValue('');
-		}
-	}
-
-
-	/// End PT Fees for filter
-
-
 	displayFn(option: FilterModel): string {
 		if (option)
 			return option.value;
@@ -711,6 +557,11 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	//// fee section
 	createFee(feeType: number) {
 		console.log(feeType);
+	}
+
+	reloadAllData(type: string) {
+		this.changingValue.next(true);
+		console.log(type);
 	}
 
 

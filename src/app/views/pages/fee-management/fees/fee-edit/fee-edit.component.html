@@ -5,14 +5,16 @@
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
-			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()" [disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
+			<!--<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()" [disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
 				<i class="la la-cog"></i>
 				<span class="kt-hidden-mobile">Reset</span>
-			</a>
+			</a>-->
 			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" *ngIf="selectedTab === 0" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
+				<i class="la la-save"></i>
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
-			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="onSumbit(false)" *ngIf="selectedTab === 1" mat-raised-button matTooltip="Save & Continue">
+			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="onSumbit(false)" *ngIf="selectedTab === 1" mat-raised-button matTooltip="Add New Service">
+				<i class="la la-edit"></i>
 				<span class="kt-hidden-mobile">Add New Service</span>
 			</a>
 
@@ -159,10 +161,10 @@
 						</form>
 					</div>
 					<br />
-					<fee-connected-professionals [hidden]="!(fee && fee.id)" [feeId]="feeId" [feeType]="feeType"></fee-connected-professionals>
+					<fee-connected-professionals [hidden]="!(fee && fee.id)" [feeId]="feeId" [feeType]="feeType" (reloadData)="reloadAllData()" [changing]="changingValue"></fee-connected-professionals>
 					<br />
 					<br />
-					<fee-connected-services [hidden]="!(fee && fee.id)" [feeId]="feeId" [feeType]="feeType"></fee-connected-services>
+					<fee-connected-services [hidden]="!(fee && fee.id)" [feeId]="feeId" [feeType]="feeType"  (reloadData)="reloadAllData()" [changing]="changingValue"></fee-connected-services>
 				</kt-portlet-body>
 			</ng-template>
 		</mat-tab>

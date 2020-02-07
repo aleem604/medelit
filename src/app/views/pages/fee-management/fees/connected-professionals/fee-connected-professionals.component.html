@@ -1,16 +1,21 @@
 <kt-portlet>
-	<div class="col-md-12 kt-margin-bottom-10-mobile pt-3 text-right">
+	<div class="col-md-12 kt-margin-bottom-10-mobile pt-2 text-right custom-header">
 		<div class="example-button-row">
 			<h5 class="connect-header">
-				<span>Connected Professionals</span>
-				<a href="javascript:;" class="btn btn-primary kt-margin-r-10 pull-right" mat-raised-button matTooltip="Update" (click)="connectService()">
+				<span class="top-8">Connected Professionals</span>
+				<a href="javascript:;" class="btn btn-default kt-margin-r-10 pull-right add-service" [routerLink]="['/professional-management/professionals/add']" mat-raised-button matTooltip="Create New Professional">
+					<i class="la la-pencil-square-o pl-2"></i>
+					<span class="kt-hidden-mobile">Create New</span>
+				</a>
+				<a href="javascript:;" class="btn btn-default kt-margin-r-10 pull-right add-service" mat-raised-button matTooltip="Update" (click)="connectService()">
+					<i class="la la-users pl-2"></i>
 					<span class="kt-hidden-mobile">Connect Professional</span>
 				</a>
 			</h5>
 		</div>
 	</div>
 	<div class="kt-form kt-margin-b-30">
-		<div class="row align-items-center collapse kt-form__group-actions mb-2" [ngClass]="{'show' : selection.selected.length > 0}">
+		<div class="row align-items-center collapse kt-form__group-actions mb-2 pt-2" [ngClass]="{'show' : selection.selected.length > 0}">
 			<div class="col-xl-12">
 				<button (click)="deleteConnects()" mat-raised-button color="accent" matTooltip="Delete selected connected professionals" class="mat-button-mt-4 ml-2">
 					<mat-icon>delete</mat-icon>	Delete All
@@ -18,7 +23,6 @@
 			</div>
 		</div>
 	</div>
-
 
 	<table mat-table [dataSource]="dataSource" matSort>
 		<!-- Checkbox Column -->

@@ -50,8 +50,10 @@ export class FeeDialogModel {
 	proFeeTags: string;
 }
 
-export interface ConnectedProfessionalsModel {
+export interface FeeConnectedProfessionalsModel {
 	id: number;
+	prfessionalId: number;
+	serviceId: number;
 	pName: string;
 	pCity: string;
 	service: string;
@@ -62,6 +64,8 @@ export interface ConnectedProfessionalsModel {
 export interface ProfessionalConnectedServicesModel {
 	id: number;
 	proId: number;
+	serviceId: number;
+	professionalId: number;
 	cService: string;
 	cField: string;
 	cSubcategory: string;
@@ -116,3 +120,9 @@ export class AddFeeToServiceDialogModel {
     ptFeeTags: string;
     proFeeTags: string;
 }
+
+export interface AttachFeesToProServiceDialogModel {
+	serviceId: number;
+	professionalId: number;
+}
+

@@ -6,7 +6,7 @@ import { each } from 'lodash';
 import { QueryResultsModel, HttpExtenstionsModel } from '../../_base/crud';
 // State
 import { LeadsState } from '../_reducers/lead.reducers';
-import { LeadModel } from '../_models/lead.model';
+import { LeadModel } from '../_models/lead/lead.model';
 
 export const selectLeadsState = createFeatureSelector<LeadsState>('leads');
 

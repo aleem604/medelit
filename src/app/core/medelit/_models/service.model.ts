@@ -24,13 +24,6 @@ export class ServiceModel extends BaseModel {
 	refundNotes: string;
 	informedConsentId?: number;
 	tags: string;
-	ptFeeId: number;
-	ptFeeA1: null;
-	ptFeeA2: null;
-
-	proFeeId: number;
-	proFeeA1: null;
-	proFeeA2: null;
 
 	status: eRecordStatus;
 	assignedToId: number;
@@ -41,7 +34,6 @@ export class ServiceModel extends BaseModel {
 	deletedAt: Date;
 	deletedById: number;
 	deletedBy: string;
-	professionals: number[];
 
 	clear() {
 		this.cycleId = 0;
@@ -61,8 +53,8 @@ export interface ServiceProfessionals {
 
 
 export interface ServiceProfessionalFeesModels {
-	proId: number;
-	proName: string;
+	id: number;
+	pName: string;
 	ptFeeId: number;
 	ptFeeName: string;
 	ptFeeA1: number;
@@ -83,7 +75,7 @@ export interface ServiceProfessionals {
 export interface ConnectedCustomersInvoicingEntities {
 	customer: string;
 	invoiceEntity: string;
-	phoneNumber: string;
+	phone: string;
 	email: string;
 }
 
@@ -108,4 +100,58 @@ export interface ServiceConnectedLeads {
 	created: Date;
 	lastChanged: Date;
 	professional: string;
+}
+
+export interface AttachProfessionalToServiceDialogModel {
+	id: number;
+	sid: number;
+	pName: string;
+	ptFeeId: number;
+	ptFeeName: string;
+	ptFeeA1: number;
+	ptFeeA2: number;
+
+	proFeeId: number;
+	proFeeName: string;
+	proFeeA1: number;
+	proFeeA2: number;
+
+}
+
+
+export interface ServiceConnectedPtFeeModel {
+	ptFeeId: number;
+	professionals: string[];
+	ptFeeName: string;
+	ptFeeA1: number;
+	ptFeeA2
+}
+
+export interface ServiceConnectedPtFeeDialogModel {
+	ptFeeId: number;
+	ptFeeName: string;
+	ptFeeA1: number;
+	ptFeeA2: number;
+	professionals: string[];
+	services: string[];
+	tags: string[];
+}
+
+
+export interface ServiceConnectedProFeeModel {
+	proFeeId: number;
+	professionals: string[];
+	proFeeName: string;
+	proFeeA1: number;
+	proFeeA2
+}
+
+export interface ServiceConnectedProFeeDialogModel {
+	proFeeId: number;
+	proFeeName: string;
+	proFeeA1: number;
+	proFeeA2: number;
+	professionals: string[];
+	services: string[];
+	tags: string[];
 }

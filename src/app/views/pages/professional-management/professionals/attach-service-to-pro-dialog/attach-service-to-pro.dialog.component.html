@@ -4,7 +4,7 @@
 		<div class="kt-portlet__head-label custom-header">
 			<h3 class="kt-portlet__head-title">
 				<span>Attach Profession to Services</span>
-				<a href="javascript:;" class="btn btn-secondary kt-margin-r-10 pull-right" (click)="save()" mat-raised-button matTooltip="Save">
+				<a href="javascript:;" class="btn btn-secondary kt-margin-r-10 pull-right" (click)="save()" mat-raised-button matTooltip="Save" [hidden]="viewLoading">
 					<span class="kt-hidden-mobile">Save</span>
 				</a>
 			</h3>

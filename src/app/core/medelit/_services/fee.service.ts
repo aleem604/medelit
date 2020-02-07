@@ -10,6 +10,8 @@ import { FeeModel } from '..';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../_models/apireponse.model';
 import { eFeeType } from '../_enums/e-fee-type.enum';
+import { ServiceModel } from '../_models/service.model';
+import { FeeConnectedProfessionalsModel } from '../_models/fee.model';
 
 
 const API_FEES_URL = `${environment.apiEndpoint}/fees`;
@@ -75,10 +77,14 @@ export class FeesService {
 		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders });
 	}
 
-
 	getFeeConnectedServices(feeId: number, feeType: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.get<ApiResponse>(`${API_FEES_URL}/fee-connected-services/${feeId}/${feeType}`, { headers: httpHeader });
+	}
+
+	connectFeesToProfessionalAndService(serviceId: number, professionalId:number, fees: Array<FeeModel>): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(`${API_FEES_URL}/connect-fees-to-service-and-professional/${serviceId}/${professionalId}`, fees, { headers: httpHeader });
 	}
 
 	getServicesToConnectWithFee(feeId: number): Observable<ApiResponse> {
@@ -120,7 +126,7 @@ export class FeesService {
 		return this.http.get<ApiResponse>(API_FEES_URL + '/connected-professionals/' + feeId, { headers: httpHeader });
 	}
 
-	deleteConnectedProfessionals(feeIds: number[], feeId: number, feeType: number): Observable<ApiResponse> {
+	deleteConnectedProfessionals(feeIds: FeeConnectedProfessionalsModel[], feeId: number, feeType: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.post<ApiResponse>(`${API_FEES_URL}/delete-connected-professionals/${feeId}/${feeType}`, feeIds, { headers: httpHeader });
 	}

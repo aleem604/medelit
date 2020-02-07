@@ -1,16 +1,30 @@
-.connect-header {
-	display: table;
-	width: 100%;
+.custom-header {
+	border-top: solid 1px #ddd;
+	border-bottom: solid 1px #ddd;
+	background-color: #eee;
 
-	span:first-of-type {
-		position: relative;
-		bottom: 0;
-		left: 0;
-		float: left;
-		top: 0em;
+
+	.btn {
+		right: 0px;
+		top: 10%;
+		padding: 0px 9px;
+		line-height: 32px;
+		font-size: 80%;
+	}
+
+	.connect-header {
+		display: table;
+		width: 100%;
+
+		span:first-of-type {
+			position: relative;
+			bottom: 0;
+			left: 0;
+			float: left;
+			top: 0em;
+		}
 	}
 }
-
 strong{
 	font-weight:500;
 }

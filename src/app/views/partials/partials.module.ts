@@ -78,6 +78,8 @@ import { MultipleSelectioComponent } from './mat-select-search/mat-select-search
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { SingleSelectioComponent } from './mat-single-select-search/mat-single-select-search.component';
 import { CreateInvoiceEntityDialogComponent } from './create-invoice-entity/create-invoice-entity.dialog.component';
+import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
+import { CSVFileUploadDialogComponent } from './csv-file-upload-dialog/csv-file-upload.dialog.component';
 
 
 @NgModule({
@@ -89,7 +91,9 @@ import { CreateInvoiceEntityDialogComponent } from './create-invoice-entity/crea
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
 		AlertComponent,
+		AlertDialogComponent,
 		ConfirmDialogComponent,
+		CSVFileUploadDialogComponent,
 
 		// topbar components
 		ContextMenu2Component,

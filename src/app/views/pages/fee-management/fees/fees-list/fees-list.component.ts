@@ -17,6 +17,7 @@ import { LayoutUtilsService, MessageType, QueryParamsModel } from '../../../../.
 import { FeeModel, FeesDataSource, FeesPageRequested, OneFeeDeleted, ManyFeesDeleted, FeesStatusUpdated } from '../../../../../core/medelit';
 import { SubheaderService } from '../../../../../core/_base/layout';
 import { FeeEditDialogComponent } from '../fee-edit-dialog/fee-edit.dialog.component';
+import { AttachFeesToProServiceDialogComponent } from '../attach-fees-to-pro-service-dialog/attach-fees-to-pro-service.dialog.component';
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -179,6 +180,24 @@ export class FeesListComponent implements OnInit, OnDestroy {
 		});
 		this.layoutUtilsService.fetchElements(messages);
 	}
+
+	connectFees() {
+
+		const dialogRef = this.dialog.open(AttachFeesToProServiceDialogComponent, { data: this.selection.selected });
+		dialogRef.afterClosed().subscribe(res => {
+			if (!res) {
+				return;
+			}
+			//this.spinner.show();
+			this.loadFeesList();
+			this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
+		});
+
+
+	}
+
+
+
 
 	updateStatusForFees() {
 		const _title = this.translate.instant('MEDELIT.FEES.UPDATE_STATUS.TITLE');

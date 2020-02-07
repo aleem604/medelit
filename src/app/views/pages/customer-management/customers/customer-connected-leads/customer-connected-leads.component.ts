@@ -1,11 +1,9 @@
 // Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, Input, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, Input, ViewChild } from '@angular/core';
 // Material
 import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
-import { SelectionModel } from '@angular/cdk/collections';
-import { fromEvent, merge, Observable, of, BehaviorSubject } from 'rxjs';
-import { CustomerConnectedLeads, CustomersService, ApiResponse, ConnectedLeads } from '../../../../../core/medelit';
+import {  Observable, BehaviorSubject } from 'rxjs';
+import { CustomerConnectedLeads, CustomersService, ApiResponse } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
@@ -21,7 +19,7 @@ export class CustomerConnectedLeadsComponent implements OnInit, OnDestroy {
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
 
-	displayedColumns: string[] = ['service', 'createDate', 'updateDate', 'professional'];
+	displayedColumns: string[] = ['leadName', 'createDate', 'updateDate', 'professional'];
 	dataSource = new MatTableDataSource<CustomerConnectedLeads>();
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;

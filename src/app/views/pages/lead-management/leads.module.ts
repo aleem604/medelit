@@ -73,6 +73,8 @@ import { LeadEditComponent } from './leads/leads-edit/leads-edit.component';
 import { StaticDataService, InvoiceEntitiesService } from '../../../core/medelit/_services';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { CreateInvoiceEntityDialogComponent } from '../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
+import { AlertDialogComponent } from '../../partials/alert-dialog/alert-dialog.component';
+import { CSVFileUploadDialogComponent } from '../../partials/csv-file-upload-dialog/csv-file-upload.dialog.component';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -176,6 +178,8 @@ const routes: Routes = [
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
+		AlertDialogComponent,
+		CSVFileUploadDialogComponent,
 		CreateInvoiceEntityDialogComponent
 	],
 	declarations: [

@@ -14,7 +14,7 @@
 			<div class="kt-form__filtration">
 				<div class="row align-items-center">
 				
-					<div class="col-md-4 kt-margin-bottom-10-mobile">
+					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field>
 							<input matInput placeholder="Search" #searchInput class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
@@ -24,11 +24,7 @@
 					</div>
 				</div>
 			</div>
-			<!-- end::FILTERS -->
 
-			<!-- start::GROUP ACTIONS -->
-			<!-- Group actions list: 'Delete selected' | 'Fetch selected' | 'Update status for selected' -->
-			<!-- Group actions are shared for all LISTS | See '../../_shared' folder -->
 			<div class="row align-items-center collapse kt-form__group-actions kt-margin-top-20 kt-margin-bottom-20" [ngClass]="{'show' : selection.selected.length > 0}">
 				<div class="col-xl-12">
 					<div class="kt-form__group kt-form__group--inline">
@@ -97,12 +93,12 @@
 
 				<ng-container matColumnDef="ptFees">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>PT Fees</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.ptFee}}</mat-cell>
+					<mat-cell *matCellDef="let service">{{service.ptFees}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="proFees">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>PRO Fees</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.proFee}}</mat-cell>
+					<mat-cell *matCellDef="let service">{{service.proFees}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="coverMap">

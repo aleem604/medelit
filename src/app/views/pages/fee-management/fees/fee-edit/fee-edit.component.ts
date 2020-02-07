@@ -43,6 +43,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 	loading$: Observable<boolean>;
 	feeForm: FormGroup;
 	hasFormErrors = false;
+	changingValue: Subject<boolean> = new Subject();
 
 	private componentSubscriptions: Subscription;
 	private headerMargin: number;
@@ -336,4 +337,8 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		this.tabTitle = event.tab.textLabel;
 	}
 
+	reloadAllData(type: string) {
+		this.changingValue.next(true);
+		console.log(type);
+	}
 }

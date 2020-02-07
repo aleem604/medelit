@@ -1,0 +1,36 @@
+<div class="p-4">
+	<h1 mat-dialog-title>
+		{{title}}
+	</h1>
+
+	<div class="wrapper" *ngIf="!loading">
+		<div mat-dialog-content>
+			<div class="row">
+				<div class="col-sm-12">
+					<p>{{message}}</p>
+					<div class="has-error mt-2 mb-2 ">
+						<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+							<p [innerHtml]="error"></p>
+						</kt-alert>
+					</div>
+				</div>
+				<div class="col-sm-12">
+					<div class="file-upload pt-2">
+						<input type="file" accept=".csv" (change)="handleFileSelect($event)">
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
+		<div mat-dialog-actions>
+			<button mat-button class="btn btn-default" (click)="onDismiss()">Close</button>
+			<a href="javascript:;" class="btn btn-primary kt-margin-r-10 pull-right" color="primary" (click)="ConvertCSVtoJSON()" [disabled]="this.leads.length === 0" mat-raised-button matTooltip="Save">
+				<i class="la la-save kt-hidden-desktop kt-hidden-tablet"></i>
+				<span class="kt-hidden-mobile">Save CSV Data <span *ngIf="leads && leads.length > 0">({{leads.length}})</span></span>
+			</a>
+		</div>
+	</div>
+	<div class="spinner text-center" *ngIf="loading">
+		<mat-spinner [diameter]="50"></mat-spinner>
+	</div>
+</div>

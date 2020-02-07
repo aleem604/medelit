@@ -99,7 +99,7 @@ export class ProfessionalsService {
 		return this.http.get<ApiResponse>(API_PROFESSIONALS_URL + '/professional-connected-services/' + proId, { headers: httpHeader });
 	}
 
-	detachProfessionalConnectedServices(serviceIds: number[], proId: number): Observable<ApiResponse> {
+	detachProfessionalConnectedServices(serviceIds: Array<ProfessionalConnectedServicesModel>, proId: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.post<ApiResponse>(API_PROFESSIONALS_URL + '/detach-professional-connected-service/' + proId, serviceIds, { headers: httpHeader });
 	}

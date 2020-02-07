@@ -24,7 +24,7 @@ export class ConnectedCustomersInvoicingEntitiesComponent implements OnInit, OnD
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
 
-	displayedColumns: string[] = ['professional', 'phone', 'email', 'status'];
+	displayedColumns: string[] = ['customer', 'invoiceEntity', 'phone', 'email'];
 	dataSource = new MatTableDataSource<ConnectedCustomersInvoicingEntities>();
 	selection = new SelectionModel<ConnectedCustomersInvoicingEntities>(true, []);
 	loadingSubject = new BehaviorSubject<boolean>(true);

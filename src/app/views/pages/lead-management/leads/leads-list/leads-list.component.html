@@ -2,6 +2,7 @@
 
 	<kt-portlet-header [sticky]="true" [title]="'Leads list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
 		<ng-container ktPortletTools>
+			<button (click)="uploadFileCSV()" class="mr-2" mat-raised-button matTooltip="Create new lead">Upload from CSV</button>
 			<button (click)="createLead()" mat-raised-button color="primary" matTooltip="Create new lead">New lead</button>
 		</ng-container>
 	</kt-portlet-header>

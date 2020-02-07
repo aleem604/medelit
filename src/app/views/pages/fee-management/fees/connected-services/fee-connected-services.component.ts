@@ -1,8 +1,8 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 
 import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { Observable, of, BehaviorSubject, Subject } from 'rxjs';
 import { ApiResponse, FeesService, ProfessionalConnectedServicesModel } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
@@ -18,10 +18,13 @@ import { AttachProToFeeDialogComponent } from '../attach-pro-to-fee-dialog/attac
 export class FeeConnectedServicesComponent implements OnInit, OnDestroy {
 	@Input("feeId") feeId;
 	@Input("feeType") feeType;
+	@Output('reloadData') reloadData = new EventEmitter();
+	@Input() changing: Subject<boolean>;
+
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-	displayedColumns: string[] = ['select', 'cService', 'cField', 'cSubcategory'];
+	displayedColumns: string[] = ['cService', 'cField', 'cSubcategory'];
 	dataSource = new MatTableDataSource<ProfessionalConnectedServicesModel>();
 	selection = new SelectionModel<ProfessionalConnectedServicesModel>(true, []);
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -37,6 +40,13 @@ export class FeeConnectedServicesComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.loadGridData();
+
+		if (this.changing) {
+			this.changing.subscribe(() => {
+				this.loadGridData();
+			});
+		}
+
 	}
 
 	isAllSelected() {
@@ -83,7 +93,8 @@ export class FeeConnectedServicesComponent implements OnInit, OnDestroy {
 				return;
 			}
 			//this.spinner.show();
-			this.loadGridData();
+			//this.loadGridData();
+			this.reloadData.emit({});
 			this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
 		});
 	}
@@ -101,6 +112,10 @@ export class FeeConnectedServicesComponent implements OnInit, OnDestroy {
 			}
 			var posIds = this.selection.selected.map((e) => e.id);
 			this.spinner.show();
+
+			//this.loadGridData();
+			this.reloadData.emit({});
+
 			//this.feeService.deleteConnectedProfessionals(posIds, this.feeId).toPromise()
 			//	.then((res) => {
 			//		this.loadGridData();

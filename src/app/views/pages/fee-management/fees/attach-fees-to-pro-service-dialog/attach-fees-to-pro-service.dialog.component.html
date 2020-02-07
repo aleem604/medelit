@@ -1,0 +1,75 @@
+<div class="kt-portlet"
+	 [ngClass]="{ 'kt-portlet--body-progress kt-portlet--body-progress-overlay' : viewLoading }">
+	<div class="kt-portlet__head kt-portlet__head__custom">
+		<div class="kt-portlet__head-label custom-header">
+			<h3 class="kt-portlet__head-title">
+				<span>Attach Professional to Fee</span>
+				<a href="javascript:;" class="btn btn-secondary kt-margin-r-10 pull-right" [hidden]="viewLoading" (click)="saveConnections()" mat-raised-button matTooltip="Save">
+					<span class="kt-hidden-mobile">Save</span>
+				</a>
+			</h3>
+		</div>
+	</div>
+
+	<div class="kt-portlet__body">
+
+		<div class="form-group row justify-content-md-center">
+
+			<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+				Both Service and Professional must be selected before saving.
+			</kt-alert>
+		</div>
+		<div class="form-group row justify-content-md-center" [hidden]="viewLoading">
+			<div class="col-sm-6 kt-margin-bottom-20-mobile">
+				<mat-form-field class="example-full-width">
+					<input type="text" placeholder="Service" aria-label="Number" matInput [matAutocomplete]="serviceAuto" [formControl]="serviceControl">
+					<button mat-button *ngIf="serviceControl.value" matSuffix mat-icon-button aria-label="Clear" (click)="serviceControl.setValue('')">
+						<mat-icon>close</mat-icon>
+					</button>
+					<mat-autocomplete autoActiveFirstOption
+									  #serviceAuto="matAutocomplete"
+									  (closed)="serviceControlClosed()"
+									  [displayWith]="displayFn">
+						<mat-option *ngFor="let elem of filteredServices | async" [value]="elem">
+							{{elem.value}}
+						</mat-option>
+					</mat-autocomplete>
+					<mat-hint align="start">
+						Select a <strong>Service </strong>
+					</mat-hint>
+					<mat-error>
+						Service is
+						<strong>required</strong>
+					</mat-error>
+				</mat-form-field>
+			</div>
+			<div class="col-sm-6 kt-margin-bottom-20-mobile">
+				<mat-form-field class="example-full-width">
+					<input type="text" placeholder="Professional" aria-label="Number" matInput [matAutocomplete]="proAuto" [formControl]="professionaControl">
+					<button mat-button *ngIf="professionaControl.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionaControl.setValue('')">
+						<mat-icon>close</mat-icon>
+					</button>
+					<mat-autocomplete autoActiveFirstOption #proAuto="matAutocomplete" [displayWith]="displayFn">
+						<mat-option *ngFor="let elem of filteredProfessionals | async" [value]="elem">
+							{{elem.value}}
+						</mat-option>
+					</mat-autocomplete>
+					<mat-hint align="start">
+						Select a <strong>Professional </strong>
+					</mat-hint>
+					<mat-error>
+						Professional is
+						<strong>required</strong>
+					</mat-error>
+				</mat-form-field>
+			</div>
+		</div>
+
+		<div class="form-group kt-form__group row" [hidden]="!viewLoading">
+			<div class="col-xl-12 p-5">
+				<mat-spinner [diameter]="20">Processing ...</mat-spinner>
+			</div>
+		</div>
+
+	</div>
+</div>

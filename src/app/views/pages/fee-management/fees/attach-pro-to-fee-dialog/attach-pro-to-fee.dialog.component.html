@@ -4,7 +4,7 @@
 		<div class="kt-portlet__head-label custom-header">
 			<h3 class="kt-portlet__head-title">
 				<span>Attach Professional to Fee</span>
-				<a href="javascript:;" class="btn btn-secondary kt-margin-r-10 pull-right" (click)="saveConnections()" mat-raised-button matTooltip="Save">
+				<a href="javascript:;" class="btn btn-secondary kt-margin-r-10 pull-right" (click)="saveConnections()" [hidden]="viewLoading" mat-raised-button matTooltip="Save">
 					<span class="kt-hidden-mobile">Save</span>
 				</a>
 			</h3>
@@ -12,7 +12,6 @@
 	</div>
 
 	<div class="kt-portlet__body">
-
 		<div class="form-group row justify-content-md-center">
 			<div class="col-sm-6 col-sm-offset-3 kt-margin-bottom-20-mobile">
 				<mat-form-field>
@@ -28,7 +27,6 @@
 			<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
 				Both Service and Professional must be selected before saving.
 			</kt-alert>
-
 		</div>
 			<div class="form-group row justify-content-md-center" *ngIf="this.feeOption.value === '1'">
 				<div class="col-sm-6 kt-margin-bottom-20-mobile">

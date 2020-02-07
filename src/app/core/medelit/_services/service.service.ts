@@ -9,7 +9,8 @@ import { HttpUtilsService, QueryParamsModel, QueryResultsModel } from '../../_ba
 import { ServiceModel } from '..';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../_models/apireponse.model';
-import { FeeDialogModel } from '../_models/fee.model';
+import { FeeDialogModel, ProfessionalConnectedServicesModel } from '../_models/fee.model';
+import { ServiceConnectedPtFeeDialogModel, ServiceConnectedPtFeeModel, AttachProfessionalToServiceDialogModel, ServiceConnectedProFeeDialogModel, ServiceConnectedProFeeModel } from '../_models/service.model';
 
 
 const API_SERVICES_URL = `${environment.apiEndpoint}/services`;
@@ -80,9 +81,9 @@ export class ServicesService {
 		return this.http.post<ApiResponse>(API_SERVICES_URL + '/services-add-update-fees', model, { headers: httpHeader });
 	}
 
-	getAttachServiceToProData(proId: number, fieldId?:number, categoryId?:number, tag?: string ): Observable<ApiResponse> {
+	getAttachServiceToProData(proId: number, fieldId?: number, categoryId?: number, tag?: string): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.post<ApiResponse>(API_SERVICES_URL + '/services-data-for-attach', {professionalId: proId,FieldId: fieldId, SubCategoryId: categoryId, Tag: tag }, { headers: httpHeader });
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/services-data-for-attach', { professionalId: proId, FieldId: fieldId, SubCategoryId: categoryId, Tag: tag }, { headers: httpHeader });
 	}
 
 	addProfessionalToServices(entities, proId: number): Observable<ApiResponse> {
@@ -130,22 +131,73 @@ export class ServicesService {
 		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-leads/' + serviceId, { headers: httpHeader });
 	}
 
-
-
 	// Attach methods
-	getProfessionalsToConnectWithService(serviceId: number): Observable<ApiResponse> {
+	getServiceConnectedProfessionals(serviceId: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.get<ApiResponse>(API_SERVICES_URL + '/professionals-to-connect-with-service/' + serviceId, { headers: httpHeader });
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-professionals/' + serviceId, { headers: httpHeader });
 	}
 
-	attachProfessionalsToService(serviceId: number): Observable<ApiResponse> {
+	getProfessionalsWithFeesToConnectWithService(serviceId: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.get<ApiResponse>(API_SERVICES_URL + '/professionals-to-connect-with-service/' + serviceId, { headers: httpHeader });
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/professionals-with-fees-to-connect-with-service/' + serviceId, { headers: httpHeader });
 	}
 
-	detachProfessionalConnectedServices(proIds: number[], serviceId:number): Observable<ApiResponse> {
+	attachProfessionalsToService(objs: any, serviceId: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.get<ApiResponse>(API_SERVICES_URL + '/professionals-to-connect-with-service/' + serviceId, { headers: httpHeader });
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/professionals-to-connect-with-service/' + serviceId, objs, { headers: httpHeader });
 	}
+
+	detachProfessionalConnectedServices(objs: ProfessionalConnectedServicesModel[], serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/detach-professionals-from-service/' + serviceId, objs, { headers: httpHeader });
+	}
+
+
+	// service connected pt fees methods
+	getServiceConnectedPtFees(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-pt-fees/' + serviceId, { headers: httpHeader });
+	}
+
+	getServiceConnectedPtFeesToAttach(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-pt-fees-to-attach/' + serviceId, { headers: httpHeader });
+	}
+
+	saveServiceConnectedPtFeesToAttach(serviceId: number, rows: ServiceConnectedPtFeeDialogModel[]): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/service-connected-pt-fees-attach/' + serviceId, rows, { headers: httpHeader });
+	}
+
+	detachServiceConnectedPtFees(serviceId: number, rows: ServiceConnectedPtFeeModel[]): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/service-connected-pt-fees-detach/' + serviceId, rows, { headers: httpHeader });
+	}
+
+	// end service connected pro fees methods
+
+	// service connected pro fees methods
+	getServiceConnectedProFees(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-pro-fees/' + serviceId, { headers: httpHeader });
+	}
+
+	getServiceConnectedProFeesToAttach(serviceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-pro-fees-to-attach/' + serviceId, { headers: httpHeader });
+	}
+
+	saveServiceConnectedProFeesToAttach(serviceId: number, rows: ServiceConnectedProFeeDialogModel[]): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/service-connected-pro-fees-attach/' + serviceId, rows, { headers: httpHeader });
+	}
+
+	detachServiceConnectedProFees(serviceId: number, rows: ServiceConnectedProFeeModel[]): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/service-connected-pro-fees-detach/' + serviceId, rows, { headers: httpHeader });
+	}
+
+	// end service connected pro fees methods
+
 
 }

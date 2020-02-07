@@ -813,58 +813,11 @@
 													</mat-hint>
 												</mat-form-field>
 											</div>
-
-											<!--<div class="col-md-12 heading-wrapper" *ngIf="professional && professional.id">
-												<div class="title-wrapper">
-													<h5>
-														Professional Services
-														<a href="javascript:;" class="btn btn-default kt-margin-r-10 pull-right add-service" (click)="addService()" mat-raised-button matTooltip="Add Service">
-															<span class="kt-hidden-mobile">Add Service</span>
-														</a>
-													</h5>
-												</div>
-											</div>-->
 											<div class="col-md-12 kt-margin-bottom-10-mobile mt-4 pl-0 pr-0" *ngIf="professional && professional.id">
 												<professional-connected-services [proId]="professional.id"></professional-connected-services>
 											</div>
-
-											<!--<div class="col-md-12 kt-margin-bottom-10-mobile pt-3" *ngIf="professional && professional.id">
-												<table class="table table-bordered tbl-service">
-													<thead>
-														<tr>
-															<th rowspan="2"></th>
-															<th rowspan="2">Service</th>
-															<th rowspan="2">Field</th>
-															<th rowspan="2">Category</th>
-															<th colspan="2">Pt Fee</th>
-															<th colspan="2">Pro Fee</th>
-														</tr>
-														<tr>
-															<th>A1</th>
-															<th>A2</th>
-															<th>A1</th>
-															<th>A2</th>
-														</tr>
-													</thead>
-													<tbody>
-														<tr *ngFor="let s of professional.professionalServices">
-															<td class="text-center">
-																<i (click)="removeService(s.service.id)" class="la la-trash-o font-1-half cursor-pointer"></i>
-																<i (click)="editServiceFee(s.service)" class="la la-pencil-square font-1-half ml-1 cursor-pointer"></i>
-															</td>
-															<td>{{s.service.name}}</td>
-															<td>{{s.service.field?.field}}</td>
-															<td>{{s.service?.subCategory?.subCategory}}</td>
-															<td>{{s.service.ptFee?.a1}}</td>
-															<td>{{s.service.ptFee?.a2}}</td>
-															<td>{{s.service.proFee?.a1}}</td>
-															<td>{{s.service.proFee?.a2}}</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>-->
 										</div>
-									</div>										
+									</div>
 								</div>
 							</form>
 						</div>

@@ -7,11 +7,12 @@ export { DashboardModel } from './_models/dashboard.model';
 export {
 	FeeModel,
 	FeeDialogModel,
-	ConnectedProfessionalsModel,
+	FeeConnectedProfessionalsModel,
 	ProfessionalConnectedServicesModel,
 	AttachServiceToFeeDialogModel,
 	AttachProToFeeDialogModel,
-	AddFeeToServiceDialogModel
+	AddFeeToServiceDialogModel,
+	AttachFeesToProServiceDialogModel
 } from './_models/fee.model';
 export {
 	InvoiceModel,
@@ -49,7 +50,8 @@ export { StaticDataModel, MedelitStaticData } from './_models/static/static-data
 export { FieldModel } from './_models/field.model';
 export { CustomerModel, CustomerServicesModel } from './_models/customer.model';
 export { CustomerModelOld } from './_models/customer-old.model';
-export { LeadModel, LeadServicesModel } from './_models/lead.model';
+export { LeadModel, LeadServicesModel } from './_models/lead/lead.model';
+export { LeadCSVModel } from './_models/lead/lead-csv.model';
 export {
 	BookingModel,
 	BookingConnectedBookings,
@@ -63,7 +65,12 @@ export {
 	ServiceConnectedCustomerInvoices,
 	ServiceConnectedBookings,
 	ConnectedCustomersInvoicingEntities,
-	ServiceConnectedLeads
+	ServiceConnectedLeads,
+	AttachProfessionalToServiceDialogModel,
+	ServiceConnectedPtFeeModel,
+	ServiceConnectedPtFeeDialogModel,
+	ServiceConnectedProFeeModel,
+	ServiceConnectedProFeeDialogModel
 } from './_models/service.model';
 export { FilterModel } from './_models/filter.model';
 export { ApiResponse } from './_models/apireponse.model';

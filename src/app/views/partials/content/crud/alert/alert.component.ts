@@ -13,13 +13,6 @@ export class AlertComponent implements OnInit {
 	@Output() close = new EventEmitter<boolean>();
 	alertShowing = true;
 
-	/**
-	 * @ Lifecycle sequences => https://angular.io/guide/lifecycle-hooks
-	 */
-
-	/**
-	 * On init
-	 */
 	ngOnInit() {
 		if (this.duration === 0) {
 			return;
@@ -30,9 +23,6 @@ export class AlertComponent implements OnInit {
 		}, this.duration);
 	}
 
-	/**
-	 * close alert
-	 */
 	closeAlert() {
 		this.close.emit();
 	}

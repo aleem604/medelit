@@ -6,7 +6,7 @@ import { MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 // RXJS
 import { debounceTime, distinctUntilChanged, tap, skip, delay, startWith, map } from 'rxjs/operators';
-import { fromEvent, merge, Observable, of, Subscription, BehaviorSubject } from 'rxjs';
+import { fromEvent, merge, of, Subscription, BehaviorSubject } from 'rxjs';
 // NGRX
 import { Store, select } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
@@ -27,9 +27,8 @@ import {
 import { selectLeadsPageLastQuery } from '../../../../../core/medelit/_selectors/lead.selectors';
 import { FormControl } from '@angular/forms';
 import { StaticDataService, LeadsService } from '../../../../../core/medelit/_services';
-import { transcode } from 'buffer';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { LeadServicesModel } from '../../../../../core/medelit/_models/lead.model';
+import { CSVFileUploadDialogComponent } from '../../../../partials/csv-file-upload-dialog/csv-file-upload.dialog.component';
 
 
 @Component({
@@ -82,7 +81,7 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 			.subscribe();
 		this.subscriptions.push(paginatorSubscriptions);
 
-		
+
 		// Filtration, bind to searchInput
 		const searchSubscription = fromEvent(this.searchInput.nativeElement, 'keyup').pipe(
 			debounceTime(150),
@@ -279,8 +278,6 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		this.router.navigateByUrl('/lead-management/leads/add');
 	}
 
-
-
 	isAllSelected() {
 		const numSelected = this.selection.selected.length;
 		const numRows = this.leadsResult.length;
@@ -345,5 +342,22 @@ export class LeadsListComponent implements OnInit, OnDestroy {
 		} catch (e) {
 
 		}
+	}
+
+	/* csv file upload */
+
+
+	uploadFileCSV() {
+		const dialogRef = this.dialog.open(CSVFileUploadDialogComponent, {
+			//width: '300px',
+			data: { title: 'Upload CSV', message: 'Choose a csv file containing leads to upload' }
+		});
+
+		dialogRef.afterClosed().subscribe((resp: number) => {
+			if (resp > 0) {
+				this.loadLeadsList();
+				this.layoutUtilsService.showActionNotification(`${resp} record(s) saved successfully`, MessageType.Create, 3000, true);
+			}
+		});
 	}
 }

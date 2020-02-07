@@ -1,0 +1,11 @@
+<div class="p-4">
+	<h1 mat-dialog-title [innerHtml]="title"></h1>
+
+	<div mat-dialog-content>
+		<p [innerHtml]="message"></p>
+	</div>
+
+	<div mat-dialog-actions>
+		<button mat-button class="pull-right" color="primary" (click)="onDismiss()">Close</button>
+	</div>
+</div>

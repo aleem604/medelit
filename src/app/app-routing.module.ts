@@ -56,10 +56,6 @@ const routes: Routes = [
 				loadChildren: () => import('./views/pages/user-management/user-management.module').then(m => m.UserManagementModule),
 			},
 			{
-				path: 'wizard',
-				loadChildren: () => import('./views/pages/wizard/wizard.module').then(m => m.WizardModule),
-			},
-			{
 				path: 'builder',
 				loadChildren: () => import('./views/theme/content/builder/builder.module').then(m => m.BuilderModule),
 			},

@@ -99,9 +99,9 @@ export class StaticDataService {
 
 	getProfessionalsForFilter(serviceId?: number): any {
 		if (serviceId)
-			return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionals/' + serviceId);
+			return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionas-with-fees/' + serviceId);
 		else
-			return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionals');
+			return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionas-with-fees');
 	}
 
 	getServicesForFilter(): any {

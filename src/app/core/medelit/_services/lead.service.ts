@@ -8,6 +8,8 @@ import { HttpUtilsService, QueryParamsModel, QueryResultsModel } from '../../_ba
 // Models
 import { LeadModel } from '..';
 import { environment } from '../../../../environments/environment';
+import { LeadCSVModel } from '../_models/lead/lead-csv.model';
+import { ApiResponse } from '../_models/apireponse.model';
 
 
 const API_LEADS_URL = `${environment.apiEndpoint}/leads`;
@@ -72,9 +74,15 @@ export class LeadsService {
 		return this.http.put<QueryResultsModel>(url, ids, { headers: httpHeaders} );
 	}
 
-	convertToBooking(leadId: number): Observable<LeadModel> {
+	bulkUploadLeadsByCSV(leads: LeadCSVModel[]): Observable<ApiResponse> {
+		const url = `${API_LEADS_URL}/leads-bulk-upload`;
+		const httpHeaders = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(url, leads, { headers: httpHeaders});
+	}
+
+	convertToBooking(leadId: number): Observable<ApiResponse> {
 		const url = `${API_LEADS_URL}/convert-booking/${leadId}`;
-		return this.http.get<LeadModel>(url);
+		return this.http.get<ApiResponse>(url);
 	}
 
 

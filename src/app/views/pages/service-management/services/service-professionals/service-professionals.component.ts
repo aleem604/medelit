@@ -4,11 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 // Material
 import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { ConnectedCustomers, ApiResponse, ServicesService, ServiceProfessionals } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { TypesUtilsService, LayoutUtilsService } from '../../../../../core/_base/crud';
 import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
+import { EventEmitter } from 'protractor';
 
 
 @Component({
@@ -20,6 +21,7 @@ import { SubheaderService, LayoutConfigService } from '../../../../../core/_base
 })
 export class ServiceProfessionalsComponent implements OnInit, OnDestroy {
 	@Input('serviceId') serviceId: number;
+	
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 

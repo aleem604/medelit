@@ -3,8 +3,10 @@
 	<div class="kt-portlet__head kt-portlet__head__custom">
 		<div class="kt-portlet__head-label customer-header">
 			<h3 class="kt-portlet__head-title">
-				Add/Update Fee to <strong>{{feeDiagModel.sName}}</strong>
-				<a *ngIf="!viewLoading" href="javascript:;" class="btn btn-primary kt-margin-r-10 pull-right" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save">
+				Add/Update Fee to <strong>{{data.cService}}</strong>
+				<a href="javascript:;"
+				   class="btn btn-primary kt-margin-r-10 pull-right" [hidden]="viewLoading"
+				   (click)="onSumbit(false)" mat-raised-button matTooltip="Save">
 					<span class="kt-hidden-mobile">Save</span>
 				</a>
 			</h3>

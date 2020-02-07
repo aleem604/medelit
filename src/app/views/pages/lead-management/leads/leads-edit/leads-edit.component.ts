@@ -31,6 +31,7 @@ import {
 import { NgxSpinnerService } from 'ngx-spinner';
 import { TranslateService } from '@ngx-translate/core';
 import { CreateInvoiceEntityDialogComponent } from '../../../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
+import { AlertDialogComponent } from '../../../../partials/alert-dialog/alert-dialog.component';
 
 
 @Component({
@@ -65,7 +66,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	private componentSubscriptions: Subscription;
 	// sticky portlet header margin
 	private headerMargin: number;
-	selected = new FormControl(0);
+	fromCustomer = new FormControl(0);
 
 	customersForFilter: FilterModel[] = [];
 	filteredCustomers: Observable<FilterModel[]>;
@@ -122,8 +123,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.loading$ = this.loadingSubject.asObservable();
-		this.loadingSubject.next(true);
+		//this.loading$ = this.loadingSubject.asObservable();
+		//this.loadingSubject.next(true);
+
 		this.activatedRoute.queryParams.subscribe((param) => {
 			const fromCustomerId = parseInt(param.fromCustomer);
 
@@ -178,13 +180,14 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 
 	loadLeadFromService(leadId, fromCustomerId?: number) {
-		this.loadingSubject.next(true);
+		this.spinner.show();
 		this.leadService.getLeadById(leadId, fromCustomerId).toPromise().then(res => {
-			this.loadingSubject.next(false);
 			let data = res as unknown as ApiResponse;
 			this.loadLead(data.data, true);
 		}).catch((e) => {
-			this.loadingSubject.next(false);
+			this.spinner.hide();
+		}).finally(() => {
+			//this.spinner.hide();
 		});
 	}
 
@@ -217,7 +220,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 	createForm() {
 		this.leadForm = this.leadFB.group({
-			customerId: [this.lead.customerId, []],
+			fromCustomerId: [this.lead.fromCustomerId, []],
 			titleId: [this.lead.titleId, Validators.required],
 			surName: [this.lead.surName, [Validators.required, Validators.min(4)]],
 			name: [this.lead.name, Validators.required],
@@ -407,8 +410,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		/** check form */
 		if (this.leadForm.invalid) {
 			Object.keys(controls).forEach(controlName => {
-				//if (controls[controlName].status === 'INVALID')
-				//console.log('invlaid controls', controlName);
+				if (controls[controlName].status === 'INVALID')
+					console.log('invlaid controls', controlName);
 			}
 			);
 
@@ -419,15 +422,15 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			(<FormArray>this.leadForm.get('services')).controls.forEach((group: FormGroup) => {
 				(<any>Object).values(group.controls).forEach((control: FormControl) => {
 					control.markAsTouched();
-					//if (control.status === 'INVALID')
-					//	console.log('invlaid controls', control.errors);
+					if (control.status === 'INVALID')
+						console.log('invlaid controls', control);
 				})
 			});
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
 			window.scroll(0, 0);
-			
+
 			return;
 		}
 
@@ -446,7 +449,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		const controls = this.leadForm.controls;
 		const _lead = new LeadModel();
 		_lead.id = this.lead.id;
-		_lead.customerId = controls.customerId.value;
+		if (controls.fromCustomerId.value)
+			_lead.fromCustomerId = +controls.fromCustomerId.value;
 		_lead.titleId = +controls.titleId.value;
 		_lead.surName = controls.surName.value;
 		_lead.name = controls.name.value;
@@ -578,7 +582,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data > 0) {
 				const _lead = resp.data as unknown as LeadModel;
-				this.loadLead(_lead, true);
 
 				const message = `Lead successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
@@ -628,11 +631,49 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 
 	convertToBooking() {
+		let email = this.leadForm.get('email').value;
+		let leadSource = this.leadForm.get('leadSourceId').value;
+		let dateOfBirth = this.leadForm.get('dateOfBirth').value;
+		let addressStreetName = this.leadForm.get('addressStreetName').value;
+		let postalCode = this.leadForm.get('postalCode').value;
+		let cityId = this.leadForm.get('cityId').value;
+
+		let message = '';
+		if (!email)
+			message += 'Email is required. <br/>';
+		if (!leadSource)
+			message += 'Lead source is required. <br/>';
+		if (!dateOfBirth)
+			message += 'Date of birth is required. <br/>';
+		if (!dateOfBirth)
+			message += 'Date of birth is required. <br/>';
+		if (!addressStreetName)
+			message += 'Street name is required. <br/>';
+		if (!postalCode)
+			message += 'Postal code is required. <br/>';
+		if (!cityId)
+			message += 'City is required. <br/>';
+
+		if (message) {
+			const dialogRef = this.dialog.open(AlertDialogComponent, {
+				width: '300px',
+				data: { title: 'Missing fields', message: '<strong>Following fields are required to convert lead to booking: </strong><br/>' + message }
+			});
+
+			dialogRef.afterClosed().subscribe(result => { });
+
+			return;
+		}
+
 		this.spinner.show();
 		this.leadService.convertToBooking(this.lead.id).toPromise().then((res) => {
-			const message = `Booking created successfully.`;
-			this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
-			this.loadLeadFromService(this.lead.id);
+			if (parseInt(res.data) > 0) {
+				const message = `Booking created successfully.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
+
+				const url = `/booking-management/bookings/edit/${res.data}`;
+				this.router.navigate([url]);
+			}
 		}).catch((e) => {
 			this.spinner.hide();
 			const message = `An error occured. Please try again later.`;
@@ -756,7 +797,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.staticService.getCustomersForImportFilter().subscribe(res => {
 			this.customersForFilter = res.data;
 
-			this.filteredCustomers = this.leadForm.get('customerId').valueChanges
+			this.filteredCustomers = this.leadForm.get('fromCustomerId').valueChanges
 				.pipe(
 					startWith(''),
 					map(value => this._filterCustomers(value))
@@ -764,7 +805,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			if (this.lead.customerId > 0) {
 				var title = this.customersForFilter.find(x => x.id == this.lead.titleId);
 				if (title) {
-					this.leadForm.patchValue({ 'customerId': { id: title.id, value: title.value } });
+					this.leadForm.patchValue({ 'fromCustomerId': { id: title.id, value: title.value } });
 				}
 			}
 		});
@@ -850,7 +891,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 	//// services
 	loadServicesForFilter() {
-		this.staticService.getServicesForFilter().subscribe(res => {
+		this.spinner.show();
+		this.staticService.getServicesForFilter().toPromise().then(res => {
 			this.servicesForFilter = res.data;
 
 			const control = <FormArray>this.leadForm.controls['services'];
@@ -894,6 +936,10 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 					}
 				});
 			}
+		}).catch((e) => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
 		});
 	}
 
@@ -903,32 +949,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 
 	serviceDrpClosed() {
-		var service = this.leadForm.get('requestedServiceId').value;
-		if (service) {
-			this.loadProfessionalsForFilter(service.id);
 
-			this.leadForm.get('ptFeeId').setValue(service.ptFeeId);
-			this.leadForm.get('ptFeeA1').setValue(service.ptFeeA1);
-			this.leadForm.get('ptFeeA2').setValue(service.ptFeeA2);
-
-			this.leadForm.get('proFeeId').setValue(service.proFeeId);
-			this.leadForm.get('proFeeA1').setValue(service.proFeeA1);
-			this.leadForm.get('proFeeA2').setValue(service.proFeeA2);
-
-
-		} else {
-			this.professionalsForFilter = [];
-			this.filteredProfessionals = new Observable<FilterModel[]>();
-			this.leadForm.patchValue({ 'professionalId': '' });
-			this.leadForm.get('ptFeeId').setValue('');
-			this.leadForm.get('ptFeeA1').setValue('');
-			this.leadForm.get('ptFeeA2').setValue('');
-
-			this.leadForm.get('proFeeId').setValue('');
-			this.leadForm.get('proFeeA1').setValue('');
-			this.leadForm.get('proFeeA2').setValue('');
-
-		}
 	}
 
 	getProfessionals(index: number) {
@@ -941,6 +962,90 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 				var elm = el as unknown as any;
 				return elm.sid === serviceId
 			});
+
+		}
+	}
+
+	getPtFees(index: number) {
+		// @ts-ignore:
+		var serviceControls = this.leadForm.get('services').controls[index];
+		if (serviceControls.get('professionalId').value) {
+
+			var proId = serviceControls.get('professionalId').value;
+			var professional = this.professionalsForFilter.find((el) => {
+				var elm = el as unknown as any;
+				return elm.id === proId;
+			});
+			if (professional) {
+				// @ts-ignore
+				return professional.ptFees;
+			} else {
+				return new Array<FilterModel>();
+			}
+
+		}
+	}
+
+	setPtFees(index) {
+		// @ts-ignore:
+		var serviceControls = this.leadForm.get('services').controls[index];
+
+		if (serviceControls.get('professionalId').value) {
+
+			var ptFeeId = serviceControls.get('ptFeeId').value;
+			var ptFee = this.getPtFees(index).find((el) => {
+				var elm = el as unknown as any;
+				return elm.id === ptFeeId;
+			});
+			if (ptFee) {
+				serviceControls.get('ptFeeA1').setValue(ptFee.a1);
+				serviceControls.get('ptFeeA2').setValue(ptFee.a2);
+			} else {
+				serviceControls.get('ptFeeA1').setValue('');
+				serviceControls.get('ptFeeA2').setValue('');
+			}
+		}
+	}
+
+	getProFees(index: number) {
+		// @ts-ignore:
+		var serviceControls = this.leadForm.get('services').controls[index];
+		if (serviceControls.get('professionalId').value) {
+
+			var proId = serviceControls.get('professionalId').value;
+			var professional = this.professionalsForFilter.find((el) => {
+				var elm = el as unknown as any;
+				return elm.id === proId;
+			});
+
+			if (professional) {
+				// @ts-ignore
+				return professional.proFees;
+			} else {
+				return new Array<FilterModel>();
+			}
+		}
+	}
+
+
+	setProFees(index) {
+		// @ts-ignore:
+		var serviceControls = this.leadForm.get('services').controls[index];
+
+		if (serviceControls.get('proFeeId').value) {
+
+			var proFeeId = serviceControls.get('proFeeId').value;
+			var proFee = this.getProFees(index).find((el) => {
+				var elm = el as unknown as any;
+				return elm.id === proFeeId;
+			});
+			if (proFee) {
+				serviceControls.get('proFeeA1').setValue(proFee.a1);
+				serviceControls.get('proFeeA2').setValue(proFee.a2);
+			} else {
+				serviceControls.get('proFeeA1').setValue('');
+				serviceControls.get('proFeeA2').setValue('');
+			}
 		}
 	}
 
@@ -951,7 +1056,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		var serviceControls = this.leadForm.get('services').controls[index];
 		var serviceObj = serviceControls.get('serviceId').value;
 		if (serviceObj) {
-			this.loadProfessionalsForFilter(serviceObj.id);
+			//this.loadProfessionalsForFilter(serviceObj.id);
 
 			serviceControls.get('ptFeeId').setValue(serviceObj.ptFeeId);
 			serviceControls.get('ptFeeA1').setValue(serviceObj.ptFeeA1);
@@ -985,11 +1090,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.staticService.getProfessionalsForFilter(serviceId).subscribe(res => {
 			this.professionalsForFilter = res.data;
 
-			//this.filteredProfessionals = this.leadForm.get('professionalId').valueChanges
-			//	.pipe(
-			//		startWith(''),
-			//		map(value => this._filterProfessionals(value))
-			//	);
 			if (this.lead.professionalId > 0) {
 				var professional = this.professionalsForFilter.find(x => x.id == this.lead.professionalId);
 				if (professional) {

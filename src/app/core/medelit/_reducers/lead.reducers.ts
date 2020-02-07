@@ -4,7 +4,7 @@ import { EntityState, EntityAdapter, createEntityAdapter, Update } from '@ngrx/e
 // Actions
 import { LeadActions, LeadActionTypes } from '../_actions/lead.actions';
 // Models
-import { LeadModel } from '../_models/lead.model';
+import { LeadModel } from '../_models/lead/lead.model';
 import { QueryParamsModel } from '../../_base/crud';
 
 export interface LeadsState extends EntityState<LeadModel> {

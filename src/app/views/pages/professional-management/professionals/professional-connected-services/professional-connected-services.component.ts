@@ -33,7 +33,6 @@ export class ProfessionalConnectedServicesComponent implements OnInit, OnDestroy
 		private spinner: NgxSpinnerService,
 		public dialog: MatDialog,
 		private professionalService: ProfessionalsService,
-		private servicesService: ServicesService,
 		private layoutUtilsService: LayoutUtilsService,
 		private cdr: ChangeDetectorRef) {
 	}
@@ -102,9 +101,9 @@ export class ProfessionalConnectedServicesComponent implements OnInit, OnDestroy
 			if (!res) {
 				return;
 			}
-			var serviceIds = this.selection.selected.map((e) => e.id);
+			var serviceObjs = this.selection.selected;
 			this.spinner.show();
-			this.professionalService.detachProfessionalConnectedServices(serviceIds, this.proId).toPromise()
+			this.professionalService.detachProfessionalConnectedServices(serviceObjs, this.proId).toPromise()
 				.then((res) => {
 					this.loadGridData();
 					this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
@@ -128,7 +127,7 @@ export class ProfessionalConnectedServicesComponent implements OnInit, OnDestroy
 	}
 
 
-	removeService(serviceId: number) {
+	removeService(service: ProfessionalConnectedServicesModel) {
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			width: '250px',
 			data: { title: 'Professional detach', message: 'Are you sure to detach professional from this service?' }
@@ -137,7 +136,7 @@ export class ProfessionalConnectedServicesComponent implements OnInit, OnDestroy
 		dialogRef.afterClosed().subscribe(result => {
 			if (result) {
 				this.spinner.show();
-				this.professionalService.detachProfessionalConnectedServices([serviceId], this.proId).toPromise().then((res) => {
+				this.professionalService.detachProfessionalConnectedServices([service], this.proId).toPromise().then((res) => {
 					if (res.success) {
 						this.loadGridData();
 						this.layoutUtilsService.showActionNotification("Request processed successfully", MessageType.Delete, 3000);

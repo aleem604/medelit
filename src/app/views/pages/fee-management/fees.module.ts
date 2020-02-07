@@ -65,7 +65,7 @@ import {
     MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
-import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { FeesListComponent } from './fees/fees-list/fees-list.component';
 import { FeesComponent } from './fees.component';
@@ -75,6 +75,7 @@ import { AttachServiceToFeeDialogComponent } from './fees/attach-service-to-fee-
 import { AttachProToFeeDialogComponent } from './fees/attach-pro-to-fee-dialog/attach-pro-to-fee.dialog.component';
 import { FeeConnectedProfessionalsComponent } from './fees/connected-professionals/fee-connected-professionals.component';
 import { FeeConnectedServicesComponent } from './fees/connected-services/fee-connected-services.component';
+import { AttachFeesToProServiceDialogComponent } from './fees/attach-fees-to-pro-service-dialog/attach-fees-to-pro-service.dialog.component';
 
 
 // tslint:disable-next-line:class-name
@@ -177,7 +178,8 @@ const routes: Routes = [
 		UpdateStatusDialogComponent,
 		FeeEditDialogComponent,
 		AttachProToFeeDialogComponent,
-		AttachServiceToFeeDialogComponent
+		AttachServiceToFeeDialogComponent,
+		AttachFeesToProServiceDialogComponent
 	],
 	declarations: [
 		FeesComponent,
@@ -187,7 +189,8 @@ const routes: Routes = [
 		FeeConnectedProfessionalsComponent,
 		FeeConnectedServicesComponent,
 		AttachProToFeeDialogComponent,
-		AttachServiceToFeeDialogComponent
+		AttachServiceToFeeDialogComponent,
+		AttachFeesToProServiceDialogComponent
 	]
 })
 export class FeesModule { }

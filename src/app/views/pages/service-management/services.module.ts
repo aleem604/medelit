@@ -1,21 +1,15 @@
-// Angular
+/// <reference path="index.ts" />
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-// Fake API Angular-in-memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-// Translate Module
 import { TranslateModule } from '@ngx-translate/core';
-// NGRX
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-// UI
 import { PartialsModule } from '../../partials/partials.module';
-// Core
 import { FakeApiService } from '../../../core/_base/layout';
-// Auth
 import { ModuleGuard } from '../../../core/auth';
 // Core => Services
 import {
@@ -68,24 +62,12 @@ import {
     MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
-import { CoreModule } from '../../../core/core.module';
-import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { ServicesComponent } from './services.component';
-import { ServicesListComponent } from './services/services-list/services-list.component';
-import { ServiceEditComponent } from './services/service-edit/service-edit.component';
-import { FieldsListComponent } from './fields/fields-list/fields-list.component';
-import { FieldEditComponent } from './fields/field-edit/field-edit.component';
 import { StaticDataService, ServicesService } from '../../../core/medelit/_services';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { ServiceFeesComponent } from './services/service-fees/service-fees.component';
-import { ServiceProfessionalsComponent } from './services/service-professionals/service-professionals.component';
-import { ServiceConnectedBookingsComponent } from './services/service-connected-bookings/service-connected-bookings.component';
-import { ServiceConnectedInvoicesComponent } from './services/service-connected-invoices/service-connected-invoies.component';
-import { ServiceConnectedLeadsComponent } from './services/service-connected-leads/service-connected-leads.component';
-
-
-
+import * as _index from '.';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -102,29 +84,29 @@ const routes: Routes = [
 			},
 			{
 				path: 'services',
-				component: ServicesListComponent
+				component: _index.ServicesListComponent
 			},
 			
 			{
 				path: 'services/add',
-				component: ServiceEditComponent
+				component: _index.ServiceEditComponent
 			},
 			{
 				path: 'services/edit/:id',
-				component: ServiceEditComponent
+				component: _index.ServiceEditComponent
 			},
 			{
 				path: 'fields',
-				component: FieldsListComponent
+				component: _index.FieldsListComponent
 			},
 
 			{
 				path: 'fields/add',
-				component: FieldEditComponent
+				component: _index.FieldEditComponent
 			},
 			{
 				path: 'fields/edit/:id',
-				component: FieldEditComponent
+				component: _index.FieldEditComponent
 			},
 		]
 	}
@@ -202,20 +184,33 @@ const routes: Routes = [
 		ActionNotificationComponent,
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
-		UpdateStatusDialogComponent
+		UpdateStatusDialogComponent,
+		_index.ServiceProfessionalConnectDialogComponent,
+		_index.ServiceConnectedPtFeeDialogComponent,
+		_index.ServiceConnectedProFeeDialogComponent
 	],
 	declarations: [
 		ServicesComponent,
-		ServicesListComponent,
-		ServiceEditComponent,
+		_index.ServicesListComponent,
+		_index.ServiceEditComponent,
 
-		FieldsListComponent,
-		FieldEditComponent,
-		ServiceFeesComponent,
-		ServiceProfessionalsComponent,
-		ServiceConnectedBookingsComponent,
-		ServiceConnectedInvoicesComponent,
-		ServiceConnectedLeadsComponent
+		_index.FieldsListComponent,
+		_index.FieldEditComponent,
+		_index.ServiceProfessionalsComponent,
+		_index.ServiceConnectedBookingsComponent,
+		_index.ConnectedCustomersInvoicingEntitiesComponent,
+		_index.ServiceConnectedInvoicesComponent,
+		_index.ServiceConnectedLeadsComponent,
+
+
+		_index.ProfessionalToServiceListingComponent,
+		_index.ServiceProfessionalConnectDialogComponent,
+
+		_index.ServiceConnectedPtFeeDialogComponent,
+		_index.ServiceConnectedPtFeeListingComponent,
+
+		_index.ServiceConnectedProFeeDialogComponent,
+		_index.ServiceConnectedProFeeListingComponent,
 	]
 })
 export class ServicesModule { }

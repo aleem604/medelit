@@ -1,15 +1,15 @@
 import { Component, OnInit, Inject, ChangeDetectionStrategy, ViewEncapsulation, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatSort, MatPaginator, MatTableDataSource, MatChipInputEvent } from '@angular/material';
-import { Subscription, of, BehaviorSubject, Observable, merge } from 'rxjs';
+import { MatDialogRef, MAT_DIALOG_DATA, MatSort, MatPaginator, MatChipInputEvent } from '@angular/material';
+import { Subscription, Observable } from 'rxjs';
 import { LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
 import {
 	ApiResponse,
 	FilterModel,
 	StaticDataService,
 	FeeDialogModel,
-    AddFeeToServiceDialogModel,
-    ProfessionalsService,
-    ProfessionalConnectedServicesModel
+	AddFeeToServiceDialogModel,
+	ProfessionalsService,
+	ProfessionalConnectedServicesModel
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -69,18 +69,21 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 
 	loadDialogData() {
 		this.viewLoading = true;
-		this.professionalService.getProfessionalServiceDetail(this.data.id, this.data.proId).toPromise().then((resp) => {
+		this.professionalService.getProfessionalServiceDetail(this.data.ptFeeRowId, this.data.proFeeRowId).toPromise().then((resp) => {
 			var res = resp as unknown as ApiResponse;
 			if (res.success) {
-				this.feeDiagModel = res.data;
-				this.loadPTFeesForFilter();
+				if (res.data == null)
+					this.feeDiagModel = new AddFeeToServiceDialogModel();
+				else
+					this.feeDiagModel = res.data;
+				this.createForm();
 			}
-			this.createForm();
+
 		}).catch(() => {
 			this.viewLoading = false;
 		}).finally(() => {
 			this.viewLoading = false;
-			this.cdr.detectChanges();
+			this.detectChanges();
 		});
 	}
 
@@ -99,6 +102,7 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 			proFeeTags: [this.feeDiagModel.proFeeTags],
 		});
 		this.updateForm(0);
+		this.loadPTFeesForFilter();
 	}
 
 	updateForm(value: number) {
@@ -143,7 +147,7 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 		}
 
 		this.viewLoading = true;
-		this.professionalService.saveProfessionalServiceFee(this.prepareFee(), this.data.id, this.data.proId).toPromise().then((res) => {
+		this.professionalService.saveProfessionalServiceFee(this.prepareFee(), this.data.ptFeeRowId, this.data.proFeeRowId).toPromise().then((res) => {
 			if (res.success) {
 				this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
 				this.dialogRef.close(res.success);
@@ -161,8 +165,8 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 
 		const controls = this.feeForm.controls;
 		const _fee = new FeeDialogModel();
-		_fee.serviceId = this.feeDiagModel.id;
-		_fee.professionalId = this.data.proId;
+		_fee.serviceId = this.data.serviceId;
+		_fee.professionalId = this.data.professionalId;
 		_fee.ptFeeRowId = this.data.ptFeeRowId;
 		_fee.proFeeRowId = this.data.proFeeRowId;
 
@@ -195,6 +199,7 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 
 	// PT Fees Filter
 	loadPTFeesForFilter() {
+		
 		this.professionalService.getFeesForFilter(this.data.ptFeeRowId, this.data.proFeeRowId).subscribe(res => {
 			this.ptFeesForFilter = res.data.pt;
 			this.proFeesForFilter = res.data.pro;
@@ -203,7 +208,7 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 				.pipe(
 					startWith(''),
 					map(value => this._filterPTFees(value))
-			);
+				);
 
 			if (this.data.ptFeeId > 0) {
 				var vat = this.ptFeesForFilter.find(x => x.id == this.data.ptFeeId);
@@ -234,7 +239,7 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 		const filterValue = this._normalizeValue(value);
 		return this.ptFeesForFilter.filter(elem => this._normalizeValue(elem.value).includes(filterValue));
 	}
-	
+
 	private _filterPROFees(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.proFeesForFilter.filter(elem => this._normalizeValue(elem.value).includes(filterValue));
@@ -304,4 +309,11 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	detectChanges() {
+		try {
+			this.cdr.detectChanges();
+		} catch{
+
+		}
+	}
 }

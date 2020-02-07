@@ -55,8 +55,6 @@ export class AttachServiceToProDialogComponent implements OnInit, OnDestroy {
 		this.tagControl.valueChanges.subscribe((v) => {
 			this.serviceControlClosed();
 		});
-
-
 	}
 
 	ngOnInit() {

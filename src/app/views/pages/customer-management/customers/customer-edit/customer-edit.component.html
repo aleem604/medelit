@@ -5,11 +5,12 @@
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
-			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()" [disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
+			<!--<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()" [disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
 				<i class="la la-cog"></i>
 				<span class="kt-hidden-mobile">Reset</span>
-			</a>
+			</a>-->
 			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
+				<i class="la la-save"></i>
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
 			<!--<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
@@ -843,11 +844,11 @@
 				</kt-portlet-body>
 			</ng-template>
 		</mat-tab>
-		<mat-tab label="Connected Customers" [disabled]='!(customer && customer.id)' title="Connected Customers">
+		<!--<mat-tab label="Connected Customers" [disabled]='!(customer && customer.id)' title="Connected Customers">
 			<ng-template matTabContent>
 				<customer-connected-customers [customerId]="customer.id"></customer-connected-customers>
 			</ng-template>
-		</mat-tab>
+		</mat-tab>-->
 
 		<mat-tab label="Services Requested" [disabled]='!(customer && customer.id)' title="Services Requested">
 			<ng-template matTabContent>
