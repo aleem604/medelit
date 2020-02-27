@@ -57,6 +57,10 @@ export class BookingConnectedBookingsComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	getTotalCost() {
+		return this.dataSource.data.map(t => t.subTotal).reduce((acc, value) => acc + value, 0);
+	}
+
 	ngOnDestroy(): void {
 
 	}	

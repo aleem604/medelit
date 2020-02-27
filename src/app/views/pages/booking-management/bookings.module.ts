@@ -6,6 +6,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { TextMaskModule } from 'angular2-text-mask';
+
+
 // Fake API Angular-in-memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 // Translate Module
@@ -68,8 +71,7 @@ import {
     MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
-import { CoreModule } from '../../../core/core.module';
-import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { StaticDataService, InvoicesService } from '../../../core/medelit/_services';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -120,6 +122,7 @@ const routes: Routes = [
 		HttpClientModule,
 		PartialsModule,
 		NgxMaterialTimepickerModule,
+		TextMaskModule,
 		NgxPermissionsModule.forChild(),
 		RouterModule.forChild(routes),
 		FormsModule,
@@ -149,6 +152,7 @@ const routes: Routes = [
 		NgxMatSelectSearchModule,
 		OwlDateTimeModule,
 		OwlNativeDateTimeModule,
+
 
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,

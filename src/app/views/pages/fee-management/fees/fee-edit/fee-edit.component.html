@@ -79,26 +79,26 @@
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput placeholder="Enter Fee Name" maxlength="250" readonly="readonly" [value]="fee.feeType" />
 												<mat-hint align="start">
-													<strong>Fee Type</strong>
+													<strong class="required-star">Fee Type</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Fee Name" formControlName="feeName" maxlength="250" />
+												<input matInput placeholder="Fee Name" formControlName="feeName" maxlength="250" />
 												<mat-error>
 													Fee Name is
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													<strong>Fee Name</strong>
+													<strong class="required-star">Fee Name</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput type="number" placeholder="Enter Fee A1 value" formControlName="a1" maxlength="5" />
+												<input matInput type="number" placeholder="Fee A1 value" formControlName="a1" maxlength="5" />
 												<span matPrefix>£&nbsp;</span>
 												<mat-error *ngIf="feeForm.get('a1')?.errors?.required">
 													Fee A1 is
@@ -109,13 +109,13 @@
 													<strong>zero</strong>
 												</mat-error>
 												<mat-hint align="start">
-													<strong>Fee A1</strong>
+													<strong class="required-star">Fee A1</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput type="number" placeholder="Enter Fee A2 value" formControlName="a2" maxlength="5" />
+												<input matInput type="number" placeholder="Fee A2 value" formControlName="a2" maxlength="5" />
 												<span matPrefix>£&nbsp;</span>
 												<mat-error *ngIf="feeForm.get('a2')?.errors?.required">
 													Fee A2 is
@@ -126,7 +126,7 @@
 													<strong>zero</strong>
 												</mat-error>
 												<mat-hint align="start">
-													<strong>Fee A2</strong>
+													<strong class="required-star">Fee A2</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>

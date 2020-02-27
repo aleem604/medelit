@@ -44,7 +44,7 @@ export class InvoiceModel extends BaseModel {
 
 
 
-	invoiceBookings: InvoiceBookings[];
+	invoiceBookingView: InvoiceBookings[];
 
 	assignedToId?: number;
 	status: eRecordStatus;
@@ -119,4 +119,12 @@ export interface InvoiceConnectedBookings {
 	professional: string;
 	proFee: number;
 	visitDate: Date;
+}
+
+
+export interface BookingsToAddToInvoiceDialogModel{
+	id: number,
+	name: string;
+	phoneNumber: string;
+	feeName:string
 }

@@ -8,7 +8,9 @@ export class ProfessionalModel extends BaseModel {
 	titleId: number;
 	title: string;
 	name: string;
-	languages: string[];
+	professionalLanguages: string[];
+	professionalFields: string[];
+	professionalSubCategories: string[];
 	email: string;
 	telephone: string;
 	accountingCodeId: number;
@@ -16,8 +18,6 @@ export class ProfessionalModel extends BaseModel {
 	mobilePhone: string;
 	homePhone: string;
 	email2: string;
-	fieldId: number;
-	subCategoryId: number;
 	fax: string;
 	coverMap: string;
 	streetName: string;
@@ -54,7 +54,7 @@ export class ProfessionalModel extends BaseModel {
 	documentListSentId: number;
 	calendarActivation: number;
 	proOnlineCV: string;
-	protaxCode: string;
+	proTaxCodeId: number;
 
 	status: eRecordStatus;
 	createDate: Date;

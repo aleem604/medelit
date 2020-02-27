@@ -16,12 +16,12 @@
 		display: table;
 		width: 100%;
 
-		span:first-of-type {
+		span:first-child {
 			position: relative;
 			bottom: 0;
 			left: 0;
 			float: left;
-			top: 0em;
+			top: 8px;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 	<kt-portlet-header [sticky]="true" [title]="'Professionals list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
 		<ng-container ktPortletTools>
-			<button (click)="createProfessional()" mat-raised-button color="primary" matTooltip="Create new professional">New professional</button>
+			<button (click)="createProfessional()" mat-raised-button color="primary" matTooltip="Create new professional"><i class="la la-plus-square-o"></i> New</button>
 		</ng-container>
 	</kt-portlet-header>
 	<!-- end::Header -->
@@ -38,7 +38,7 @@
 						<mat-form-field>
 							<input matInput placeholder="Search" #searchInput class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
-								<strong>Search in all fields</strong>
+								Search in all <strong>fields</strong>
 							</mat-hint>
 						</mat-form-field>
 					</div>
@@ -119,17 +119,17 @@
 
 				<ng-container matColumnDef="fields">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Fields</mat-header-cell>
-					<mat-cell *matCellDef="let professional">{{professional.field}}</mat-cell>
+					<mat-cell *matCellDef="let professional"><span [innerHtml]="professional.field"></span></mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="subCategories">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Subcategories</mat-header-cell>
-					<mat-cell *matCellDef="let professional">{{professional.subCategory}}</mat-cell>
+					<mat-cell *matCellDef="let professional"><span [innerHtml]="professional.subCategory"></span></mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="services">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Services</mat-header-cell>
-					<mat-cell *matCellDef="let professional">{{professional.services}}</mat-cell>
+					<mat-cell *matCellDef="let professional"><span [innerHtml]="professional.services"></span></mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="city">

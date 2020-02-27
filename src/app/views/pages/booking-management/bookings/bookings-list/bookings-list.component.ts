@@ -32,7 +32,7 @@ import { selectBookingsPageLastQuery } from '../../../../../core/medelit/_select
 export class BookingsListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: BookingDataSource;
-	displayedColumns = ['select', 'name', 'invoicingEntity', 'service', 'professional', 'bookingDate', 'visitDate', 'visitTime', 'paymentMethod', 'ptFee', 'actions'];
+	displayedColumns = ['select', 'name', 'customer', 'invoicingEntity', 'service', 'professional', 'bookingDate', 'visitDate', 'visitTime', 'paymentMethod', 'ptFee', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	loadingSubject = new BehaviorSubject<boolean>(true);

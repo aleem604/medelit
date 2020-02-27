@@ -5,11 +5,12 @@
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
-			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()" [disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
+			<!--<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()" [disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
 				<i class="la la-cog"></i>
 				<span class="kt-hidden-mobile">Reset</span>
-			</a>
+			</a>-->
 			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
+				<i class="la la-save"></i>
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
 			<!--<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
@@ -51,9 +52,6 @@
 											<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
 												<label>Last Changed : </label> <span class="ml-2">{{professional.updateDate | date:'dd/MM/yyyy h:mm a'}}</span>
 											</div>
-											<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-												<label>Assigned To : </label> <span class="text-capitalize ml-2">{{professional.assignedTo}}</span>
-											</div>
 
 										</div>
 
@@ -71,7 +69,7 @@
 														</mat-option>
 													</mat-select>
 													<mat-hint align="start">
-														Select a <strong class="required-star">Title</strong>
+														<strong class="required-star">Title</strong>
 													</mat-hint>
 													<mat-error>
 														Title is
@@ -87,7 +85,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong class="required-star">Name</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -100,7 +97,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong class="required-star">Mobile Phone</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -113,7 +109,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong class="required-star">Main Telephone</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -126,28 +121,26 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong>Home Phone</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Clinic phone" formControlName="clinicPhoneNumber" maxlength="50">
+													<input matInput placeholder="Clinic phone number" formControlName="clinicPhoneNumber" maxlength="50">
 													<mat-error>
-														Clinic Phone is
+														Clinic Phone Number is
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
-														<strong>Clinic Phone</strong>
+														<strong>Clinic Phone Number</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Enter email" formControlName="email">
+													<input matInput placeholder="Email" formControlName="email">
 													<mat-error *ngIf="professionalForm.get('email').errors?.required">
 														Email is
 														<strong>required</strong>
@@ -157,7 +150,6 @@
 														<strong>invalid</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong class="required-star">Email</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -174,44 +166,7 @@
 														<strong>invalid</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong>Email 2</strong>
-													</mat-hint>
-												</mat-form-field>
-											</div>
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="example-full-width">
-													<input type="text" placeholder="Field" aria-label="Number" matInput [matAutocomplete]="fieldAuto" formControlName="fieldId">
-													<mat-autocomplete autoActiveFirstOption #fieldAuto="matAutocomplete"
-																	  [displayWith]="displayFn">
-														<mat-option *ngFor="let t of filteredFields | async" [value]="t">
-															{{t.value}}
-														</mat-option>
-													</mat-autocomplete>
-													<mat-error>
-														Field is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														Select a <strong class="required-star">Field </strong>
-													</mat-hint>
-												</mat-form-field>
-											</div>
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="example-full-width">
-													<input type="text" placeholder="Subcategory" aria-label="Number" matInput [matAutocomplete]="subCategoryAuto" formControlName="subCategoryId">
-													<mat-autocomplete autoActiveFirstOption #subCategoryAuto="matAutocomplete"
-																	  [displayWith]="displayFn">
-														<mat-option *ngFor="let t of filteredSubCategories | async" [value]="t">
-															{{t.value}}
-														</mat-option>
-													</mat-autocomplete>
-													<mat-error>
-														Subcategory is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														Select a <strong class="required-star">Subcategory </strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
@@ -223,14 +178,13 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong>Fax</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field>
-													<mat-select [formControlName]="'languages'" placeholder="Languages" [multiple]="true" #multiSelect>
+													<mat-select [formControlName]="'professionalLanguages'" placeholder="Languages" [multiple]="true" #multiSelect>
 														<ngx-mat-select-search placeholderLabel="Search Language" type="text" [formControl]="langMultiFilterCtrl"></ngx-mat-select-search>
 														<mat-option *ngFor="let lang of filteredLanguages | async" [value]="lang">
 															{{lang.value}}
@@ -241,11 +195,11 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please select
 														<strong class="required-star">Language(S)</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
+
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
 													<input matInput placeholder="Website" formControlName="website" maxlength="250">
@@ -254,7 +208,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong>Website</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -267,11 +220,46 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong class="required-star">Online CV link</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
+
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field>
+													<mat-select [formControlName]="'professionalFields'" placeholder="Fields" [multiple]="true" #multiSelect>
+														<ngx-mat-select-search placeholderLabel="Search Fields" type="text" [formControl]="fieldMultiFilterCtrl"></ngx-mat-select-search>
+														<mat-option *ngFor="let lang of filteredFields | async" [value]="lang">
+															{{lang.value}}
+														</mat-option>
+													</mat-select>
+													<mat-error>
+														Field(S) are
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														<strong class="required-star">Field(S)</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field>
+													<mat-select [formControlName]="'professionalSubCategories'" placeholder="Subcategories" [multiple]="true" #multiSelect>
+														<ngx-mat-select-search placeholderLabel="Search Subcategories" type="text" [formControl]="subCatsMultiFilterCtrl"></ngx-mat-select-search>
+														<mat-option *ngFor="let lang of filteredSubCats | async" [value]="lang">
+															{{lang.value}}
+														</mat-option>
+													</mat-select>
+													<mat-error>
+														SubCategory(S) are
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														<strong class="required-star">SubCategory(S)</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
 													<input matInput [matDatepicker]="dateOfBirthPicker" placeholder="Date of birth" [formControlName]="'dateOfBirth'">
@@ -282,7 +270,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong class="required-star">Date of Birth</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -300,7 +287,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong>Covermap</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -321,20 +307,18 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong class="required-star">Street Name</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Enter post code" formControlName="postCode" maxlength="250">
+													<input matInput placeholder="Post code" formControlName="postCode" maxlength="250">
 													<mat-error>
 														Post Code Name is
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong class="required-star">Post Code</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -353,7 +337,7 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select a <strong class="required-star">City </strong>
+														<strong class="required-star">City </strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
@@ -371,7 +355,7 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select a <strong class="required-star">Country </strong>
+														<strong class="required-star">Country </strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
@@ -390,7 +374,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong>Clinic Street Name</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -403,7 +386,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong>Clinic Post Code</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -417,13 +399,14 @@
 															{{t.value}}
 														</mat-option>
 													</mat-autocomplete>
-													<mat-hint align="start">
-														Select a <strong>Clinic City </strong>
-													</mat-hint>
+
 													<mat-error>
 														Clinic City is
 														<strong>required</strong>
 													</mat-error>
+													<mat-hint align="start">
+														<strong>Clinic City </strong>
+													</mat-hint>
 												</mat-form-field>
 											</div>
 
@@ -435,112 +418,20 @@
 											<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
 													<textarea matInput rows="7" placeholder="Description" formControlName="description"></textarea>
-													<mat-hint align="start">
-														Enter a <strong>Description </strong>
-													</mat-hint>
 													<mat-error>
 														Description is
 														<strong>required</strong>
 													</mat-error>
+													<mat-hint align="start">
+														<strong>Description </strong>
+													</mat-hint>
 												</mat-form-field>
 											</div>
 
 											<div class="col-md-12 heading-wrapper">
 												<div class="title-wrapper">
-													<h5>Payments and Invocing</h5>
+													<h5>Payments and Invoicing</h5>
 												</div>
-											</div>
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Company name" formControlName="companyName" maxlength="250">
-													<mat-error>
-														Company Name is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														Please enter
-														<strong>Company Name</strong>
-													</mat-hint>
-												</mat-form-field>
-											</div>
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Company number" formControlName="companyNumber" maxlength="250">
-													<mat-error>
-														Company Number is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														Please enter
-														<strong>Company Number</strong>
-													</mat-hint>
-												</mat-form-field>
-											</div>
-
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Bank name" formControlName="bank" maxlength="250">
-													<mat-error>
-														Bank Name is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														Please enter
-														<strong>Bank Name</strong>
-													</mat-hint>
-												</mat-form-field>
-											</div>
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Bank branch name" formControlName="branch" maxlength="250">
-													<mat-error>
-														Bank Branch Name is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														Please enter
-														<strong>Bank Branch Name</strong>
-													</mat-hint>
-												</mat-form-field>
-											</div>
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Account name" formControlName="accountName" maxlength="250">
-													<mat-error>
-														Account Name is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														Please enter
-														<strong>Account Name</strong>
-													</mat-hint>
-												</mat-form-field>
-											</div>
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Account number" formControlName="accountNumber" maxlength="250">
-													<mat-error>
-														Account Number is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														Please enter
-														<strong>Account Number</strong>
-													</mat-hint>
-												</mat-form-field>
-											</div>
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Sort code" formControlName="sortCode" maxlength="250">
-													<mat-error>
-														Sort Code is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														Please enter
-														<strong>Sort Code</strong>
-													</mat-hint>
-												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="example-full-width">
@@ -554,15 +445,101 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select a <strong class="required-star">Accounting Code </strong>
+														<strong class="required-star">Accounting Code  {{professionalForm.get('accountingCodeId').value}}</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3" [hidden]="professionalForm.get('accountingCodeId').value !== 2">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Company name" formControlName="companyName" maxlength="250">
+													<mat-error>
+														Company Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														<strong>Company Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3" [hidden]="professionalForm.get('accountingCodeId').value !== '2'">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Company number" formControlName="companyNumber" maxlength="250">
+													<mat-error>
+														Company Number is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														<strong>Company Number</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Bank name" formControlName="bank" maxlength="250">
+													<mat-error>
+														Bank Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														<strong>Bank Name</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Bank branch name" formControlName="branch" maxlength="250">
+													<mat-error>
+														Bank Branch Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														<strong>Bank Branch Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Account name" formControlName="accountName" maxlength="250">
+													<mat-error>
+														Account Name is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														<strong>Account Name</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Account number" formControlName="accountNumber" maxlength="250">
+													<mat-error>
+														Account Number is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														<strong>Account Number</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="Sort code" formControlName="sortCode" maxlength="250">
+													<mat-error>
+														Sort Code is
+														<strong>required</strong>
+													</mat-error>
+													<mat-hint align="start">
+														<strong>Sort Code</strong>
+													</mat-hint>
+												</mat-form-field>
+											</div>
+
+											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+												<mat-form-field class="mat-form-field-fluid">
 													<textarea matInput rows="7" placeholder="Invoicing notes" formControlName="invoicingNotes"></textarea>
 													<mat-hint align="start">
-														Enter a <strong>Invoicing Notes </strong>
+														<strong>Invoicing Notes </strong>
 													</mat-hint>
 													<mat-error>
 														Invoicing Notes is
@@ -588,13 +565,13 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select an <strong class="required-star">Active Collaboration </strong>
+														<strong class="required-star">Active Collaboration </strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="contractDatePicker" placeholder="Contract date" [formControlName]="'contractDate'">
+													<input matInput [matDatepicker]="contractDatePicker" placeholder="Contract start date" [formControlName]="'contractDate'">
 													<mat-datepicker-toggle matSuffix [for]="contractDatePicker"></mat-datepicker-toggle>
 													<mat-datepicker #contractDatePicker></mat-datepicker>
 													<mat-error>
@@ -602,7 +579,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select
 														<strong class="required-star"> Contract Date</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -617,7 +593,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select
 														<strong> Contract End Date</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -634,38 +609,35 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select a
 														<strong>Clinic Agreement </strong>option
 													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="firstContractDatePicker" placeholder="First contract date" [formControlName]="'firstContactDate'" />
-													<mat-datepicker-toggle matSuffix [for]="firstContractDatePicker"></mat-datepicker-toggle>
-													<mat-datepicker #firstContractDatePicker></mat-datepicker>
+													<input matInput [matDatepicker]="firstContactDatePicker" placeholder="First contact date" [formControlName]="'firstContactDate'" />
+													<mat-datepicker-toggle matSuffix [for]="firstContactDatePicker"></mat-datepicker-toggle>
+													<mat-datepicker #firstContactDatePicker></mat-datepicker>
 													<mat-error>
-														First Contract Date is
+														First Contact Date is
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select
-														<strong>First Contract Date</strong>
+														<strong>First Contact Date</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="lastContactDatePicker" placeholder="Contract end date" [formControlName]="'lastContactDate'" />
+													<input matInput [matDatepicker]="lastContactDatePicker" placeholder="Last contact date" [formControlName]="'lastContactDate'" />
 													<mat-datepicker-toggle matSuffix [for]="lastContactDatePicker"></mat-datepicker-toggle>
 													<mat-datepicker #lastContactDatePicker></mat-datepicker>
 													<mat-error>
-														Last Contract Date is
+														Last Contact Date is
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select
-														<strong> Last Contract Date</strong>
+														<strong> Last Contact Date</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
@@ -686,7 +658,7 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select a <strong>application method </strong>
+														<strong>application method </strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
@@ -702,20 +674,19 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select a <strong class="required-star">Application Means </strong>
+														<strong class="required-star">Application Means </strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Referring colleage" formControlName="colleagueReferring" maxlength="250">
+													<input matInput placeholder="Refering colleage" formControlName="colleagueReferring" maxlength="250">
 													<mat-error>
-														Referring colleage name is
+														Refering colleage name is
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
-														<strong>Referring Colleage Name</strong>
+														<strong>Refering Colleage Name</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
@@ -732,7 +703,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong>Work Place Info</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -747,7 +717,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select
 														<strong> Insurance Expiry Date</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -760,7 +729,7 @@
 														</mat-option>
 													</mat-select>
 													<mat-hint align="start">
-														Select a <strong>Contract Status </strong>
+														<strong>Contract Status </strong>
 													</mat-hint>
 													<mat-error>
 														Contract Status is
@@ -776,7 +745,7 @@
 														</mat-option>
 													</mat-select>
 													<mat-hint align="start">
-														Select a <strong class="required-star">Document List Sent </strong>
+														<strong class="required-star">Document List Sent </strong>
 													</mat-hint>
 													<mat-error>
 														Document List Sent is
@@ -795,22 +764,24 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Select a
 														<strong>Calendar Actication Option </strong>option
 													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Professional code info" formControlName="protaxCode" maxlength="250">
+												<mat-form-field class="common-form-field">
+													<mat-select [formControlName]="'proTaxCodeId'">
+														<mat-option *ngFor="let val of proTaxCodesForFilter" [value]="val.id">
+															{{ val.value }}
+														</mat-option>
+													</mat-select>
+													<mat-hint align="start">
+														<strong>Tax Code </strong>
+													</mat-hint>
 													<mat-error>
-														Professional tax code is
+														Tax Code is
 														<strong>required</strong>
 													</mat-error>
-													<mat-hint align="start">
-														Please enter
-														<strong>Professional Tax Code</strong>
-													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-12 kt-margin-bottom-10-mobile mt-4 pl-0 pr-0" *ngIf="professional && professional.id">

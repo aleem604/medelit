@@ -1,7 +1,7 @@
 // Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, OnChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, FormArray, ValidatorFn } from '@angular/forms';
 // Material
 import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS, MatTabChangeEvent } from '@angular/material';
 // RxJS
@@ -45,6 +45,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	// Public properties
 	booking: BookingModel;
 	bookingId$: Observable<number>;
+	timedService: boolean;
+
 	titles: Observable<StaticDataModel>;
 	languages: Observable<StaticDataModel>;
 	countries: Observable<StaticDataModel>;
@@ -129,9 +131,9 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.loading$ = this.loadingSubject.asObservable();
-		this.loadingSubject.next(true);
+		this.loadingSubject.next(false);
 		this.activatedRoute.params.subscribe(params => {
-			const id = params.id;
+			const id = parseInt(params.id);
 			if (id && id > 0) {
 
 				//this.store.pipe(
@@ -159,6 +161,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		};
 	}
 
+
 	loadBooking(_booking, fromService: boolean = false) {
 		if (!_booking) {
 			this.goBack('');
@@ -167,11 +170,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		this.bookingId$ = of(_booking.id);
 		this.oldBooking = Object.assign({}, _booking);
 		this.initBooking();
+		this.detectChanges();
 		this.loadStaticResources();
-
-		if (fromService) {
-			this.cdr.detectChanges();
-		}
 	}
 
 	loadBookingFromService(bookingId) {
@@ -179,10 +179,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		this.bookingService.getBookingById(bookingId).toPromise().then(res => {
 			let data = res as unknown as ApiResponse;
 			this.loadBooking(data.data, true);
-		}).catch((e) => {
-			this.spinner.hide();
-		}).finally(() => {
-			this.spinner.hide();
 		});
 	}
 
@@ -193,30 +189,32 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	}
 
 	initBooking() {
-		this.createForm();
-		this.loadingSubject.next(false);
-		if (!this.booking.id) {
+		try {
+			this.createForm();
+			if (!this.booking.id) {
+				this.subheaderService.setBreadcrumbs([
+					{ title: 'booking-management', page: `/bookings` },
+					{ title: 'Bookings', page: `/booking-management/bookings` },
+					{ title: 'Create booking', page: `/booking-management/bookings/add` }
+				]);
+				return;
+			}
+			this.subheaderService.setTitle('Bookings');
+
 			this.subheaderService.setBreadcrumbs([
 				{ title: 'booking-management', page: `/bookings` },
 				{ title: 'Bookings', page: `/booking-management/bookings` },
-				{ title: 'Create booking', page: `/booking-management/bookings/add` }
+				{ title: 'Edit booking', page: `/booking-management/bookings/edit`, queryParams: { id: this.booking.id } }
 			]);
-			return;
+		} catch (e) {
+			//console.log(e);
 		}
-		this.subheaderService.setTitle('Bookings');
-
-		this.subheaderService.setBreadcrumbs([
-			{ title: 'booking-management', page: `/bookings` },
-			{ title: 'Bookings', page: `/booking-management/bookings` },
-			{ title: 'Edit booking', page: `/booking-management/bookings/edit`, queryParams: { id: this.booking.id } }
-		]);
-
 	}
 
 	createForm() {
 		this.bookingForm = this.bookingFB.group({
 
-			customerName: [this.booking.customerName, Validators.required],
+			customerName: [this.booking.customerName],
 			invoiceEntityName: [this.booking.invoiceEntityName, []],
 			name: [this.booking.name, [Validators.required]],
 			bookingStatusId: [this.booking.bookingStatusId, [Validators.required]],
@@ -225,14 +223,14 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			bookingTypeId: [this.booking.bookingTypeId, [Validators.required]],
 			visitLanguageId: [this.booking.visitLanguageId, [Validators.required]],
 			visitVenueId: [this.booking.visitVenueId, [Validators.required]],
-			visitVenueDetail: [this.booking.visitVenueDetail, [Validators.required]],
-			addressNotes: [this.booking.addressNotes, [Validators.required]],
-			buzzer: [this.booking.buzzer, [Validators.required]],
-			visitRequestingPerson: [this.booking.visitRequestingPerson, [Validators.required]],
-			visitRequestingPersonRelationId: [this.booking.visitRequestingPersonRelationId, [Validators.required]],
-			flatNumber: [this.booking.flatNumber, [Validators.required]],
-			floor: [this.booking.floor, [Validators.required]],
-			buildingTypeId: [this.booking.buildingTypeId, [Validators.required]],
+			visitVenueDetail: [this.booking.visitVenueDetail, []],
+			addressNotes: [this.booking.addressNotes],
+			buzzer: [this.booking.buzzer],
+			visitRequestingPerson: [this.booking.visitRequestingPerson],
+			visitRequestingPersonRelationId: [this.booking.visitRequestingPersonRelationId],
+			flatNumber: [this.booking.flatNumber],
+			floor: [this.booking.floor],
+			buildingTypeId: [this.booking.buildingTypeId],
 			visitStreetName: [this.booking.visitStreetName, [Validators.required]],
 			homeStreetName: [this.booking.homeStreetName, [Validators.required]],
 			homePostCode: [this.booking.homePostCode, [Validators.required]],
@@ -241,17 +239,16 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			visitCityId: [this.booking.visitCityId, [Validators.required]],
 			phoneNumber: [this.booking.phoneNumber, [Validators.required]],
 			email: [this.booking.email, [Validators.required]],
-			email2: [this.booking.email2, [Validators.required]],
-			phone2: [this.booking.phone2, [Validators.required]],
-			phone2Owner: [this.booking.phone2Owner, [Validators.required]],
-			dateOfBirth: [this.booking.dateOfBirth, [Validators.required]],
-			countryOfBirthId: [this.booking.countryOfBirthId, [Validators.required]],
+			phone2: [this.booking.phone2],
+			phone2Owner: [this.booking.phone2Owner],
+			//dateOfBirth: [this.booking.dateOfBirth],
+			//countryOfBirthId: [this.booking.countryOfBirthId],
 			homeCountryId: [this.booking.homeCountryId, [Validators.required]],
 			visitCountryId: [this.booking.visitCountryId, [Validators.required]],
 			details: [this.booking.details, [Validators.required]],
-			diagnosis: [this.booking.diagnosis, [Validators.required]],
+			diagnosis: [this.booking.diagnosis],
 			reasonForVisit: [this.booking.reasonForVisit, [Validators.required]],
-			imToProId: [this.booking.imToProId, [Validators.required]],
+			imToProId: [this.booking.imToProId],
 			mailToPtId: [this.booking.mailToPtId, []],
 			ptCalledForAppointmentId: [this.booking.ptCalledForAppointmentId, []],
 			paymentConcludedId: [this.booking.paymentConcludedId, []],
@@ -284,26 +281,26 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			excemptionCode: [this.booking.excemptionCode, []],
 			nhsOrPrivateId: [this.booking.nhsOrPrivateId, []],
 
-
 			isAllDayVisit: [this.booking.isAllDayVisit, []],
 			visitStartDate: [this.booking.visitStartDate, [Validators.required]],
 			visitEndDate: [this.booking.visitEndDate, [Validators.required]],
 
 			proDiscount: [this.booking.proDiscount, []],
 			cashConfirmationMailId: [this.booking.cashConfirmationMailId, []],
-			quantityHours: [this.booking.quantityHours, [Validators.required]],
+			quantityHours: [this.booking.quantityHours, Validators.required],
 
 			serviceId: [this.booking.serviceId, [Validators.required]],
 			professionalId: [this.booking.professionalId, [Validators.required]],
-			ptFee: [this.booking.ptFee, [Validators.required]],
-			proFee: [this.booking.proFee, [Validators.required]],
+			ptFeeA1: [this.booking.ptFeeA1, [Validators.required]],
+			ptFeeA2: [this.booking.ptFeeA2, [Validators.required]],
+			isPtFeeA1: [this.booking.isPtFeeA1, [Validators.required]],
 
 			patientAge: [this.booking.patientAge, []],
 			cycle: [this.booking.cycle, []],
 			cycleNumber: [this.booking.cycleNumber, []],
 			proInvoiceNumber: [this.booking.proInvoiceNumber, []],
 
-			taxType: [this.booking.taxType, []],
+			taxType: [this.booking.taxType, [Validators.required]],
 			subTotal: [this.booking.subTotal, []],
 			taxAmount: [this.booking.taxAmount, []],
 			patientDiscount: [this.booking.patientDiscount, []],
@@ -311,41 +308,66 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			totalDue: [this.booking.totalDue, []],
 			totalPaid: [this.booking.totalPaid, []],
 
-		});
+		}, { validator: this.dateLessThan() });
+
 		this.setConstants();
+	}
+
+	dateLessThan(): ValidatorFn {
+		return (group: FormGroup): { [key: string]: any } => {
+			let f = group.controls['visitStartDate'];
+			let t = group.controls['visitEndDate'];
+			if (f.value > t.value) {
+				return {
+					dates: "Visit End Date should be less than Date to"
+				};
+			}
+			return {};
+		}
+	}
+
+	checkDates() {
+		var startDate = this.bookingForm.get('visitStartDate').value;
+		var endDate = this.bookingForm.get('visitEndDate').value;
+		if (startDate && endDate) {
+			const sdate = new Date(startDate);
+			var edate = new Date(endDate);
+			if (edate < sdate)
+				this.bookingForm.get('visitEndDate').setValue(sdate);
+		}
 	}
 
 	setConstants() {
 		this.bookingForm.get('visitStartDate').valueChanges.subscribe((d) => {
 			if (d) {
-				var years = Math.floor(moment(new Date(d)).diff(moment(new Date(this.bookingForm.get('dateOfBirth').value), "MM/DD/YYYY"), 'years', true));
+				var years = Math.floor(moment(new Date(d)).diff(moment(new Date(this.booking.dateOfBirth), "MM/DD/YYYY"), 'years', true));
 				this.bookingForm.get('patientAge').setValue(years);
 				return years;
 			}
 		});
 
-		this.bookingForm.get('dateOfBirth').valueChanges.subscribe((d) => {
-			if (d) {
-				var years = Math.floor(moment(new Date(this.bookingForm.get('visitStartDate').value)).diff(moment(new Date(d), "MM/DD/YYYY"), 'years', true));
-				this.bookingForm.get('patientAge').setValue(years);
-				return years;
-			}
-		});
+		//this.bookingForm.get('dateOfBirth').valueChanges.subscribe((d) => {
+		//	if (d) {
+		//		var years = Math.floor(moment(new Date(this.bookingForm.get('visitStartDate').value)).diff(moment(new Date(d), "MM/DD/YYYY"), 'years', true));
+		//		this.bookingForm.get('patientAge').setValue(years);
+		//		return years;
+		//	}
+		//});
 
 		this.bookingForm.get('ptFee').valueChanges.subscribe((d) => {
 			this.bookingForm.get('cashReturn').setValue(d);
 		});
 
-
 		this.updateAccountings();
 	}
 
 	updateAccountings() {
-		var ptFee = this.bookingForm.get('ptFee').value;
+		var ptFee = this.bookingForm.get('isPtFeeA1').value === '1' ? this.bookingForm.get('ptFeeA1').value : this.bookingForm.get('ptFeeA2').value;
+		var patientDiscount = this.bookingForm.get('patientDiscount').value;
 		var quantity = this.bookingForm.get('quantityHours').value;
 		var taxType = this.bookingForm.get('taxType').value;
 		var subTotal = parseInt(ptFee) * parseInt(quantity);
-		var taxAmount = subTotal * parseInt(taxType) * 0.01;
+		var taxAmount = subTotal * (parseInt(taxType) * 0.01);
 
 
 		if (!isNaN(subTotal)) {
@@ -360,10 +382,12 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		} else {
 			this.bookingForm.get('taxAmount').setValue('');
 		}
+		let grossTotal = subTotal + taxAmount;
+		if (patientDiscount) {
+			grossTotal -= patientDiscount;
+		}
 
-		this.bookingForm.get('grossTotal').setValue(subTotal + taxAmount);
-
-
+		this.bookingForm.get('grossTotal').setValue(grossTotal);
 	}
 
 
@@ -400,12 +424,19 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 	onSumbit(withBack: boolean = false) {
 		this.hasFormErrors = false;
+		this.dateLessThan();
 		const controls = this.bookingForm.controls;
 		/** check form */
+		Object.keys(controls).forEach(controlName => {
+			if (controls[controlName].status === 'INVALID')
+				console.log('invlaid controls', controlName);
+		});
+
+
 		if (this.bookingForm.invalid) {
-			Object.keys(controls).forEach(controlName =>
-				controls[controlName].markAsTouched()
-			);
+			Object.keys(controls).forEach(controlName => {
+				controls[controlName].markAsTouched();
+			});
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
@@ -455,12 +486,11 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			_booking.visitCityId = controls.visitCityId.value.id;
 		_booking.phoneNumber = controls.phoneNumber.value;
 		_booking.email = controls.email.value;
-		_booking.email2 = controls.email2.value;
 		_booking.phone2 = controls.phone2.value;
 		_booking.phone2Owner = controls.phone2Owner.value;
-		_booking.dateOfBirth = controls.dateOfBirth.value;
-		if (controls.countryOfBirthId.value)
-			_booking.countryOfBirthId = controls.countryOfBirthId.value.id;
+		//_booking.dateOfBirth = controls.dateOfBirth.value;
+		//if (controls.countryOfBirthId.value)
+		//	_booking.countryOfBirthId = controls.countryOfBirthId.value.id;
 
 		if (controls.homeCountryId.value)
 			_booking.homeCountryId = controls.homeCountryId.value.id;
@@ -519,8 +549,9 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			_booking.serviceId = controls.serviceId.value.id;
 		if (controls.professionalId.value)
 			_booking.professionalId = controls.professionalId.value.id;
-		_booking.ptFee = controls.ptFee.value;
-		_booking.proFee = controls.proFee.value;
+		_booking.ptFeeA1 = controls.ptFeeA1.value;
+		_booking.ptFeeA2 = controls.ptFeeA2.value;
+		_booking.isPtFeeA1 = controls.isPtFeeA1.value;
 
 		_booking.patientAge = controls.patientAge.value;
 		_booking.cycle = controls.cycle.value;
@@ -535,7 +566,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	addBooking(_booking: BookingModel, withBack: boolean = false) {
 		this.spinner.show();
 		this.bookingService.createBooking(_booking).toPromise().then((res) => {
-			this.spinner.hide();
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
 				const message = `New booking successfully has been added.`;
@@ -547,34 +577,15 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			}
 		}).catch((e) => {
 			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
 		});
 
-
-
-		//this.store.dispatch(new BookingOnServerCreated({ booking: _booking }));
-		//this.componentSubscriptions = this.store.pipe(
-		//	delay(1000),
-		//	select(selectLastCreatedBookingId)
-		//).subscribe(newId => {
-		//	if (!newId) {
-		//		return;
-		//	}
-
-		//	this.loadingSubject.next(false);
-		//	if (withBack) {
-		//		this.goBack(newId);
-		//	} else {
-		//		const message = `New booking successfully has been added.`;
-		//		this.layoutUtilsService.showActionNotification(message, MessageType.Create, 10000, true, true);
-		//		this.refreshBooking(true, newId);
-		//	}
-		//});
 	}
 
 	updateBooking(_booking: BookingModel, withBack: boolean = false) {
 		this.spinner.show();
 		this.bookingService.updateBooking(_booking).toPromise().then((res) => {
-			this.spinner.hide();
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
 				const _booking = resp.data as unknown as BookingModel;
@@ -588,6 +599,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
 			}
 		}).catch((e) => {
+			this.spinner.hide();
+		}).finally(() => {
 			this.spinner.hide();
 		});
 
@@ -639,7 +652,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 					this.spinner.hide();
 					if (res.success) {
 						this.layoutUtilsService.showActionNotification("Invoice is created successfully.", MessageType.Create, 5000, true);
-
+						const url = `/invoice-management/invoices/edit/${res.data}`;
+						this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 					} else {
 						this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
 					}
@@ -681,7 +695,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
-				const _booking = resp.data as unknown as BookingModel;
 				const dialogRef = this.dialog.open(BookingToInvoiceDialog, {
 					width: '500px',
 					height: '300px',
@@ -694,16 +707,14 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 					}
 				});
 			} else {
-				const message = `An error occured while processing your request. Please try again later.`;
+				const message = resp.errors[0];
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
 			}
-		}).catch((e) => {
+		}).catch(() => {
 			this.spinner.hide();
 			const message = `An error occured while processing your request. Please try again later.`;
 			this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-		});;
-
-
+		});
 	}
 
 	cloneBooking() {
@@ -718,6 +729,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
+			window.scroll(0, 0);
 			return;
 		}
 		let editedBooking = this.prepareBooking();
@@ -740,11 +752,11 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 							this.spinner.hide();
 							if (res.success) {
 								this.layoutUtilsService.showActionNotification("Clone process completed successfully.", MessageType.Create, 3000, true);
-
+								const url = `/booking-management/bookings/edit/${res.data}`;
+								this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 							} else {
 								this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
 							}
-
 						}).catch((error) => {
 							this.spinner.hide();
 							this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
@@ -797,6 +809,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 							this.spinner.hide();
 							if (res.success) {
 								this.layoutUtilsService.showActionNotification("Clone process completed successfully.", MessageType.Create, 3000, true);
+								const url = `/booking-management/bookings/edit/${res.data}`;
+								this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 
 							} else {
 								this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
@@ -820,7 +834,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		});
 	}
 
-
 	getComponentTitle() {
 		let result = 'Create booking';
 		if (this.selectedTab == 0) {
@@ -843,13 +856,11 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 	/*Fitlers Section*/
 	loadStaticResources() {
-		this.detectChanges();
 		this.loadLanguagesForFilter();
 		this.loadCountriesFilter();
 		this.loadCitiesForFilter();
 		this.loadCountiesForFilter();
 		this.loadServicesForFilter();
-
 
 		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
 
@@ -1015,17 +1026,17 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		this.staticService.getCountriesForFilter().subscribe(res => {
 			this.countriesForCountryOfBirthForFilter = res.data;
 
-			this.filteredCountries = this.bookingForm.get('countryOfBirthId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this.filteredCountryOfBirth(value))
-				);
-			if (this.booking.countryOfBirthId > 0) {
-				var title = this.countriesForCountryOfBirthForFilter.find(x => x.id == this.booking.countryOfBirthId);
-				if (title) {
-					this.bookingForm.patchValue({ 'countryOfBirthId': { id: title.id, value: title.value } });
-				}
-			}
+			//this.filteredCountries = this.bookingForm.get('countryOfBirthId').valueChanges
+			//	.pipe(
+			//		startWith(''),
+			//		map(value => this.filteredCountryOfBirth(value))
+			//	);
+			//if (this.booking.countryOfBirthId > 0) {
+			//	var title = this.countriesForCountryOfBirthForFilter.find(x => x.id == this.booking.countryOfBirthId);
+			//	if (title) {
+			//		this.bookingForm.patchValue({ 'countryOfBirthId': { id: title.id, value: title.value } });
+			//	}
+			//}
 
 
 			this.filteredHomeCountries = this.bookingForm.get('homeCountryId').valueChanges
@@ -1064,7 +1075,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 	//// services
 	loadServicesForFilter() {
-		this.staticService.getServicesForFilter().subscribe(res => {
+		this.spinner.show();
+		this.staticService.getServicesForFilter().toPromise().then(res => {
 			this.servicesForFilter = res.data;
 
 			this.filteredServices = this.bookingForm.get('serviceId').valueChanges
@@ -1073,16 +1085,32 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 					map(value => this._filterServices(value))
 				);
 			if (this.booking.serviceId > 0) {
-				var service = this.servicesForFilter.find(x => x.id == this.booking.serviceId);
+				var service = this.servicesForFilter.find(x => x.id == this.booking.serviceId) as any;
 				if (service) {
-					// @ts-ignore
 					this.bookingForm.patchValue({ 'serviceId': { id: service.id, value: service.value, vat: service.vat } });
+					this.timedService = service.timeService;
+
+					if (!service.timeService) {
+						this.timedService = false;
+						this.bookingForm.get('quantityHours').setValue(1);
+						this.bookingForm.get('quantityHours').clearValidators();
+					} else {
+						this.timedService = true;
+						this.bookingForm.get('quantityHours').setValidators(Validators.required);
+					}
+
+					var isPtFeeA1 = this.bookingForm.get('isPtFeeA1').value;
+					if (isPtFeeA1 != undefined || isPtFeeA1 != null)
+						this.bookingForm.patchValue({ 'isPtFeeA1': isPtFeeA1.toString() });
 				}
+
 				this.loadProfessionalsForFilter(this.booking.serviceId);
 			}
+		}).catch(() => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
 		});
-
-
 	}
 	private _filterServices(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
@@ -1094,51 +1122,45 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		var service = this.bookingForm.get('serviceId').value;
 		if (service) {
 			this.loadProfessionalsForFilter(service.id);
-			this.bookingForm.get('ptFee').setValue(service.ptFeeA1);
-			this.bookingForm.get('proFee').setValue(service.proFeeA1);
 			this.bookingForm.get('taxType').setValue(service.vat);
 
-			if (!service.timeService)
+			if (!service.timeService) {
+				this.timedService = false;
 				this.bookingForm.get('quantityHours').setValue(1);
+				this.bookingForm.get('quantityHours').clearValidators();
+			} else {
+				this.timedService = true;
+				this.bookingForm.get('quantityHours').setValidators(Validators.required);
+			}
 
 		} else {
 			this.professionalsForFilter = [];
 			this.filteredProfessionals = new Observable<FilterModel[]>();
 			this.bookingForm.patchValue({ 'professionalId': '' });
-			this.bookingForm.get('ptFee').setValue('');
-			this.bookingForm.get('proFee').setValue('');
 			this.bookingForm.get('taxType').setValue('');
 		}
 		this.updateAccountings();
 
 	}
 
-
-	serviceSelected(event, index) {
-		// @ts-ignore:
-		var serviceControls = this.bookingForm.get('services').controls[index];
-		var serviceObj = serviceControls.get('serviceId').value;
-		if (serviceObj) {
-			this.loadProfessionalsForFilter(serviceObj.id);
-
-			serviceControls.get('ptFee').setValue(serviceObj.ptFeeA1);
-			serviceControls.get('proFee').setValue(serviceObj.proFeeA1);
-
+	professionalDrpClosed() {
+		var professional = this.bookingForm.get('professionalId').value;
+		if (professional) {
+			this.bookingForm.get('ptFeeA1').setValue(professional.ptFees.a1);
+			this.bookingForm.get('ptFeeA2').setValue(professional.proFees.a1);
 		} else {
-			this.professionalsForFilter = [];
-			this.filteredProfessionals = new Observable<FilterModel[]>();
-			serviceControls.patchValue({ 'professionalId': '' });
-			serviceControls.get('ptFee').setValue('');
-			serviceControls.get('proFee').setValue('');
+			this.bookingForm.get('ptFeeA1').setValue('');
+			this.bookingForm.get('ptFeeA2').setValue('');
 		}
-
+		this.updateAccountings();
 	}
 
 	// end services
 
 	// Service Professionals
 	loadProfessionalsForFilter(serviceId?: number) {
-		this.staticService.getProfessionalsForFilter(serviceId).subscribe(res => {
+		this.spinner.show();
+		this.staticService.getProfessionalsForFilter(serviceId).toPromise().then(res => {
 			this.professionalsForFilter = res.data.filter(m => m.sid == serviceId);
 
 			this.filteredProfessionals = this.bookingForm.get('professionalId').valueChanges
@@ -1149,16 +1171,21 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			if (this.booking.professionalId > 0) {
 				var professional = this.professionalsForFilter.find(x => x.id == this.booking.professionalId);
 				if (professional) {
-					this.bookingForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value } });
+					// @ts-ignore
+					this.bookingForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value, ptFees: professional.ptFees[0], proFees: professional.proFees[0] } });
 				}
 			}
+		}).catch(() => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
+			this.updateAccountings();
 		});
-
 	}
+
 	private _filterProfessionals(value: string): FilterModel[] {
 		try {
 			const filterValue = this._normalizeValue(value);
-
 			return this.professionalsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
 		} catch (e) {
 			return [];

@@ -128,6 +128,7 @@ export interface ServiceConnectedPtFeeModel {
 }
 
 export interface ServiceConnectedPtFeeDialogModel {
+	id: number;
 	ptFeeId: number;
 	ptFeeName: string;
 	ptFeeA1: number;
@@ -139,6 +140,7 @@ export interface ServiceConnectedPtFeeDialogModel {
 
 
 export interface ServiceConnectedProFeeModel {
+	id: number;
 	proFeeId: number;
 	professionals: string[];
 	proFeeName: string;

@@ -20,7 +20,7 @@ export class CustomerModel extends BaseModel {
 	email2: string;
 	fax: string;
 	dateOfBirth?: Date;
-	countryOfBirthId?: number = 1003;
+	countryOfBirthId?: number;
 	visitRequestingPerson: string;
 	visitRequestingPersonRelationId?: number;
 	homeStreetName: string;

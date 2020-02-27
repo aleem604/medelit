@@ -21,6 +21,10 @@ export class StaticDataService {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/customers');
 	}
 
+	getCustomersForFilter(): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/customers-for-filter');
+	}
+
 	getInvoicesForFilter(): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/invoices');
 	}

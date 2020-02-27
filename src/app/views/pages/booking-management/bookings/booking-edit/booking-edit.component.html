@@ -92,7 +92,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong class="required-star">Booking Name</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -101,14 +100,13 @@
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput placeholder="Customer name" #customerName formControlName="customerName" readonly="readonly">
 												<!--<button mat-button *ngIf="customerName.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('customerName').setValue('')">
-												<mat-icon>close</mat-icon>
-											</button>-->
+													<mat-icon>close</mat-icon>
+												</button>-->
 												<mat-error>
 													Customer Name is
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong class="required-star">Customer Name</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -117,14 +115,13 @@
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput placeholder="Invoie entity name" #invoiceEntityName formControlName="invoiceEntityName" readonly="readonly">
 												<!--<button mat-button *ngIf="invoiceEntityName.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('invoiceEntityName').setValue('')">
-												<mat-icon>close</mat-icon>
-											</button>-->
+													<mat-icon>close</mat-icon>
+												</button>-->
 												<mat-error>
 													Invoice Entity Name is
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Invoice Entity Name</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -137,7 +134,7 @@
 													</mat-option>
 												</mat-select>
 												<mat-hint align="start">
-													Select a <strong class="required-star"> Booking Status </strong>
+													<strong class="required-star"> Booking Status </strong>
 												</mat-hint>
 												<mat-error>
 													Booking Status is
@@ -153,7 +150,7 @@
 													</mat-option>
 												</mat-select>
 												<mat-hint align="start">
-													Select a <strong> Booking Type </strong>
+													<strong> Booking Type </strong>
 												</mat-hint>
 												<mat-error>
 													Booking Type is
@@ -164,22 +161,21 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput [owlDateTime]="bookingDatePicker" placeholder="Booking date" [owlDateTimeTrigger]="bookingDatePicker" #bookingDate [formControlName]="'bookingDate'" readonly="readonly">
-												<owl-date-time #bookingDatePicker></owl-date-time>
+												<input matInput [matDatepicker]="bookingDatePicker" #bookingDate placeholder="Booking date" [formControlName]="'bookingDate'">
 												<button mat-button *ngIf="bookingDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('bookingDate').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
+												<mat-datepicker-toggle matSuffix [for]="bookingDatePicker"></mat-datepicker-toggle>
+												<mat-datepicker #bookingDatePicker></mat-datepicker>
 												<mat-error>
 													Booking Date
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong class="required-star">Booking Date</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
-
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div class="row">
@@ -189,10 +185,18 @@
 												</div>
 											</div>
 											<div class="row">
-												<div class="col-md-4 pt-4">Visit Starts: </div>
+												<div class="col-md-4 pt-4"><span class="required-star font-500">Visit Starts:</span> </div>
 												<div class="col-md-8">
 													<mat-form-field class="mat-form-field-fluid">
-														<input matInput [owlDateTime]="visitStartDatePicker" [owlDateTimeTrigger]="visitStartDatePicker" #visitStartDate placeholder="" [formControlName]="'visitStartDate'" readonly="readonly">
+														<input matInput [owlDateTime]="visitStartDatePicker"
+															   [owlDateTimeTrigger]="visitStartDatePicker"
+															   [selectMode]="'single'"
+															   #visitStartDate
+															   placeholder=""
+															   [formControlName]="'visitStartDate'"
+															   readonly="readonly"
+															   (dateTimeChange)="checkDates()"
+															   useValueAsDate>
 														<owl-date-time #visitStartDatePicker></owl-date-time>
 														<button mat-button *ngIf="visitStartDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitStartDate').setValue('')">
 															<mat-icon>close</mat-icon>
@@ -201,34 +205,42 @@
 															Visit Start Date
 															<strong>required</strong>
 														</mat-error>
-														<!--<mat-hint align="start">
-														Please select
-														<strong>Visit Start Date</strong>
-													</mat-hint>-->
 													</mat-form-field>
 												</div>
 											</div>
 
-
 											<div class="row">
-												<div class="col-md-4 pt-4">Visit Ends: </div>
+												<div class="col-md-4 pt-4">
+													<span class="required-star font-500">Visit Ends: </span>
+												</div>
 
 												<div class="col-md-8">
 													<mat-form-field class="mat-form-field-fluid">
-														<input matInput [owlDateTime]="visitEndDatePicker" [owlDateTimeTrigger]="visitEndDatePicker" #visitEndDate placeholder="" [formControlName]="'visitEndDate'" readonly="readonly">
+														<input matInput
+															   [owlDateTime]="visitEndDatePicker"
+															   [owlDateTimeTrigger]="visitEndDatePicker"
+															   [selectMode]="'single'"
+															   #visitEndDate
+															   placeholder=""
+															   [formControlName]="'visitEndDate'"
+															   readonly="readonly"
+															   useValueAsDate>
 														<owl-date-time #visitEndDatePicker></owl-date-time>
 														<button mat-button *ngIf="visitEndDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitEndDate').setValue('')">
 															<mat-icon>close</mat-icon>
 														</button>
 														<mat-error>
-															Visit End Date
-															<strong>required</strong>
+															<span *ngIf="this.bookingForm.get('visitEndDate').errors?.required">
+																Visit End Date
+																<strong>required</strong>
+															</span>
 														</mat-error>
-														<!--<mat-hint align="start">
-														Please enter
-														<strong>Visit End Date</strong>
-													</mat-hint>-->
+
 													</mat-form-field>
+													<p *ngIf="this.bookingForm.get('visitEndDate').errors?.required== null &&  this.bookingForm.hasError('dates')" class="mat-error">
+														Visit End Date
+														<strong>should be greater than Visit Start Date</strong>
+													</p>
 												</div>
 											</div>
 										</div>
@@ -241,19 +253,16 @@
 														{{ val.value }}
 													</mat-option>
 												</mat-select>
-												<mat-hint align="start">
-													Select a <strong> Type of Building </strong>
-												</mat-hint>
 												<mat-error>
 													Type of Building is
 													<strong>required</strong>
 												</mat-error>
+												<mat-hint align="start">
+													<strong> Type of Building </strong>
+												</mat-hint>
 											</mat-form-field>
 										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<p class="m-0">&nbsp;</p>
-											<label class="font-500">Patient Age (years) : </label> {{this.bookingForm.get('patientAge').value}}
-										</div>
+										<div class="col-md-12"></div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<label>Cycle: </label> {{booking.cycle}}
 										</div>
@@ -279,7 +288,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong class="required-star">Contact Phone</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -295,7 +303,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Phone 2</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -311,33 +318,38 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Phone 2</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Email" #email formControlName="email">
-												<button mat-button *ngIf="email.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('email').setValue('')">
-													<mat-icon>close</mat-icon>
-												</button>
-												<mat-error *ngIf="bookingForm.get('email').errors?.required">
-													Email
-													<strong>required</strong>
-												</mat-error>
-												<mat-error *ngIf="bookingForm.get('email').errors?.email">
-													Invalid
-													<strong>Email</strong>
-												</mat-error>
-												<mat-hint align="start">
-													Please enter
-													<strong class="required-star">Email</strong>
-												</mat-hint>
-											</mat-form-field>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">											
+											<div class="row">
+												<div class="col-md-8">
+													<mat-form-field class="mat-form-field-fluid">
+														<input matInput placeholder="Email" #email formControlName="email">
+														<button mat-button *ngIf="email.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('email').setValue('')">
+															<mat-icon>close</mat-icon>
+														</button>
+														<mat-error *ngIf="bookingForm.get('email').errors?.required">
+															Email
+															<strong>required</strong>
+														</mat-error>
+														<mat-error *ngIf="bookingForm.get('email').errors?.email">
+															Invalid
+															<strong>Email</strong>
+														</mat-error>
+														<mat-hint align="start">
+															<strong class="required-star">Email</strong>
+														</mat-hint>
+													</mat-form-field>
+												</div>
+												<div class="col-md-4">
+													<button class="btn btn-primary btn-sm">Send Email</button>
+												</div>
+											</div>
 										</div>
-										
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+
+										<!--<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput [matDatepicker]="dateOfBirthPicker" #dateOfBirth placeholder="Date of birth" [formControlName]="'dateOfBirth'">
 												<button mat-button *ngIf="dateOfBirth.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('dateOfBirth').setValue('')">
@@ -350,12 +362,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Date of Birth</strong>
 												</mat-hint>
 											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+										</div>-->
+										<!--<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<input type="text" placeholder="Country of birth" aria-label="Number" matInput #countryOfBirthId [matAutocomplete]="countryAuto" [formControlName]="'countryOfBirthId'">
 												<button mat-button *ngIf="countryOfBirthId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('countryOfBirthId').setValue('')">
@@ -368,14 +379,14 @@
 													</mat-option>
 												</mat-autocomplete>
 												<mat-hint align="start">
-													Select a <strong>Country of Birth </strong>
+													<strong>Country of Birth </strong>
 												</mat-hint>
 												<mat-error>
 													Country of Birth is
 													<strong>required</strong>
 												</mat-error>
 											</mat-form-field>
-										</div>
+										</div>-->
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<input type="text" placeholder="Visit language" aria-label="Number" matInput #visitLanguageId [matAutocomplete]="visitLanguageAuto" [formControlName]="'visitLanguageId'">
@@ -389,7 +400,7 @@
 													</mat-option>
 												</mat-autocomplete>
 												<mat-hint align="start">
-													Select a <strong  class="required-star">Visit Language </strong>
+													<strong class="required-star">Visit Language </strong>
 												</mat-hint>
 												<mat-error>
 													Visit Language is
@@ -397,6 +408,11 @@
 												</mat-error>
 											</mat-form-field>
 										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<p class="m-0">&nbsp;</p>
+											<label class="font-500">Patient Age (years) : </label> {{this.bookingForm.get('patientAge').value}}
+										</div>
+
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
@@ -409,7 +425,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Name of Person Requesting Visit</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -422,7 +437,7 @@
 													</mat-option>
 												</mat-select>
 												<mat-hint align="start">
-													Select a <strong> Visit Requesting Person Relationship </strong>
+													<strong> Visit Requesting Person Relationship </strong>
 												</mat-hint>
 												<mat-error>
 													Visit Requesting Person Relationship is
@@ -449,7 +464,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong class="required-star">Visit Street Name</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -465,7 +479,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong class="required-star">Visit Post Code</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -482,13 +495,13 @@
 														{{t.value}}
 													</mat-option>
 												</mat-autocomplete>
-												<mat-hint align="start">
-													Select a <strong>Visit City / Town </strong>
-												</mat-hint>
 												<mat-error>
 													Visit City / Town is
 													<strong>required</strong>
 												</mat-error>
+												<mat-hint align="start">
+													<strong class="required-star">Visit City / Town </strong>
+												</mat-hint>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -503,13 +516,13 @@
 														{{t.value}}
 													</mat-option>
 												</mat-autocomplete>
-												<mat-hint align="start">
-													Select a <strong class="required-star">Visit Country </strong>
-												</mat-hint>
 												<mat-error>
 													Visit Country is
 													<strong>required</strong>
 												</mat-error>
+												<mat-hint align="start">
+													<strong class="required-star">Visit Country </strong>
+												</mat-hint>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -519,13 +532,13 @@
 														{{ val.value }}
 													</mat-option>
 												</mat-select>
-												<mat-hint align="start">
-													Select a <strong>Visit Building Type </strong>
-												</mat-hint>
 												<mat-error>
 													Visit Building Type is
 													<strong>required</strong>
 												</mat-error>
+												<mat-hint align="start">
+													<strong>Visit Building Type </strong>
+												</mat-hint>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -539,7 +552,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Buzzer</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -555,7 +567,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Flat Number</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -571,7 +582,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Floor Number</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -584,7 +594,7 @@
 													</mat-option>
 												</mat-select>
 												<mat-hint align="start">
-													Select a <strong class="required-star"> Visit Venue </strong>
+													<strong class="required-star"> Visit Venue </strong>
 												</mat-hint>
 												<mat-error>
 													Visit Venue is
@@ -603,7 +613,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Venue Detail</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -619,7 +628,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Address Notes</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -643,7 +651,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong class="required-star">Home Street Name</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -660,7 +667,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong class="required-star">Home Post Code</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -677,13 +683,13 @@
 														{{t.value}}
 													</mat-option>
 												</mat-autocomplete>
-												<mat-hint align="start">
-													Select a <strong>Home City/ / Town </strong>
-												</mat-hint>
 												<mat-error>
 													Home City / Town is
 													<strong>required</strong>
 												</mat-error>
+												<mat-hint align="start">
+													<strong class="required-star">Home City/ / Town </strong>
+												</mat-hint>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -699,7 +705,7 @@
 													</mat-option>
 												</mat-autocomplete>
 												<mat-hint align="start">
-													Select a <strong class="required-star">Home Country </strong>
+													<strong class="required-star">Home Country </strong>
 												</mat-hint>
 												<mat-error>
 													Home Country is
@@ -722,13 +728,13 @@
 														{{ val.value }}
 													</mat-option>
 												</mat-select>
-												<mat-hint align="start">
-													Select a <strong> Payment Method </strong>
-												</mat-hint>
 												<mat-error>
 													Payment Method is
 													<strong>required</strong>
 												</mat-error>
+												<mat-hint align="start">
+													<strong> Payment Method </strong>
+												</mat-hint>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -738,13 +744,13 @@
 														{{ val.value }}
 													</mat-option>
 												</mat-select>
-												<mat-hint align="start">
-													Select a <strong class="required-star"> Payment Status </strong>
-												</mat-hint>
 												<mat-error>
 													Payment Status is
 													<strong>required</strong>
 												</mat-error>
+												<mat-hint align="start">
+													<strong class="required-star"> Payment Status </strong>
+												</mat-hint>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -754,7 +760,6 @@
 												<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
 											</mat-radio-group>
 										</div>
-
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
@@ -769,7 +774,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Payment Arrival Date</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -806,7 +810,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>CC Owner Info</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -828,7 +831,7 @@
 											<mat-form-field class="mat-form-field-fluid">
 												<textarea matInput rows="7" placeholder="Notes in payment" formControlName="notesOnPayment"></textarea>
 												<mat-hint align="start">
-													Enter a <strong>Notes in Payment </strong>
+													<strong>Notes in Payment </strong>
 												</mat-hint>
 												<mat-error>
 													Notes in Payment are
@@ -860,6 +863,7 @@
 												<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
 											</mat-radio-group>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div>Mail to Pt.:</div>
 											<mat-radio-group class="example-radio-group" formControlName="mailToPtId">
@@ -867,6 +871,7 @@
 												<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
 											</mat-radio-group>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput placeholder="Feedback from pro." #feedbackFromPro formControlName="feedbackFromPro" maxlength="250">
@@ -878,11 +883,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Feedback From Pro.</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<mat-select [formControlName]="'reportDeliveredId'">
@@ -891,7 +896,7 @@
 													</mat-option>
 												</mat-select>
 												<mat-hint align="start">
-													Select a <strong>Report Delivered Option </strong>
+													<strong>Report Delivered Option </strong>
 												</mat-hint>
 												<mat-error>
 													Report Delivered Option is
@@ -899,6 +904,7 @@
 												</mat-error>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div>Insurance Covered:</div>
 											<mat-radio-group class="example-radio-group" formControlName="insuranceCoverId">
@@ -906,25 +912,10 @@
 												<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
 											</mat-radio-group>
 										</div>
-										<!--<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-										<mat-form-field class="example-full-width">
-											<mat-select [formControlName]="'discountNetworkId'">
-												<mat-option *ngFor="let val of discountNetworkOptions" [value]="val.id">
-													{{ val.value }}
-												</mat-option>
-											</mat-select>
-											<mat-hint align="start">
-												Select a <strong>Discount Network </strong>
-											</mat-hint>
-											<mat-error>
-												Discount Network is
-												<strong>required</strong>
-											</mat-error>
-										</mat-form-field>
-									</div>-->
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput type="number" placeholder="Patient discount" #patientDiscount formControlName="patientDiscount">
+												<input matInput type="number" placeholder="Patient discount" #patientDiscount formControlName="patientDiscount"  (change)="updateAccountings()">
 												<button mat-button *ngIf="patientDiscount.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('patientDiscount').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -933,11 +924,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Patient Discount</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput type="number" placeholder="Pro. discount" #proDiscount formControlName="proDiscount">
@@ -949,11 +940,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Pro. Discount</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<textarea matInput rows="4" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
@@ -965,11 +956,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Invoicing Notes</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput [matDatepicker]="invoiceDueDatePicker" #invoiceDueDate placeholder="Invoice date" [formControlName]="'invoiceDueDate'" readonly="readonly">
@@ -983,14 +974,15 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please select an
 													<strong>Invoice Due Date</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-20-mobile pt-5">
 											<label>Invoice Number: </label> {{booking.invoiceNumber}}
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<mat-select [formControlName]="'addToAccountingId'">
@@ -999,7 +991,7 @@
 													</mat-option>
 												</mat-select>
 												<mat-hint align="start">
-													Select a <strong>Added to Accounting Option </strong>
+													<strong>Added to Accounting Option </strong>
 												</mat-hint>
 												<mat-error>
 													Added to Accounting Option is
@@ -1027,11 +1019,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Prescription Date</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<mat-select [formControlName]="'labId'">
@@ -1044,11 +1036,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Lab Info</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput type="number" placeholder="Vials info" #vials formControlName="vials">
@@ -1060,11 +1052,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Vials Info</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput type="number" placeholder="Prescription number" #repeadPrescriptionNumber formControlName="repeadPrescriptionNumber">
@@ -1076,11 +1068,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Prescription Number</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<textarea matInput rows="4" placeholder="Notes" #notes formControlName="notes"></textarea>
@@ -1092,11 +1084,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Notes</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput type="number" placeholder="Private fee" #privateFee formControlName="privateFee">
@@ -1108,11 +1100,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Private Fee</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput type="number" placeholder="Ticket fee" #ticketFee formControlName="ticketFee">
@@ -1124,11 +1116,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Ticket Fee</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput type="text" placeholder="Exemption code" #excemptionCode formControlName="excemptionCode">
@@ -1140,7 +1132,6 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Exemption Code</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -1160,6 +1151,7 @@
 												<h5>Visit Details</h5>
 											</div>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<textarea matInput rows="4" placeholder="Details" #details formControlName="details"></textarea>
@@ -1171,11 +1163,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Details</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<textarea matInput rows="4" placeholder="Diagnosis info" #diagnosis formControlName="diagnosis"></textarea>
@@ -1187,11 +1179,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong>Diagnosis Info</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<textarea matInput rows="4" placeholder="Reason for visit" #reasonForVisit formControlName="reasonForVisit"></textarea>
@@ -1203,13 +1195,11 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													Please enter
 													<strong class="required-star">Reason For Visit</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
 									</div>
-
 
 									<div class="row">
 										<div class="col-md-12 heading-wrapper mt-4">
@@ -1232,7 +1222,7 @@
 													</mat-option>
 												</mat-autocomplete>
 												<mat-hint align="start">
-													Select a <strong class="required-star">Service </strong>
+													<strong class="required-star">Service </strong>
 												</mat-hint>
 												<mat-error>
 													Service is
@@ -1240,6 +1230,7 @@
 												</mat-error>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<input type="text" placeholder="Professional" aria-label="Number" matInput #professionalId [matAutocomplete]="professionalAuto" [formControlName]="'professionalId'">
@@ -1247,13 +1238,14 @@
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-autocomplete autoActiveFirstOption #professionalAuto="matAutocomplete"
-																  [displayWith]="displayFn">
+																  [displayWith]="displayFn"
+																  (closed)="professionalDrpClosed()">
 													<mat-option *ngFor="let t of filteredProfessionals | async" [value]="t">
 														{{t.value}}
 													</mat-option>
 												</mat-autocomplete>
 												<mat-hint align="start">
-													Select a <strong class="required-star">Professional </strong>
+													<strong class="required-star">Professional </strong>
 												</mat-hint>
 												<mat-error>
 													Professional is
@@ -1261,43 +1253,50 @@
 												</mat-error>
 											</mat-form-field>
 										</div>
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<mat-form-field>
-												<input type="number" matInput placeholder="PT Fee" #ptFee formControlName="ptFee" min="0" (change)="updateAccountings()">
-												<button mat-button *ngIf="ptFee.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('ptFee').setValue('')">
-													<mat-icon>close</mat-icon>
-												</button>
-												<mat-hint align="start">
-													<strong class="required-star">PT Fee</strong>
-												</mat-hint>
-												<mat-error>
-													PT Fee
-													<strong>required</strong>
-												</mat-error>
-											</mat-form-field>
+											<div class="row">
+												<div class="col-md-3">
+													<mat-radio-group class="example-radio-group" formControlName="isPtFeeA1" (change)="updateAccountings()">
+														<mat-radio-button class="example-radio-button" value="1">A1</mat-radio-button>
+														<mat-radio-button class="example-radio-button" value="0">A2</mat-radio-button>
+													</mat-radio-group>
+												</div>
+												<div class="col-md-9">
+													<mat-form-field *ngIf="bookingForm.get('isPtFeeA1') != null && bookingForm.get('isPtFeeA1').value === '1'">
+														<input type="number" matInput placeholder="PT Fee" #ptFeeA1 formControlName="ptFeeA1" min="0" (change)="updateAccountings()">
+														<button mat-button *ngIf="ptFeeA1.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('ptFeeA1').setValue('')">
+															<mat-icon>close</mat-icon>
+														</button>
+														<mat-hint align="start">
+															<strong class="required-star">PT Fee A1</strong>
+														</mat-hint>
+														<mat-error>
+															PT Fee A1
+															<strong>required</strong>
+														</mat-error>
+													</mat-form-field>
+
+													<mat-form-field *ngIf="bookingForm.get('isPtFeeA1') != null && bookingForm.get('isPtFeeA1').value === '0'">
+														<input type="number" matInput placeholder="PT Fee" #ptFeeA2 formControlName="ptFeeA2" min="0" (change)="updateAccountings()">
+														<button mat-button *ngIf="ptFeeA2.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('ptFeeA2').setValue('')">
+															<mat-icon>close</mat-icon>
+														</button>
+														<mat-hint align="start">
+															<strong class="required-star">PT Fee A2</strong>
+														</mat-hint>
+														<mat-error>
+															PT Fee A2
+															<strong>required</strong>
+														</mat-error>
+													</mat-form-field>
+												</div>
+											</div>
 										</div>
 
-
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3" [hidden]="!timedService">
 											<mat-form-field>
-												<input type="number" matInput placeholder="PRO Fee" #proFee formControlName="proFee" min="0">
-												<button mat-button *ngIf="proFee.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('proFee').setValue('')">
-													<mat-icon>close</mat-icon>
-												</button>
-												<mat-hint align="start">
-													<strong class="required-star">PRO Fee</strong>
-												</mat-hint>
-												<mat-error>
-													PRO Fee
-													<strong>required</strong>
-												</mat-error>
-											</mat-form-field>
-										</div>
-
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<mat-form-field>
-												<input type="number" matInput placeholder="Quantity (hours)" #quantityHours formControlName="quantityHours" min="0" (change)="updateAccountings()">
+												<input type="number" matInput placeholder="Quantity (hours)" #quantityHours [formControlName]="'quantityHours'" min="0" max="50" (change)="updateAccountings()">
 												<button mat-button *ngIf="quantityHours.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('quantityHours').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -1333,8 +1332,6 @@
 							</div>
 						</form>
 					</div>
-
-
 				</kt-portlet-body>
 			</ng-template>
 		</mat-tab>

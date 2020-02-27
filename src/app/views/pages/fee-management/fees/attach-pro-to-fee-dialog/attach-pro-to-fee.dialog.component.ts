@@ -118,11 +118,6 @@ export class AttachProToFeeDialogComponent implements OnInit, OnDestroy {
 				this.cdr.detectChanges();
 			});
 
-
-
-
-
-
 		} else {
 			var ids = this.selection.selected.map(x => x.id);
 			this.viewLoading = true;
@@ -170,7 +165,8 @@ export class AttachProToFeeDialogComponent implements OnInit, OnDestroy {
 
 	// PRO Fees Filter
 	loadProfessionalsForFilter(servieId: number) {
-		this.feesService.getProfessionalForFeeForFilter(servieId, this.data.feeId, this.data.feeType).subscribe(res => {
+		this.viewLoading = true;
+		this.feesService.getProfessionalForFeeForFilter(servieId, this.data.feeId, this.data.feeType).toPromise().then(res => {
 			this.professionalsForFitlers = res.data;
 
 			this.filteredProfessionals = this.professionaControl.valueChanges
@@ -178,6 +174,10 @@ export class AttachProToFeeDialogComponent implements OnInit, OnDestroy {
 					startWith(''),
 					map(value => this._filterPROFees(value))
 				);
+		}).catch(() => {
+			this.viewLoading = false;
+		}).finally(() => {
+			this.viewLoading = false;
 		});
 	}
 	private _filterPROFees(value: string): FilterModel[] {

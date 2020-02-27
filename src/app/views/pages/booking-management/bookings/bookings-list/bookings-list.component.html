@@ -36,7 +36,7 @@
 						<mat-form-field>
 							<input matInput #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
-								<strong>Search in all fields</strong>
+								Search in all <strong>fields</strong>
 							</mat-hint>
 						</mat-form-field>
 					</div>
@@ -96,17 +96,17 @@
 				</ng-container>
 
 				<ng-container matColumnDef="name">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Booking <br/> Name</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.name}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="customer">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Customer Name</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Customer <br/> Name</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.customer}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="invoicingEntity">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Invoicing Entity</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Invoicing <br /> Entity</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.invoicingEntity}}</mat-cell>
 				</ng-container>
 
@@ -121,27 +121,27 @@
 				</ng-container>
 
 				<ng-container matColumnDef="bookingDate">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Booking Date</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Booking <br /> Date</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.createDate  | date: 'yyyy-MM-dd'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="visitDate">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Date of Visit</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Date of <br /> Visit</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.visitDate  | date: 'yyyy-MM-dd'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="visitTime">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Time of Visit</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Time of <br /> Visit</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.visitDate  | date: 'h:mm:ss a'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="paymentMethod">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Payment Method</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Payment <br /> Method</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.paymentMethod}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="ptFee">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>PT Fee</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>PT <br /> Fee</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.ptFee}}</mat-cell>
 				</ng-container>
 

@@ -68,7 +68,7 @@ export class BookingToInvoiceDialog implements OnInit {
 					this.dialogRef.close(res.data);
 				} else {
 					this.hasFormErrors = true;
-					this.operationErrors = res.errors.join('<br/>');
+					this.operationErrors = res.errors[0];
 				}
 			}).catch(() => {
 				this.spinner.hide();

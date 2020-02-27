@@ -53,20 +53,11 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	availableYears: number[] = [];
 	filteredColors: Observable<string[]>;
 	filteredManufactures: Observable<string[]>;
-	// Private password
 	private componentSubscriptions: Subscription;
-	// sticky portlet header margin
 	private headerMargin: number;
 
 	titlesForFilter: FilterModel[] = [];
 	filteredTitles: Observable<FilterModel[]>;
-
-	fieldsForFilter: FilterModel[] = [];
-	filteredFields: Observable<FilterModel[]>;
-
-	subCategoriesForFilter: FilterModel[] = [];
-	filteredSubCategories: Observable<FilterModel[]>;
-
 
 	accCodesForFilter: FilterModel[] = [];
 
@@ -92,15 +83,25 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	documentListSentOptionsForFilter: FilterModel[];
 	contractStatusOptionsForFilter: FilterModel[];
 
+	proTaxCodesForFilter: FilterModel[] = [];
+
 	languagesForFilter: FilterModel[] = [];
 	filteredLanguages: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
 
-	public langMultiCtrl: FormControl = new FormControl();
 	public langMultiFilterCtrl: FormControl = new FormControl();
 	public filteredLangsMulti: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
-	@ViewChild('multiSelect', { static: true }) multiSelect: MatSelect;
-	protected _onDestroy = new Subject<void>();
 
+	fieldsForFilter: FilterModel[] = [];
+	filteredFields: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
+	public fieldMultiFilterCtrl: FormControl = new FormControl();
+	public filteredFieldsMulti: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
+
+	subCatsForFilter: FilterModel[] = [];
+	filteredSubCats: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
+	public subCatsMultiFilterCtrl: FormControl = new FormControl();
+	public filteredSubCatsMulti: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
+
+	protected _onDestroy = new Subject<void>();
 
 	constructor(
 		private store: Store<AppState>,
@@ -173,7 +174,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		this.spinner.show();
 		this.professionalService.getProfessionalById(professionalId).toPromise().then(res => {
 			this.loadProfessional((res as unknown as ApiResponse).data, true);
-		}).finally(() => {
+		}).catch(() => {
 			this.spinner.hide();
 		});
 	}
@@ -211,14 +212,14 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			name: [this.professional.name, [Validators.required]],
 			email: [this.professional.email, [Validators.required, Validators.email]],
 			email2: [this.professional.email2, [Validators.email]],
-			fieldId: [this.professional.fieldId, [Validators.required]],
-			subCategoryId: [this.professional.subCategoryId, [Validators.required]],
 			dateOfBirth: [this.professional.dateOfBirth, [Validators.required]],
 			mobilePhone: [this.professional.mobilePhone, [Validators.required]],
 			telephone: [this.professional.telephone, [Validators.required]],
 			homePhone: [this.professional.homePhone],
 			clinicPhoneNumber: [this.professional.clinicPhoneNumber],
-			languages: [this.professional.languages, [Validators.required]],
+			professionalLanguages: [this.professional.professionalLanguages, [Validators.required]],
+			professionalFields: [this.professional.professionalFields, [Validators.required]],
+			professionalSubCategories: [this.professional.professionalSubCategories, [Validators.required]],
 			website: [this.professional.website],
 			proOnlineCV: [this.professional.proOnlineCV, [Validators.required]],
 			fax: [this.professional.fax],
@@ -268,27 +269,24 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			applicationMeansId: [this.professional.applicationMeansId, Validators.required],
 			colleagueReferring: [this.professional.colleagueReferring],
 
-
 			// HR Status
 			workPlace: [this.professional.workPlace],
 			insuranceExpiryDate: [this.professional.insuranceExpiryDate],
 			contractStatusId: [this.professional.contractStatusId],
 			documentListSentId: [this.professional.documentListSentId, Validators.required],
 			calendarActivation: [this.professional.calendarActivation.toString(), Validators.required],
-			protaxCode: [this.professional.protaxCode],
-
+			proTaxCodeId: [this.professional.proTaxCodeId]
 		});
-
 	}
 
 	loadResources() {
 		this.loadLanguagesForFilter();
+		this.loadFieldsForFilter();
+		this.loadSubCatsForFilter();
 		this.loadCountiesForFilter();
 		this.loadCitiesForFilter();
 		this.loadClinicCitiesForFilter();
-		this.loadFieldsForFilter();
-		this.loadSubCategoriesForFilter();
-
+		
 		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
 			this.titlesForFilter = data.map((el) => { return { id: el.id, value: el.titles }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 			if (this.professional.titleId) {
@@ -343,6 +341,19 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 				if (obj)
 					this.professionalForm.get('documentListSentId').setValue(obj.id);
 			}
+
+			// pro tax codes for filter
+			this.proTaxCodesForFilter = data.map((el) => { return { id: el.id, value: el.proTaxCodes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.professional.proTaxCodeId) {
+				var obj = data.find((e) => { return e.id == this.professional.proTaxCodeId });
+				if (obj)
+					this.professionalForm.get('proTaxCodeId').setValue(obj.id);
+			}
+
+		}).catch(() => {
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
 		});
 	}
 
@@ -413,18 +424,15 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		_professional.name = controls.name.value;
 		_professional.email = controls.email.value;
 		_professional.email2 = controls.email2.value;
-
-		if (controls.fieldId.value)
-			_professional.fieldId = controls.fieldId.value.id;
-		if (controls.subCategoryId.value)
-			_professional.subCategoryId = controls.subCategoryId.value.id;
-
+		
 		_professional.dateOfBirth = controls.dateOfBirth.value;
 		_professional.mobilePhone = controls.mobilePhone.value;
 		_professional.telephone = controls.telephone.value;
 		_professional.homePhone = controls.homePhone.value;
 		_professional.clinicPhoneNumber = controls.clinicPhoneNumber.value;
-		_professional.languages = controls.languages.value;
+		_professional.professionalLanguages = controls.professionalLanguages.value;
+		_professional.professionalFields = controls.professionalFields.value;
+		_professional.professionalSubCategories = controls.professionalSubCategories.value;
 		_professional.website = controls.website.value;
 		_professional.proOnlineCV = controls.proOnlineCV.value;
 		_professional.fax = controls.fax.value;
@@ -465,7 +473,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		_professional.contractStatusId = +controls.contractStatusId.value;
 		_professional.documentListSentId = controls.documentListSentId.value;
 		_professional.calendarActivation = +controls.calendarActivation.value;
-		_professional.protaxCode = controls.protaxCode.value;
+		_professional.proTaxCodeId = controls.proTaxCodeId.value;
 
 		return _professional;
 	}
@@ -581,7 +589,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			this.filteredLanguages.next(this.languagesForFilter.slice());
 
 			if (this.professional.id) {
-				var langs = this.professional.languages as unknown as FilterModel[];
+				var langs = this.professional.professionalLanguages as unknown as FilterModel[];
 				var select: FilterModel[] = [];
 				langs && langs.forEach((x) => {
 					var findIndex = this.languagesForFilter.findIndex((el) => { return el.id == x.id });
@@ -589,9 +597,8 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 						select.push(this.languagesForFilter[findIndex]);
 
 				});
-				this.professionalForm.patchValue({ 'languages': select });
+				this.professionalForm.patchValue({ 'professionalLanguages': select });
 			}
-
 
 			this.langMultiFilterCtrl.valueChanges
 				.pipe(takeUntil(this._onDestroy))
@@ -618,8 +625,102 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			this.languagesForFilter.filter(bank => bank.value.toLowerCase().indexOf(search) > -1)
 		);
 	}
-
 	// end languages fitler
+
+	// Fields For Filter
+	loadFieldsForFilter() {
+		this.staticService.getFieldsForFilter().subscribe(res => {
+			this.fieldsForFilter = res.data;
+			this.filteredFields.next(this.fieldsForFilter.slice());
+
+			if (this.professional.id) {
+				var fields = this.professional.professionalFields as unknown as FilterModel[];
+				var select: FilterModel[] = [];
+				fields && fields.forEach((x) => {
+					var findIndex = this.fieldsForFilter.findIndex((el) => { return el.id == x.id });
+					if (findIndex > -1)
+						select.push(this.fieldsForFilter[findIndex]);
+
+				});
+				this.professionalForm.patchValue({ 'professionalFields': select });
+			}
+
+			this.fieldMultiFilterCtrl.valueChanges
+				.pipe(takeUntil(this._onDestroy))
+				.subscribe(() => {
+					this.filterFieldsMulti();
+				});
+		});
+	}
+
+	private filterFieldsMulti() {
+		if (!this.fieldsForFilter) {
+			return;
+		}
+		// get the search keyword
+		let search = this.fieldMultiFilterCtrl.value;
+		if (!search) {
+			this.filteredFields.next(this.fieldsForFilter.slice());
+			return;
+		} else {
+			search = search.toLowerCase();
+		}
+		// filter the banks
+		this.filteredFields.next(
+			this.fieldsForFilter.filter(elem => elem.value.toLowerCase().indexOf(search) > -1)
+		);
+	}
+	// end fields fitler
+	// SubCats For Filter
+	loadSubCatsForFilter() {
+		this.staticService.getCategoriesForFilter().subscribe(res => {
+			this.subCatsForFilter = res.data;
+			this.filteredSubCats.next(this.subCatsForFilter.slice());
+
+			if (this.professional.id) {
+				var cats = this.professional.professionalSubCategories as unknown as FilterModel[];
+				var select: FilterModel[] = [];
+				cats && cats.forEach((x) => {
+					var findIndex = this.subCatsForFilter.findIndex((el) => { return el.id == x.id });
+					if (findIndex > -1)
+						select.push(this.subCatsForFilter[findIndex]);
+
+				});
+				this.professionalForm.patchValue({ 'professionalSubCategories': select });
+			}
+
+			this.subCatsMultiFilterCtrl.valueChanges
+				.pipe(takeUntil(this._onDestroy))
+				.subscribe(() => {
+					this.filterSubCatsMulti();
+				});
+		});
+	}
+
+	private filterSubCatsMulti() {
+		if (!this.fieldsForFilter) {
+			return;
+		}
+		// get the search keyword
+		let search = this.subCatsMultiFilterCtrl.value;
+		if (!search) {
+			this.filteredSubCats.next(this.fieldsForFilter.slice());
+			return;
+		} else {
+			search = search.toLowerCase();
+		}
+		// filter the banks
+		this.filteredSubCats.next(
+			this.subCatsForFilter.filter(elem => elem.value.toLowerCase().indexOf(search) > -1)
+		);
+	}
+	// end fields fitler
+
+
+
+
+
+
 
 	// cities
 	loadCitiesForFilter() {
@@ -696,61 +797,6 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		return this.countriesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
 	}
 	// end account code id filter
-
-	// fiels for filter
-
-	loadFieldsForFilter() {
-		this.staticService.getFieldsForFilter().subscribe(res => {
-			this.fieldsForFilter = res.data;
-
-			this.filteredFields = this.professionalForm.get('fieldId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterFields(value))
-				);
-			if (this.professional.fieldId > 0) {
-				var elem = this.fieldsForFilter.find(x => x.id == this.professional.fieldId);
-				if (elem) {
-					this.professionalForm.patchValue({ 'fieldId': { id: elem.id, value: elem.value } });
-				}
-			}
-		});
-
-	}
-
-	private _filterFields(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.fieldsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end fields for filter
-
-	// subcategories for filter
-
-	loadSubCategoriesForFilter() {
-		this.staticService.getCategoriesForFilter().subscribe(res => {
-			this.subCategoriesForFilter = res.data;
-
-			this.filteredSubCategories = this.professionalForm.get('subCategoryId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterSubCategories(value))
-				);
-			if (this.professional.subCategoryId > 0) {
-				var elem = this.subCategoriesForFilter.find(x => x.id == this.professional.subCategoryId);
-				if (elem) {
-					this.professionalForm.patchValue({ 'subCategoryId': { id: elem.id, value: elem.value } });
-				}
-			}
-		});
-
-	}
-
-	private _filterSubCategories(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.subCategoriesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end fields for filter
-
 
 	displayFn(option: FilterModel): string {
 		if (option)

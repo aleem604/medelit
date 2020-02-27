@@ -81,9 +81,6 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 
 		}).catch(() => {
 			this.viewLoading = false;
-		}).finally(() => {
-			this.viewLoading = false;
-			this.detectChanges();
 		});
 	}
 
@@ -199,8 +196,8 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 
 	// PT Fees Filter
 	loadPTFeesForFilter() {
-		
-		this.professionalService.getFeesForFilter(this.data.ptFeeRowId, this.data.proFeeRowId).subscribe(res => {
+		this.viewLoading = true;
+		this.professionalService.getFeesForFilter(this.data.ptFeeRowId, this.data.proFeeRowId).toPromise().then(res => {
 			this.ptFeesForFilter = res.data.pt;
 			this.proFeesForFilter = res.data.pro;
 
@@ -232,7 +229,11 @@ export class AddFeeToServiceDialogComponent implements OnInit, OnDestroy {
 				}
 			}
 
-
+		}).catch(() => {
+			this.viewLoading = false;
+		}).finally(() => {
+			this.viewLoading = false;
+			this.detectChanges();
 		});
 	}
 	private _filterPTFees(value: string): FilterModel[] {

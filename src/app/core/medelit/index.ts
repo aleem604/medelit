@@ -21,7 +21,8 @@ export {
 	InvoiceConnectedBookings,
 	InvoiceConnectedCustomers,
 	InvoiceConnectedInvoiceEntities,
-	InvoiceConnectedProfessionals
+	InvoiceConnectedProfessionals,
+	BookingsToAddToInvoiceDialogModel
 } from './_models/invoice.model';
 export {
 	InvoiceEntityModel,

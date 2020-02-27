@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 // RxJS
-import { filter, mergeMap, tap, withLatestFrom, map, catchError } from 'rxjs/operators';
+import { filter, mergeMap, tap, withLatestFrom, map, catchError, retry, delay } from 'rxjs/operators';
 import { defer, Observable, of, pipe } from 'rxjs';
 // NGRX
 import { Actions, Effect, ofType } from '@ngrx/effects';
@@ -51,10 +51,8 @@ export class AuthEffects {
 			withLatestFrom(this.store.pipe(select(isUserLoaded))),
 			filter(([action, _isUserLoaded]) => !_isUserLoaded),
 			mergeMap(([action, _isUserLoaded]) => this.auth.getUserByToken()),
-			pipe(catchError((err: HttpErrorResponse) => {
-				if (err.status === 401) {
-					this.store.dispatch(new Logout());
-				}
+			pipe(retry(4), delay(300), catchError((err: HttpErrorResponse) => {
+				this.store.dispatch(new Logout());
 				return of(null);
 			})),
 			tap(_user => {

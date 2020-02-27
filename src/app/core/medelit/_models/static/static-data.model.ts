@@ -34,4 +34,5 @@ export class MedelitStaticData {
 	vatUnit: string;
 	visitVenues: string;
 	addToAccountOptions: string;
+	proTaxCodes: string;
 }

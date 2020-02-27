@@ -60,7 +60,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Pick title" aria-label="Number" matInput [matAutocomplete]="titleAuto" #titleId [formControlName]="'titleId'">
+												<input type="text" placeholder="Title" aria-label="Number" matInput [matAutocomplete]="titleAuto" #titleId [formControlName]="'titleId'">
 												<button mat-button *ngIf="titleId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('titleId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -81,7 +81,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter surname" formControlName="surName" #surName>
+												<input matInput placeholder="Surname" formControlName="surName" #surName>
 												<button mat-button *ngIf="surName.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('surName').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -96,7 +96,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter name" formControlName="name" #name>
+												<input matInput placeholder="Name" formControlName="name" #name>
 												<button mat-button *ngIf="name.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('name').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -118,7 +118,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Pick a invoice entity" aria-label="Number" #invoiceEntityId matInput [matAutocomplete]="ieAuto" [formControlName]="'invoiceEntityId'">
+												<input type="text" placeholder="Invoice entity" aria-label="Number" #invoiceEntityId matInput [matAutocomplete]="ieAuto" [formControlName]="'invoiceEntityId'">
 												<button mat-button *ngIf="invoiceEntityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('invoiceEntityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -148,7 +148,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter main phone" #mainPhone formControlName="mainPhone">
+												<input matInput placeholder="Main phone" #mainPhone formControlName="mainPhone">
 												<button mat-button *ngIf="mainPhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('mainPhone').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -163,7 +163,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter main phone owner" #mainPhoneOwner formControlName="mainPhoneOwner">
+												<input matInput placeholder="Main phone owner" #mainPhoneOwner formControlName="mainPhoneOwner">
 												<button mat-button *ngIf="mainPhoneOwner.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('mainPhoneOwner').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -178,7 +178,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter contact phone" #contactPhone formControlName="contactPhone">
+												<input matInput placeholder="Contact phone" #contactPhone formControlName="contactPhone">
 												<button mat-button *ngIf="contactPhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('contactPhone').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -194,7 +194,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter phone 2" #mainPhoneOwner formControlName="phone2">
+												<input matInput placeholder="Phone 2" #mainPhoneOwner formControlName="phone2">
 												<button mat-button *ngIf="mainPhoneOwner.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('mainPhoneOwner').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -209,7 +209,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter phone 2 owner" #phone2Owner formControlName="phone2Owner">
+												<input matInput placeholder="Phone 2 owner" #phone2Owner formControlName="phone2Owner">
 												<button mat-button *ngIf="phone2Owner.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('phone2Owner').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -224,7 +224,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter phone 3" #phone3 formControlName="phone3">
+												<input matInput placeholder="Phone 3" #phone3 formControlName="phone3">
 												<button mat-button *ngIf="phone3.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('phone3').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -239,7 +239,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter phone 3 owner" #phone3Owner formControlName="phone3Owner">
+												<input matInput placeholder="Phone 3 owner" #phone3Owner formControlName="phone3Owner">
 												<button mat-button *ngIf="phone3Owner.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('phone3Owner').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -252,47 +252,62 @@
 												</mat-hint>
 											</mat-form-field>
 										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">										
+											<div class="row">
+												<div class="col-md-8">
+													<mat-form-field class="mat-form-field-fluid">
+														<input matInput placeholder="Email" #email formControlName="email">
+														<button mat-button *ngIf="email.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('email').setValue('')">
+															<mat-icon>close</mat-icon>
+														</button>
+														<mat-error *ngIf="customerForm.get('email').errors?.required">
+															Email
+															<strong>required</strong>
+														</mat-error>
+														<mat-error *ngIf="customerForm.get('email').errors?.email">
+															Invalid
+															<strong>Email</strong>
+														</mat-error>
+														<mat-hint align="start">
+															<strong class="required-star">Email</strong>
+														</mat-hint>
+													</mat-form-field>
+												</div>
+												<div class="col-md-4">
+													<button class="btn btn-primary btn-sm">Send Email</button>
+												</div>
+											</div>
+										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter email" #email formControlName="email">
-												<button mat-button *ngIf="email.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('email').setValue('')">
-													<mat-icon>close</mat-icon>
-												</button>
-												<mat-error *ngIf="customerForm.get('email').errors?.required">
-													Email
-													<strong>required</strong>
-												</mat-error>
-												<mat-error *ngIf="customerForm.get('email').errors?.email">
-													Invalid
-													<strong>Email</strong>
-												</mat-error>
-												<mat-hint align="start">
-													<strong class="required-star">Email</strong>
-												</mat-hint>
-											</mat-form-field>
+										
+											<div class="row">
+												<div class="col-md-8">
+													<mat-form-field class="mat-form-field-fluid">
+														<input matInput placeholder="Email" #email2 formControlName="email2">
+														<button mat-button *ngIf="email2.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('email2').setValue('')">
+															<mat-icon>close</mat-icon>
+														</button>
+														<mat-error *ngIf="customerForm.get('email2').errors?.required">
+															Email 2 is
+															<strong>required</strong>
+														</mat-error>
+														<mat-error *ngIf="customerForm.get('email2').errors?.email">
+															Invalid
+															<strong>Email</strong>
+														</mat-error>
+														<mat-hint align="start">
+															<strong>Email 2</strong>
+														</mat-hint>
+													</mat-form-field>
+												</div>
+												<div class="col-md-4">
+													<button class="btn btn-primary btn-sm">Send Email</button>
+												</div>
+											</div>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter email" #email2 formControlName="email2">
-												<button mat-button *ngIf="email2.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('email2').setValue('')">
-													<mat-icon>close</mat-icon>
-												</button>
-												<mat-error *ngIf="customerForm.get('email2').errors?.required">
-													Email 2 is
-													<strong>required</strong>
-												</mat-error>
-												<mat-error *ngIf="customerForm.get('email2').errors?.email">
-													Invalid
-													<strong>Email</strong>
-												</mat-error>
-												<mat-hint align="start">
-													<strong>Email 2</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter fax" #fax formControlName="fax">
+												<input matInput placeholder="Fax" #fax formControlName="fax">
 												<button mat-button *ngIf="fax.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('fax').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -308,7 +323,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput [matDatepicker]="dateOfBirthPicker" #dateOfBirth placeholder="Choose date of birth" [formControlName]="'dateOfBirth'">
+												<input matInput [matDatepicker]="dateOfBirthPicker" #dateOfBirth placeholder="Date of birth" [formControlName]="'dateOfBirth'">
 												<button mat-button *ngIf="dateOfBirth.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('dateOfBirth').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -326,7 +341,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Pick country of birth" aria-label="Number" matInput #countryOfBirthId [matAutocomplete]="countryOfBirthAuto" [formControlName]="'countryOfBirthId'">
+												<input type="text" placeholder="Country of birth" aria-label="Number" matInput #countryOfBirthId [matAutocomplete]="countryOfBirthAuto" [formControlName]="'countryOfBirthId'">
 												<button mat-button *ngIf="countryOfBirthId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('countryOfBirthId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -348,7 +363,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Pick language" aria-label="Number" matInput #languageId [matAutocomplete]="languageAuto" [formControlName]="'languageId'">
+												<input type="text" placeholder="Language" aria-label="Number" matInput #languageId [matAutocomplete]="languageAuto" [formControlName]="'languageId'">
 												<button mat-button *ngIf="languageId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('languageId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -370,7 +385,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Name of person requesting visit" #visitRequestingPerson formControlName="visitRequestingPerson">
+												<input matInput placeholder="Name of person requesting visit" #visitRequestingPerson formControlName="visitRequestingPerson">
 												<button mat-button *ngIf="visitRequestingPerson.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('visitRequestingPerson').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -385,7 +400,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Pick Requesting Person Relationship" aria-label="Number" #visitRequestingPersonRelationId matInput [matAutocomplete]="relationshipAuto" [formControlName]="'visitRequestingPersonRelationId'">
+												<input type="text" placeholder="Requesting person relationship" aria-label="Number" #visitRequestingPersonRelationId matInput [matAutocomplete]="relationshipAuto" [formControlName]="'visitRequestingPersonRelationId'">
 												<button mat-button *ngIf="visitRequestingPersonRelationId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('visitRequestingPersonRelationId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -406,7 +421,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter GP" #gpCode formControlName="gpCode">
+												<input matInput placeholder="GP code" #gpCode formControlName="gpCode">
 												<button mat-button *ngIf="gpCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('gpCode').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -419,40 +434,40 @@
 												</mat-hint>
 											</mat-form-field>
 										</div>
-									</div>
-									<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-										<mat-form-field class="example-full-width">
-											<mat-select [formControlName]="'leadSourceId'">
-												<mat-option *ngFor="let val of leadSourceOptions" [value]="val.id">
-													{{ val.value }}
-												</mat-option>
-											</mat-select>
-											<mat-error>
-												Lead Source is
-												<strong>required</strong>
-											</mat-error>
-											<mat-hint align="start">
-												Select a <strong class="required-star">Lead Source</strong>
-											</mat-hint>
-										</mat-form-field>
-									</div>
-									<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-										<mat-form-field class="example-full-width">
-											<mat-select [formControlName]="'contactMethodId'">
-												<mat-option *ngFor="let val of contactMethodOptions" [value]="val.id">
-													{{ val.value }}
-												</mat-option>
-											</mat-select>
-											<mat-error>
-												Contact Method is
-												<strong>required</strong>
-											</mat-error>
-											<mat-hint align="start">
-												<strong class="required-star">Contact Method</strong>
-											</mat-hint>
-										</mat-form-field>
-									</div>
 
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="example-full-width">
+												<mat-select [formControlName]="'leadSourceId'">
+													<mat-option *ngFor="let val of leadSourceOptions" [value]="val.id">
+														{{ val.value }}
+													</mat-option>
+												</mat-select>
+												<mat-error>
+													Lead Source is
+													<strong>required</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong class="required-star">Lead Source</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="example-full-width">
+												<mat-select [formControlName]="'contactMethodId'">
+													<mat-option *ngFor="let val of contactMethodOptions" [value]="val.id">
+														{{ val.value }}
+													</mat-option>
+												</mat-select>
+												<mat-error>
+													Contact Method is
+													<strong>required</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong class="required-star">Contact Method</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+									</div>
 									<div class="row">
 										<div class="col-md-12 heading-wrapper mt-4">
 											<div class="title-wrapper">
@@ -516,7 +531,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Pick country" aria-label="Number" matInput #visitCountryId [matAutocomplete]="visitCountryAuto" [formControlName]="'visitCountryId'">
+												<input type="text" placeholder="Country" aria-label="Number" matInput #visitCountryId [matAutocomplete]="visitCountryAuto" [formControlName]="'visitCountryId'">
 												<button mat-button *ngIf="visitCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('visitCountryId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -555,7 +570,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter buzzer info" #buzzer formControlName="buzzer">
+												<input matInput placeholder="Buzzer" #buzzer formControlName="buzzer">
 												<button mat-button *ngIf="buzzer.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('buzzer').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -570,7 +585,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput type="number" placeholder="Enter Flat Nº info" #flatNumber formControlName="flatNumber">
+												<input matInput type="number" placeholder="Flat Nº info" #flatNumber formControlName="flatNumber">
 												<button mat-button *ngIf="flatNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('flatNumber').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -585,7 +600,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput type="number" placeholder="Enter Floor Nº info" #floor formControlName="floor">
+												<input matInput type="number" placeholder="Floor Nº info" #floor formControlName="floor">
 												<button mat-button *ngIf="floor.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('floor').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -753,7 +768,7 @@
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<textarea matInput rows="4" placeholder="Enter Invoice Notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
+													<textarea matInput rows="4" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
 													<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('invoicingNotes').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
@@ -800,7 +815,6 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														Please enter
 														<strong>Account Number</strong>
 													</mat-hint>
 												</mat-form-field>
@@ -808,7 +822,7 @@
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Enter sortCode info" #sortCode formControlName="sortCode">
+													<input matInput placeholder="Sort Code" #sortCode formControlName="sortCode">
 													<button mat-button *ngIf="sortCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('sortCode').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
@@ -823,7 +837,7 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Enter IBAN" #iban formControlName="iban">
+													<input matInput placeholder="IBAN" #iban formControlName="iban">
 													<button mat-button *ngIf="iban.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('iban').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>

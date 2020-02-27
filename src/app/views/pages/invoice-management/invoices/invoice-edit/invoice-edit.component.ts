@@ -17,24 +17,17 @@ import { SubheaderService, LayoutConfigService } from '../../../../../core/_base
 import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Services and Models
 import {
-	selectLastCreatedInvoiceId,
-	selectInvoiceById,
-	SPECIFICATIONS_DICTIONARY,
 	InvoiceModel,
-	InvoiceOnServerCreated,
-	InvoiceUpdated,
 	InvoicesService,
 	StaticDataModel,
-
 	StaticDataService,
 	FilterModel,
 	ApiResponse,
-
-	BookingViewModel,
 	InvoiceBookings
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmDialogModel, ConfirmDialogComponent } from '../../../../partials/confirm-dialog/confirm-dialog.component';
+import { AddBookingToInvoiceDialog } from '../add-booking-to-invoice-dialog/add-booking-to-invoice.dialog';
 
 
 @Component({
@@ -70,6 +63,8 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 	private headerMargin: number;
 	selected = new FormControl(0);
 
+	customersForFilter: FilterModel[] = [];
+	filteredCustomers: Observable<FilterModel[]>;
 
 	servicesForFilter: FilterModel[] = [];
 	filteredServices: Observable<FilterModel[]>;
@@ -150,22 +145,22 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		this.invoiceId$ = of(_invoice.id);
 		this.oldInvoice = Object.assign({}, _invoice);
 		this.initInvoice();
+		this.detectChanges();
 
 		this.loadStaticResources();
-
-		if (fromService) {
-			this.cdr.detectChanges();
-		}
 	}
 
 	loadInvoiceFromService(invoiceId) {
-		this.loadingSubject.next(true);
+		this.spinner.show();
 		this.invoiceService.getInvoiceById(invoiceId).toPromise().then(res => {
-			this.loadingSubject.next(false);
+			this.spinner.hide();
 			let data = res as unknown as ApiResponse;
 			this.loadInvoice(data.data, true);
+
 		}).catch((e) => {
-			this.loadingSubject.next(false);
+			this.spinner.hide();
+		}).finally(() => {
+			this.spinner.hide();
 		});
 	}
 
@@ -199,9 +194,10 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 	createForm() {
 		this.invoiceForm = this.invoiceFB.group({
 			invoiceNumber: [this.invoice.invoiceNumber, [Validators.required]],
+			customerId: [this.invoice.customerId, [Validators.required]],
 			subject: [this.invoice.subject, [Validators.required]],
-			invoiceEntityId: [this.invoice.invoiceEntityId, [Validators.required]],
-			patientDateOfBirth: [this.invoice.patientDateOfBirth, [Validators.required]],
+			invoiceEntityId: [this.invoice.invoiceEntityId],
+			patientDateOfBirth: [this.invoice.patientDateOfBirth],
 			statusId: [this.invoice.statusId, [Validators.required]],
 			dueDate: [this.invoice.dueDate, [Validators.required]],
 			invoiceDate: [this.invoice.invoiceDate, [Validators.required]],
@@ -210,22 +206,25 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			invoiceSentByMailId: [this.invoice.invoiceSentByMailId, [Validators.required]],
 			// Billing Address
 			ieBillingAddress: [this.invoice.ieBillingAddress, [Validators.required]],
-			ieBillingPostCode: [this.invoice.ieBillingPostCode, [Validators.required]],
-			ieBillingCityId: [this.invoice.ieBillingCityId, [Validators.required]],
+			ieBillingPostCode: [this.invoice.ieBillingPostCode],
+			ieBillingCityId: [this.invoice.ieBillingCityId],
 			ieBillingCountryId: [this.invoice.ieBillingCountryId, [Validators.required]],
 
 			// mailing address
 			mailingAddress: [this.invoice.mailingAddress, [Validators.required]],
-			mailingPostCode: [this.invoice.mailingPostCode, [Validators.required]],
-			mailingCityId: [this.invoice.mailingCityId, [Validators.required]],
+			mailingPostCode: [this.invoice.mailingPostCode],
+			mailingCityId: [this.invoice.mailingCityId],
 			mailingCountryId: [this.invoice.mailingCountryId, [Validators.required]],
 
 			// payment and invoicing
+			paymentDue: [this.invoice.paymentDue, [Validators.required]],
+			discount: [this.invoice.discount],
 			paymentMethodId: [this.invoice.paymentMethodId, [Validators.required]],
-			insuranceCoverId: [this.invoice.insuranceCoverId, [Validators.required]],
+			insuranceCoverId: [this.invoice.insuranceCoverId],
 			invoiceNotes: [this.invoice.invoiceNotes, [Validators.required]],
-			invoiceDiagnosis: [this.invoice.invoiceDiagnosis, [Validators.required]],
+			invoiceDiagnosis: [this.invoice.invoiceDiagnosis],
 
+			termsAndConditions: [this.invoice.termsAndConditions],
 		});
 
 	}
@@ -294,6 +293,8 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		_invoice.id = this.invoice.id;
 		_invoice.subject = controls.subject.value;
 		_invoice.invoiceNumber = controls.invoiceNumber.value;
+		if (controls.customerId.value)
+			_invoice.customerId = +controls.customerId.value.id;
 		_invoice.patientDateOfBirth = controls.patientDateOfBirth.value;
 		if (controls.invoiceEntityId.value)
 			_invoice.invoiceEntityId = +controls.invoiceEntityId.value.id;
@@ -319,6 +320,8 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			_invoice.mailingCountryId = controls.mailingCountryId.value.id;
 
 		//payment and invoicing
+		_invoice.paymentDue = controls.paymentDue.value;
+		_invoice.discount = controls.discount.value;
 		_invoice.paymentMethodId = controls.paymentMethodId.value;
 		_invoice.insuranceCoverId = controls.insuranceCoverId.value;
 		_invoice.invoiceNotes = controls.invoiceNotes.value;
@@ -327,10 +330,9 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		return _invoice;
 	}
 
-	deleteService(invoiceBooking: InvoiceBookings) {
-		let result: string;
-		const message = `Are you sure you want to do this?`;
-		const dialogData = new ConfirmDialogModel("Confirm Action", message);
+	deleteBookingFromInvoice(invoiceBooking: InvoiceBookings) {
+		const message = `Are you sure you want to remove this booking from invoice?`;
+		const dialogData = new ConfirmDialogModel("Confirm", message);
 
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			maxWidth: "300px",
@@ -454,6 +456,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 
 	/*Fitlers Section*/
 	loadStaticResources() {
+		this.loadCustomersForFilter();
 		this.loadInvoiceEntitiesForFilter();
 		this.loadCitiesForFilter();
 		this.loadCountiesForFilter();
@@ -492,6 +495,32 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		}
 
 	}
+
+	// customers
+	loadCustomersForFilter() {
+		this.staticService.getCustomersForFilter().subscribe(res => {
+			this.customersForFilter = res.data;
+
+			this.filteredCustomers = this.invoiceForm.get('customerId').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterCustomers(value))
+				);
+			if (this.invoice.customerId > 0) {
+				var elem = this.customersForFilter.find(x => x.id == this.invoice.customerId);
+				if (elem) {
+					this.invoiceForm.patchValue({ 'customerId': { id: elem.id, value: elem.value } });
+				}
+			}
+
+		});
+
+	}
+	private _filterCustomers(value: string): FilterModel[] {
+		const filterValue = this._normalizeValue(value);
+		return this.customersForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
+	}
+	// end clinic cities
 
 
 	//// Invoice Entities
@@ -612,7 +641,30 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 
 	/*End Filters Section*/
 
+	addBooking() {
+		const dialogRef = this.dialog.open(AddBookingToInvoiceDialog, {
+			data: this.invoice.id
+		});
+
+		dialogRef.afterClosed().subscribe(result => {
+			if (result) {
+				this.loadInvoiceFromService(this.invoice.id);
+				this.detectChanges();
+			}
+		});
+	}
+
+
+
 	tabChanged(event: MatTabChangeEvent) {
 		this.tabTitle = event.tab.textLabel;
 	}
+
+	detectChanges() {
+		try {
+			this.cdr.detectChanges();
+		} catch (e) {
+		}
+	}
+
 }

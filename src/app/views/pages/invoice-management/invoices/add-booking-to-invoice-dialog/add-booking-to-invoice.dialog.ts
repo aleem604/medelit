@@ -1,40 +1,36 @@
 import { Component, OnInit, Inject, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSort, MatPaginator, MatTableDataSource } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { LayoutUtilsService, MessageType } from '../../../../../../core/_base/crud';
-import {
-	ServiceModel,
-	ServicesService,
-	ApiResponse,
-	ServiceConnectedPtFeeDialogModel,
-} from '../../../../../../core/medelit';
+
 import { SelectionModel } from '@angular/cdk/collections';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { BookingsToAddToInvoiceDialogModel, InvoicesService, ApiResponse } from '../../../../../core/medelit';
+import { LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
 
 
 @Component({
 	// tslint:disable-next-line:component-selector
-	selector: 'service-connected-pt-fee-dialog',
-	templateUrl: './service-connected-pt-fee.dialog.component.html',
-	styleUrls: ['./service-connected-pt-fee.dialog.component.scss']
+	selector: 'add-booking-to-invoice-dialog',
+	templateUrl: './add-booking-to-invoice.dialog.html',
+	styleUrls: ['./add-booking-to-invoice.dialog.scss']
 })
-export class ServiceConnectedPtFeeDialogComponent implements OnInit, OnDestroy {
+export class AddBookingToInvoiceDialog implements OnInit, OnDestroy {
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	viewLoading = false;
 
-	displayedColumns: string[] = ['select', 'ptFeeName', 'ptFeeA1', 'ptFeeA2', 'professionals', 'services', 'tags'];
-	dataSource = new MatTableDataSource<ServiceConnectedPtFeeDialogModel>();
-	selection = new SelectionModel<ServiceConnectedPtFeeDialogModel>(true, []);
+	displayedColumns: string[] = ['select', 'name', 'phoneNumber', 'feeName'];
+	dataSource = new MatTableDataSource<BookingsToAddToInvoiceDialogModel>();
+	selection = new SelectionModel<BookingsToAddToInvoiceDialogModel>(true, []);
 
 	private subscriptions: Subscription[] = [];
-	constructor(public dialogRef: MatDialogRef<ServiceConnectedPtFeeDialogComponent>,
+	constructor(public dialogRef: MatDialogRef<AddBookingToInvoiceDialog>,
 		@Inject(MAT_DIALOG_DATA) public data: number,
-		private servicesService: ServicesService,
+		private invoiceService: InvoicesService,
 		private spinner: NgxSpinnerService,
 		private layoutUtilsService: LayoutUtilsService,
 		private cdr: ChangeDetectorRef) {
-		
+
 	}
 
 	ngOnInit() {
@@ -42,12 +38,12 @@ export class ServiceConnectedPtFeeDialogComponent implements OnInit, OnDestroy {
 	}
 
 	loadDialogData() {
-		
+
 		this.viewLoading = true;
-		this.servicesService.getServiceConnectedPtFeesToAttach(this.data).toPromise().then((resp) => {
+		this.invoiceService.getBookingsToAddToInvoice(this.data).toPromise().then((resp) => {
 			var res = resp as unknown as ApiResponse;
 			if (res.success) {
-				this.dataSource = new MatTableDataSource<ServiceConnectedPtFeeDialogModel>(res.data);
+				this.dataSource = new MatTableDataSource<BookingsToAddToInvoiceDialogModel>(res.data);
 				this.dataSource.paginator = this.paginator;
 				this.dataSource.sort = this.sort;
 			}
@@ -70,7 +66,7 @@ export class ServiceConnectedPtFeeDialogComponent implements OnInit, OnDestroy {
 			this.dataSource.data.forEach(row => this.selection.select(row));
 	}
 
-	checkboxLabel(row?: ServiceConnectedPtFeeDialogModel): string {
+	checkboxLabel(row?: BookingsToAddToInvoiceDialogModel): string {
 		if (!row) {
 			return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
 		}
@@ -80,10 +76,10 @@ export class ServiceConnectedPtFeeDialogComponent implements OnInit, OnDestroy {
 	save() {
 		var objs = this.selection.selected;
 		this.viewLoading = true;
-		this.servicesService.saveServiceConnectedPtFeesToAttach(this.data, objs).toPromise().then((res) => {
+		this.invoiceService.addBookingsToInvoice(objs.map(x=> x.id), this.data).toPromise().then((res) => {
 			if (res.success) {
 				this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
-				this.dialogRef.close(this.selection.selected);
+				this.dialogRef.close(res.data);
 			}
 		}).catch(() => {
 			this.viewLoading = false;
@@ -97,7 +93,7 @@ export class ServiceConnectedPtFeeDialogComponent implements OnInit, OnDestroy {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
 
-	
+
 	applyFilter(filterValue: string) {
 		this.dataSource.filter = filterValue.trim().toLowerCase();
 

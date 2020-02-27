@@ -65,18 +65,11 @@ import {
 	MatTooltipModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
-import { CoreModule } from '../../../core/core.module';
-import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { InvoicesComponent } from './invoices.component';
-import { InvoicesListComponent } from './invoices/invoices-list/invoices-list.component';
-import { InvoiceEditComponent } from './invoices/invoice-edit/invoice-edit.component';
-import { InvoiceViewComponent } from './invoices/invoice-view/invoice-view.component';
+import * as _index from './invoices';
 import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
-import { InvoiceConnectedProfessinalsComponent } from './invoices/invoice-connected-professionals/invoice-connected-professionals.component';
-import { InvoiceConnectedCustomersComponent } from './invoices/invoice-connected-customers/invoice-connected-customers.component';
-import { InvoiceConnectedInvoieEntitiesComponent } from './invoices/invoice-connected-invoice-entities/invoice-connected-invoice-entities.component';
-import { InvoiceConnectedBookingsComponent } from './invoices/invoice-connected-bookings/invoice-connected-bookings.component';
 
 
 // tslint:disable-next-line:class-name
@@ -94,20 +87,20 @@ const routes: Routes = [
 			},
 			{
 				path: 'invoices',
-				component: InvoicesListComponent
+				component: _index.InvoicesListComponent
 			},
 			
 			{
 				path: 'invoices/add',
-				component: InvoiceEditComponent
+				component: _index.InvoiceEditComponent
 			},
 			{
 				path: 'invoices/edit/:id',
-				component: InvoiceEditComponent
+				component: _index.InvoiceEditComponent
 			},
 			{
 				path: 'invoices/view/:id',
-				component: InvoiceViewComponent
+				component: _index.InvoiceViewComponent
 			},
 		]
 	}
@@ -182,17 +175,19 @@ const routes: Routes = [
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
-		ConfirmDialogComponent
+		ConfirmDialogComponent,
+		_index.AddBookingToInvoiceDialog
 	],
 	declarations: [
 		InvoicesComponent,
-		InvoicesListComponent,
-		InvoiceEditComponent,
-		InvoiceViewComponent,
-		InvoiceConnectedProfessinalsComponent,
-		InvoiceConnectedCustomersComponent,
-		InvoiceConnectedInvoieEntitiesComponent,
-		InvoiceConnectedBookingsComponent
+		_index.InvoicesListComponent,
+		_index.InvoiceEditComponent,
+		_index.InvoiceViewComponent,
+		_index.InvoiceConnectedProfessinalsComponent,
+		_index.InvoiceConnectedCustomersComponent,
+		_index.InvoiceConnectedInvoieEntitiesComponent,
+		_index.InvoiceConnectedBookingsComponent,
+		_index.AddBookingToInvoiceDialog
 	]
 })
 export class InvoicesModule { }

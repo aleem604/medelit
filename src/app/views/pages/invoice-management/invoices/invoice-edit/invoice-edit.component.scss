@@ -6,9 +6,6 @@
 	width: 100%;
 	position: relative;
 
-
-
-
 	table {
 		tr {
 			th:last-of-type, td:last-of-type {
@@ -34,12 +31,16 @@
 	.title-wrapper {
 		padding-top: 1em;
 		padding-bottom: 1em;
-
 		.btn {
 			position: absolute;
-			bottom: 0.35rem;
+			bottom: 0.5rem;
 			right: 0.5em;
 		}
+
+		h5{
+			display:inline-table;
+		}
+
 	}
 
 	h5, h6 {

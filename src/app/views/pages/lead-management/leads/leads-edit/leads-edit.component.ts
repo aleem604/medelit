@@ -223,7 +223,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			fromCustomerId: [this.lead.fromCustomerId, []],
 			titleId: [this.lead.titleId, Validators.required],
 			surName: [this.lead.surName, [Validators.required, Validators.min(4)]],
-			name: [this.lead.name, Validators.required],
+			name: [this.lead.name],
 			languageId: [this.lead.languageId, [Validators.required]],
 			mainPhone: [this.lead.mainPhone, []],
 			mainPhoneOwner: [this.lead.mainPhoneOwner],
@@ -244,7 +244,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			services: this.leadFB.array([]),
 
 			preferredPaymentMethodId: [this.lead.preferredPaymentMethodId, []],
-			insuranceCoverId: [this.lead.insuranceCoverId, [Validators.required]],
+			insuranceCoverId: [this.lead.insuranceCoverId, []],
 			listedDiscountNetworkId: [this.lead.listedDiscountNetworkId, []],
 			discount: [this.lead.discount, []],
 			haveDifferentIEId: [this.lead.haveDifferentIEId, []],
@@ -404,7 +404,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.leadForm.updateValueAndValidity();
 	}
 
-	onSumbit(withBack: boolean = false) {
+	onSumbit(withBack: boolean = false, withBooking: boolean = false) {
 		this.hasFormErrors = false;
 		const controls = this.leadForm.controls;
 		/** check form */
@@ -412,9 +412,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			Object.keys(controls).forEach(controlName => {
 				if (controls[controlName].status === 'INVALID')
 					console.log('invlaid controls', controlName);
-			}
-			);
-
+			});
 
 			Object.keys(controls).forEach(controlName =>
 				controls[controlName].markAsTouched()
@@ -433,12 +431,52 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 			return;
 		}
+		if (withBooking) {
+			let name = this.leadForm.get('name').value;
+			let email = this.leadForm.get('email').value;
+			let leadSource = this.leadForm.get('leadSourceId').value;
+			let dateOfBirth = this.leadForm.get('dateOfBirth').value;
+			let addressStreetName = this.leadForm.get('addressStreetName').value;
+			let postalCode = this.leadForm.get('postalCode').value;
+			let cityId = this.leadForm.get('cityId').value;
+			let visitVenueId = this.leadForm.get('visitVenueId').value;
+
+			let message = '';
+			if (!name)
+				message += '<span class="font-500">Name</span> is required. <br/>';
+			if (!email)
+				message += '<span class="font-500">Email</span> is required. <br/>';
+			if (!leadSource)
+				message += '<span class="font-500">Lead source</span> is required. <br/>';
+			if (!dateOfBirth)
+				message += '<span class="font-500">Date of birth</span> is required. <br/>';
+			if (!addressStreetName)
+				message += '<span class="font-500">Street name</span> is required. <br/>';
+			if (!postalCode)
+				message += '<span class="font-500">Postal code</span> is required. <br/>';
+			if (!cityId)
+				message += '<span class="font-500">City</span> is required. <br/>';
+			if (!visitVenueId)
+				message += '<span class="font-500">Visit Venue</span> is required. <br/>';
+
+			if (message) {
+				const dialogRef = this.dialog.open(AlertDialogComponent, {
+					width: '300px',
+					data: { title: 'Missing fields', message: '<strong>Following fields are required to convert lead to booking: </strong><br/>' + message }
+				});
+
+				dialogRef.afterClosed().subscribe(result => { });
+
+				return;
+			}
+		}
+
 
 		// tslint:disable-next-line:prefer-const
 		let editedLead = this.prepareLead();
 
 		if (editedLead.id > 0) {
-			this.updateLead(editedLead, withBack);
+			this.updateLead(editedLead, withBack, withBooking);
 			return;
 		}
 
@@ -575,12 +613,17 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		//});
 	}
 
-	updateLead(_lead: LeadModel, withBack: boolean = false) {
+	updateLead(_lead: LeadModel, withBack: boolean = false, withBooking:boolean = false) {
 		this.spinner.show();
 		this.leadService.updateLead(_lead).toPromise().then((res) => {
-			this.spinner.hide();
+			
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data > 0) {
+				if (withBooking) {
+					this.convertToBooking();
+					return;
+				}
+				this.spinner.hide();
 				const _lead = resp.data as unknown as LeadModel;
 
 				const message = `Lead successfully has been saved.`;
@@ -593,27 +636,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		}).catch((e) => {
 			this.spinner.hide();
 		});
-
-		//this.loadingSubject.next(true);
-		//const updateLead: Update<LeadModel> = {
-		//	id: _lead.id,
-		//	changes: _lead
-		//};
-
-		//this.store.dispatch(new LeadUpdated({
-		//	partialLead: updateLead,
-		//	lead: _lead
-		//}));
-
-		//of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
-		//	if (withBack) {
-		//		this.goBack(_lead.id);
-		//	} else {
-		//		const message = `Lead successfully has been saved.`;
-		//		this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-		//		this.refreshLead(false);
-		//	}
-		//}); 
 	}
 
 	getComponentTitle() {
@@ -622,7 +644,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			return result;
 		}
 
-		result = `Edit lead - ${this.lead.surName} ${this.lead.name}`;
+		result = `Edit lead - ${this.lead.surName}`;
 		return result;
 	}
 
@@ -631,41 +653,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 
 	convertToBooking() {
-		let email = this.leadForm.get('email').value;
-		let leadSource = this.leadForm.get('leadSourceId').value;
-		let dateOfBirth = this.leadForm.get('dateOfBirth').value;
-		let addressStreetName = this.leadForm.get('addressStreetName').value;
-		let postalCode = this.leadForm.get('postalCode').value;
-		let cityId = this.leadForm.get('cityId').value;
-
-		let message = '';
-		if (!email)
-			message += 'Email is required. <br/>';
-		if (!leadSource)
-			message += 'Lead source is required. <br/>';
-		if (!dateOfBirth)
-			message += 'Date of birth is required. <br/>';
-		if (!dateOfBirth)
-			message += 'Date of birth is required. <br/>';
-		if (!addressStreetName)
-			message += 'Street name is required. <br/>';
-		if (!postalCode)
-			message += 'Postal code is required. <br/>';
-		if (!cityId)
-			message += 'City is required. <br/>';
-
-		if (message) {
-			const dialogRef = this.dialog.open(AlertDialogComponent, {
-				width: '300px',
-				data: { title: 'Missing fields', message: '<strong>Following fields are required to convert lead to booking: </strong><br/>' + message }
-			});
-
-			dialogRef.afterClosed().subscribe(result => { });
-
-			return;
-		}
-
-		this.spinner.show();
 		this.leadService.convertToBooking(this.lead.id).toPromise().then((res) => {
 			if (parseInt(res.data) > 0) {
 				const message = `Booking created successfully.`;
@@ -790,8 +777,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		}
 	}
 
-
-
 	// Customer
 	loadCustomerForImport() {
 		this.staticService.getCustomersForImportFilter().subscribe(res => {
@@ -811,6 +796,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		});
 
 	}
+
 	private _filterCustomers(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.customersForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
@@ -837,7 +823,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 	//// Customers
 
-
 	//// Languages
 	loadLanguagesForFilter() {
 		this.staticService.getLanguagesForFilter().subscribe(res => {
@@ -857,6 +842,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		});
 
 	}
+
 	private _filterLanguages(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.languagesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
@@ -955,6 +941,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	getProfessionals(index: number) {
 		// @ts-ignore:
 		var serviceControls = this.leadForm.get('services').controls[index];
+		//serviceControls.get('professionalId').setValue('');
+
+
 		if (serviceControls.get('serviceId').value) {
 
 			var serviceId = serviceControls.get('serviceId').value.id;
@@ -966,90 +955,37 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	getPtFees(index: number) {
+	setFees(index) {
 		// @ts-ignore:
 		var serviceControls = this.leadForm.get('services').controls[index];
+
 		if (serviceControls.get('professionalId').value) {
 
 			var proId = serviceControls.get('professionalId').value;
-			var professional = this.professionalsForFilter.find((el) => {
-				var elm = el as unknown as any;
-				return elm.id === proId;
-			});
-			if (professional) {
-				// @ts-ignore
-				return professional.ptFees;
-			} else {
-				return new Array<FilterModel>();
-			}
-
-		}
-	}
-
-	setPtFees(index) {
-		// @ts-ignore:
-		var serviceControls = this.leadForm.get('services').controls[index];
-
-		if (serviceControls.get('professionalId').value) {
-
-			var ptFeeId = serviceControls.get('ptFeeId').value;
-			var ptFee = this.getPtFees(index).find((el) => {
-				var elm = el as unknown as any;
-				return elm.id === ptFeeId;
-			});
+			const proData = this.professionalsForFilter.find((el) => el.id == proId);
+			const ptFee = proData.ptFees;
+			const proFee = proData.proFees;
 			if (ptFee) {
+				serviceControls.get('ptFeeId').setValue(ptFee.id);
 				serviceControls.get('ptFeeA1').setValue(ptFee.a1);
 				serviceControls.get('ptFeeA2').setValue(ptFee.a2);
 			} else {
+				serviceControls.get('ptFeeId').setValue('');
 				serviceControls.get('ptFeeA1').setValue('');
 				serviceControls.get('ptFeeA2').setValue('');
 			}
-		}
-	}
 
-	getProFees(index: number) {
-		// @ts-ignore:
-		var serviceControls = this.leadForm.get('services').controls[index];
-		if (serviceControls.get('professionalId').value) {
-
-			var proId = serviceControls.get('professionalId').value;
-			var professional = this.professionalsForFilter.find((el) => {
-				var elm = el as unknown as any;
-				return elm.id === proId;
-			});
-
-			if (professional) {
-				// @ts-ignore
-				return professional.proFees;
-			} else {
-				return new Array<FilterModel>();
-			}
-		}
-	}
-
-
-	setProFees(index) {
-		// @ts-ignore:
-		var serviceControls = this.leadForm.get('services').controls[index];
-
-		if (serviceControls.get('proFeeId').value) {
-
-			var proFeeId = serviceControls.get('proFeeId').value;
-			var proFee = this.getProFees(index).find((el) => {
-				var elm = el as unknown as any;
-				return elm.id === proFeeId;
-			});
 			if (proFee) {
+				serviceControls.get('proFeeId').setValue(proFee.id);
 				serviceControls.get('proFeeA1').setValue(proFee.a1);
 				serviceControls.get('proFeeA2').setValue(proFee.a2);
 			} else {
+				serviceControls.get('proFeeId').setValue('');
 				serviceControls.get('proFeeA1').setValue('');
 				serviceControls.get('proFeeA2').setValue('');
 			}
 		}
 	}
-
-
 
 	serviceSelected(event, index) {
 		// @ts-ignore:
@@ -1064,8 +1000,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			serviceControls.get('proFeeId').setValue(serviceObj.proFeeId);
 			serviceControls.get('proFeeA1').setValue(serviceObj.proFeeA1);
 			serviceControls.get('proFeeA2').setValue(serviceObj.proFeeA2);
-
-
+			serviceControls.patchValue({ 'professionalId': '' });
 		} else {
 			this.professionalsForFilter = [];
 			this.filteredProfessionals = new Observable<FilterModel[]>();
@@ -1081,24 +1016,23 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		}
 
 	}
-
-
 	// end services
 
 	// Service Professionals
+
 	loadProfessionalsForFilter(serviceId?: number) {
-		this.staticService.getProfessionalsForFilter(serviceId).subscribe(res => {
+		this.staticService.getProfessionalsForFilter().subscribe(res => {
 			this.professionalsForFilter = res.data;
 
 			if (this.lead.professionalId > 0) {
 				var professional = this.professionalsForFilter.find(x => x.id == this.lead.professionalId);
 				if (professional) {
-					this.leadForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value } });
+					this.leadForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value, ptFees: professional.ptFees, proFees: professional.proFees   } });
 				}
 			}
 		});
-
 	}
+
 	private _filterProfessionals(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.professionalsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
@@ -1125,6 +1059,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		});
 
 	}
+
 	private _filterInvoiceEntities(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.invoiceEntitiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
@@ -1204,6 +1139,10 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		ieModel.blackListId = controls.blacklistId.value;
 		ieModel.discountPercent = controls.discount.value;
 
+		let errorMessage = '';
+
+
+
 		const dialogRef = this.dialog.open(CreateInvoiceEntityDialogComponent, { data: ieModel });
 		dialogRef.afterClosed().subscribe(res => {
 			if (!res) {
@@ -1211,12 +1150,10 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			}
 
 			this.loadInvoiceEntitiesForFilter();
-
 			this.layoutUtilsService.showActionNotification(_saveMessage, _messageType);
 			this.detectChanges();
 			//this.refreshLead(false, this.lead.id);
 		});
-
 	}
 
 	// end Invoice Entities

@@ -101,6 +101,18 @@ export class InvoicesService {
 		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + `/view/${invoiceId}`);
 	}
 
+	// bookings that can be attached to invoice
+	getBookingsToAddToInvoice(invoiceId: number): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + `/bookings-to-add-to-invoice/${invoiceId}`);
+	}
+
+	addBookingsToInvoice(bookingIds: number[], invoiceId: number): Observable<ApiResponse> {
+		const url = `${API_INVOICE_ENTITIES_URL}/add-bookings-to-invoice/${invoiceId}`;
+		const httpHeaders = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(url, bookingIds, { headers: httpHeaders });
+	}
+
+
 	getInvoiceConnectedProfessionals(invoiceId: number): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + `/invoice-connected-professionals/${invoiceId}`);
 	}
@@ -116,5 +128,7 @@ export class InvoicesService {
 	getInvoiceConnectedBookings(invoiceId: number): Observable<ApiResponse> {
 		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + `/invoice-connected-bookings/${invoiceId}`);
 	}
+
+	
 	
 }

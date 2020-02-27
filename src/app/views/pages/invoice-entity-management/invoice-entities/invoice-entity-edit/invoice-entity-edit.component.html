@@ -214,47 +214,61 @@
 										</div>
 
 
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter email" #email formControlName="email">
-												<button mat-button *ngIf="email.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('email').setValue('')">
-													<mat-icon>close</mat-icon>
-												</button>
-												<mat-error *ngIf="invoiceEntityForm.get('email').errors?.required">
-													Email
-													<strong>required</strong>
-												</mat-error>
-												<mat-error *ngIf="invoiceEntityForm.get('email').errors?.email">
-													Invalid
-													<strong>Email</strong>
-												</mat-error>
-												<mat-hint align="start">
-													Please enter
-													<strong>Email</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter email 2" #email2 formControlName="email2">
-												<button mat-button *ngIf="email2.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('email2').setValue('')">
-													<mat-icon>close</mat-icon>
-												</button>
-												<mat-error *ngIf="invoiceEntityForm.get('email2').errors?.required">
-													Email 2
-													<strong>required</strong>
-												</mat-error>
-												<mat-error *ngIf="invoiceEntityForm.get('email2').errors?.email">
-													Invalid
-													<strong>Email 2</strong>
-												</mat-error>
-												<mat-hint align="start">
-													Please enter
-													<strong>Email 2</strong>
-												</mat-hint>
-											</mat-form-field>
-										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">											
+											<div class="row">
+												<div class="col-md-8">
+													<mat-form-field class="mat-form-field-fluid">
+														<input matInput placeholder="Enter email" #email formControlName="email">
+														<button mat-button *ngIf="email.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('email').setValue('')">
+															<mat-icon>close</mat-icon>
+														</button>
+														<mat-error *ngIf="invoiceEntityForm.get('email').errors?.required">
+															Email
+															<strong>required</strong>
+														</mat-error>
+														<mat-error *ngIf="invoiceEntityForm.get('email').errors?.email">
+															Invalid
+															<strong>Email</strong>
+														</mat-error>
+														<mat-hint align="start">
+															Please enter
+															<strong>Email</strong>
+														</mat-hint>
+													</mat-form-field>
+												</div>
+												<div class="col-md-4">
+													<button class="btn btn-primary btn-sm">Send Email</button>
+												</div>
+											</div>
 
+										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">										
+											<div class="row">
+												<div class="col-md-8">
+													<mat-form-field class="mat-form-field-fluid">
+														<input matInput placeholder="Enter email 2" #email2 formControlName="email2">
+														<button mat-button *ngIf="email2.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('email2').setValue('')">
+															<mat-icon>close</mat-icon>
+														</button>
+														<mat-error *ngIf="invoiceEntityForm.get('email2').errors?.required">
+															Email 2
+															<strong>required</strong>
+														</mat-error>
+														<mat-error *ngIf="invoiceEntityForm.get('email2').errors?.email">
+															Invalid
+															<strong>Email 2</strong>
+														</mat-error>
+														<mat-hint align="start">
+															Please enter
+															<strong>Email 2</strong>
+														</mat-hint>
+													</mat-form-field>
+												</div>
+												<div class="col-md-4">
+													<button class="btn btn-primary btn-sm">Send Email</button>
+												</div>
+											</div>
+										</div>
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">

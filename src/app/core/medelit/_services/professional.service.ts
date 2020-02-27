@@ -130,7 +130,7 @@ export class ProfessionalsService {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.post<ApiResponse>(`${API_PROFESSIONALS_URL}/attach-services-to-professional/${proId}`,serviceIds, { headers: httpHeader });
 	}
-
+	                                                                           
 	getFeesForFilter(serviceId:number, proId: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.get<ApiResponse>(`${API_PROFESSIONALS_URL}/fees-for-filter-to-attach-with-service-professional/${serviceId}/${proId}`, { headers: httpHeader });

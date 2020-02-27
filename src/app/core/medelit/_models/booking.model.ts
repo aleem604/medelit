@@ -8,7 +8,7 @@ export class BookingModel extends BaseModel {
 	name: string;
 	invoiceEntityId: number;
 	invoiceEntityName: string;
-	bookingStatusId?: number;
+	bookingStatusId?: number = 1;
 	bookingDate?: Date;
 	bookingTypeId?: number;
 	visitLanguageId?: number;
@@ -29,7 +29,6 @@ export class BookingModel extends BaseModel {
 	visitCityId?: number;
 	phoneNumber: string;
 	email: string;
-	email2: string;
 	phone2: string;
 	phone2Owner: string;
 	dateOfBirth: Date;
@@ -91,8 +90,9 @@ export class BookingModel extends BaseModel {
 	proInvoiceNumber: string;
 	serviceId: number;
 	professionalId: number;
-	ptFee: number;
-	proFee: number;
+	ptFeeA1: number;
+	ptFeeA2: number;
+	isPtFeeA1: number;
 	quantityHours?: number;
 	taxType?: number;
 	subTotal?: number;
@@ -123,7 +123,7 @@ export interface BookingConnectedBookings {
 	professional: string;
 	cycleNumber: number;
 	fee: string;
-	subTotalFee: number;
+	subTotal: number;
 }
 
 export interface BookingConnectedProfessionals {
