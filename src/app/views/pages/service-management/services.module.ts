@@ -197,6 +197,7 @@ const routes: Routes = [
 		_index.FieldsListComponent,
 		_index.FieldEditComponent,
 		_index.ServiceProfessionalsComponent,
+		_index.ServiceConnectedProfessionalsComponent,
 		_index.ServiceConnectedBookingsComponent,
 		_index.ConnectedCustomersInvoicingEntitiesComponent,
 		_index.ServiceConnectedInvoicesComponent,

@@ -6,7 +6,7 @@ import { Observable, of, BehaviorSubject, Subject } from 'rxjs';
 import { ApiResponse, FeesService, ProfessionalConnectedServicesModel } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
-import { AttachProToFeeDialogComponent } from '../attach-pro-to-fee-dialog/attach-pro-to-fee.dialog.component';
+import { AttachServiceToFeeDialogComponent } from '../attach-service-to-fee-dialog/attach-service-to-fee.dialog.component';
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -24,7 +24,7 @@ export class FeeConnectedServicesComponent implements OnInit, OnDestroy {
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-	displayedColumns: string[] = ['cService', 'cField', 'cSubcategory'];
+	displayedColumns: string[] = ['select', 'cService', 'cField', 'cSubcategory'];
 	dataSource = new MatTableDataSource<ProfessionalConnectedServicesModel>();
 	selection = new SelectionModel<ProfessionalConnectedServicesModel>(true, []);
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -87,7 +87,7 @@ export class FeeConnectedServicesComponent implements OnInit, OnDestroy {
 	}
 
 	connectService() {
-		const dialogRef = this.dialog.open(AttachProToFeeDialogComponent, { data: this.feeId });
+		const dialogRef = this.dialog.open(AttachServiceToFeeDialogComponent, { data: { feeId: this.feeId, feeType: this.feeType } });
 		dialogRef.afterClosed().subscribe(res => {
 			if (!res) {
 				return;
@@ -116,15 +116,15 @@ export class FeeConnectedServicesComponent implements OnInit, OnDestroy {
 			//this.loadGridData();
 			this.reloadData.emit({});
 
-			//this.feeService.deleteConnectedProfessionals(posIds, this.feeId).toPromise()
-			//	.then((res) => {
-			//		this.loadGridData();
-			//		this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
-			//	}).catch((e) => {
-			//		this.spinner.hide();
-			//	}).finally(() => {
-			//		this.spinner.hide();
-			//	});
+			this.feeService.deleteConnectedServices(posIds, this.feeId, this.feeType).toPromise()
+				.then((res) => {
+					this.loadGridData();
+					this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
+				}).catch((e) => {
+					this.spinner.hide();
+				}).finally(() => {
+					this.spinner.hide();
+				});
 		});
 	}
 

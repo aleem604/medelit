@@ -22,7 +22,7 @@ export class InvoiceConnectedCustomersComponent implements OnInit, OnDestroy {
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
 
-	displayedColumns: string[] = ['customer', 'phoneNumber', 'email', 'lastVisitDate', 'professional'];
+	displayedColumns: string[] = ['customer', 'phoneNumber', 'email', 'service', 'lastVisitDate', 'professional'];
 	dataSource = new MatTableDataSource<ConnectedCustomers>();
 	selection = new SelectionModel<ConnectedCustomers>(true, []);
 	loadingSubject = new BehaviorSubject<boolean>(true);

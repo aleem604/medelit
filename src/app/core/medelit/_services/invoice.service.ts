@@ -66,6 +66,12 @@ export class InvoicesService {
 		return this.http.put(API_INVOICE_ENTITIES_URL, entity, { headers: httpHeader });
 	}
 
+	// UPDATE => PUT: update the entity on the server
+	processInvoiceEmission(invoiceId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_INVOICE_ENTITIES_URL + '/process-invoice-emission/' + invoiceId, { headers: httpHeader });
+	}
+
 	// UPDATE Status
 	updateStatusForInvoice(entities: InvoiceModel[], status: number): Observable<any> {
 		const httpHeaders = this.httpUtils.getHTTPHeaders();

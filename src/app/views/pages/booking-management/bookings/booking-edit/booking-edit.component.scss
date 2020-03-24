@@ -23,6 +23,21 @@
 	}
 }
 
+.mat-form-field {
+	display: inline-block;
+	position: relative;
+	text-align: left;
+	width: 100%;
+}
+
+.mat-dialog-content {
+	display: block;
+	margin: 0 -24px;
+	padding: 0 24px;
+	height: 211px;
+	overflow: auto;
+}
+
 .heading-wrapper {
 	border-top: solid 1px #ddd;
 	border-bottom: solid 1px #ddd;
@@ -47,4 +62,9 @@
 
 .mat-form-field {
 	width: 100%;
+}
+
+.customer-link{
+	position:absolute;
+	top:1.5em;
 }

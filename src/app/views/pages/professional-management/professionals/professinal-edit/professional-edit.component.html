@@ -185,7 +185,7 @@
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field>
 													<mat-select [formControlName]="'professionalLanguages'" placeholder="Languages" [multiple]="true" #multiSelect>
-														<ngx-mat-select-search placeholderLabel="Search Language" type="text" [formControl]="langMultiFilterCtrl"></ngx-mat-select-search>
+														<ngx-mat-select-search placeholderLabel="Search Language" noEntriesFoundLabel="No data found" type="text" [formControl]="langMultiFilterCtrl"></ngx-mat-select-search>
 														<mat-option *ngFor="let lang of filteredLanguages | async" [value]="lang">
 															{{lang.value}}
 														</mat-option>
@@ -201,34 +201,48 @@
 											</div>
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Website" formControlName="website" maxlength="250">
-													<mat-error>
-														Website is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														<strong>Website</strong>
-													</mat-hint>
-												</mat-form-field>
+												<div class="row">
+													<div [ngClass]="{'col-md-9': isValidUrl('website'), 'col-md-12':!isValidUrl('website')}">
+														<mat-form-field class="mat-form-field-fluid">
+															<input matInput placeholder="Website" formControlName="website" maxlength="250">
+															<mat-error>
+																Website is
+																<strong>required</strong>
+															</mat-error>
+															<mat-hint align="start">
+																<strong>Website</strong>
+															</mat-hint>
+														</mat-form-field>
+													</div>
+													<div class="col-md-3" *ngIf="isValidUrl('website')">
+														<a class="view-link" href="{{getUrl('website')}}" target="_blank">Visit website</a>
+													</div>
+												</div>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Online CV link" maxlength="4000" formControlName="proOnlineCV">
-													<mat-error>
-														Online CV link is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														<strong class="required-star">Online CV link</strong>
-													</mat-hint>
-												</mat-form-field>
+												<div class="row">
+													<div [ngClass]="{'col-md-9': isValidUrl('proOnlineCV'), 'col-md-12':!isValidUrl('proOnlineCV')}">
+														<mat-form-field class="mat-form-field-fluid">
+															<input matInput placeholder="Online CV link" maxlength="4000" formControlName="proOnlineCV">
+															<mat-error>
+																Online CV link is
+																<strong>required</strong>
+															</mat-error>
+															<mat-hint align="start">
+																<strong class="required-star">Online CV link</strong>
+															</mat-hint>
+														</mat-form-field>
+													</div>
+													<div class="col-md-3" *ngIf="isValidUrl('proOnlineCV')">
+														<a class="view-link" href="{{getUrl('proOnlineCV')}}" target="_blank">View cv</a>
+													</div>
+												</div>	
 											</div>
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field>
-													<mat-select [formControlName]="'professionalFields'" placeholder="Fields" [multiple]="true" #multiSelect>
-														<ngx-mat-select-search placeholderLabel="Search Fields" type="text" [formControl]="fieldMultiFilterCtrl"></ngx-mat-select-search>
+													<mat-select [formControlName]="'professionalFields'" placeholder="Fields" [multiple]="true" #multiSelect (selectionChange)="loadSubCatsForFilter()">
+														<ngx-mat-select-search placeholderLabel="Search Fields" noEntriesFoundLabel="No data found" type="text" [formControl]="fieldMultiFilterCtrl"></ngx-mat-select-search>
 														<mat-option *ngFor="let lang of filteredFields | async" [value]="lang">
 															{{lang.value}}
 														</mat-option>
@@ -245,7 +259,7 @@
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field>
 													<mat-select [formControlName]="'professionalSubCategories'" placeholder="Subcategories" [multiple]="true" #multiSelect>
-														<ngx-mat-select-search placeholderLabel="Search Subcategories" type="text" [formControl]="subCatsMultiFilterCtrl"></ngx-mat-select-search>
+														<ngx-mat-select-search placeholderLabel="Search Subcategories" noEntriesFoundLabel="No data found" type="text" [formControl]="subCatsMultiFilterCtrl"></ngx-mat-select-search>
 														<mat-option *ngFor="let lang of filteredSubCats | async" [value]="lang">
 															{{lang.value}}
 														</mat-option>
@@ -524,7 +538,7 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Sort code" formControlName="sortCode" maxlength="250">
+													<input matInput placeholder="Sort code" formControlName="sortCode" mask="00-00-00" maxlength="250">
 													<mat-error>
 														Sort Code is
 														<strong>required</strong>
@@ -571,7 +585,7 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="contractDatePicker" placeholder="Contract start date" [formControlName]="'contractDate'">
+													<input matInput [matDatepicker]="contractDatePicker" placeholder="Contract date" [formControlName]="'contractDate'">
 													<mat-datepicker-toggle matSuffix [for]="contractDatePicker"></mat-datepicker-toggle>
 													<mat-datepicker #contractDatePicker></mat-datepicker>
 													<mat-error>
@@ -680,13 +694,13 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Refering colleage" formControlName="colleagueReferring" maxlength="250">
+													<input matInput placeholder="Referring Colleague" formControlName="colleagueReferring" maxlength="250">
 													<mat-error>
-														Refering colleage name is
+														Referring Colleague is
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														<strong>Refering Colleage Name</strong>
+														<strong>Referring Colleague Name</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>

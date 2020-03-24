@@ -109,7 +109,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		this.loading$ = this.loadingSubject.asObservable();
 		this.loadingSubject.next(true);
 		this.activatedRoute.params.subscribe(params => {
-			const id = params.id;
+			const id = parseInt(params.id);
 			if (id && id > 0) {
 
 				//this.store.pipe(
@@ -172,6 +172,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 
 	initInvoice() {
 		this.createForm();
+
 		this.loadingSubject.next(false);
 		if (!this.invoice.id) {
 			this.subheaderService.setBreadcrumbs([
@@ -202,8 +203,8 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			dueDate: [this.invoice.dueDate, [Validators.required]],
 			invoiceDate: [this.invoice.invoiceDate, [Validators.required]],
 			invoiceDeliveryDate: [this.invoice.invoiceDeliveryDate, [Validators.required]],
-			invoiceSentByEmailId: [this.invoice.invoiceSentByEmailId, [Validators.required]],
-			invoiceSentByMailId: [this.invoice.invoiceSentByMailId, [Validators.required]],
+			invoiceSentByEmailId: [this.invoice.invoiceSentByEmailId.toString(), [Validators.required]],
+			invoiceSentByMailId: [this.invoice.invoiceSentByMailId.toString(), [Validators.required]],
 			// Billing Address
 			ieBillingAddress: [this.invoice.ieBillingAddress, [Validators.required]],
 			ieBillingPostCode: [this.invoice.ieBillingPostCode],
@@ -218,13 +219,15 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 
 			// payment and invoicing
 			paymentDue: [this.invoice.paymentDue, [Validators.required]],
-			discount: [this.invoice.discount],
+			//discount: [this.invoice.discount],
 			paymentMethodId: [this.invoice.paymentMethodId, [Validators.required]],
 			insuranceCoverId: [this.invoice.insuranceCoverId],
-			invoiceNotes: [this.invoice.invoiceNotes, [Validators.required]],
+			invoiceNotes: [this.invoice.invoiceNotes, []],
 			invoiceDiagnosis: [this.invoice.invoiceDiagnosis],
+			invoiceDescription: [this.invoice.invoiceDescription, []],
+			termsAndConditions: [this.invoice.termsAndConditions, [Validators.required]],
+			itemNameOnInvoice: [this.invoice.itemNameOnInvoice, [Validators.required]],
 
-			termsAndConditions: [this.invoice.termsAndConditions],
 		});
 
 	}
@@ -276,15 +279,55 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		// tslint:disable-next-line:prefer-const
 		let editedInvoice = this.prepareInvoice();
-
 		if (editedInvoice.id > 0) {
 			this.updateInvoice(editedInvoice, withBack);
 			return;
 		}
 
-		this.addInvoice(editedInvoice, withBack);
+		//this.addInvoice(editedInvoice, withBack);
+	}
+
+	invoiceEmission() {
+		this.hasFormErrors = false;
+		const controls = this.invoiceForm.controls;
+		/** check form */
+		if (this.invoiceForm.invalid) {
+			Object.keys(controls).forEach(controlName =>
+				controls[controlName].markAsTouched()
+			);
+
+			this.hasFormErrors = true;
+			this.selectedTab = 0;
+			window.scroll(0, 0);
+			return;
+		}
+
+		let editedInvoice = this.prepareInvoice();
+		
+		this.spinner.show();
+		this.invoiceService.updateInvoice(editedInvoice).toPromise().then((res) => {
+			this.spinner.hide();
+			const resp = res as unknown as ApiResponse;
+			if (resp.success) {
+				this.invoiceService.processInvoiceEmission(editedInvoice.id).toPromise().then((r) => {
+					if (r.success) {
+						const message = `Invoice emission processed successfully.`;
+						this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+						this.loadInvoiceFromService(this.invoice.id);
+					} else {
+						const message = r.errors[0];
+						this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+					}
+				});
+			} else {
+				const message = `An error occured while processing your request. Please try again later.`;
+				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+			}
+		}).catch((e) => {
+			this.spinner.hide();
+		});
+
 	}
 
 	prepareInvoice(): InvoiceModel {
@@ -321,11 +364,14 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 
 		//payment and invoicing
 		_invoice.paymentDue = controls.paymentDue.value;
-		_invoice.discount = controls.discount.value;
+		//_invoice.discount = controls.discount.value;
 		_invoice.paymentMethodId = controls.paymentMethodId.value;
 		_invoice.insuranceCoverId = controls.insuranceCoverId.value;
 		_invoice.invoiceNotes = controls.invoiceNotes.value;
 		_invoice.invoiceDiagnosis = controls.invoiceDiagnosis.value;
+		_invoice.termsAndConditions = controls.termsAndConditions.value;
+		_invoice.invoiceDescription = controls.invoiceDescription.value;
+		_invoice.itemNameOnInvoice = controls.itemNameOnInvoice.value;
 
 		return _invoice;
 	}
@@ -413,26 +459,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			this.spinner.hide();
 		});
 
-		//this.loadingSubject.next(true);
-		//const updateInvoice: Update<InvoiceModel> = {
-		//	id: _invoice.id,
-		//	changes: _invoice
-		//};
 
-		//this.store.dispatch(new InvoiceUpdated({
-		//	partialInvoice: updateInvoice,
-		//	invoice: _invoice
-		//}));
-
-		//of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
-		//	if (withBack) {
-		//		this.goBack(_invoice.id);
-		//	} else {
-		//		const message = `Invoice successfully has been saved.`;
-		//		this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-		//		this.refreshInvoice(false);
-		//	}
-		//}); 
 	}
 
 	getComponentTitle() {
@@ -541,11 +568,11 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			}
 		});
 	}
+
 	private _filterInvoiceEntities(value: string): FilterModel[] {
 		const filterValue = this._normalizeValue(value);
 		return this.invoiceEntitiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
 	}
-
 
 	// end Invoice Entities
 
@@ -638,7 +665,6 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			return value.toLowerCase().replace(/\s/g, '');
 		return value;
 	}
-
 	/*End Filters Section*/
 
 	addBooking() {
@@ -653,8 +679,6 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			}
 		});
 	}
-
-
 
 	tabChanged(event: MatTabChangeEvent) {
 		this.tabTitle = event.tab.textLabel;

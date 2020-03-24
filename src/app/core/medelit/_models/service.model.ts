@@ -72,6 +72,13 @@ export interface ServiceProfessionals {
 	status: string;
 }
 
+export interface ServiceConnectedProfessionals {
+	proName: string;
+	phone: string;
+	email: string;
+	status: string;
+}
+
 export interface ConnectedCustomersInvoicingEntities {
 	customer: string;
 	invoiceEntity: string;

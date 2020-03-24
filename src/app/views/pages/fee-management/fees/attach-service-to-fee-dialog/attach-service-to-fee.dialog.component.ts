@@ -7,7 +7,8 @@ import {
 	FilterModel,
 	StaticDataService,
 	FeesService,
-	AttachServiceToFeeDialogModel
+	AttachServiceToFeeDialogModel,
+    eFeeType
 } from '../../../../../core/medelit';
 import { SelectionModel } from '@angular/cdk/collections';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -38,13 +39,13 @@ export class AttachServiceToFeeDialogComponent implements OnInit, OnDestroy {
 	filteredCategories: Observable<FilterModel[]>;
 	tagControl: FormControl = new FormControl();
 
-	displayedColumns: string[] = ['select', 'id', 'serviceName', 'professionals'];
+	displayedColumns: string[] = ['select', 'id', 'serviceName', 'cField', 'cSubcategory'];
 	dataSource = new MatTableDataSource<AttachServiceToFeeDialogModel>();
 	selection = new SelectionModel<AttachServiceToFeeDialogModel>(true, []);
 	private subscriptions: Subscription[] = [];
 
 	constructor(public dialogRef: MatDialogRef<AttachServiceToProDialogComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: any,
+		@Inject(MAT_DIALOG_DATA) public data: {feeId: number, feeType: eFeeType},
 		private feesService: FeesService,
 		private spinner: NgxSpinnerService,
 		private layoutUtilsService: LayoutUtilsService,
@@ -61,7 +62,7 @@ export class AttachServiceToFeeDialogComponent implements OnInit, OnDestroy {
 	loadDialogData() {
 
 		this.viewLoading = true;
-		this.feesService.getServicesToConnectWithFee(this.data).toPromise().then((resp) => {
+		this.feesService.getServicesToConnectWithFee(this.data.feeId, this.data.feeType).toPromise().then((resp) => {
 			var res = resp as unknown as ApiResponse;
 			if (res.success) {
 				this.dataSource = new MatTableDataSource<AttachServiceToFeeDialogModel>(res.data);
@@ -98,7 +99,7 @@ export class AttachServiceToFeeDialogComponent implements OnInit, OnDestroy {
 	saveConnections() {
 		var ids = this.selection.selected.map(x => x.id);
 		this.viewLoading = true;
-		this.feesService.saveServicesToConnectWithFee(ids, this.data).toPromise().then((res) => {
+		this.feesService.saveServicesToConnectWithFee(ids, this.data.feeId, this.data.feeType).toPromise().then((res) => {
 			if (res.success) {
 				this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
 				this.dialogRef.close(this.selection.selected);
@@ -138,7 +139,9 @@ export class AttachServiceToFeeDialogComponent implements OnInit, OnDestroy {
 
 	// countries
 	loadCategoriesForFilter() {
-		this.staticService.getCategoriesForFilter().subscribe(res => {
+		let fields = this.fieldControl.value;
+
+		this.staticService.getCategoriesForFilter(fields).subscribe(res => {
 			this.categoriesForFitlers = res.data;
 
 			this.filteredCategories = this.categoryControl.valueChanges

@@ -3,27 +3,28 @@
 		<div class="example-button-row">
 			<h5 class="connect-header">
 				<span>Connected Services</span>
+
+				<a href="javascript:;" class="btn btn-default kt-margin-r-10 add-service" mat-raised-button matTooltip="Connect Service" (click)="connectService()">
+					<i class="la la-users pl-2"></i>
+					<span class="kt-hidden-mobile">Connect Service</span>
+				</a>
 				<a href="javascript:;" class="btn btn-default add-service" [routerLink]="['/service-management/services/add']" mat-raised-button matTooltip="Create New Service">
 					<i class="la la-pencil-square-o pl-2"></i>
 					<span class="kt-hidden-mobile">Create New</span>
 				</a>
-				<!--<a href="javascript:;" class="btn btn-default kt-margin-r-10 pull-right add-service" mat-raised-button matTooltip="Update" (click)="connectService()">
-					<i class="la la-users pl-2"></i>
-					<span class="kt-hidden-mobile">Connect Professional</span>
-				</a>-->
 			</h5>
 		</div>
 	</div>
 
-	<!--<div class="kt-form kt-margin-b-30">
+	<div class="kt-form mt-2 mb-1">
 		<div class="row align-items-center collapse kt-form__group-actions mb-2" [ngClass]="{'show' : selection.selected.length > 0}">
-			<div class="col-xl-12">
-				<button (click)="deleteConnects()" mat-raised-button color="accent" matTooltip="Delete selected connected professionals" class="mat-button-mt-4 ml-2">
+			<div class="col-xl-12 ml-3">
+				<button (click)="deleteConnects()" mat-raised-button color="accent" matTooltip="Delete selected connected services" class="mat-button-mt-4 ml-2">
 					<mat-icon>delete</mat-icon>	Delete All
 				</button>&nbsp;
 			</div>
 		</div>
-	</div>-->
+	</div>
 
 
 	<table mat-table [dataSource]="dataSource" matSort>

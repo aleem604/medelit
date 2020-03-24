@@ -61,18 +61,6 @@ export class MenuHorizontalComponent implements OnInit, AfterViewInit {
 		}
 	};
 
-	/**
-	 * Component Conctructor
-	 *
-	 * @param el: ElementRef
-	 * @param htmlClassService: HtmlClassService
-	 * @param menuHorService: MenuHorService
-	 * @param menuConfigService: MenuConfigService
-	 * @param layoutConfigService: LayouConfigService
-	 * @param router: Router
-	 * @param render: Renderer2
-	 * @param cdr: ChangeDetectorRef
-	 */
 	constructor(
 		private el: ElementRef,
 		public htmlClassService: HtmlClassService,
@@ -85,19 +73,9 @@ export class MenuHorizontalComponent implements OnInit, AfterViewInit {
 	) {
 	}
 
-	/**
-	 * @ Lifecycle sequences => https://angular.io/guide/lifecycle-hooks
-	 */
-
-	/**
-	 * After view init
-	 */
 	ngAfterViewInit(): void {
 	}
 
-	/**
-	 * On init
-	 */
 	ngOnInit(): void {
 		this.rootArrowEnabled = this.layoutConfigService.getConfig('header.menu.self.root-arrow');
 
@@ -110,10 +88,6 @@ export class MenuHorizontalComponent implements OnInit, AfterViewInit {
 			});
 	}
 
-	/**
-	 * Return Css Class Name
-	 * @param item: any
-	 */
 	getItemCssClasses(item) {
 		let classes = 'kt-menu__item';
 
@@ -151,10 +125,6 @@ export class MenuHorizontalComponent implements OnInit, AfterViewInit {
 		return classes;
 	}
 
-	/**
-	 * Returns Attribute SubMenu Toggle
-	 * @param item: any
-	 */
 	getItemAttrSubmenuToggle(item) {
 		let toggle = 'hover';
 		if (objectPath.get(item, 'toggle') === 'click') {
@@ -168,10 +138,6 @@ export class MenuHorizontalComponent implements OnInit, AfterViewInit {
 		return toggle;
 	}
 
-	/**
-	 * Returns Submenu CSS Class Name
-	 * @param item: any
-	 */
 	getItemMenuSubmenuClass(item) {
 		let classes = '';
 
@@ -201,10 +167,6 @@ export class MenuHorizontalComponent implements OnInit, AfterViewInit {
 		return classes;
 	}
 
-	/**
-	 * Check Menu is active
-	 * @param item: any
-	 */
 	isMenuItemIsActive(item): boolean {
 		if (item.submenu) {
 			return this.isMenuRootItemIsActive(item);
@@ -217,10 +179,6 @@ export class MenuHorizontalComponent implements OnInit, AfterViewInit {
 		return this.currentRouteUrl.indexOf(item.page) !== -1;
 	}
 
-	/**
-	 * Check Menu Root Item is active
-	 * @param item: any
-	 */
 	isMenuRootItemIsActive(item): boolean {
 		if (item.submenu.items) {
 			for (const subItem of item.submenu.items) {

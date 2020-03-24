@@ -8,8 +8,8 @@
 				<strong>required</strong>
 			</mat-error>
 			<mat-error *ngIf="cloneControl.errors?.min">
-				Number of cycles 
-				<strong>min value shoule be 5</strong>
+				Sorry, Minimum Number for a Cycle is 5
+				<strong>5</strong>
 			</mat-error>
 			<mat-hint align="start">
 				Please enter
@@ -21,6 +21,6 @@
 	</div>
 	<div mat-dialog-actions>
 		<button mat-button (click)="onCancel()">Cancel</button>
-		<button mat-button [mat-dialog-close]="cloneControl.value" cdkFocusInitial [disabled]="cloneControl.invalid">Ok</button>
+		<button mat-button class="pull-right" [mat-dialog-close]="cloneControl.value" cdkFocusInitial [disabled]="cloneControl.invalid">Ok</button>
 	</div>
 </div>

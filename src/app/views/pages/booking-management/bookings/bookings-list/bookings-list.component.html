@@ -122,7 +122,7 @@
 
 				<ng-container matColumnDef="bookingDate">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Booking <br /> Date</mat-header-cell>
-					<mat-cell *matCellDef="let booking">{{booking.createDate  | date: 'yyyy-MM-dd'}}</mat-cell>
+					<mat-cell *matCellDef="let booking">{{booking.bookingDate  | date: 'yyyy-MM-dd'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="visitDate">

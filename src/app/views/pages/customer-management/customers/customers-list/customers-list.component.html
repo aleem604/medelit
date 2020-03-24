@@ -16,7 +16,7 @@
 					
 					<div class="col-md-4 kt-margin-bottom-10-mobile">
 						<mat-form-field>
-							<input matInput placeholder="Search customer" #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
+							<input matInput #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
 								<strong>Search in all fields</strong>
 							</mat-hint>
@@ -47,16 +47,9 @@
 					</div>
 				</div>
 			</div>
-			<!-- end::GROUP ACTIONS -->
 		</div>
-		<!-- end::FILTERS & GROUP ACTIONS -->
 
-		<!-- MATERIAL TABLE | Binded to datasources -->
-		<!-- See off.documentations 'https://material.angular.io/components/table/overview' -->
 		<div class="mat-table__wrapper">
-			<!-- Checkbox Column -->
-			<!-- Table with selection -->
-			<!-- https://run.stackblitz.com/api/angular/v1?file=app%2Ftable-selection-example.ts -->
 			<mat-table class="lmat-elevation-z8"
 					   #table
 					   [dataSource]="dataSource"
@@ -65,7 +58,6 @@
 					   matSortActive="id"
 					   matSortDirection="desc"
 					   matSortDisableClear>
-				<!-- Checkbox Column -->
 				<ng-container matColumnDef="select">
 					<mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
 						<mat-checkbox (change)="$event ? masterToggle() : null"
@@ -153,12 +145,9 @@
 			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">Please wait....</div>
 		</div>
 
-		<!-- start: BOTTOM -->
 		<div class="mat-table__bottom">
 			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
 			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
 		</div>
-		<!-- end: BOTTOM -->
 	</kt-portlet-body>
-	<!-- end::Body -->
 </kt-portlet>

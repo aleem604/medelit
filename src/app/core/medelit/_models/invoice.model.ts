@@ -16,8 +16,8 @@ export class InvoiceModel extends BaseModel {
 	statusId?: number;
 	paymentDue?: Date;
 	invoiceDeliveryDate: Date;
-	invoiceSentByEmailId?: number;
-	invoiceSentByMailId?: number;
+	invoiceSentByEmailId?: number = 0;
+	invoiceSentByMailId?: number = 0;
 	paymentMethodId: number;
 	patientDateOfBirth?: Date;
 	ieBillingAddress: string;
@@ -41,6 +41,7 @@ export class InvoiceModel extends BaseModel {
 	subTotal?: number;
 	discount?: number;
 	totalInvoice?: number;
+	isProforma: boolean;
 
 
 

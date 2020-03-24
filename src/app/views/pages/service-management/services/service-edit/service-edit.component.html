@@ -105,6 +105,7 @@
 											<mat-form-field class="example-full-width">
 												<input type="text" placeholder="Pick field" aria-label="Number" matInput [matAutocomplete]="fieldAuto" [formControlName]="'fieldId'">
 												<mat-autocomplete autoActiveFirstOption #fieldAuto="matAutocomplete"
+																  (optionSelected)="loadCategoriesForFilter()"
 																  [displayWith]="displayFn">
 													<mat-option *ngFor="let f of filteredFields | async" [value]="f">
 														{{f.value}}
@@ -274,11 +275,11 @@
 			</ng-template>
 		</mat-tab>
 
-		<!--<mat-tab label="Connected Professionals" [disabled]='!(service && service.id)' title="Connected Professionals">
+		<mat-tab label="Connected Professionals" [disabled]='!(service && service.id)' title="Connected Professionals">
 			<ng-template matTabContent>
 				<service-professionals [serviceId]="serviceId"></service-professionals>
 			</ng-template>
-		</mat-tab>-->
+		</mat-tab>
 
 		<mat-tab label="Connected Customer & Invoicing Entities" [disabled]='!(service && service.id)' title="Connected Customer & Invoicing Entities">
 			<ng-template matTabContent>

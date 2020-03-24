@@ -87,17 +87,17 @@ export class FeesService {
 		return this.http.post<ApiResponse>(`${API_FEES_URL}/connect-fees-to-service-and-professional/${serviceId}/${professionalId}`, fees, { headers: httpHeader });
 	}
 
-	getServicesToConnectWithFee(feeId: number): Observable<ApiResponse> {
+	getServicesToConnectWithFee(feeId: number, feeType: eFeeType): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.get<ApiResponse>(API_FEES_URL + '/services-to-connect-with-fee/' + feeId, { headers: httpHeader });
+		return this.http.get<ApiResponse>(`${API_FEES_URL}/services-to-connect-with-fee/${feeId}/${feeType}`, { headers: httpHeader });
 	}
 
-	saveServicesToConnectWithFee(serviceIds: any[], feeId: number): Observable<ApiResponse> {
+	saveServicesToConnectWithFee(serviceIds: any[], feeId: number, feeType: eFeeType): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
-		return this.http.post<ApiResponse>(API_FEES_URL + '/services-to-connect-with-fee/' + feeId, serviceIds, { headers: httpHeader });
+		return this.http.post<ApiResponse>(`${API_FEES_URL}/services-to-connect-with-fee/${feeId}/${feeType}`, serviceIds, { headers: httpHeader });
 	}
 
-	deleteConnectedServices(feeIds: number[], feeId: number, feeType: number): Observable<ApiResponse> {
+	deleteConnectedServices(feeIds: number[], feeId: number, feeType: eFeeType): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.post<ApiResponse>(`${API_FEES_URL}/delete-connected-services/${feeId}/${feeType}`, feeIds, { headers: httpHeader });
 	}

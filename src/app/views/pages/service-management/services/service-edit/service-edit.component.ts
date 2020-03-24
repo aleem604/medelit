@@ -3,14 +3,14 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRe
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 // Material
-import { MatDialog, MatChipInputEvent, MatSelect, MatTabChangeEvent } from '@angular/material';
+import { MatDialog, MatChipInputEvent, MatSelect, MatTabChangeEvent, getMatFormFieldPlaceholderConflictError } from '@angular/material';
 // RxJS
 import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
 import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
 // NGRX
 import { Store, select } from '@ngrx/store';
-import { Dictionary, Update } from '@ngrx/entity';
 import { AppState } from '../../../../../core/reducers';
+import * as _ from 'lodash';
 // Layout
 import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
 // CRUD
@@ -197,7 +197,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			description: [this.service.description, []],
 			durationId: [this.service.durationId, [Validators.required]],
 			vatId: [this.service.vatId, [Validators.required]],
-			
+
 			covermap: [this.service.covermap, []],
 			invoicingNotes: [this.service.invoicingNotes, []],
 			refundNotes: [this.service.refundNotes, []],
@@ -441,14 +441,24 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 	// Categories Filter
 	loadCategoriesForFilter() {
-		this.staticService.getCategoriesForFilter().subscribe(res => {
+		let field = this.serviceForm.get('fieldId').value;
+		let fieldObj = [];
+		if (_.isNumber(field)) {
+			fieldObj.push({ id: field, value: '' });
+		} else {
+			fieldObj.push(field);
+		}
+
+		this.staticService.getCategoriesForFilter(fieldObj).subscribe(res => {
 			this.categoriesForFilter = res.data;
 
 			this.filteredCategories = this.serviceForm.get('subcategoryId').valueChanges
 				.pipe(
 					startWith(''),
 					map(value => this._filterCategories(value))
-				);
+			);
+
+			this.serviceForm.get('subcategoryId').setValue('');
 			if (this.service.subcategoryId > 0) {
 				var title = this.categoriesForFilter.find(x => x.id == this.service.subcategoryId);
 				if (title) {

@@ -23,7 +23,7 @@
 			<td mat-cell *matCellDef="let element"> {{element.email}} </td>
 		</ng-container>
 
-		<ng-container matColumnDef="lastBookedService">
+		<ng-container matColumnDef="service">
 			<th mat-header-cell *matHeaderCellDef mat-sort-header> Services + Fees </th>
 			<td mat-cell *matCellDef="let element"><span [innerHtml]="element.service"></span>	</td>
 		</ng-container>

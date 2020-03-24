@@ -18,7 +18,7 @@ import {
 	ApiResponse,
 	MedelitStaticData,
 	ServicesService,
-    ServiceModel
+	ServiceModel
 } from '../../../../../core/medelit';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -277,16 +277,20 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			calendarActivation: [this.professional.calendarActivation.toString(), Validators.required],
 			proTaxCodeId: [this.professional.proTaxCodeId]
 		});
+
+
+
+
 	}
 
 	loadResources() {
 		this.loadLanguagesForFilter();
 		this.loadFieldsForFilter();
-		this.loadSubCatsForFilter();
+		//this.loadSubCatsForFilter();
 		this.loadCountiesForFilter();
 		this.loadCitiesForFilter();
 		this.loadClinicCitiesForFilter();
-		
+
 		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
 			this.titlesForFilter = data.map((el) => { return { id: el.id, value: el.titles }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 			if (this.professional.titleId) {
@@ -424,7 +428,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		_professional.name = controls.name.value;
 		_professional.email = controls.email.value;
 		_professional.email2 = controls.email2.value;
-		
+
 		_professional.dateOfBirth = controls.dateOfBirth.value;
 		_professional.mobilePhone = controls.mobilePhone.value;
 		_professional.telephone = controls.telephone.value;
@@ -544,7 +548,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 				return result;
 			}
 			result = `Edit professional - ${this.professional.name}`;
-		} else{
+		} else {
 			result = this.tabTitle;
 		}
 
@@ -640,11 +644,11 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 					var findIndex = this.fieldsForFilter.findIndex((el) => { return el.id == x.id });
 					if (findIndex > -1)
 						select.push(this.fieldsForFilter[findIndex]);
-
 				});
 				this.professionalForm.patchValue({ 'professionalFields': select });
 			}
 
+			this.loadSubCatsForFilter();
 			this.fieldMultiFilterCtrl.valueChanges
 				.pipe(takeUntil(this._onDestroy))
 				.subscribe(() => {
@@ -673,7 +677,8 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	// end fields fitler
 	// SubCats For Filter
 	loadSubCatsForFilter() {
-		this.staticService.getCategoriesForFilter().subscribe(res => {
+		var fields = this.professionalForm.get('professionalFields').value;
+		this.staticService.getCategoriesForFilter(fields).subscribe(res => {
 			this.subCatsForFilter = res.data;
 			this.filteredSubCats.next(this.subCatsForFilter.slice());
 
@@ -897,4 +902,39 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	tabChanged(event: MatTabChangeEvent) {
 		this.tabTitle = event.tab.textLabel;
 	}
+
+	isValidUrl = (control) => {
+		try {
+			let val = this.professionalForm.get(control).value;
+			if (val &&  !_.startsWith('www.', val)) {
+				if (!(_.startsWith('http://', val) || _.startsWith('https://', val))) {
+					val = 'http://' + val;
+				}
+			}
+			return this.validateURL(val);
+		} catch (_) {
+			return false;
+		}
+	}
+	getUrl = (control) => {
+		let val = this.professionalForm.get(control).value;
+		if (!_.startsWith('www.', val)) {
+			if (!(_.startsWith('http://', val) || _.startsWith('https://', val))) {
+				val = 'http://' + val;
+			}
+		}
+		return new URL(val);
+	}
+
+	validateURL(str) {
+		var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+			'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+			'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+			'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+			'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+			'(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+		return !!pattern.test(str);
+	}
+
+
 }

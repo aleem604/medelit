@@ -63,6 +63,7 @@ export {
 	ServiceModel,
 	ServiceProfessionalFeesModels,
 	ServiceProfessionals,
+	ServiceConnectedProfessionals,
 	ServiceConnectedCustomerInvoices,
 	ServiceConnectedBookings,
 	ConnectedCustomersInvoicingEntities,

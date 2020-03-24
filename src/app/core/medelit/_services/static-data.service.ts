@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { QueryParamsModel, HttpUtilsService } from '../../_base/crud';
-import { ApiResponse } from '..';
+import { ApiResponse, FilterModel } from '..';
 
 
 const API_STATIC_DATA_URL = environment.apiEndpoint + '/static';
@@ -11,177 +11,218 @@ const API_STATIC_DATA_URL = environment.apiEndpoint + '/static';
 @Injectable()
 export class StaticDataService {
 
-	lastFilter$: BehaviorSubject<QueryParamsModel> = new BehaviorSubject(new QueryParamsModel({}, 'asc', '', 0, 10));
+	lastFilter$: BehaviorSubject<QueryParamsModel> = new BehaviorSubject(new QueryParamsModel({}, 'desc', '', 0, 10));
 
 	constructor(private http: HttpClient,
 		private httpUtils: HttpUtilsService) { }
 
 
 	getCustomersForImportFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/customers');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/customers', { headers: httpHeader });
 	}
 
 	getCustomersForFilter(): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/customers-for-filter');
 	}
 
 	getInvoicesForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/invoices');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/invoices', { headers: httpHeader });
 	}
 
 	getApplicationMethodsForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/application-methods');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/application-methods', { headers: httpHeader });
 	}
 
 	getApplicationMeansForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/application-means');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/application-means', { headers: httpHeader });
 	}
 
 	getContractStatusOptions(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/contract-status');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/contract-status', { headers: httpHeader });
 	}
 
 	getDocumentListSentForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/document-list-sent');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/document-list-sent', { headers: httpHeader });
 	}
 
 	getCollaborationCodes(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/collaboration-codes');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/collaboration-codes', { headers: httpHeader });
 	}
 
 	getStatuses(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/statuses');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/statuses', { headers: httpHeader });
 	}
 
 	getTitlesForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/titles');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/titles', { headers: httpHeader });
 	}
 
 	getLanguagesForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/languages');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/languages', { headers: httpHeader });
 	}
 
 	getCitiesForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/cities');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/cities', { headers: httpHeader });
 	}
 
 	getCountriesForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/countries');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/countries', { headers: httpHeader });
 	}
 
 	getRelationshipsForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/relationships');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/relationships', { headers: httpHeader });
 	}
 
 	getAccountingCodesForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/accounting-codes');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/accounting-codes', { headers: httpHeader });
 	}
 
 	getFieldsForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/fields');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/fields', { headers: httpHeader });
 	}
 
-	getCategoriesForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/categories');
+	getCategoriesForFilter(fields: FilterModel[]): any {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(API_STATIC_DATA_URL + '/categories', fields, { headers: httpHeader });
 	}
 
 	getDurationsForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/durations');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/durations', { headers: httpHeader });
 	}
 
 	getVatsForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/vats');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/vats', { headers: httpHeader });
 	}
 
 	getPTFeesForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/ptfees');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/ptfees', { headers: httpHeader });
 	}
 
 	getPROFeesForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/profees');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/profees', { headers: httpHeader });
 	}
 
 	getProfessionalsForFilter(serviceId?: number): any {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
 		if (serviceId)
-			return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionas-with-fees/' + serviceId);
+			return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionas-with-fees/' + serviceId, { headers: httpHeader });
 		else
-			return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionas-with-fees');
+			return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/professionas-with-fees', { headers: httpHeader });
 	}
 
 	getServicesForFilter(): any {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/services');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/services', { headers: httpHeader });
 	}
 
 	getPaymentMethodsForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/payment-methods');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/payment-methods', { headers: httpHeader });
 	}
 
 	getPaymentStatusForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/payment-status');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/payment-status', { headers: httpHeader });
 	}
 
 	getDiscountNetworksForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/discount-networks');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/discount-networks', { headers: httpHeader });
 	}
 
 	getInvoiceEntitiesForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/invoice-entities');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/invoice-entities', { headers: httpHeader });
 	}
 
 	getVisitVenuesForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/visit-venues');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/visit-venues', { headers: httpHeader });
 	}
 
 	getBuildingTypesForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/building-types');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/building-types', { headers: httpHeader });
 	}
 
 	getLeadStatusesForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/lead-statuses');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/lead-statuses', { headers: httpHeader });
 	}
 
 	getLeadSourcesForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/lead-sources');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/lead-sources', { headers: httpHeader });
 	}
 
 	getLeadCategoriesForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/lead-categories');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/lead-categories', { headers: httpHeader });
 	}
 
 	getContactMethodsForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/contact-methods');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/contact-methods', { headers: httpHeader });
 	}
 
 	getBookingStatusesForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/booking-status');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/booking-status', { headers: httpHeader });
 	}
 
 	getReportDeliveryOptions(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/report-delivery-options');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/report-delivery-options', { headers: httpHeader });
 	}
 
 	getAddedToAccountOptions(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/added-to-account-options');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/added-to-account-options', { headers: httpHeader });
 	}
 
 	getRatingOptions(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/ratings');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/ratings', { headers: httpHeader });
 	}
 
 	getInvoiceEntityTypesForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/ie-types');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/ie-types', { headers: httpHeader });
 	}
 
 	getInvoiceStatusOptions(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/invoice-status');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/invoice-status', { headers: httpHeader });
 	}
 
 	getStaticDataForFitler(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/static-data');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/static-data', { headers: httpHeader });
 	}
 
 	getLabsForFilter(): Observable<ApiResponse> {
-		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/labs');
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_STATIC_DATA_URL + '/labs', { headers: httpHeader });
 	}
 
 }

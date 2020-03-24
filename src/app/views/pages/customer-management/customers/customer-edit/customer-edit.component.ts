@@ -521,7 +521,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
 			this.paymentMethodsOptions = data.map((el) => { return { id: el.id, value: el.paymentMethods }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 			if (this.customer.paymentMethodId) {
-				var obj = data.find((e) => { return e.id == this.customer.paymentMethodId });
+				var obj = this.paymentMethodsOptions.find((e) => { return e.id == this.customer.paymentMethodId });
 				if (obj)
 					this.customerForm.get('paymentMethodId').setValue(obj.id);
 			}
@@ -529,7 +529,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			this.listedDiscountNetworkOptions = data.map((el) => { return { id: el.id, value: el.discountNetworks }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });;
 
 			if (this.customer.listedDiscountNetworkId) {
-				var obj = data.find((e) => { return e.id == this.customer.listedDiscountNetworkId });
+				var obj = this.paymentMethodsOptions.find((e) => { return e.id == this.customer.listedDiscountNetworkId });
 				if (obj)
 					this.customerForm.get('listedDiscountNetworkId').setValue(obj.id);
 			}
@@ -537,7 +537,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			this.buildingTypeOptions = data.map((el) => { return { id: el.id, value: el.buildingTypes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.customer.buildingTypeId) {
-				var obj = data.find((e) => { return e.id == this.customer.buildingTypeId });
+				var obj = this.buildingTypeOptions.find((e) => { return e.id == this.customer.buildingTypeId });
 				if (obj)
 					this.customerForm.get('buildingTypeId').setValue(obj.id);
 			}
@@ -545,7 +545,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			this.visitVenueOptions = data.map((el) => { return { id: el.id, value: el.visitVenues }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.customer.visitVenueId) {
-				const obj = data.find((e) => { return e.id == this.customer.visitVenueId });
+				const obj = this.visitVenueOptions.find((e) => { return e.id == this.customer.visitVenueId });
 				if (obj)
 					this.customerForm.get('visitVenueId').setValue(obj.id);
 			}
@@ -553,7 +553,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			this.contactMethodOptions = data.map((el) => { return { id: el.id, value: el.contactMethods }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.customer.contactMethodId) {
-				const obj = data.find((e) => { return e.id == this.customer.contactMethodId });
+				const obj = this.contactMethodOptions.find((e) => { return e.id == this.customer.contactMethodId });
 				if (obj)
 					this.customerForm.get('contactMethodId').setValue(obj.id);
 			}
@@ -561,7 +561,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			this.leadSourceOptions = data.map((el) => { return { id: el.id, value: el.leadSources }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.customer.leadSourceId) {
-				const obj = data.find((e) => { return e.id == this.customer.leadSourceId });
+				const obj = this.leadSourceOptions.find((e) => { return e.id == this.customer.leadSourceId });
 				if (obj)
 					this.customerForm.get('leadSourceId').setValue(obj.id);
 			}

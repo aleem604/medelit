@@ -1,14 +1,14 @@
 // Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, OnChanges } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray, ValidatorFn } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, ValidatorFn } from '@angular/forms';
 // Material
-import { MatDialog, MatSelect, DateAdapter, MAT_DATE_FORMATS, MatTabChangeEvent } from '@angular/material';
+import { MatDialog, MatTabChangeEvent } from '@angular/material';
 // RxJS
-import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
-import { map, startWith, delay, first, takeUntil, filter } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 // NGRX
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
 // Layout
 import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
@@ -19,12 +19,10 @@ import {
 	BookingModel,
 	BookingService,
 	StaticDataModel,
-
 	StaticDataService,
 	FilterModel,
 	ApiResponse,
 	MedelitStaticData,
-
 	InvoicesService
 } from '../../../../../core/medelit';
 import * as moment from 'moment';
@@ -32,10 +30,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { BookingToInvoiceDialog } from '../booking-to-invoice/booking-to-invoice-dialog';
 import { BookingCloneDialog } from '../booking-clone-dialog/booking-clone-dialog';
 import { BookingCycleDialog } from '../booking-cycle-dialog/booking-cycle-dialog';
-
+import { AlertDialogComponent } from '../../../../partials/alert-dialog/alert-dialog.component';
 
 @Component({
-	// tslint:disable-next-line:component-selector
 	selector: 'kt-booking-edit',
 	templateUrl: './booking-edit.component.html',
 	styleUrls: ['./booking-edit.component.scss'],
@@ -216,7 +213,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 			customerName: [this.booking.customerName],
 			invoiceEntityName: [this.booking.invoiceEntityName, []],
-			name: [this.booking.name, [Validators.required]],
+			bookingName: [this.booking.bookingName, []],
 			bookingStatusId: [this.booking.bookingStatusId, [Validators.required]],
 			bookingDate: [this.booking.bookingDate, [Validators.required]],
 
@@ -245,7 +242,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			//countryOfBirthId: [this.booking.countryOfBirthId],
 			homeCountryId: [this.booking.homeCountryId, [Validators.required]],
 			visitCountryId: [this.booking.visitCountryId, [Validators.required]],
-			details: [this.booking.details, [Validators.required]],
+			details: [this.booking.details, []],
 			diagnosis: [this.booking.diagnosis],
 			reasonForVisit: [this.booking.reasonForVisit, [Validators.required]],
 			imToProId: [this.booking.imToProId],
@@ -281,19 +278,24 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			excemptionCode: [this.booking.excemptionCode, []],
 			nhsOrPrivateId: [this.booking.nhsOrPrivateId, []],
 
+			visitDate: [this.booking.visitDate, []],
 			isAllDayVisit: [this.booking.isAllDayVisit, []],
 			visitStartDate: [this.booking.visitStartDate, [Validators.required]],
 			visitEndDate: [this.booking.visitEndDate, [Validators.required]],
 
 			proDiscount: [this.booking.proDiscount, []],
 			cashConfirmationMailId: [this.booking.cashConfirmationMailId, []],
-			quantityHours: [this.booking.quantityHours, Validators.required],
+			quantityHours: [this.booking.quantityHours, [Validators.required, Validators.min(1), Validators.max(50)]],
 
 			serviceId: [this.booking.serviceId, [Validators.required]],
 			professionalId: [this.booking.professionalId, [Validators.required]],
 			ptFeeA1: [this.booking.ptFeeA1, [Validators.required]],
 			ptFeeA2: [this.booking.ptFeeA2, [Validators.required]],
 			isPtFeeA1: [this.booking.isPtFeeA1, [Validators.required]],
+
+			proFeeA1: [this.booking.proFeeA1, [Validators.required]],
+			proFeeA2: [this.booking.proFeeA2, [Validators.required]],
+			isProFeeA1: [this.booking.isProFeeA1, [Validators.required]],
 
 			patientAge: [this.booking.patientAge, []],
 			cycle: [this.booking.cycle, []],
@@ -355,7 +357,10 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		//});
 
 		this.bookingForm.get('ptFee').valueChanges.subscribe((d) => {
-			this.bookingForm.get('cashReturn').setValue(d);
+			var paymentMethodId = this.bookingForm.get('paymentMethodId').value;
+			if (paymentMethodId === '2' || paymentMethodId === '3') {
+				this.bookingForm.get('cashReturn').setValue(d);
+			}
 		});
 
 		this.updateAccountings();
@@ -460,7 +465,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		const _booking = new BookingModel();
 		_booking.id = this.booking.id;
 
-		_booking.name = controls.name.value;
+		_booking.bookingName = controls.bookingName.value;
 		_booking.bookingStatusId = +controls.bookingStatusId.value;
 		_booking.bookingDate = controls.bookingDate.value;
 
@@ -537,6 +542,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		_booking.patientDiscount = controls.patientDiscount.value;
 		_booking.grossTotal = controls.grossTotal.value;
 
+		_booking.visitDate = controls.visitDate.value;
 		_booking.isAllDayVisit = controls.isAllDayVisit.value;
 		_booking.visitStartDate = controls.visitStartDate.value;
 		_booking.visitEndDate = controls.visitEndDate.value;
@@ -552,6 +558,10 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		_booking.ptFeeA1 = controls.ptFeeA1.value;
 		_booking.ptFeeA2 = controls.ptFeeA2.value;
 		_booking.isPtFeeA1 = controls.isPtFeeA1.value;
+
+		_booking.proFeeA1 = controls.proFeeA1.value;
+		_booking.proFeeA2 = controls.proFeeA2.value;
+		_booking.isProFeeA1 = controls.isProFeeA1.value;
 
 		_booking.patientAge = controls.patientAge.value;
 		_booking.cycle = controls.cycle.value;
@@ -638,9 +648,27 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 			this.hasFormErrors = true;
 			this.selectedTab = 0;
+			window.scroll(0, 0);
 			return;
 		}
 		let editedBooking = this.prepareBooking();
+
+		const invoiceNumber = this.booking.invoiceNumber;
+		const paymentStatus = +this.bookingForm.get('paymentStatusId').value;
+		const paymentConcluded = +this.bookingForm.get('paymentConcludedId').value;
+		const paymentMethod = +this.bookingForm.get('paymentMethodId').value;
+		const bookingStatus = +this.bookingForm.get('bookingStatusId').value;
+
+		if ((invoiceNumber == null && paymentStatus === 3 && paymentConcluded === 1 && paymentMethod !== 4) || (invoiceNumber === null && paymentStatus == 2 && (bookingStatus === 4 || bookingStatus === 6))) {
+			console.log(true);
+
+		} else {
+			this.dialog.open(AlertDialogComponent, {
+				width: '300px',
+				data: { title: 'Create Invoice', message: 'This booking is not viable for invoicing.' }
+			});
+			return;
+		}
 
 		this.spinner.show();
 		this.bookingService.updateBooking(editedBooking).toPromise().then((res) => {
@@ -661,9 +689,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 					this.spinner.hide();
 					this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
 				});
-
-
-
 			} else {
 				const message = `An error occured while processing your request. Please try again later.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
@@ -798,7 +823,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			if (resp.success) {
 
 				const dialogRef = this.dialog.open(BookingCycleDialog, {
-					width: '250px',
+					width: '370px',
 					data: { cycles: 5 }
 				});
 
@@ -898,7 +923,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			}
 
 			// relationship for filter
-			this.relationshipsForFilter = data.map((el) => { return { id: el.id, value: el.reportDeliveryOptions }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			this.relationshipsForFilter = data.map((el) => { return { id: el.id, value: el.relationships }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.booking.visitRequestingPersonRelationId) {
 				var obj = data.find((e) => { return e.id == this.booking.visitRequestingPersonRelationId });
@@ -1096,12 +1121,16 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 						this.bookingForm.get('quantityHours').clearValidators();
 					} else {
 						this.timedService = true;
-						this.bookingForm.get('quantityHours').setValidators(Validators.required);
+						this.bookingForm.get('quantityHours').setValidators([Validators.required, Validators.min(1), Validators.max(50)]);
 					}
 
 					var isPtFeeA1 = this.bookingForm.get('isPtFeeA1').value;
 					if (isPtFeeA1 != undefined || isPtFeeA1 != null)
 						this.bookingForm.patchValue({ 'isPtFeeA1': isPtFeeA1.toString() });
+
+					var isProFeeA1 = this.bookingForm.get('isProFeeA1').value;
+					if (isProFeeA1 != undefined || isProFeeA1 != null)
+						this.bookingForm.patchValue({ 'isProFeeA1': isProFeeA1.toString() });
 				}
 
 				this.loadProfessionalsForFilter(this.booking.serviceId);

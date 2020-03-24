@@ -52,7 +52,7 @@ export class InvoiceConnectedBookingsComponent implements OnInit, OnDestroy {
 
 	isFuture(row: any) {
 		if (row.statusId === 4) {
-			return true;
+			return 1;
 		}
 		return 0;
 	}

@@ -6,6 +6,8 @@ export class BookingModel extends BaseModel {
 	customerId?: number;
 	customerName: string;
 	name: string;
+	srNo: number;
+	bookingName: string;
 	invoiceEntityId: number;
 	invoiceEntityName: string;
 	bookingStatusId?: number = 1;
@@ -75,6 +77,7 @@ export class BookingModel extends BaseModel {
 	taxAmount?: number;
 	patientDiscount?: number;
 	grossTotal?: number;
+	visitDate?: Date;
 	isAllDayVisit: number;
 	visitStartDate?: Date;
 	visitEndDate?: Date;
@@ -90,14 +93,23 @@ export class BookingModel extends BaseModel {
 	proInvoiceNumber: string;
 	serviceId: number;
 	professionalId: number;
+
+	ptFeeId: number;
 	ptFeeA1: number;
 	ptFeeA2: number;
 	isPtFeeA1: number;
+
+	proFeeId: number;
+	proFeeA1: number;
+	proFeeA2: number;
+	isProFeeA1: number;
+
 	quantityHours?: number;
 	taxType?: number;
 	subTotal?: number;
 	totalDue?: number;
 	totalPaid?: number;
+	invoiceId?: number;
 
 	status: eRecordStatus;
 	createDate: Date;

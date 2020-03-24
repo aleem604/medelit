@@ -356,7 +356,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		return { ptFeeSubTotal: ptFeeSubTotal, proFeeSubTotal: proFeeSubTotal };
 	}
 
-
 	removeService(index) {
 		if (index > 0) {
 			this.lead.services.splice(index, 1);
@@ -369,7 +368,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			//this.loadServicesForFilter();
 		}
 	}
-
 
 	goBack(id) {
 		this.loadingSubject.next(false);
@@ -440,7 +438,12 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			let postalCode = this.leadForm.get('postalCode').value;
 			let cityId = this.leadForm.get('cityId').value;
 			let visitVenueId = this.leadForm.get('visitVenueId').value;
-
+			let contactMethodId = this.leadForm.get('contactMethodId').value;
+			let buildingTypeId = this.leadForm.get('buildingTypeId').value;
+			let paymentMethodId = this.leadForm.get('preferredPaymentMethodId').value;
+			let insuranceCoverId = this.leadForm.get('insuranceCoverId').value;			
+			let visitVenueDetail = this.leadForm.get('visitVenueDetail').value;
+			
 			let message = '';
 			if (!name)
 				message += '<span class="font-500">Name</span> is required. <br/>';
@@ -458,6 +461,17 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 				message += '<span class="font-500">City</span> is required. <br/>';
 			if (!visitVenueId)
 				message += '<span class="font-500">Visit Venue</span> is required. <br/>';
+			if (!visitVenueDetail)
+				message += '<span class="font-500">Visit Venue Detail</span> is required. <br/>';
+			if (!contactMethodId)
+				message += '<span class="font-500">Contact Method</span> is required. <br/>';
+			if (!buildingTypeId)
+				message += '<span class="font-500">Building Type</span> is required. <br/>';
+			if (!paymentMethodId)
+				message += '<span class="font-500">Payment Method</span> is required. <br/>';
+			if (!insuranceCoverId)
+				message += '<span class="font-500">Insurance Cover</span> is required. <br/>';
+
 
 			if (message) {
 				const dialogRef = this.dialog.open(AlertDialogComponent, {
@@ -469,6 +483,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 				return;
 			}
+
+			return;
 		}
 
 
@@ -536,6 +552,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		_lead.visitVenueId = controls.visitVenueId.value;
 		_lead.addressNotes = controls.addressNotes.value;
 		_lead.visitVenueDetail = controls.visitVenueDetail.value;
+		
 
 		// lead info
 		_lead.leadStatusId = controls.leadStatusId.value;
@@ -613,10 +630,10 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		//});
 	}
 
-	updateLead(_lead: LeadModel, withBack: boolean = false, withBooking:boolean = false) {
+	updateLead(_lead: LeadModel, withBack: boolean = false, withBooking: boolean = false) {
 		this.spinner.show();
 		this.leadService.updateLead(_lead).toPromise().then((res) => {
-			
+
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data > 0) {
 				if (withBooking) {
@@ -1027,7 +1044,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			if (this.lead.professionalId > 0) {
 				var professional = this.professionalsForFilter.find(x => x.id == this.lead.professionalId);
 				if (professional) {
-					this.leadForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value, ptFees: professional.ptFees, proFees: professional.proFees   } });
+					this.leadForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value, ptFees: professional.ptFees, proFees: professional.proFees } });
 				}
 			}
 		});
@@ -1041,7 +1058,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	// Service Professionals
 
 	//// Invoice Entities
-	loadInvoiceEntitiesForFilter() {
+	loadInvoiceEntitiesForFilter(ieId?: number) {
 		this.staticService.getInvoiceEntitiesForFilter().subscribe(res => {
 			this.invoiceEntitiesForFilter = res.data;
 
@@ -1050,14 +1067,22 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 					startWith(''),
 					map(value => this._filterInvoiceEntities(value))
 				);
-			if (this.lead.invoiceEntityId > 0) {
-				var ie = this.invoiceEntitiesForFilter.find(x => x.id == this.lead.invoiceEntityId);
+
+			if (ieId && ieId > 0) {
+				const ie = this.invoiceEntitiesForFilter.find(x => x.id == ieId);
 				if (ie) {
 					this.leadForm.patchValue({ 'invoiceEntityId': { id: ie.id, value: ie.value } });
 				}
+
+			} else {
+				if (this.lead.invoiceEntityId > 0) {
+					const ie = this.invoiceEntitiesForFilter.find(x => x.id == this.lead.invoiceEntityId);
+					if (ie) {
+						this.leadForm.patchValue({ 'invoiceEntityId': { id: ie.id, value: ie.value } });
+					}
+				}
 			}
 		});
-
 	}
 
 	private _filterInvoiceEntities(value: string): FilterModel[] {
@@ -1139,17 +1164,14 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		ieModel.blackListId = controls.blacklistId.value;
 		ieModel.discountPercent = controls.discount.value;
 
-		let errorMessage = '';
-
-
-
 		const dialogRef = this.dialog.open(CreateInvoiceEntityDialogComponent, { data: ieModel });
-		dialogRef.afterClosed().subscribe(res => {
+		dialogRef.afterClosed().subscribe((res: ApiResponse) => {
 			if (!res) {
 				return;
 			}
 
-			this.loadInvoiceEntitiesForFilter();
+			// @ts-ignore
+			this.loadInvoiceEntitiesForFilter(res.resp.data.id);
 			this.layoutUtilsService.showActionNotification(_saveMessage, _messageType);
 			this.detectChanges();
 			//this.refreshLead(false, this.lead.id);

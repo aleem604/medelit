@@ -29,8 +29,8 @@ export class CustomerModel extends BaseModel {
 	visitCityId: number = 1002;
 	homePostCode: string;
 	visitPostCode: string;
-	homeCountryId?: number = 1003;
-	visitCountryId?: number = 1003;
+	homeCountryId?: number = 1022;
+	visitCountryId?: number = 1022;
 	gpCode: string;
 	visitVenueId?: number;
 	visitVenueDetail: string;

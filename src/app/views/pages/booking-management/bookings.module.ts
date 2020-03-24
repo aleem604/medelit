@@ -84,6 +84,7 @@ import { BookingToInvoiceDialog } from './bookings/booking-to-invoice/booking-to
 import { BookingConnectedBookingsComponent } from './bookings/booking-connected-bookings/booking-connected-bookings.component';
 import { BookingConnectedProfessinalsComponent } from './bookings/booking-connected-professionals/booking-connected-professionals.component';
 import { BookingConnectedInvoicesComponent } from './bookings/booking-connected-invoices/booking-connected-invoices.component';
+import { AlertDialogComponent } from '../../partials/alert-dialog/alert-dialog.component';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -192,6 +193,7 @@ const routes: Routes = [
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
+		AlertDialogComponent,
 		BookingCloneDialog,
 		BookingCycleDialog,
 		BookingToInvoiceDialog

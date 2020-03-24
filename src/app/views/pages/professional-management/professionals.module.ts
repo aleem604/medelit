@@ -83,6 +83,7 @@ import { ConnectedLeadsComponent } from './professionals/connected-leads/connect
 import { AttachServiceToProDialogComponent } from './professionals/attach-service-to-pro-dialog/attach-service-to-pro.dialog.component';
 import { ProfessionalConnectedServicesComponent } from './professionals/professional-connected-services/professional-connected-services.component';
 import { AddFeeToServiceDialogComponent } from './professionals/add-fee-to-service-dialog/add-fee-to-service.dialog.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 
 // tslint:disable-next-line:class-name
@@ -149,6 +150,7 @@ const routes: Routes = [
 		NgbProgressbarModule,
 		NgxMatSelectSearchModule,
 		NgxSpinnerModule,
+		NgxMaskModule.forRoot(),
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false
@@ -159,6 +161,7 @@ const routes: Routes = [
 	providers: [
 		ModuleGuard,
 		InterceptService,
+		
       	{
         	provide: HTTP_INTERCEPTORS,
        	 	useClass: InterceptService,

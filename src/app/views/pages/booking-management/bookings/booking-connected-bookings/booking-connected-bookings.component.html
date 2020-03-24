@@ -40,12 +40,12 @@
 		<ng-container matColumnDef="proFee">
 			<th mat-header-cell *matHeaderCellDef mat-sort-header> Pro. Fee </th>
 			<td mat-cell *matCellDef="let element" class="text-capitalize"> {{element.proFee}} </td>
-			<td mat-footer-cell *matFooterCellDef><strong>Total</strong> </td>
+			<td mat-footer-cell *matFooterCellDef><strong *ngIf="dataSource.data.length">Total</strong> </td>
 		</ng-container>
 		<ng-container matColumnDef="subTotal">
 			<th mat-header-cell *matHeaderCellDef mat-sort-header> Sub Total </th>
 			<td mat-cell *matCellDef="let element" class="text-capitalize"> {{element.subTotal}} </td>
-			<td mat-footer-cell *matFooterCellDef> {{getTotalCost() | number:'3.1-1'}} </td>
+			<td mat-footer-cell *matFooterCellDef> <span *ngIf="dataSource.data.length">{{getTotalCost() | number:'3.1-1'}}</span> </td>
 		</ng-container>
 
 		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

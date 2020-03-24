@@ -30,15 +30,6 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
 	@ViewChild('ktHeader', {static: true}) ktHeader: ElementRef;
 
-	/**
-	 * Component constructor
-	 *
-	 * @param router: Router
-	 * @param layoutRefService: LayoutRefService
-	 * @param layoutConfigService: LayoutConfigService
-	 * @param loader: LoadingBarService
-	 * @param htmlClassService: HtmlClassService
-	 */
 	constructor(
 		private router: Router,
 		private layoutRefService: LayoutRefService,
@@ -65,31 +56,15 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	/**
-	 * @ Lifecycle sequences => https://angular.io/guide/lifecycle-hooks
-	 */
-
-	/**
-	 * On init
-	 */
 	ngOnInit(): void {
 		const config = this.layoutConfigService.getConfig();
 
-		// get menu header display option
 		this.menuHeaderDisplay = objectPath.get(config, 'header.menu.self.display');
 
-		// header width fluid
 		this.fluid = objectPath.get(config, 'header.self.width') === 'fluid';
-
-		// animate the header minimize the height on scroll down. to be removed, not applicable for default demo
-		/*if (objectPath.get(config, 'header.self.fixed.desktop.enabled') || objectPath.get(config, 'header.self.fixed.desktop')) {
-			// header minimize on scroll down
-			this.ktHeader.nativeElement.setAttribute('data-ktheader-minimize', '1');
-		}*/
 	}
 
 	ngAfterViewInit(): void {
-		// keep header element in the service
 		this.layoutRefService.addElement('header', this.ktHeader.nativeElement);
 	}
 }

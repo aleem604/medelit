@@ -3,6 +3,7 @@ export * from './services/services-list/services-list.component';
 export * from './services/service-edit/service-edit.component';
 
 export * from './services/connected-customers-invoicing-entities/connected-customers-invoicing-entities.component';
+export * from './services/service-connected-professionals/service-connected-professionals.component';
 export * from './services/service-connected-bookings/service-connected-bookings.component';
 export * from './services/service-connected-invoices/service-connected-invoies.component';
 export * from './services/service-connected-leads/service-connected-leads.component';

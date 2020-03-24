@@ -7,6 +7,12 @@ import { HtmlClassService } from '../html-class.service';
 @Component({
 	selector: 'kt-brand',
 	templateUrl: './brand.component.html',
+	styles: [`
+				.brand-logo {
+					width: 75%;
+				}
+	
+		`]
 })
 export class BrandComponent implements OnInit, AfterViewInit {
 	// Public properties

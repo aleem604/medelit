@@ -9,6 +9,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { DateValueAccessorModule } from 'angular-date-value-accessor';
+import { NgxMaskModule } from 'ngx-mask'
 
 // Angular in memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
@@ -103,6 +104,8 @@ export function hljsLanguages(): HighlightLanguage[] {
 		HttpClientModule,
 		NgxMaterialTimepickerModule,
 		DateValueAccessorModule,
+		NgxMaskModule.forRoot(),
+
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forRoot(FakeApiService, {
 			passThruUnknownUrl: true,
 			dataEncapsulation: false

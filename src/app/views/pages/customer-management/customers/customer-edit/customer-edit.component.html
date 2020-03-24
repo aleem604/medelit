@@ -1,7 +1,7 @@
 <kt-portlet>
 	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
 		<ng-container ktPortletTools>
-			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the products list">
+			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
@@ -560,7 +560,7 @@
 													</mat-option>
 												</mat-select>
 												<mat-hint align="start">
-													<strong>Building Type </strong>
+													<strong class="required-star">Building Type </strong>
 												</mat-hint>
 												<mat-error>
 													Building Type is
@@ -725,7 +725,7 @@
 														</mat-option>
 													</mat-select>
 													<mat-hint align="start">
-														<strong>Preferred Payment Method </strong>
+														<strong class="required-star">Preferred Payment Method </strong>
 													</mat-hint>
 													<mat-error>
 														Preferred Payment Method is
@@ -745,7 +745,7 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														<strong class="required-star">Insurance Cover Option </strong>
+														<strong class="required-star">Insurance Cover </strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>

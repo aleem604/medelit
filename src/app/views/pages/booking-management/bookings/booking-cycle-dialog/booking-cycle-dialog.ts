@@ -5,6 +5,7 @@ import { FormControl, Validators } from '@angular/forms';
 @Component({
   selector: 'booking-cycle-dialog',
 	templateUrl: 'booking-cycle-dialog.html',
+	styleUrls: ['booking-cycle-dialog.scss'],
 })
 export class BookingCycleDialog implements OnInit {
 	cloneControl: FormControl;
