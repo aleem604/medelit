@@ -13,10 +13,10 @@
 				<i class="la la-save"></i>
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
-			<a *ngIf="leadId && leadId >0" href="javascript:;" class="btn kt-margin-r-10" (click)="onSumbit(false, true)" mat-raised-button matTooltip="Convert to Booking">
+			<button *ngIf="leadId && leadId >0" class="btn kt-margin-r-10" (click)="onSumbit(false, true)" mat-raised-button matTooltip="Convert to Booking">
 				<i class="la la-mail-forward"></i>
 				<span class="kt-hidden-mobile">Convert to Booking</span>
-			</a>
+			</button>
 			<!--<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
 				<mat-icon>more_vert</mat-icon>
 			</button>-->
@@ -162,13 +162,13 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Main phone" #mainPhone formControlName="mainPhone">
+									<input matInput placeholder="Main phone" #mainPhone mask="+(00)-000-000-0000" formControlName="mainPhone">
 									<button mat-button *ngIf="mainPhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('mainPhone').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
 										Main phone is
-										<strong>required</strong>
+										<strong>invalid</strong>
 									</mat-error>
 									<mat-hint align="start">
 										<strong>Main Phone</strong>
@@ -192,7 +192,7 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Contact phone" #contactPhone formControlName="contactPhone">
+									<input matInput placeholder="Contact phone" #contactPhone mask="+(00)-000-000-0000" formControlName="contactPhone">
 									<button mat-button *ngIf="contactPhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('contactPhone').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
@@ -209,7 +209,7 @@
 								<div class="row">
 									<div class="col kt-margin-bottom-10-mobile">
 										<mat-form-field class="mat-form-field-fluid">
-											<input matInput placeholder="Phone 2" #phone2 formControlName="phone2">
+											<input matInput placeholder="Phone 2" #phone2 mask="+(00)-000-000-0000" formControlName="phone2">
 											<button mat-button *ngIf="phone2.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('phone2').setValue('')">
 												<mat-icon>close</mat-icon>
 											</button>
@@ -243,7 +243,7 @@
 								<div class="row">
 									<div class="col kt-margin-bottom-10-mobile">
 										<mat-form-field class="mat-form-field-fluid">
-											<input matInput placeholder="Phone 3" #phone3 formControlName="phone3">
+											<input matInput placeholder="Phone 3" #phone3 mask="+(00)-000-000-0000" formControlName="phone3">
 											<button mat-button *ngIf="phone3.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('phone3').setValue('')">
 												<mat-icon>close</mat-icon>
 											</button>
@@ -623,7 +623,7 @@
 										<strong>required</strong>
 									</mat-error>
 									<mat-hint align="start">
-										<strong>Insurance Cover Option </strong>
+										<strong>Insurance Cover</strong>
 									</mat-hint>
 								</mat-form-field>
 							</div>

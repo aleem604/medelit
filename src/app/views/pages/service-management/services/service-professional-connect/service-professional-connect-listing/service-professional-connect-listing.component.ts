@@ -8,6 +8,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { LayoutUtilsService, MessageType } from '../../../../../../core/_base/crud';
 import { ConfirmDialogComponent } from '../../../../../partials/confirm-dialog/confirm-dialog.component';
 import { ServiceProfessionalConnectDialogComponent } from '../service-professional-connect-dialog/service-professional-connect.dialog.component';
+import { EditServiceProfessionalRowDialog } from '../eidt-service-professional-connect-diag/eidt-service-professional-connect.dialog.component';
 
 
 @Component({
@@ -24,7 +25,7 @@ export class ProfessionalToServiceListingComponent implements OnInit, OnDestroy 
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-	displayedColumns: string[] = ['select', 'professional', 'ptFeeName', 'ptFeeA1', 'ptFeeA2', 'proFeeName', 'proFeeA1', 'proFeeA2'];
+	displayedColumns: string[] = ['select', 'professional', 'ptFeeName', 'ptFeeA1', 'ptFeeA2', 'proFeeName', 'proFeeA1', 'proFeeA2', 'actions'];
 	dataSource = new MatTableDataSource<ProfessionalConnectedServicesModel>();
 	selection = new SelectionModel<ProfessionalConnectedServicesModel>(true, []);
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -110,9 +111,9 @@ export class ProfessionalToServiceListingComponent implements OnInit, OnDestroy 
 			if (!res) {
 				return;
 			}
-			var professionals = this.selection.selected;
+			var rows = this.selection.selected.map(m=>m.id);
 			this.spinner.show();
-			this.servicesService.detachProfessionalConnectedServices(professionals, this.serviceId).toPromise()
+			this.servicesService.detachProfessionalConnectedServices(rows, this.serviceId).toPromise()
 				.then((res) => {
 					this.loadGridData();
 					this.reloadData.emit('professional');
@@ -134,6 +135,19 @@ export class ProfessionalToServiceListingComponent implements OnInit, OnDestroy 
 			this.loadGridData();
 			this.reloadData.emit('professional');
 			this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
+		});
+	}
+
+	editServiceFee(serviceRow: ProfessionalConnectedServicesModel) {
+		const dialogRef = this.dialog.open(EditServiceProfessionalRowDialog, { data: serviceRow });
+		dialogRef.afterClosed().subscribe(res => {
+			if (!res) {
+				return;
+			}
+			this.loadGridData();
+			this.reloadData.emit('professional');
+			this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
+			this.detectChanges();
 		});
 	}
 

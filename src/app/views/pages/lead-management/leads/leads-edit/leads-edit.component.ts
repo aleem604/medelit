@@ -225,7 +225,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			surName: [this.lead.surName, [Validators.required, Validators.min(4)]],
 			name: [this.lead.name],
 			languageId: [this.lead.languageId, [Validators.required]],
-			mainPhone: [this.lead.mainPhone, []],
+			mainPhone: [this.lead.mainPhone, [Validators.pattern('^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$')]],
 			mainPhoneOwner: [this.lead.mainPhoneOwner],
 			contactPhone: [this.lead.contactPhone, []],
 			phone2: [this.lead.phone2, []],
@@ -416,11 +416,21 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 				controls[controlName].markAsTouched()
 			);
 			(<FormArray>this.leadForm.get('services')).controls.forEach((group: FormGroup) => {
-				(<any>Object).values(group.controls).forEach((control: FormControl) => {
-					control.markAsTouched();
-					if (control.status === 'INVALID')
-						console.log('invlaid controls', control);
-				})
+				const scontrols = group.controls;
+
+				(<any>Object).keys(scontrols).forEach((controlName) => {
+					scontrols[controlName].markAsTouched()
+					if (scontrols[controlName].status === 'INVALID')
+						console.log('invlaid service controls', controlName);
+				});
+
+
+
+				//(<any>Object).values(group.controls).forEach((control: FormControl) => {
+				//	control.markAsTouched();
+				//	if (control.status === 'INVALID')
+				//		console.log('invlaid controls', control);
+				//});
 			});
 
 			this.hasFormErrors = true;
@@ -441,9 +451,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			let contactMethodId = this.leadForm.get('contactMethodId').value;
 			let buildingTypeId = this.leadForm.get('buildingTypeId').value;
 			let paymentMethodId = this.leadForm.get('preferredPaymentMethodId').value;
-			let insuranceCoverId = this.leadForm.get('insuranceCoverId').value;			
+			let insuranceCoverId = this.leadForm.get('insuranceCoverId').value;
 			let visitVenueDetail = this.leadForm.get('visitVenueDetail').value;
-			
+
 			let message = '';
 			if (!name)
 				message += '<span class="font-500">Name</span> is required. <br/>';
@@ -483,8 +493,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 				return;
 			}
-
-			return;
 		}
 
 
@@ -552,7 +560,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		_lead.visitVenueId = controls.visitVenueId.value;
 		_lead.addressNotes = controls.addressNotes.value;
 		_lead.visitVenueDetail = controls.visitVenueDetail.value;
-		
+
 
 		// lead info
 		_lead.leadStatusId = controls.leadStatusId.value;
@@ -696,7 +704,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.loadCitiesForFilter();
 		this.loadCountiesForFilter();
 		this.loadServicesForFilter();
-		this.loadProfessionalsForFilter(1);
+		//this.loadProfessionalsForFilter(1);
 
 		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
 			this.titlesForFilter = data.map((el) => { return { id: el.id, value: el.titles }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
@@ -905,8 +913,10 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 					const sobj = this.servicesForFilter.filter((ele) => {
 						return ele.id == serviceObj;
 					});
-					if (sobj)
+					if (sobj) {
 						control.controls[i].patchValue({ 'serviceId': sobj[0] });
+						this.loadProfessionalsForFilter(sobj[0].id);
+					}
 				}
 
 				var isPtFeeA1 = control.controls[i].get('isPtFeeA1').value;
@@ -1009,14 +1019,14 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		var serviceControls = this.leadForm.get('services').controls[index];
 		var serviceObj = serviceControls.get('serviceId').value;
 		if (serviceObj) {
-			//this.loadProfessionalsForFilter(serviceObj.id);
+			this.loadProfessionalsForFilter(serviceObj.id);
 
-			serviceControls.get('ptFeeId').setValue(serviceObj.ptFeeId);
-			serviceControls.get('ptFeeA1').setValue(serviceObj.ptFeeA1);
-			serviceControls.get('ptFeeA2').setValue(serviceObj.ptFeeA2);
-			serviceControls.get('proFeeId').setValue(serviceObj.proFeeId);
-			serviceControls.get('proFeeA1').setValue(serviceObj.proFeeA1);
-			serviceControls.get('proFeeA2').setValue(serviceObj.proFeeA2);
+			//serviceControls.get('ptFeeId').setValue(serviceObj.ptFeeId);
+			//serviceControls.get('ptFeeA1').setValue(serviceObj.ptFeeA1);
+			//serviceControls.get('ptFeeA2').setValue(serviceObj.ptFeeA2);
+			//serviceControls.get('proFeeId').setValue(serviceObj.proFeeId);
+			//serviceControls.get('proFeeA1').setValue(serviceObj.proFeeA1);
+			//serviceControls.get('proFeeA2').setValue(serviceObj.proFeeA2);
 			serviceControls.patchValue({ 'professionalId': '' });
 		} else {
 			this.professionalsForFilter = [];
@@ -1037,8 +1047,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 	// Service Professionals
 
-	loadProfessionalsForFilter(serviceId?: number) {
-		this.staticService.getProfessionalsForFilter().subscribe(res => {
+	loadProfessionalsForFilter(serviceId: number) {
+		this.spinner.show();
+		this.staticService.getProfessionalsForFilter(serviceId).subscribe(res => {
 			this.professionalsForFilter = res.data;
 
 			if (this.lead.professionalId > 0) {
@@ -1047,7 +1058,13 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 					this.leadForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value, ptFees: professional.ptFees, proFees: professional.proFees } });
 				}
 			}
-		});
+		},
+			() => {
+				this.spinner.hide();
+			},
+			() => {
+				this.spinner.hide();
+			});
 	}
 
 	private _filterProfessionals(value: string): FilterModel[] {

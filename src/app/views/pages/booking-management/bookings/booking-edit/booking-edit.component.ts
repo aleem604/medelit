@@ -211,7 +211,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	createForm() {
 		this.bookingForm = this.bookingFB.group({
 
-			customerName: [this.booking.customerName],
+			customerName: [this.booking.customerName, [Validators.required]],
 			invoiceEntityName: [this.booking.invoiceEntityName, []],
 			bookingName: [this.booking.bookingName, []],
 			bookingStatusId: [this.booking.bookingStatusId, [Validators.required]],
@@ -280,8 +280,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 			visitDate: [this.booking.visitDate, []],
 			isAllDayVisit: [this.booking.isAllDayVisit, []],
-			visitStartDate: [this.booking.visitStartDate, [Validators.required]],
-			visitEndDate: [this.booking.visitEndDate, [Validators.required]],
+			visitStartDate: [this.booking.visitStartDate, []],
+			visitEndDate: [this.booking.visitEndDate, []],
 
 			proDiscount: [this.booking.proDiscount, []],
 			cashConfirmationMailId: [this.booking.cashConfirmationMailId, []],
@@ -1176,10 +1176,14 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		var professional = this.bookingForm.get('professionalId').value;
 		if (professional) {
 			this.bookingForm.get('ptFeeA1').setValue(professional.ptFees.a1);
-			this.bookingForm.get('ptFeeA2').setValue(professional.proFees.a1);
+			this.bookingForm.get('ptFeeA2').setValue(professional.ptFees.a1);
+			this.bookingForm.get('proFeeA1').setValue(professional.proFees.a1);
+			this.bookingForm.get('proFeeA2').setValue(professional.proFees.a1);
 		} else {
 			this.bookingForm.get('ptFeeA1').setValue('');
 			this.bookingForm.get('ptFeeA2').setValue('');
+			this.bookingForm.get('proFeeA1').setValue('');
+			this.bookingForm.get('proFeeA2').setValue('');
 		}
 		this.updateAccountings();
 	}

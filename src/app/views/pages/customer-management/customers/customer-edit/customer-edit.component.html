@@ -148,7 +148,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Main phone" #mainPhone formControlName="mainPhone">
+												<input matInput placeholder="Main phone" #mainPhone mask="+(00)-000-000-0000" formControlName="mainPhone">
 												<button mat-button *ngIf="mainPhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('mainPhone').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -178,7 +178,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Contact phone" #contactPhone formControlName="contactPhone">
+												<input matInput placeholder="Contact phone" #contactPhone mask="+(00)-000-000-0000" formControlName="contactPhone">
 												<button mat-button *ngIf="contactPhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('contactPhone').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -194,8 +194,8 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Phone 2" #mainPhoneOwner formControlName="phone2">
-												<button mat-button *ngIf="mainPhoneOwner.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('mainPhoneOwner').setValue('')">
+												<input matInput placeholder="Phone 2" #phone2 mask="+(00)-000-000-0000" formControlName="phone2">
+												<button mat-button *ngIf="phone2.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('phone2').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -224,7 +224,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Phone 3" #phone3 formControlName="phone3">
+												<input matInput placeholder="Phone 3" #phone3 mask="+(00)-000-000-0000" formControlName="phone3">
 												<button mat-button *ngIf="phone3.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('phone3').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -711,77 +711,93 @@
 										</div>
 
 									</div>
-										<div class="row">
-											<div class="col-md-12 heading-wrapper mt-4">
-												<div class="title-wrapper">
-													<h5>Payment and Invoicing</h5>
-												</div>
-											</div>
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="example-full-width">
-													<mat-select [formControlName]="'paymentMethodId'">
-														<mat-option *ngFor="let val of paymentMethodsOptions" [value]="val.id">
-															{{ val.value }}
-														</mat-option>
-													</mat-select>
-													<mat-hint align="start">
-														<strong class="required-star">Preferred Payment Method </strong>
-													</mat-hint>
-													<mat-error>
-														Preferred Payment Method is
-														<strong>required</strong>
-													</mat-error>
-												</mat-form-field>
-											</div>
-
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field>
-													<mat-select class="mat-form-field mat-form-field-fluid" [formControlName]="'insuranceCoverId'">
-														<mat-option value="0">No</mat-option>
-														<mat-option value="1">Yes</mat-option>
-													</mat-select>
-													<mat-error>
-														Insurance Cover is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														<strong class="required-star">Insurance Cover </strong>
-													</mat-hint>
-												</mat-form-field>
-											</div>
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="example-full-width">
-													<mat-select [formControlName]="'listedDiscountNetworkId'">
-														<mat-option *ngFor="let val of listedDiscountNetworkOptions" [value]="val.id">
-															{{ val.value }}
-														</mat-option>
-													</mat-select>
-													<mat-hint align="start">
-														<strong>Listed Discount Network </strong>
-													</mat-hint>
-													<mat-error>
-														Listed Discount Network is
-														<strong>required</strong>
-													</mat-error>
-												</mat-form-field>
-											</div>
-
-											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<textarea matInput rows="4" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
-													<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('invoicingNotes').setValue('')">
-														<mat-icon>close</mat-icon>
-													</button>
-													<mat-error>
-														Invoice Notes is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														<strong>Invoice Notes</strong>
-													</mat-hint>
-												</mat-form-field>
+									<div class="row">
+										<div class="col-md-12 heading-wrapper mt-4">
+											<div class="title-wrapper">
+												<h5>Payment and Invoicing</h5>
 											</div>
 										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="example-full-width">
+												<mat-select [formControlName]="'paymentMethodId'">
+													<mat-option *ngFor="let val of paymentMethodsOptions" [value]="val.id">
+														{{ val.value }}
+													</mat-option>
+												</mat-select>
+												<mat-hint align="start">
+													<strong class="required-star">Preferred Payment Method </strong>
+												</mat-hint>
+												<mat-error>
+													Preferred Payment Method is
+													<strong>required</strong>
+												</mat-error>
+											</mat-form-field>
+										</div>
+
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field>
+												<mat-select class="mat-form-field mat-form-field-fluid" [formControlName]="'insuranceCoverId'">
+													<mat-option value="0">No</mat-option>
+													<mat-option value="1">Yes</mat-option>
+												</mat-select>
+												<mat-error>
+													Insurance Cover is
+													<strong>required</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong class="required-star">Insurance Cover </strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="example-full-width">
+												<mat-select [formControlName]="'listedDiscountNetworkId'">
+													<mat-option *ngFor="let val of listedDiscountNetworkOptions" [value]="val.id">
+														{{ val.value }}
+													</mat-option>
+												</mat-select>
+												<mat-hint align="start">
+													<strong>Listed Discount Network </strong>
+												</mat-hint>
+												<mat-error>
+													Listed Discount Network is
+													<strong>required</strong>
+												</mat-error>
+											</mat-form-field>
+										</div>
+
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="mat-form-field-fluid">
+												<input matInput placeholder="Discount %" #discount formControlName="discount">
+												<button mat-button *ngIf="discount.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('discount').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
+												<mat-error>
+													Discount % is
+													<strong>required</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong>Discount %</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="mat-form-field-fluid">
+												<textarea matInput rows="4" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
+												<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('invoicingNotes').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
+												<mat-error>
+													Invoice Notes is
+													<strong>required</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong>Invoice Notes</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+									</div>
 
 										<div class="row">
 											<div class="col-md-12 heading-wrapper mt-4">

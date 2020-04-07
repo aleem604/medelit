@@ -74,6 +74,7 @@ import { InvoiceEntityConnectedCustomersComponent } from './invoice-entities/ie-
 import { InvoiceEntityConnectedProfessinalsComponent } from './invoice-entities/ie-connected-professionals/ie-connected-professionals.component';
 import { InvoieEntityConnectedBookingsComponent } from './invoice-entities/ie-connected-bookings/ie-connected-bookings.component';
 import { InvoiceEntityConnectedInvoicesComponent } from './invoice-entities/ie-connected-invoices/ie-connected-invoices.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 
 // tslint:disable-next-line:class-name
@@ -137,6 +138,7 @@ const routes: Routes = [
 		MatTabsModule,
 		MatTooltipModule,
 		NgbProgressbarModule,
+		NgxMaskModule.forRoot(),
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false

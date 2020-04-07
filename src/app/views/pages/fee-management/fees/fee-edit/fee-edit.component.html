@@ -86,7 +86,10 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Fee Name" formControlName="feeName" maxlength="250" />
+												<input matInput placeholder="Fee Name" #feeName formControlName="feeName" maxlength="250" />
+												<button mat-button *ngIf="feeName.value" matSuffix mat-icon-button aria-label="Clear" (click)="feeForm.get('feeName').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
 												<mat-error>
 													Fee Name is
 													<strong>required</strong>
@@ -98,7 +101,10 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput type="number" placeholder="Fee A1 value" formControlName="a1" maxlength="5" />
+												<input matInput type="number" placeholder="Fee A1 value" #a1 formControlName="a1" maxlength="5" />
+												<button mat-button *ngIf="a1.value" matSuffix mat-icon-button aria-label="Clear" (click)="feeForm.get('a1').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
 												<span matPrefix>£&nbsp;</span>
 												<mat-error *ngIf="feeForm.get('a1')?.errors?.required">
 													Fee A1 is
@@ -115,7 +121,10 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput type="number" placeholder="Fee A2 value" formControlName="a2" maxlength="5" />
+												<input matInput type="number" placeholder="Fee A2 value" #a2 formControlName="a2" maxlength="5" />
+												<button mat-button *ngIf="a2.value" matSuffix mat-icon-button aria-label="Clear" (click)="feeForm.get('a2').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
 												<span matPrefix>£&nbsp;</span>
 												<mat-error *ngIf="feeForm.get('a2')?.errors?.required">
 													Fee A2 is

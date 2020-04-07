@@ -54,9 +54,11 @@ export class AttachServiceToFeeDialogComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.loadCategoriesForFilter();
-		this.loadFieldsForFilter();
 		this.loadDialogData();
+	}
+
+	applyFilter(filterValue: string) {
+		this.dataSource.filter = filterValue.trim().toLowerCase();
 	}
 
 	loadDialogData() {
@@ -118,56 +120,10 @@ export class AttachServiceToFeeDialogComponent implements OnInit, OnDestroy {
 		this.subscriptions.forEach(el => el.unsubscribe());
 	}
 
-	// fields
-	loadFieldsForFilter() {
-		this.staticService.getFieldsForFilter().subscribe(res => {
-			this.fieldsForFilter = res.data;
-
-			this.filteredFields = this.fieldControl.valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterFields(value))
-				);
-		});
-
-	}
-	private _filterFields(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.fieldsForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end account code id filter
-
-	// countries
-	loadCategoriesForFilter() {
-		let fields = this.fieldControl.value;
-
-		this.staticService.getCategoriesForFilter(fields).subscribe(res => {
-			this.categoriesForFitlers = res.data;
-
-			this.filteredCategories = this.categoryControl.valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterCategories(value))
-				);
-		});
-
-	}
-	private _filterCategories(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.categoriesForFitlers.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end account code id filter
-
 	displayFn(option: FilterModel): string {
 		if (option)
 			return option.value;
 		return '';
-	}
-
-	private _normalizeValue(value: string): string {
-		if (value && value.length > 0)
-			return value.toLowerCase().replace(/\s/g, '');
-		return value;
 	}
 
 	// End Fitler Section

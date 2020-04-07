@@ -22,7 +22,7 @@ export class ServiceProfessionalConnectDialogComponent implements OnInit, OnDest
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	viewLoading = false;
 
-	displayedColumns: string[] = ['select', 'pName', 'ptFeeName', 'ptFeeA1', 'ptFeeA2', 'proFeeName', 'proFeeA1', 'proFeeA2'];
+	displayedColumns: string[] = ['select', 'name', 'email', 'telephone', 'city', 'country'];
 	dataSource = new MatTableDataSource<AttachProfessionalToServiceDialogModel>();
 	selection = new SelectionModel<AttachProfessionalToServiceDialogModel>(true, []);
 
@@ -77,7 +77,7 @@ export class ServiceProfessionalConnectDialogComponent implements OnInit, OnDest
 	}
 
 	save() {
-		var objs = this.selection.selected;
+		var objs = this.selection.selected.map(m=>m.id);
 		this.viewLoading = true;
 		this.servicesService.attachProfessionalsToService(objs, this.data).toPromise().then((res) => {
 			if (res.success) {

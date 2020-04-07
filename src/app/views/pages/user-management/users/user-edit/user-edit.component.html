@@ -47,7 +47,7 @@
 						</div>-->
 						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
 							<mat-form-field class="mat-form-field-fluid">
-								<input matInput placeholder="Enter First Name" formControlName="firstName" />
+								<input matInput placeholder="First Name" formControlName="firstName" />
 								<mat-error>
 									First Name is
 									<strong>required</strong>
@@ -60,7 +60,7 @@
 						</div>
 						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
 							<mat-form-field class="mat-form-field-fluid">
-								<input matInput placeholder="Enter Last Name" formControlName="lastName" />
+								<input matInput placeholder="Last Name" formControlName="lastName" />
 								<mat-error>
 									Last Name is
 									<strong>required</strong>
@@ -74,7 +74,7 @@
 
 						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
 							<mat-form-field class="mat-form-field-fluid">
-								<input type="email" matInput placeholder="Enter Email" formControlName="email" />
+								<input type="email" matInput placeholder="Email" formControlName="email" />
 								<mat-error *ngIf="userForm.get('email').errors?.required">
 									Email is
 									<strong>required</strong>
@@ -92,7 +92,7 @@
 
 						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
 							<mat-form-field class="mat-form-field-fluid">
-								<input type="text" matInput placeholder="Enter temporary password" formControlName="password" maxlength="20" />
+								<input type="text" matInput placeholder="Temporary password" formControlName="password" maxlength="20" />
 
 								<mat-error *ngIf="userForm.get('password').errors?.required">
 									Temporary Password is
@@ -111,7 +111,7 @@
 
 						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
 							<mat-form-field class="mat-form-field-fluid">
-								<input matInput placeholder="Enter Phone" formControlName="phoneNumber" maxlength="20" />
+								<input matInput placeholder="Phone" mask="+(00)-000-000-0000" formControlName="phoneNumber" maxlength="20" />
 
 								<mat-error *ngIf="userForm.get('phoneNumber').errors?.minlength">
 									Please Enter a valid

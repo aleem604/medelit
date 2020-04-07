@@ -57,6 +57,7 @@ import {
     rolesReducer,
     RoleEffects
 } from '../../../core/auth';
+import { NgxMaskModule } from 'ngx-mask';
 
 const routes: Routes = [
 	{
@@ -133,7 +134,8 @@ const routes: Routes = [
 		MatExpansionModule,
 		MatTabsModule,
 		MatTooltipModule,
-		MatDialogModule
+		MatDialogModule,
+		NgxMaskModule.forRoot()
 	],
 	providers: [
 		InterceptService,

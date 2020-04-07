@@ -17,12 +17,12 @@ import {
 	StaticDataService,
 	ApiResponse,
 	MedelitStaticData,
-	ServicesService,
-	ServiceModel
+	ServicesService
 } from '../../../../../core/medelit';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmDialogComponent } from '../../../../partials/confirm-dialog/confirm-dialog.component';
+import { urlReg } from '../../../../../core/medelit/_consts/specification.dictionary';
 import { AttachServiceToProDialogComponent } from '../attach-service-to-pro-dialog/attach-service-to-pro.dialog.component';
 
 @Component({
@@ -220,12 +220,12 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			professionalLanguages: [this.professional.professionalLanguages, [Validators.required]],
 			professionalFields: [this.professional.professionalFields, [Validators.required]],
 			professionalSubCategories: [this.professional.professionalSubCategories, [Validators.required]],
-			website: [this.professional.website],
-			proOnlineCV: [this.professional.proOnlineCV, [Validators.required]],
+			website: [this.professional.website, [Validators.pattern(urlReg)]],
+			proOnlineCV: [this.professional.proOnlineCV, [Validators.pattern(urlReg)]],
 			fax: [this.professional.fax],
 
 			// conver maps
-			coverMap: [this.professional.coverMap],
+			coverMap: [this.professional.coverMap, [Validators.pattern(urlReg)]],
 
 			// Addresses
 			// home address
@@ -277,10 +277,6 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			calendarActivation: [this.professional.calendarActivation.toString(), Validators.required],
 			proTaxCodeId: [this.professional.proTaxCodeId]
 		});
-
-
-
-
 	}
 
 	loadResources() {
@@ -903,19 +899,6 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		this.tabTitle = event.tab.textLabel;
 	}
 
-	isValidUrl = (control) => {
-		try {
-			let val = this.professionalForm.get(control).value;
-			if (val &&  !_.startsWith('www.', val)) {
-				if (!(_.startsWith('http://', val) || _.startsWith('https://', val))) {
-					val = 'http://' + val;
-				}
-			}
-			return this.validateURL(val);
-		} catch (_) {
-			return false;
-		}
-	}
 	getUrl = (control) => {
 		let val = this.professionalForm.get(control).value;
 		if (!_.startsWith('www.', val)) {
@@ -923,18 +906,11 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 				val = 'http://' + val;
 			}
 		}
-		return new URL(val);
+		return val ? new URL(val) : val;
 	}
 
-	validateURL(str) {
-		var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-			'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-			'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-			'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-			'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-			'(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-		return !!pattern.test(str);
+	getControl = controlName => {
+		return this.professionalForm.get(controlName);
 	}
-
 
 }

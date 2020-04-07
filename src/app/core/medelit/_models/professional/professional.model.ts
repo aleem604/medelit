@@ -23,7 +23,7 @@ export class ProfessionalModel extends BaseModel {
 	streetName: string;
 	cityId: number = 1002;
 	postCode: string;
-	countryId: number = 1003;
+	countryId: number = 1022;
 	description: string;
 	clinicStreetName: string;
 	clinicPostCode: string;

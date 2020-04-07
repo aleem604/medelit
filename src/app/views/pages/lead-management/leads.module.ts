@@ -75,6 +75,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { CreateInvoiceEntityDialogComponent } from '../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
 import { AlertDialogComponent } from '../../partials/alert-dialog/alert-dialog.component';
 import { CSVFileUploadDialogComponent } from '../../partials/csv-file-upload-dialog/csv-file-upload.dialog.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -140,6 +141,7 @@ const routes: Routes = [
 		NgbProgressbarModule,
 		NgxMatSelectSearchModule,
 		NgbModule,
+		NgxMaskModule.forRoot(),
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false

@@ -100,7 +100,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div class="row">
-												<div [ngClass]="{'col-md-9': booking && booking.customerId, 'col-md-12': !(booking && booking.customerId)}">
+												<div [ngClass]="{'col-md-10': booking && booking.customerId, 'col-md-12': !(booking && booking.customerId)}">
 													<mat-form-field class="mat-form-field-fluid">
 														<input matInput placeholder="Customer name" #customerName formControlName="customerName" readonly="readonly">
 														<!--<button mat-button *ngIf="customerName.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('customerName').setValue('')">
@@ -115,8 +115,8 @@
 														</mat-hint>
 													</mat-form-field>
 												</div>
-												<div class="col-md-3" *ngIf="booking && booking.customerId">
-													<a class="customer-link" [routerLink]="['/customer-management/customers/edit/', booking.customerId]" title="Edit customer">View</a>
+												<div class="col-md-2" *ngIf="booking && booking.customerId">
+													<a class="customer-link" [routerLink]="['/customer-management/customers/edit/', booking.customerId]" title="Edit customer"><i class="la la-eye la-2x"></i></a>
 												</div>
 											</div>
 										</div>
@@ -306,7 +306,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Contact phone" #phoneNumber formControlName="phoneNumber">
+												<input matInput placeholder="Contact phone" #phoneNumber mask="+(00)-000-000-0000" formControlName="phoneNumber">
 												<button mat-button *ngIf="phoneNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('phoneNumber').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -321,7 +321,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Phone 2" #phone2 formControlName="phone2">
+												<input matInput placeholder="Phone 2" #phone2 mask="+(00)-000-000-0000" formControlName="phone2">
 												<button mat-button *ngIf="phone2.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('phone2').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>

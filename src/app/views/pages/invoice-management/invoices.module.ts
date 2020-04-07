@@ -70,6 +70,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { InvoicesComponent } from './invoices.component';
 import * as _index from './invoices';
 import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 
 // tslint:disable-next-line:class-name
@@ -137,6 +138,7 @@ const routes: Routes = [
 		MatTabsModule,
 		MatTooltipModule,
 		NgbProgressbarModule,
+		NgxMaskModule.forRoot(),
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false

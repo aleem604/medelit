@@ -246,6 +246,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
 			paymentMethodId: [this.customer.paymentMethodId, [Validators.required]],
 			listedDiscountNetworkId: [this.customer.listedDiscountNetworkId, []],
+			discount: [this.customer.discount, []],
 			haveDifferentIEId: [this.customer.haveDifferentIEId, []],
 			invoiceEntityId: [this.customer.invoiceEntityId, [Validators.required]],
 			invoicingNotes: [this.customer.invoicingNotes, []],
@@ -366,6 +367,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
 		_customer.paymentMethodId = controls.paymentMethodId.value;
 		_customer.listedDiscountNetworkId = controls.listedDiscountNetworkId.value;
+		_customer.discount = controls.discount.value;
 		if (controls.invoiceEntityId.value)
 			_customer.invoiceEntityId = controls.invoiceEntityId.value.id;
 		_customer.invoicingNotes = controls.invoicingNotes.value;
@@ -769,6 +771,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		ieModel.insuranceCoverId = controls.insuranceCoverId.value;
 		ieModel.invoicingNotes = controls.invoicingNotes.value;
 		ieModel.discountNetworkId = controls.listedDiscountNetworkId.value;
+		ieModel.discountPercent = controls.discount.value;
 		ieModel.personOfReference = controls.visitRequestingPerson.value;
 		ieModel.personOfReferenceEmail = controls.email.value;
 		ieModel.personOfReferencePhone = controls.mainPhone.value;

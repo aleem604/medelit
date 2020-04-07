@@ -109,7 +109,7 @@ export class ServiceConnectedPtFeeListingComponent implements OnInit, OnDestroy 
 			if (!res) {
 				return;
 			}
-			var fees = this.selection.selected;
+			var fees = this.selection.selected.map(m=>m.ptFeeId);
 			this.spinner.show();
 			this.servicesService.detachServiceConnectedPtFees(this.serviceId, fees).toPromise()
 				.then((res) => {
@@ -133,35 +133,6 @@ export class ServiceConnectedPtFeeListingComponent implements OnInit, OnDestroy 
 			//this.loadGridData();
 			this.reloadData.emit({});
 			this.layoutUtilsService.showActionNotification("Changes saved successfully", MessageType.Create);
-		});
-	}
-
-
-	removeService(serviceId: number) {
-		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-			width: '250px',
-			data: { title: 'Professional detach', message: 'Are you sure to detach professional from this service?' }
-		});
-
-		dialogRef.afterClosed().subscribe(result => {
-			if (result) {
-				this.spinner.show();
-				this.servicesService.detachProfessionalConnectedServices([], this.serviceId).toPromise().then((res) => {
-					if (res.success) {
-						//this.loadGridData();
-						this.reloadData.emit({});
-						this.layoutUtilsService.showActionNotification("Request processed successfully", MessageType.Delete, 3000);
-					} else {
-						if (res.errors)
-							this.layoutUtilsService.showActionNotification(_.join(res.errors, "<br/>"), MessageType.Delete, 3000);
-					}
-				}).catch((err) => {
-					this.spinner.hide();
-					this.layoutUtilsService.showActionNotification("An error occured while porcessing your request. Please try again later.", MessageType.Update, 3000);
-				}).finally(() => {
-					this.spinner.hide();
-				});
-			}
 		});
 	}
 

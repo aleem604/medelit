@@ -147,13 +147,14 @@ export class ServicesService {
 		return this.http.post<ApiResponse>(API_SERVICES_URL + '/professionals-to-connect-with-service/' + serviceId, objs, { headers: httpHeader });
 	}
 
-	detachProfessionalConnectedServices(objs: ProfessionalConnectedServicesModel[], serviceId: number): Observable<ApiResponse> {
+	detachProfessionalConnectedServices(objs: number[], serviceId: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.post<ApiResponse>(API_SERVICES_URL + '/detach-professionals-from-service/' + serviceId, objs, { headers: httpHeader });
 	}
 
 
 	// service connected pt fees methods
+
 	getServiceConnectedPtFees(serviceId: number): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-pt-fees/' + serviceId, { headers: httpHeader });
@@ -164,15 +165,30 @@ export class ServicesService {
 		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-pt-fees-to-attach/' + serviceId, { headers: httpHeader });
 	}
 
-	saveServiceConnectedPtFeesToAttach(serviceId: number, rows: ServiceConnectedPtFeeDialogModel[]): Observable<ApiResponse> {
+	saveServiceConnectedPtFeesToAttach(serviceId: number, rows: number[]): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.post<ApiResponse>(API_SERVICES_URL + '/service-connected-pt-fees-attach/' + serviceId, rows, { headers: httpHeader });
 	}
-
-	detachServiceConnectedPtFees(serviceId: number, rows: ServiceConnectedPtFeeModel[]): Observable<ApiResponse> {
+	detachServiceConnectedPtFees(serviceId: number, rows: number[]): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.post<ApiResponse>(API_SERVICES_URL + '/service-connected-pt-fees-detach/' + serviceId, rows, { headers: httpHeader });
 	}
+
+	getServiceProfesionalFeesRowDetail(serviceProFeeRowId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(API_SERVICES_URL + '/get-service-professional-fee-row-detail/' + serviceProFeeRowId, { headers: httpHeader });
+	}
+
+	getFeesForFilter(serviceProFeeRowId: number) {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.get<ApiResponse>(`${API_SERVICES_URL}/get-service-professional-fee-fees-for-filter/${serviceProFeeRowId}`, { headers: httpHeader });
+	}
+
+	saveServiceProfessionalFee(data: FeeDialogModel, rowId: number): Observable<ApiResponse> {
+		const httpHeader = this.httpUtils.getHTTPHeaders();
+		return this.http.post<ApiResponse>(API_SERVICES_URL + '/save-service-professional-fees/' + rowId, data, { headers: httpHeader });
+	}
+
 
 	// end service connected pro fees methods
 
@@ -187,12 +203,12 @@ export class ServicesService {
 		return this.http.get<ApiResponse>(API_SERVICES_URL + '/service-connected-pro-fees-to-attach/' + serviceId, { headers: httpHeader });
 	}
 
-	saveServiceConnectedProFeesToAttach(serviceId: number, rows: ServiceConnectedProFeeDialogModel[]): Observable<ApiResponse> {
+	saveServiceConnectedProFeesToAttach(serviceId: number, rows: number[]): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.post<ApiResponse>(API_SERVICES_URL + '/service-connected-pro-fees-attach/' + serviceId, rows, { headers: httpHeader });
 	}
 
-	detachServiceConnectedProFees(serviceId: number, rows: ServiceConnectedProFeeModel[]): Observable<ApiResponse> {
+	detachServiceConnectedProFees(serviceId: number, rows: number[]): Observable<ApiResponse> {
 		const httpHeader = this.httpUtils.getHTTPHeaders();
 		return this.http.post<ApiResponse>(API_SERVICES_URL + '/service-connected-pro-fees-detach/' + serviceId, rows, { headers: httpHeader });
 	}

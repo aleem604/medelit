@@ -68,6 +68,7 @@ import { ServicesComponent } from './services.component';
 import { StaticDataService, ServicesService } from '../../../core/medelit/_services';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import * as _index from '.';
+import { NgxMaskModule } from 'ngx-mask';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -145,6 +146,7 @@ const routes: Routes = [
 		NgbProgressbarModule,
 		MatChipsModule,
 		NgxMatSelectSearchModule,
+		NgxMaskModule.forRoot(),
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false
@@ -186,6 +188,7 @@ const routes: Routes = [
 		FetchEntityDialogComponent,
 		UpdateStatusDialogComponent,
 		_index.ServiceProfessionalConnectDialogComponent,
+		_index.EditServiceProfessionalRowDialog,
 		_index.ServiceConnectedPtFeeDialogComponent,
 		_index.ServiceConnectedProFeeDialogComponent
 	],
@@ -206,6 +209,7 @@ const routes: Routes = [
 
 		_index.ProfessionalToServiceListingComponent,
 		_index.ServiceProfessionalConnectDialogComponent,
+		_index.EditServiceProfessionalRowDialog,
 
 		_index.ServiceConnectedPtFeeDialogComponent,
 		_index.ServiceConnectedPtFeeListingComponent,

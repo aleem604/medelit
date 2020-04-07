@@ -65,8 +65,7 @@ import {
 	MatTooltipModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
-import { CoreModule } from '../../../core/core.module';
-import { NgbProgressbarModule, NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { CustomersComponent } from './customers.component';
 import { CustomersListComponent } from './customers/customers-list/customers-list.component';
@@ -78,6 +77,7 @@ import { CustomerConnectedProfessinalsComponent } from './customers/customer-con
 import { CustomerConnectedBookingsComponent } from './customers/customer-connected-bookings/customer-connected-bookings.component';
 import { CustomerConnectedInvoicesComponent } from './customers/customer-connected-invoices/customer-connected-invoices.component';
 import { CustomerConnectedLeadsComponent } from './customers/customer-connected-leads/customer-connected-leads.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -136,6 +136,7 @@ const routes: Routes = [
 		MatTooltipModule,
 		NgbProgressbarModule,
 		NgxMatSelectSearchModule,
+		NgxMaskModule.forRoot(),
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false

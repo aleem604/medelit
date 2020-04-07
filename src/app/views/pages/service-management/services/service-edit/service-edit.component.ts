@@ -30,6 +30,7 @@ import {
 } from '../../../../../core/medelit';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Update } from '@ngrx/entity';
 
 export interface Fruit {
 	name: string;
@@ -173,7 +174,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			]);
 			return;
 		}
-		this.subheaderService.setTitle('Edit servie');
+		this.subheaderService.setTitle('Edit service');
 		this.subheaderService.setBreadcrumbs([
 			{ title: 'Service Management', page: `/service-management` },
 			{ title: 'Services', page: `/service-management/services` },
@@ -354,11 +355,19 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	updateService(_service: ServiceModel, withBack: boolean = false) {
 		this.spinner.show();
 		this.serviceService.createService(_service).toPromise().then((res) => {
-			this.loadingSubject.next(false);
 			var resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
 				const message = `New service successfully has been added.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+				const updateService: Update<ServiceModel> = {
+					id: _service.id,
+					changes: _service
+				};
+
+				this.store.dispatch(new ServiceUpdated({
+					partialService: updateService,
+					service: _service
+				}));
 				this.refreshService(false);
 			} else {
 				const message = `An error occured while processing your reques. Please try again later.`;
@@ -369,8 +378,6 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		}).finally(() => {
 			this.spinner.hide();
 		});;
-
-
 
 
 		//this.loadingSubject.next(true);
@@ -456,7 +463,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 				.pipe(
 					startWith(''),
 					map(value => this._filterCategories(value))
-			);
+				);
 
 			this.serviceForm.get('subcategoryId').setValue('');
 			if (this.service.subcategoryId > 0) {
@@ -571,7 +578,6 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 	reloadAllData(type: string) {
 		this.changingValue.next(true);
-		console.log(type);
 	}
 
 

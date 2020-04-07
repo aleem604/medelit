@@ -76,6 +76,7 @@ import { AttachProToFeeDialogComponent } from './fees/attach-pro-to-fee-dialog/a
 import { FeeConnectedProfessionalsComponent } from './fees/connected-professionals/fee-connected-professionals.component';
 import { FeeConnectedServicesComponent } from './fees/connected-services/fee-connected-services.component';
 import { AttachFeesToProServiceDialogComponent } from './fees/attach-fees-to-pro-service-dialog/attach-fees-to-pro-service.dialog.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 
 // tslint:disable-next-line:class-name
@@ -139,6 +140,7 @@ const routes: Routes = [
 		MatTooltipModule,
 		NgbProgressbarModule,
 		MatChipsModule,
+		NgxMaskModule.forRoot(),
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false

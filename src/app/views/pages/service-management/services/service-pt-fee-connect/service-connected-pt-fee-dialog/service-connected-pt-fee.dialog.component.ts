@@ -78,7 +78,7 @@ export class ServiceConnectedPtFeeDialogComponent implements OnInit, OnDestroy {
 	}
 
 	save() {
-		var objs = this.selection.selected;
+		var objs = this.selection.selected.map(m=>m.id);
 		this.viewLoading = true;
 		this.servicesService.saveServiceConnectedPtFeesToAttach(this.data, objs).toPromise().then((res) => {
 			if (res.success) {

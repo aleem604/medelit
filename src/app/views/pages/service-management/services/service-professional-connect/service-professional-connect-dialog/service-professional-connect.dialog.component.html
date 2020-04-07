@@ -42,41 +42,32 @@
 					</ng-container>
 
 					
-					<ng-container matColumnDef="pName">
+					<ng-container matColumnDef="name">
 						<th mat-header-cell *matHeaderCellDef mat-sort-header> Professional </th>
-						<td mat-cell *matCellDef="let element" class="pl-2"> {{element.pName}} </td>
+						<td mat-cell *matCellDef="let element" class="pl-2"> {{element.name}} </td>
 					</ng-container>
 
-					<ng-container matColumnDef="ptFeeName">
-						<th mat-header-cell *matHeaderCellDef mat-sort-header> Customer Fee </th>
-						<td mat-cell *matCellDef="let element"> {{element.ptFeeName}} </td>
+					<ng-container matColumnDef="email">
+						<th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+						<td mat-cell *matCellDef="let element"> {{element.email}} </td>
 					</ng-container>
 
-					<ng-container matColumnDef="ptFeeA1">
-						<th mat-header-cell *matHeaderCellDef mat-sort-header> A1 </th>
-						<td mat-cell *matCellDef="let element"> {{element.ptFeeA1}} </td>
+					<ng-container matColumnDef="telephone">
+						<th mat-header-cell *matHeaderCellDef mat-sort-header> Telephone </th>
+						<td mat-cell *matCellDef="let element"> {{element.telephone}} </td>
 					</ng-container>
 
-					<ng-container matColumnDef="ptFeeA2">
-						<th mat-header-cell *matHeaderCellDef mat-sort-header> A2 </th>
-						<td mat-cell *matCellDef="let element"> {{element.ptFeeA2}} </td>
+					<ng-container matColumnDef="city">
+						<th mat-header-cell *matHeaderCellDef mat-sort-header> City </th>
+						<td mat-cell *matCellDef="let element"> {{element.city}} </td>
 					</ng-container>
 
-					<ng-container matColumnDef="proFeeName">
-						<th mat-header-cell *matHeaderCellDef mat-sort-header> Pro Fee </th>
-						<td mat-cell *matCellDef="let element"> {{element.proFeeName}} </td>
+					<ng-container matColumnDef="country">
+						<th mat-header-cell *matHeaderCellDef mat-sort-header> Country </th>
+						<td mat-cell *matCellDef="let element"> {{element.country}} </td>
 					</ng-container>
 
-					<ng-container matColumnDef="proFeeA1">
-						<th mat-header-cell *matHeaderCellDef mat-sort-header> A1 </th>
-						<td mat-cell *matCellDef="let element"> {{element.proFeeA1}} </td>
-					</ng-container>
-
-					<ng-container matColumnDef="proFeeA2">
-						<th mat-header-cell *matHeaderCellDef mat-sort-header> A2 </th>
-						<td mat-cell *matCellDef="let element"> {{element.proFeeA2}} </td>
-					</ng-container>
-
+				
 					<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 					<tr mat-row *matRowDef="let row; columns: displayedColumns;"
 						(click)="selection.toggle(row)"></tr>

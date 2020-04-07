@@ -439,6 +439,7 @@
 			margin: 0;
 			list-style: none;
 			padding: kt-get($layout, default, self, padding);
+			padding-bottom: 10em;
 
 			// Base markup
 			.kt-menu__scroll {

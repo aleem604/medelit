@@ -66,6 +66,7 @@ import * as scss from 'highlight.js/lib/languages/scss';
 import * as xml from 'highlight.js/lib/languages/xml';
 import * as json from 'highlight.js/lib/languages/json';
 import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { OWL_DATE_TIME_LOCALE } from 'ng-pick-datetime';
 
 // tslint:disable-next-line:class-name
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -74,6 +75,19 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 	minScrollbarLength: 40,
 	maxScrollbarLength: 300,
 };
+
+export const MY_FORMATS = {
+	parse: {
+		dateInput: 'LL',
+	},
+	display: {
+		dateInput: 'DD/MM/YYYY',
+		monthYearLabel: 'YYYY',
+		dateA11yLabel: 'LL',
+		monthYearA11yLabel: 'YYYY',
+	},
+};
+
 
 
 export function initializeLayoutConfig(appConfig: LayoutConfigService) {
@@ -159,6 +173,7 @@ export function hljsLanguages(): HighlightLanguage[] {
 			useValue: {languages: hljsLanguages}
 		},
 		{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+		{ provide: OWL_DATE_TIME_LOCALE, useValue: 'en-GB' },
 		// template services
 		SubheaderService,
 		MenuHorizontalService,

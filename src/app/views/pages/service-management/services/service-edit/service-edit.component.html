@@ -55,14 +55,13 @@
 									<div class="row">
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter Name" formControlName="name">
+												<input matInput placeholder="Name" formControlName="name">
 												<mat-error>
 													Name is
 													<strong>required</strong>
 												</mat-error>
-												<mat-hint align="start">
-													Please enter
-													<strong>Model</strong>
+												<mat-hint align="start">													
+													<strong>Name</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
@@ -88,7 +87,7 @@
 											</mat-radio-group>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<div>Contract Service:</div>
+											<div>Contracted Service:</div>
 											<mat-radio-group formControlName="contractedServiceId">
 												<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
 												<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
@@ -103,7 +102,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Pick field" aria-label="Number" matInput [matAutocomplete]="fieldAuto" [formControlName]="'fieldId'">
+												<input type="text" placeholder="Field" aria-label="Number" matInput [matAutocomplete]="fieldAuto" [formControlName]="'fieldId'">
 												<mat-autocomplete autoActiveFirstOption #fieldAuto="matAutocomplete"
 																  (optionSelected)="loadCategoriesForFilter()"
 																  [displayWith]="displayFn">
@@ -112,7 +111,7 @@
 													</mat-option>
 												</mat-autocomplete>
 												<mat-hint align="start">
-													Select a <strong>Field </strong>
+													<strong>Field </strong>
 												</mat-hint>
 												<mat-error>
 													Field is
@@ -122,7 +121,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Pick subcategory" aria-label="Number" matInput [matAutocomplete]="catAuto" [formControlName]="'subcategoryId'">
+												<input type="text" placeholder="Subcategory" aria-label="Number" matInput [matAutocomplete]="catAuto" [formControlName]="'subcategoryId'">
 												<mat-autocomplete autoActiveFirstOption #catAuto="matAutocomplete"
 																  [displayWith]="displayFn">
 													<mat-option *ngFor="let cat of filteredCategories | async" [value]="cat">
@@ -167,7 +166,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Pick a duration" aria-label="Number" matInput [matAutocomplete]="dAuto" [formControlName]="'durationId'">
+												<input type="text" placeholder="Duration" aria-label="Number" matInput [matAutocomplete]="dAuto" [formControlName]="'durationId'">
 												<mat-autocomplete autoActiveFirstOption #dAuto="matAutocomplete"
 																  [displayWith]="displayFn">
 													<mat-option *ngFor="let elem of filteredDurations | async" [value]="elem">
@@ -185,7 +184,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Pick vat" aria-label="Number" matInput [matAutocomplete]="vatAuto" [formControlName]="'vatId'">
+												<input type="text" placeholder="Vat" aria-label="Number" matInput [matAutocomplete]="vatAuto" [formControlName]="'vatId'">
 												<mat-autocomplete autoActiveFirstOption #vatAuto="matAutocomplete"
 																  [displayWith]="displayFn">
 													<mat-option *ngFor="let elem of filteredVats | async" [value]="elem">
@@ -203,7 +202,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Enter covermap link" formControlName="covermap" #covermap maxlength="4000">
+												<input matInput placeholder="Covermap link" formControlName="covermap" #covermap maxlength="4000">
 												<button mat-button *ngIf="covermap.value" matSuffix mat-icon-button aria-label="Clear" (click)="serviceForm.get('covermap').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -225,7 +224,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="7" placeholder="Enter Invoicing Notes" formControlName="invoicingNotes"></textarea>
+												<textarea matInput rows="7" placeholder="Invoicing notes" formControlName="invoicingNotes"></textarea>
 												<mat-error>
 													Invoicing Notes is
 													<strong>required</strong>
@@ -238,7 +237,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="7" placeholder="Enter Refund Notes" formControlName="refundNotes"></textarea>
+												<textarea matInput rows="7" placeholder="Refund notes" formControlName="refundNotes"></textarea>
 												<mat-error>
 													Refund Notes is
 													<strong>required</strong>

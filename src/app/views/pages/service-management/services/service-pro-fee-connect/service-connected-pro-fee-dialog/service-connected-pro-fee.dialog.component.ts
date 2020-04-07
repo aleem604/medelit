@@ -77,7 +77,7 @@ export class ServiceConnectedProFeeDialogComponent implements OnInit, OnDestroy 
 	}
 
 	save() {
-		var objs = this.selection.selected;
+		var objs = this.selection.selected.map(m=>m.proFeeId);
 		this.viewLoading = true;
 		this.servicesService.saveServiceConnectedProFeesToAttach(this.data, objs).toPromise().then((res) => {
 			if (res.success) {

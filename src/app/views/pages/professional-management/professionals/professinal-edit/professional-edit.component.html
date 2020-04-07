@@ -79,7 +79,10 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Name" formControlName="name">
+													<input matInput placeholder="Name" #name formControlName="name">
+													<button mat-button *ngIf="name.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('name').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
 													<mat-error>
 														Name is
 														<strong>required</strong>
@@ -91,7 +94,10 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Mobile phone" formControlName="mobilePhone" maxlength="50">
+													<input matInput placeholder="Mobile phone" #mobilePhone formControlName="mobilePhone" maxlength="50">
+													<button mat-button *ngIf="mobilePhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('mobilePhone').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
 													<mat-error>
 														Mobile Phone is
 														<strong>required</strong>
@@ -103,7 +109,10 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Main telephone" formControlName="telephone" maxlength="50">
+													<input matInput placeholder="Main telephone" #telephone mask="+(00)-000-000-0000" formControlName="telephone" maxlength="50">
+													<button mat-button *ngIf="telephone.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('telephone').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
 													<mat-error>
 														Main Telephone is
 														<strong>required</strong>
@@ -115,7 +124,10 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Home phone" formControlName="homePhone" maxlength="50">
+													<input matInput placeholder="Home phone" mask="+(00)-000-000-0000" #homePhone formControlName="homePhone" maxlength="50">
+													<button mat-button *ngIf="homePhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('homePhone').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
 													<mat-error>
 														Home Phone is
 														<strong>required</strong>
@@ -127,7 +139,10 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Clinic phone number" formControlName="clinicPhoneNumber" maxlength="50">
+													<input matInput placeholder="Clinic phone number" #clinicPhoneNumber mask="+(00)-000-000-0000" formControlName="clinicPhoneNumber" maxlength="50">
+													<button mat-button *ngIf="clinicPhoneNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('clinicPhoneNumber').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
 													<mat-error>
 														Clinic Phone Number is
 														<strong>required</strong>
@@ -140,7 +155,13 @@
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Email" formControlName="email">
+													<input matInput placeholder="Email" #email formControlName="email">
+													<button mat-button *ngIf="email.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('email').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+													<mat-hint align="start">
+														<strong class="required-star">Email</strong>
+													</mat-hint>
 													<mat-error *ngIf="professionalForm.get('email').errors?.required">
 														Email is
 														<strong>required</strong>
@@ -149,14 +170,18 @@
 														Email is
 														<strong>invalid</strong>
 													</mat-error>
-													<mat-hint align="start">
-														<strong class="required-star">Email</strong>
-													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Email 2" formControlName="email2">
+													<input matInput placeholder="Email 2" #email2 formControlName="email2">
+													<button mat-button *ngIf="email2.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('email2').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
+													<mat-hint align="start">
+														<strong>Email 2</strong>
+													</mat-hint>
 													<mat-error *ngIf="professionalForm.get('email2').errors?.required">
 														Email 2 is
 														<strong>required</strong>
@@ -165,21 +190,22 @@
 														Email 2 is
 														<strong>invalid</strong>
 													</mat-error>
-													<mat-hint align="start">
-														<strong>Email 2</strong>
-													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Fax" maxlength="250" formControlName="fax">
+													<input matInput placeholder="Fax" #fax maxlength="250" formControlName="fax">
+													<button mat-button *ngIf="fax.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('fax').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
+													<mat-hint align="start">
+														<strong>Fax</strong>
+													</mat-hint>
 													<mat-error>
 														Fax is
 														<strong>required</strong>
 													</mat-error>
-													<mat-hint align="start">
-														<strong>Fax</strong>
-													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -202,39 +228,58 @@
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<div class="row">
-													<div [ngClass]="{'col-md-9': isValidUrl('website'), 'col-md-12':!isValidUrl('website')}">
+													<div [ngClass]="{'col-md-11': professionalForm.get('website').valid, 'col-md-12':!professionalForm.get('website').valid}">
 														<mat-form-field class="mat-form-field-fluid">
-															<input matInput placeholder="Website" formControlName="website" maxlength="250">
-															<mat-error>
-																Website is
-																<strong>required</strong>
-															</mat-error>
+															<input matInput placeholder="Website" #website formControlName="website" maxlength="250">
+															<button mat-button *ngIf="website.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('website').setValue('')">
+																<mat-icon>close</mat-icon>
+															</button>
+
 															<mat-hint align="start">
 																<strong>Website</strong>
 															</mat-hint>
+
+															<mat-error *ngIf="getControl('website').error?.required">
+																Website is
+																<strong>required</strong>
+															</mat-error>
+															<mat-error *ngIf="!getControl('website').error?.required">
+																Invalid
+																<strong>website url</strong>
+															</mat-error>
 														</mat-form-field>
 													</div>
-													<div class="col-md-3" *ngIf="isValidUrl('website')">
-														<a class="view-link" href="{{getUrl('website')}}" target="_blank">Visit website</a>
+													<div class="col-md-1" *ngIf="getControl('website').valid">
+														<a class="view-link" href="website.value" target="_blank"><i class="la la-2x la-eye"></i></a>
 													</div>
 												</div>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<div class="row">
-													<div [ngClass]="{'col-md-9': isValidUrl('proOnlineCV'), 'col-md-12':!isValidUrl('proOnlineCV')}">
+													<div [ngClass]="{'col-md-11': getControl('proOnlineCV').valid, 'col-md-12':!getControl('proOnlineCV').valid}">
 														<mat-form-field class="mat-form-field-fluid">
-															<input matInput placeholder="Online CV link" maxlength="4000" formControlName="proOnlineCV">
-															<mat-error>
+															<input type="url" matInput placeholder="Online CV link" #proOnlineCV maxlength="4000" formControlName="proOnlineCV">
+															<button mat-button *ngIf="proOnlineCV.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('proOnlineCV').setValue('')">
+																<mat-icon>close</mat-icon>
+															</button>
+
+
+															<mat-hint align="start">
+																<strong>Online CV link</strong>
+															</mat-hint>
+
+															<mat-error *ngIf="getControl('proOnlineCV').error?.required">
 																Online CV link is
 																<strong>required</strong>
 															</mat-error>
-															<mat-hint align="start">
-																<strong class="required-star">Online CV link</strong>
-															</mat-hint>
+															<mat-error *ngIf="!getControl('proOnlineCV').error?.required">
+																Invalid
+																<strong>CV url</strong>
+															</mat-error>
 														</mat-form-field>
 													</div>
-													<div class="col-md-3" *ngIf="isValidUrl('proOnlineCV')">
-														<a class="view-link" href="{{getUrl('proOnlineCV')}}" target="_blank">View cv</a>
+													<div class="col-md-1" *ngIf="professionalForm.get('proOnlineCV').valid">
+														<a class="view-link" href="{{getUrl('proOnlineCV')}}" target="_blank"><i class="la la-2x la-eye"></i></a>
 													</div>
 												</div>	
 											</div>
@@ -276,7 +321,11 @@
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="dateOfBirthPicker" placeholder="Date of birth" [formControlName]="'dateOfBirth'">
+													<input matInput [matDatepicker]="dateOfBirthPicker" #dateOfBirth placeholder="Date of birth" [formControlName]="'dateOfBirth'">
+													<button mat-button *ngIf="dateOfBirth.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('dateOfBirth').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
 													<mat-datepicker #dateOfBirthPicker></mat-datepicker>
 													<mat-error>
@@ -294,16 +343,33 @@
 												</div>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Covermap" formControlName="coverMap" maxlength="250">
-													<mat-error>
-														Covermap is
-														<strong>required</strong>
-													</mat-error>
-													<mat-hint align="start">
-														<strong>Covermap</strong>
-													</mat-hint>
-												</mat-form-field>
+												
+												<div class="row">
+													<div [ngClass]="{'col-md-11': professionalForm.get('coverMap').valid, 'col-md-12':!professionalForm.get('coverMap').valid}">
+														<mat-form-field class="mat-form-field-fluid">
+															<input matInput placeholder="Covermap" #coverMap formControlName="coverMap" maxlength="250">
+															<button mat-button *ngIf="coverMap.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('coverMap').setValue('')">
+																<mat-icon>close</mat-icon>
+															</button>
+
+															<mat-hint align="start">
+																<strong>Covermap</strong>
+															</mat-hint>
+
+															<mat-error *ngIf="getControl('coverMap').error?.required">
+																Covermap is
+																<strong>required</strong>
+															</mat-error>
+															<mat-error *ngIf="!getControl('coverMap').error?.required">
+																Invalid
+																<strong>Covermap url</strong>
+															</mat-error>
+														</mat-form-field>
+													</div>
+													<div class="col-md-1" *ngIf="getControl('coverMap').valid">
+														<a class="view-link" [href]="coverMap.value" target="_blank"><i class="la la-2x la-eye"></i></a>
+													</div>
+												</div>
 											</div>
 
 
@@ -315,7 +381,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Street name" formControlName="streetName" maxlength="250">
+													<input matInput placeholder="Street name" #streetName formControlName="streetName" maxlength="250">
+													<button mat-button *ngIf="streetName.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('streetName').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-error>
 														Street Name is
 														<strong>required</strong>
@@ -327,7 +397,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Post code" formControlName="postCode" maxlength="250">
+													<input matInput placeholder="Post code" #postCode formControlName="postCode" maxlength="250">
+													<button mat-button *ngIf="postCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('postCode').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-error>
 														Post Code Name is
 														<strong>required</strong>
@@ -339,7 +413,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="example-full-width">
-													<input type="text" placeholder="City" aria-label="Number" matInput [matAutocomplete]="cityAuto" formControlName="cityId">
+													<input type="text" placeholder="City" #cityId aria-label="Number" matInput [matAutocomplete]="cityAuto" formControlName="cityId">
+													<button mat-button *ngIf="cityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('cityId').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-autocomplete autoActiveFirstOption #cityAuto="matAutocomplete"
 																	  [displayWith]="displayFn">
 														<mat-option *ngFor="let t of filteredCities | async" [value]="t">
@@ -357,7 +435,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="example-full-width">
-													<input type="text" placeholder="Country" aria-label="Number" matInput [matAutocomplete]="countryAuto" formControlName="countryId">
+													<input type="text" placeholder="Country" aria-label="Number" #countryId matInput [matAutocomplete]="countryAuto" formControlName="countryId">
+													<button mat-button *ngIf="countryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('countryId').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-autocomplete autoActiveFirstOption #countryAuto="matAutocomplete"
 																	  [displayWith]="displayFn">
 														<mat-option *ngFor="let t of filteredCountries | async" [value]="t">
@@ -382,19 +464,27 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Clinic street name" formControlName="clinicStreetName" maxlength="250">
+													<input matInput placeholder="Clinic street name" #clinicStreetName formControlName="clinicStreetName" maxlength="250">
+													<button mat-button *ngIf="clinicStreetName.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('clinicStreetName').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
+													<mat-hint align="start">
+														<strong>Clinic Street Name</strong>
+													</mat-hint>
 													<mat-error>
 														Clinic Street Name is
 														<strong>required</strong>
 													</mat-error>
-													<mat-hint align="start">
-														<strong>Clinic Street Name</strong>
-													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Clinic post code" formControlName="clinicPostCode" maxlength="250">
+													<input matInput placeholder="Clinic post code" #clinicPostCode formControlName="clinicPostCode" maxlength="250">
+													<button mat-button *ngIf="clinicPostCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('clinicPostCode').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-error>
 														Clinic Post Code is
 														<strong>required</strong>
@@ -406,7 +496,10 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="example-full-width">
-													<input type="text" placeholder="Clinic city" aria-label="Number" matInput [matAutocomplete]="clinicCityAuto" [formControlName]="'clinicCityId'">
+													<input type="text" placeholder="Clinic city" aria-label="Number" #clinicCityId matInput [matAutocomplete]="clinicCityAuto" [formControlName]="'clinicCityId'">
+													<button mat-button *ngIf="clinicCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('clinicCityId').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
 													<mat-autocomplete autoActiveFirstOption #clinicCityAuto="matAutocomplete"
 																	  [displayWith]="displayFn">
 														<mat-option *ngFor="let t of filteredClinicCities | async" [value]="t">
@@ -431,7 +524,10 @@
 											</div>
 											<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<textarea matInput rows="7" placeholder="Description" formControlName="description"></textarea>
+													<textarea matInput rows="7" placeholder="Description" #description formControlName="description"></textarea>
+													<button mat-button *ngIf="description.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('description').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
 													<mat-error>
 														Description is
 														<strong>required</strong>
@@ -465,32 +561,44 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3" [hidden]="professionalForm.get('accountingCodeId').value !== 2">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Company name" formControlName="companyName" maxlength="250">
+													<input matInput placeholder="Company name" #companyName formControlName="companyName" maxlength="250">
+													<button mat-button *ngIf="companyName.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('companyName').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
+													<mat-hint align="start">
+														<strong>Company Name</strong>
+													</mat-hint>
 													<mat-error>
 														Company Name is
 														<strong>required</strong>
 													</mat-error>
-													<mat-hint align="start">
-														<strong>Company Name</strong>
-													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3" [hidden]="professionalForm.get('accountingCodeId').value !== '2'">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Company number" formControlName="companyNumber" maxlength="250">
+													<input matInput placeholder="Company number" #companyNumber formControlName="companyNumber" maxlength="250">
+													<button mat-button *ngIf="companyNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('companyNumber').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
+													<mat-hint align="start">
+														<strong>Company Number</strong>
+													</mat-hint>
 													<mat-error>
 														Company Number is
 														<strong>required</strong>
 													</mat-error>
-													<mat-hint align="start">
-														<strong>Company Number</strong>
-													</mat-hint>
 												</mat-form-field>
 											</div>
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Bank name" formControlName="bank" maxlength="250">
+													<input matInput placeholder="Bank name" #bank formControlName="bank" maxlength="250">
+													<button mat-button *ngIf="bank.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('bank').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-error>
 														Bank Name is
 														<strong>required</strong>
@@ -502,7 +610,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Bank branch name" formControlName="branch" maxlength="250">
+													<input matInput placeholder="Bank branch name" #branch formControlName="branch" maxlength="250">
+													<button mat-button *ngIf="branch.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('branch').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-error>
 														Bank Branch Name is
 														<strong>required</strong>
@@ -514,7 +626,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Account name" formControlName="accountName" maxlength="250">
+													<input matInput placeholder="Account name" #accountName formControlName="accountName" maxlength="250">
+													<button mat-button *ngIf="accountName.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('accountName').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-error>
 														Account Name is
 														<strong>required</strong>
@@ -526,7 +642,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Account number" formControlName="accountNumber" maxlength="250">
+													<input matInput placeholder="Account number" #accountNumber formControlName="accountNumber" maxlength="250">
+													<button mat-button *ngIf="accountNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('accountNumber').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-error>
 														Account Number is
 														<strong>required</strong>
@@ -538,20 +658,28 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Sort code" formControlName="sortCode" mask="00-00-00" maxlength="250">
+													<input matInput placeholder="Sort code" #sortCode formControlName="sortCode" mask="00-00-00" maxlength="250">
+													<button mat-button *ngIf="sortCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('sortCode').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
+													<mat-hint align="start">
+														<strong>Sort Code</strong>
+													</mat-hint>
 													<mat-error>
 														Sort Code is
 														<strong>required</strong>
 													</mat-error>
-													<mat-hint align="start">
-														<strong>Sort Code</strong>
-													</mat-hint>
 												</mat-form-field>
 											</div>
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<textarea matInput rows="7" placeholder="Invoicing notes" formControlName="invoicingNotes"></textarea>
+													<textarea matInput rows="7" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
+													<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('invoicingNotes').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-hint align="start">
 														<strong>Invoicing Notes </strong>
 													</mat-hint>
@@ -585,7 +713,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="contractDatePicker" placeholder="Contract date" [formControlName]="'contractDate'">
+													<input matInput [matDatepicker]="contractDatePicker" #contractDate placeholder="Contract date" [formControlName]="'contractDate'">
+													<button mat-button *ngIf="contractDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('contractDate').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-datepicker-toggle matSuffix [for]="contractDatePicker"></mat-datepicker-toggle>
 													<mat-datepicker #contractDatePicker></mat-datepicker>
 													<mat-error>
@@ -593,13 +725,17 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														<strong class="required-star"> Contract Date</strong>
+														<strong> Contract Date</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="contractEndDatePicker" placeholder="Contract end date" [formControlName]="'contractEndDate'">
+													<input matInput [matDatepicker]="contractEndDatePicker" #contractEndDate placeholder="Contract end date" [formControlName]="'contractEndDate'">
+													<button mat-button *ngIf="contractEndDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('contractEndDate').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-datepicker-toggle matSuffix [for]="contractEndDatePicker"></mat-datepicker-toggle>
 													<mat-datepicker #contractEndDatePicker></mat-datepicker>
 													<mat-error>
@@ -629,7 +765,12 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="firstContactDatePicker" placeholder="First contact date" [formControlName]="'firstContactDate'" />
+													<input matInput [matDatepicker]="firstContactDatePicker" #firstContactDate placeholder="First contact date" [formControlName]="'firstContactDate'" />
+													<button mat-button *ngIf="firstContactDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('firstContactDate').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
+
 													<mat-datepicker-toggle matSuffix [for]="firstContactDatePicker"></mat-datepicker-toggle>
 													<mat-datepicker #firstContactDatePicker></mat-datepicker>
 													<mat-error>
@@ -643,7 +784,12 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="lastContactDatePicker" placeholder="Last contact date" [formControlName]="'lastContactDate'" />
+													<input matInput [matDatepicker]="lastContactDatePicker" #lastContactDate placeholder="Last contact date" [formControlName]="'lastContactDate'" />
+													<button mat-button *ngIf="lastContactDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('lastContactDate').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
+
 													<mat-datepicker-toggle matSuffix [for]="lastContactDatePicker"></mat-datepicker-toggle>
 													<mat-datepicker #lastContactDatePicker></mat-datepicker>
 													<mat-error>
@@ -694,7 +840,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Referring Colleague" formControlName="colleagueReferring" maxlength="250">
+													<input matInput placeholder="Referring Colleague" #colleagueReferring formControlName="colleagueReferring" maxlength="250">
+													<button mat-button *ngIf="colleagueReferring.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('colleagueReferring').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-error>
 														Referring Colleague is
 														<strong>required</strong>
@@ -711,7 +861,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Work place info" formControlName="workPlace" maxlength="250">
+													<input matInput placeholder="Work place info" #workPlace formControlName="workPlace" maxlength="250">
+													<button mat-button *ngIf="workPlace.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('workPlace').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-error>
 														Work place info is
 														<strong>required</strong>
@@ -723,7 +877,11 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="insuranceExpiryDatePicker" placeholder="Insurance expiry date" [formControlName]="'insuranceExpiryDate'">
+													<input matInput [matDatepicker]="insuranceExpiryDatePicker" placeholder="Insurance expiry date" #insuranceExpiryDate [formControlName]="'insuranceExpiryDate'">
+													<button mat-button *ngIf="insuranceExpiryDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('insuranceExpiryDate').setValue('')">
+														<mat-icon>close</mat-icon>
+													</button>
+
 													<mat-datepicker-toggle matSuffix [for]="insuranceExpiryDatePicker"></mat-datepicker-toggle>
 													<mat-datepicker #insuranceExpiryDatePicker></mat-datepicker>
 													<mat-error>

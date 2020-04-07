@@ -85,6 +85,7 @@ import { BookingConnectedBookingsComponent } from './bookings/booking-connected-
 import { BookingConnectedProfessinalsComponent } from './bookings/booking-connected-professionals/booking-connected-professionals.component';
 import { BookingConnectedInvoicesComponent } from './bookings/booking-connected-invoices/booking-connected-invoices.component';
 import { AlertDialogComponent } from '../../partials/alert-dialog/alert-dialog.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -153,7 +154,7 @@ const routes: Routes = [
 		NgxMatSelectSearchModule,
 		OwlDateTimeModule,
 		OwlNativeDateTimeModule,
-
+		NgxMaskModule.forRoot(),
 
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
