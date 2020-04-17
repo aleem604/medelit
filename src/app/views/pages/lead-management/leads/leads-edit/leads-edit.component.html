@@ -40,10 +40,10 @@
 					<div class="kt-form__group pt-1">
 						<div class="form-group kt-form__group row" *ngIf="lead.id">
 							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-								<label class="font-500">Created : </label> {{lead.createDate | date:'dd/Mm/yyyy'}}
+								<label class="font-500">Created : </label> {{lead.createDate | date:'dd/MM/yyyy'}}
 							</div>
 							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-								<label class="font-500">Last Changed : </label> {{lead.updateDate | date:'dd/Mm/yyyy'}}
+								<label class="font-500">Last Changed : </label> {{lead.updateDate | date:'dd/MM/yyyy'}}
 							</div>
 							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
 								<label class="pr-2">Assigned To : </label> <span class="text-capitalize">{{lead.assignedTo}}</span>
@@ -430,6 +430,7 @@
 								</mat-form-field>
 							</div>
 						</div>
+
 						<div class="row">
 							<div class="col-md-12 heading-wrapper mt-4">
 								<div class="title-wrapper">
@@ -462,6 +463,11 @@
 															{{ val.value }}
 														</mat-option>
 													</mat-select>
+
+
+
+
+
 													<mat-hint align="start">
 														<strong class="required-star">Service </strong>
 													</mat-hint>

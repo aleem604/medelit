@@ -68,7 +68,7 @@ import { environment } from '../../../../environments/environment';
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { InvoicesComponent } from './invoices.component';
-import * as _index from './invoices';
+import * as _index from '.';
 import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
 import { NgxMaskModule } from 'ngx-mask';
 

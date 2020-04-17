@@ -582,7 +582,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			var s = new LeadServicesModel();
 			if (control.controls[i].get('serviceId').value)
 				s.serviceId = +control.controls[i].get('serviceId').value.id;
-			s.professionalId = +control.controls[i].get('professionalId').value;
+
+			if (control.controls[i].get('professionalId').value)
+			s.professionalId = +control.controls[i].get('professionalId').value.id;
 
 			s.ptFeeId = +control.controls[i].get('ptFeeId').value
 			s.isPtFeeA1 = +control.controls[i].get('isPtFeeA1').value
@@ -989,7 +991,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		if (serviceControls.get('professionalId').value) {
 
 			var proId = serviceControls.get('professionalId').value;
-			const proData = this.professionalsForFilter.find((el) => el.id == proId);
+			if (!proId)
+				return;
+			const proData = this.professionalsForFilter.find((el) => el.id == proId.id);
 			const ptFee = proData.ptFees;
 			const proFee = proData.proFees;
 			if (ptFee) {

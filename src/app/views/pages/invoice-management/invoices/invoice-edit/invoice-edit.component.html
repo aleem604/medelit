@@ -45,10 +45,10 @@
 									<div class="form-group kt-form__group row" *ngIf="invoice.id">
 
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-											<label>Created : </label> {{invoice.createDate | date:'dd/Mm/yyyy'}}
+											<label>Created : </label> {{invoice.createDate | date:'dd/MM/yyyy'}}
 										</div>
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-											<label>Last Changed : </label> {{invoice.updateDate | date:'dd/Mm/yyyy'}}
+											<label>Last Changed : </label> {{invoice.updateDate | date:'dd/MM/yyyy'}}
 										</div>
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
 											<label class="pr-2">Assigned To : </label> <span class="text-capitalize">{{invoice.assignedTo}}</span>
@@ -410,18 +410,18 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput [matDatepicker]="paymentDuePicker" #paymentDue placeholder="Payment due date" [formControlName]="'paymentDue'">
-												<button mat-button *ngIf="paymentDue.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('paymentDue').setValue('')">
+												<input matInput [matDatepicker]="paymentArrivalDatePicker" #paymentArrivalDate placeholder="Payment arrival date" [formControlName]="'paymentArrivalDate'">
+												<button mat-button *ngIf="paymentArrivalDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('paymentArrivalDate').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-datepicker-toggle matSuffix [for]="paymentDuePicker"></mat-datepicker-toggle>
-												<mat-datepicker #paymentDueDatePicker></mat-datepicker>
+												<mat-datepicker-toggle matSuffix [for]="paymentArrivalDatePicker"></mat-datepicker-toggle>
+												<mat-datepicker #paymentArrivalDatePicker></mat-datepicker>
 												<mat-error>
 													Payment Due Date
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													<strong class="required-star">Payment Due Date</strong>
+													<strong class="required-star">Payment Arrival Date</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
@@ -622,7 +622,7 @@
 				<invoice-connected-bookings [invoiceId]="invoice.id"></invoice-connected-bookings>
 			</ng-template>
 		</mat-tab>
-
+	
 	</mat-tab-group>
 
 </kt-portlet>

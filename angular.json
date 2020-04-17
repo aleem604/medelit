@@ -27,8 +27,8 @@
               "src/assets",
               "src/.htaccess"
             ],
-            "styles": [
-              	"src/styles.scss",
+			"styles": [
+				"src/styles.scss",
 				"node_modules/bootstrap/dist/css/bootstrap.css",
 				"node_modules/perfect-scrollbar/css/perfect-scrollbar.css",
 				"node_modules/socicon/css/socicon.css",
@@ -37,8 +37,9 @@
 				"src/assets/plugins/flaticon/flaticon.css",
 				"src/assets/plugins/flaticon2/flaticon.css",
 				"src/assets/sass/style.angular.scss"
-            ],
+			],
 			"scripts": [
+				"node_modules/jquery/dist/jquery.js",
 				"node_modules/popper.js/dist/umd/popper.js",
 				"node_modules/print-js/dist/print.js",
 				"node_modules/tooltip.js/dist/umd/tooltip.min.js",

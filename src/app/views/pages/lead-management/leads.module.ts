@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { Select2Module } from 'ng2-select2';
 
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 
@@ -115,6 +116,7 @@ const routes: Routes = [
 		PartialsModule,
 		NgxPermissionsModule.forChild(),
 		RouterModule.forChild(routes),
+		Select2Module,
 		FormsModule,
 		ReactiveFormsModule,
 		TranslateModule.forChild(),

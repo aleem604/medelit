@@ -20,7 +20,7 @@ export class InvoiceConnectedBookingsComponent implements OnInit, OnDestroy {
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-	displayedColumns: string[] = ['bookingName', 'serviceFees', 'professional', 'visitDate'];
+	displayedColumns: string[] = ['bookingName', 'serviceFees', 'professional', 'proFee', 'visitDate'];
 	dataSource = new MatTableDataSource<InvoiceConnectedBookings>();
 	selection = new SelectionModel<InvoiceConnectedBookings>(true, []);
 	loadingSubject = new BehaviorSubject<boolean>(true);

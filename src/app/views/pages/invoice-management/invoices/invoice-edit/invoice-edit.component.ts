@@ -218,6 +218,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			mailingCountryId: [this.invoice.mailingCountryId, [Validators.required]],
 
 			// payment and invoicing
+			paymentArrivalDate: [this.invoice.paymentArrivalDate, [Validators.required]],
 			paymentDue: [this.invoice.paymentDue, [Validators.required]],
 			//discount: [this.invoice.discount],
 			paymentMethodId: [this.invoice.paymentMethodId, [Validators.required]],
@@ -363,6 +364,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			_invoice.mailingCountryId = controls.mailingCountryId.value.id;
 
 		//payment and invoicing
+		_invoice.paymentArrivalDate = controls.paymentArrivalDate.value;
 		_invoice.paymentDue = controls.paymentDue.value;
 		//_invoice.discount = controls.discount.value;
 		_invoice.paymentMethodId = controls.paymentMethodId.value;
@@ -469,7 +471,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			if (!this.invoice || !this.invoice.id) {
 				return result;
 			}
-			result = `Edit customer - ${this.invoice.subject}`;
+			result = `Edit invoice - ${this.invoice.invoiceNumber}`;
 		} else {
 			result = this.tabTitle;
 		}
