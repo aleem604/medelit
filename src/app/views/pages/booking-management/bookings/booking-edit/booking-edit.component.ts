@@ -31,6 +31,7 @@ import { BookingToInvoiceDialog } from '../booking-to-invoice/booking-to-invoice
 import { BookingCloneDialog } from '../booking-clone-dialog/booking-clone-dialog';
 import { BookingCycleDialog } from '../booking-cycle-dialog/booking-cycle-dialog';
 import { AlertDialogComponent } from '../../../../partials/alert-dialog/alert-dialog.component';
+import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
 
 @Component({
 	selector: 'kt-booking-edit',
@@ -234,9 +235,9 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			visitPostCode: [this.booking.visitPostCode, [Validators.required]],
 			homeCityId: [this.booking.homeCityId, [Validators.required]],
 			visitCityId: [this.booking.visitCityId, [Validators.required]],
-			phoneNumber: [this.booking.phoneNumber, [Validators.required]],
+			phoneNumber: [this.booking.phoneNumber, [Validators.required, Validators.pattern(MedelitConstants.mobnumPattern)]],
 			email: [this.booking.email, [Validators.required]],
-			phone2: [this.booking.phone2],
+			phone2: [this.booking.phone2, [Validators.pattern(MedelitConstants.mobnumPattern)]],
 			phone2Owner: [this.booking.phone2Owner],
 			//dateOfBirth: [this.booking.dateOfBirth],
 			//countryOfBirthId: [this.booking.countryOfBirthId],
@@ -296,6 +297,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			proFeeA1: [this.booking.proFeeA1, [Validators.required]],
 			proFeeA2: [this.booking.proFeeA2, [Validators.required]],
 			isProFeeA1: [this.booking.isProFeeA1, [Validators.required]],
+
+			itemNameOnInvoice: [this.booking.itemNameOnInvoice, [Validators.required]],
 
 			patientAge: [this.booking.patientAge, []],
 			cycle: [this.booking.cycle, []],
@@ -562,6 +565,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		_booking.proFeeA1 = controls.proFeeA1.value;
 		_booking.proFeeA2 = controls.proFeeA2.value;
 		_booking.isProFeeA1 = controls.isProFeeA1.value;
+		_booking.itemNameOnInvoice = controls.itemNameOnInvoice.value;
 
 		_booking.patientAge = controls.patientAge.value;
 		_booking.cycle = controls.cycle.value;
@@ -834,8 +838,9 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 							this.spinner.hide();
 							if (res.success) {
 								this.layoutUtilsService.showActionNotification("Clone process completed successfully.", MessageType.Create, 3000, true);
-								const url = `/booking-management/bookings/edit/${res.data}`;
-								this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
+								this.loadBookingFromService(res.data);
+								//const url = `/booking-management/bookings/edit/${res.data}`;
+								//this.router.navigateByUrl(url, { relativeTo: this.activatedRoute });
 
 							} else {
 								this.layoutUtilsService.showActionNotification("An error occured while processing your request. Please try again later.", MessageType.Create, 5000, true);
@@ -1343,6 +1348,19 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	}
 
 	/*End Filters Section*/
+
+	/*Start closed events */
+
+	controlFocusout(control) {
+		const val = this.bookingForm.get(control).value;
+		if (val && val.id) return;
+		this.bookingForm.get(control).setValue('');
+		this.cdr.markForCheck();
+	}
+
+	/*End Closed events */
+
+
 
 	detectChanges() {
 		try {

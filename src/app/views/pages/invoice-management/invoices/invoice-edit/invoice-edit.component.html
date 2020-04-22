@@ -95,7 +95,13 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Customer Name" aria-label="Number" matInput #customerId [matAutocomplete]="customerIdAuto" [formControlName]="'customerId'"  readonly="readonly">
+												<input type="text"
+													   placeholder="Customer Name"
+													   aria-label="Number"
+													   matInput #customerId
+													   [matAutocomplete]="customerIdAuto"
+													   [formControlName]="'customerId'"
+													   readonly="readonly">
 												<button mat-button *ngIf="customerId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('customerId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -117,7 +123,12 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Invoice entity" aria-label="Number" matInput #invoiceEntityId [matAutocomplete]="invocingEntityAuto" [formControlName]="'invoiceEntityId'">
+												<input type="text"
+													   placeholder="Invoice entity"
+													   aria-label="Number" matInput
+													   #invoiceEntityId
+													   [matAutocomplete]="invocingEntityAuto"
+													   [formControlName]="'invoiceEntityId'" (focusout)="controlFocusout('invoiceEntityId')">
 												<button mat-button *ngIf="invoiceEntityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('invoiceEntityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -278,7 +289,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Billing city/town" aria-label="Number" matInput #ieBillingCityId [matAutocomplete]="ieBillingCityAuto" [formControlName]="'ieBillingCityId'">
+												<input type="text"
+													   placeholder="Billing city/town"
+													   aria-label="Number" matInput
+													   #ieBillingCityId
+													   [matAutocomplete]="ieBillingCityAuto"
+													   [formControlName]="'ieBillingCityId'" (focusout)="controlFocusout('ieBillingCityId')">
 												<button mat-button *ngIf="ieBillingCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('ieBillingCityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -300,7 +316,12 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Billing country" aria-label="Number" matInput #ieBillingCountryId [matAutocomplete]="ieBillingCountryAuto" [formControlName]="'ieBillingCountryId'">
+												<input type="text"
+													   placeholder="Billing country"
+													   aria-label="Number" matInput
+													   #ieBillingCountryId
+													   [matAutocomplete]="ieBillingCountryAuto"
+													   [formControlName]="'ieBillingCountryId'" (focusout)="controlFocusout('ieBillingCountryId')">
 												<button mat-button *ngIf="ieBillingCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('ieBillingCountryId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -359,7 +380,11 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Mailing city/town" aria-label="Number" matInput #mailingCityId [matAutocomplete]="mailingCityAuto" [formControlName]="'mailingCityId'">
+												<input type="text"
+													   placeholder="Mailing city/town"
+													   aria-label="Number" matInput #mailingCityId
+													   [matAutocomplete]="mailingCityAuto"
+													   [formControlName]="'mailingCityId'" (focusout)="controlFocusout('mailingCityId')">
 												<button mat-button *ngIf="mailingCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('mailingCityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -381,7 +406,13 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Mailing country" aria-label="Number" matInput #mailingCountryId [matAutocomplete]="mailingCountryAuto" [formControlName]="'mailingCountryId'">
+												<input type="text"
+													   placeholder="Mailing country"
+													   aria-label="Number" matInput
+													   #mailingCountryId
+													   [matAutocomplete]="mailingCountryAuto"
+													   [formControlName]="'mailingCountryId'"
+													   (focusout)="controlFocusout('mailingCountryId')">
 												<button mat-button *ngIf="mailingCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('mailingCountryId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>

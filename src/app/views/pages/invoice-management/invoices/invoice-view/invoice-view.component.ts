@@ -63,6 +63,7 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 		this.spinner.show();
 		this.invoiceService.getInvoiceView(invoiceId).toPromise().then(res => {
 			this.invoice = res.data;
+			this.cdr.markForCheck();
 		})
 			.catch(() => {
 				this.spinner.hide();
@@ -132,7 +133,7 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 		return result;
 	}
 
-	generatePdf1() {
+	generatePdf() {
 		let data = document.getElementById('invoice-container');
 		html2canvas(data).then(canvas => {
 			const contentDataURL = canvas.toDataURL('image/png');
@@ -140,10 +141,11 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 			//let pdf = new jspdf('p', 'cm', 'a4'); //Generates PDF in portrait mode
 			pdf.addImage(contentDataURL, 'PNG', 0, 0, 29.7, 21.0);
 			pdf.save(`${this.invoice.subject}-${this.invoice.invoiceNumber}.pdf`);
+			window.open(pdf.output('bloburl', { filename: `${this.invoice.subject}-${this.invoice.invoiceNumber}.pdf` }), '_blank');
 		});
 	}
 
-	generatePdf() {
+	generatePdf1() {
 		//const fileName = String(new Date().valueOf());
 		
 		try {
@@ -160,4 +162,30 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 			console.log(e);
 		} 
 	}
+
+	getMilliSeconds(date: string): any {
+		try {
+			if (date) {
+				if (date.indexOf('Z') === -1) {
+					date = date + 'Z';
+					return new Date(date).getTime();
+				}
+			}
+		} catch {
+
+		}
+		const tdate = new Date();
+		const utc = new Date(
+			tdate.getUTCFullYear(),
+			tdate.getUTCMonth(),
+			tdate.getUTCDate(),
+			tdate.getUTCHours(),
+			tdate.getUTCMinutes(),
+			tdate.getUTCSeconds(),
+		);
+
+		return utc.getTime();
+	}
+
+
 }

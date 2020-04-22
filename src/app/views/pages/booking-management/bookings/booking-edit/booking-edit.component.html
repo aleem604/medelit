@@ -37,7 +37,7 @@
 					<i class="la la-clone"></i>
 					<span class="ml-2">Clone</span>
 				</button>
-				<button mat-menu-item (click)="createCycle()">
+				<button mat-menu-item (click)="createCycle()" *ngIf="!booking?.cycle">
 					<i class="la la-recycle"></i>
 					<span class="ml-2">Create a Cycle</span>
 				</button>
@@ -306,32 +306,36 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Contact phone" #phoneNumber mask="+(00)-000-000-0000" formControlName="phoneNumber">
+												<input matInput placeholder="Contact phone" #phoneNumber formControlName="phoneNumber">
 												<button mat-button *ngIf="phoneNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('phoneNumber').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-error>
-													Contact phone is
-													<strong>required</strong>
-												</mat-error>
 												<mat-hint align="start">
 													<strong class="required-star">Contact Phone</strong>
 												</mat-hint>
+												<mat-error *ngIf="bookingForm.get('phoneNumber').errors?.required">
+													Contact phone is
+													<strong>required </strong>
+												</mat-error>
+												<mat-error *ngIf="bookingForm.get('phoneNumber').errors?.pattern">
+													Contact phone should start with
+													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+												</mat-error>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Phone 2" #phone2 mask="+(00)-000-000-0000" formControlName="phone2">
+												<input matInput placeholder="Phone 2" #phone2 formControlName="phone2">
 												<button mat-button *ngIf="phone2.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('phone2').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-error>
-													Phone 2 is
-													<strong>required</strong>
-												</mat-error>
 												<mat-hint align="start">
 													<strong>Phone 2</strong>
 												</mat-hint>
+												<mat-error *ngIf="bookingForm.get('phone2').errors?.pattern">
+													Phone 2 should start with
+													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+												</mat-error>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -416,7 +420,12 @@
 										</div>-->
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Visit language" aria-label="Number" matInput #visitLanguageId [matAutocomplete]="visitLanguageAuto" [formControlName]="'visitLanguageId'">
+												<input type="text"
+													   placeholder="Visit language"
+													   aria-label="Number"
+													   matInput #visitLanguageId
+													   [matAutocomplete]="visitLanguageAuto"
+													   [formControlName]="'visitLanguageId'" (focusout)="controlFocusout('visitLanguageId')">
 												<button mat-button *ngIf="visitLanguageId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitLanguageId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -512,7 +521,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Visit city/town" aria-label="Number" #visitCityId matInput [matAutocomplete]="visitCityIdAuto" [formControlName]="'visitCityId'">
+												<input type="text"
+													   placeholder="Visit city/town"
+													   aria-label="Number"
+													   #visitCityId matInput
+													   [matAutocomplete]="visitCityIdAuto"
+													   [formControlName]="'visitCityId'" (focusout)="controlFocusout('visitCityId')">
 												<button mat-button *ngIf="visitCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitCityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -533,7 +547,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Visit country" aria-label="Number" #visitCountryId matInput [matAutocomplete]="visitCountryIdAuto" [formControlName]="'visitCountryId'">
+												<input type="text"
+													   placeholder="Visit country"
+													   aria-label="Number"
+													   #visitCountryId matInput
+													   [matAutocomplete]="visitCountryIdAuto"
+													   [formControlName]="'visitCountryId'" (focusout)="controlFocusout('visitCountryId')">
 												<button mat-button *ngIf="visitCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitCountryId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -700,7 +719,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Home city/town" aria-label="Number" #homeCityId matInput [matAutocomplete]="homeCityIdAuto" [formControlName]="'homeCityId'">
+												<input type="text"
+													   placeholder="Home city/town"
+													   aria-label="Number"
+													   #homeCityId matInput
+													   [matAutocomplete]="homeCityIdAuto"
+													   [formControlName]="'homeCityId'" (focusout)="controlFocusout('homeCityId')">
 												<button mat-button *ngIf="homeCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('homeCityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -721,7 +745,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Home country" aria-label="Number" #homeCountryId matInput [matAutocomplete]="homeCountryAuto" [formControlName]="'homeCountryId'">
+												<input type="text"
+													   placeholder="Home country"
+													   aria-label="Number"
+													   #homeCountryId matInput
+													   [matAutocomplete]="homeCountryAuto"
+													   [formControlName]="'homeCountryId'" (focusout)="controlFocusout('homeCityId')">
 												<button mat-button *ngIf="homeCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('homeCountryId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -1237,7 +1266,9 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Service" aria-label="Number" matInput #serviceId [matAutocomplete]="serviceAuto" [formControlName]="'serviceId'">
+												<input type="text" placeholder="Service" aria-label="Number"
+													   matInput #serviceId [matAutocomplete]="serviceAuto"
+													   [formControlName]="'serviceId'" (focusout)="controlFocusout('serviceId')">
 												<button mat-button *ngIf="serviceId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('serviceId').setValue('');">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -1260,7 +1291,10 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Professional" aria-label="Number" matInput #professionalId [matAutocomplete]="professionalAuto" [formControlName]="'professionalId'">
+												<input type="text" placeholder="Professional"
+													   aria-label="Number" matInput #professionalId
+													   [matAutocomplete]="professionalAuto"
+													   [formControlName]="'professionalId'" (focusout)="controlFocusout('professionalId')">
 												<button mat-button *ngIf="professionalId.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('professionalId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -1382,6 +1416,24 @@
 												</mat-error>
 											</mat-form-field>
 										</div>
+
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="mat-form-field-fluid">
+												<input matInput type="text" placeholder="Item Name on Invoice" #itemNameOnInvoice formControlName="itemNameOnInvoice">
+												<button mat-button *ngIf="itemNameOnInvoice.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('itemNameOnInvoice').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
+												<mat-error>
+													Item Name on Invoice is
+													<strong class="required-star">required</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong>Item Name on Invoice</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+
+
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<p class="m-0">&nbsp;</p>

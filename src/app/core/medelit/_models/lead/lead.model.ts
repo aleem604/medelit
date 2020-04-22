@@ -1,5 +1,6 @@
 import { BaseModel } from '../../../_base/crud';
 import { eRecordStatus } from '../../_enums/e-record-status.enum';
+import { FilterModel } from '../filter.model';
 
 export class LeadModel extends BaseModel {
 	id: number;
@@ -35,7 +36,7 @@ export class LeadModel extends BaseModel {
 	email2: string;
 	leadSourceId?: number;
 	leadSource: string;
-	leadStatusId?: number;
+	leadStatusId?: number = 1;
 	leadStatus: string;
 	languageId?: number = 1015;
 	language: string;
@@ -104,7 +105,9 @@ export class LeadServicesModel {
 	id: number;
 	leadId: number;
 	serviceId: number;
+	serviceSearchCtrl: FilterModel;
 	professionalId: number;
+	professionalSearchCtrl: FilterModel;
 	isPtFeeA1: number = 1;
 	ptFeeId: number;
 	ptFeeA1: number;

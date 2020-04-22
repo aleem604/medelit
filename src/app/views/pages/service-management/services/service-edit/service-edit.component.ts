@@ -580,5 +580,14 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.changingValue.next(true);
 	}
 
+	/*Start closed events */
 
+	controlFocusout(control) {
+		const val = this.serviceForm.get(control).value;
+		if (val && val.id) return;
+		this.serviceForm.get(control).setValue('');
+		this.cdr.markForCheck();
+	}
+
+/*End Closed events */
 }

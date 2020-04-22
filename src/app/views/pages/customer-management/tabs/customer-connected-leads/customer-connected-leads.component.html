@@ -28,7 +28,7 @@
 		</ng-container>
 
 		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-		<tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.make-green]="row.statusId === 1" [class.make-blue]="row.statusId === 3"
+		<tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.make-green]="row.leadStatusId === 1" [class.make-blue]="row.leadStatusId === 3"
 			(click)="selection.toggle(row)"></tr>
 	</table>
 	<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

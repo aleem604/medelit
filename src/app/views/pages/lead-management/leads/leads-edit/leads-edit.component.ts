@@ -32,6 +32,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { TranslateService } from '@ngx-translate/core';
 import { CreateInvoiceEntityDialogComponent } from '../../../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
 import { AlertDialogComponent } from '../../../../partials/alert-dialog/alert-dialog.component';
+import { PasswordValidation } from '../../../user-management/users/_subs/change-password/change-password.component';
+import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
 
 
 @Component({
@@ -67,6 +69,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	// sticky portlet header margin
 	private headerMargin: number;
 	fromCustomer = new FormControl(0);
+	searchCtrl = new FormControl();
 
 	customersForFilter: FilterModel[] = [];
 	filteredCustomers: Observable<FilterModel[]>;
@@ -225,12 +228,12 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			surName: [this.lead.surName, [Validators.required, Validators.min(4)]],
 			name: [this.lead.name],
 			languageId: [this.lead.languageId, [Validators.required]],
-			mainPhone: [this.lead.mainPhone, [Validators.pattern('^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$')]],
+			mainPhone: [this.lead.mainPhone, [Validators.pattern(MedelitConstants.mobnumPattern)]],
 			mainPhoneOwner: [this.lead.mainPhoneOwner],
-			contactPhone: [this.lead.contactPhone, []],
-			phone2: [this.lead.phone2, []],
+			contactPhone: [this.lead.contactPhone, [Validators.pattern(MedelitConstants.mobnumPattern)]],
+			phone2: [this.lead.phone2, [Validators.pattern(MedelitConstants.mobnumPattern)]],
 			phone2Owner: [this.lead.phone2Owner, []],
-			phone3: [this.lead.phone3, []],
+			phone3: [this.lead.phone3, [Validators.pattern(MedelitConstants.mobnumPattern)]],
 			phone3Owner: [this.lead.phone3Owner, []],
 			email: [this.lead.email, [Validators.email,]],
 			email2: [this.lead.email2, [Validators.email,]],
@@ -268,7 +271,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			leadSourceId: [this.lead.leadSourceId, []],
 			leadCategoryId: [this.lead.leadCategoryId, []],
 			contactMethodId: [this.lead.contactMethodId, []],
-			leadDescription: [this.lead.leadDescription, []],
+			leadDescription: [this.lead.leadDescription, [Validators.required]],
 
 			// bank info
 			bankName: [this.lead.bankName, []],
@@ -290,7 +293,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 				const group = this.leadFB.group({
 					id: [service.id, []],
 					serviceId: [service.serviceId, [Validators.required]],
+					serviceSearchCtrl: [''],
 					professionalId: [service.professionalId, [Validators.required]],
+					professionalSearchCtrl: [''],
 					ptFeeId: [service.ptFeeId, [Validators.required]],
 					isPtFeeA1: [service.isPtFeeA1, [Validators.required]],
 
@@ -584,7 +589,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 				s.serviceId = +control.controls[i].get('serviceId').value.id;
 
 			if (control.controls[i].get('professionalId').value)
-			s.professionalId = +control.controls[i].get('professionalId').value.id;
+			s.professionalId = +control.controls[i].get('professionalId').value;
 
 			s.ptFeeId = +control.controls[i].get('ptFeeId').value
 			s.isPtFeeA1 = +control.controls[i].get('isPtFeeA1').value
@@ -706,7 +711,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.loadCitiesForFilter();
 		this.loadCountiesForFilter();
 		this.loadServicesForFilter();
-		//this.loadProfessionalsForFilter(1);
+		this.loadProfessionalsForFilter(1);
 
 		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
 			this.titlesForFilter = data.map((el) => { return { id: el.id, value: el.titles }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
@@ -993,7 +998,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			var proId = serviceControls.get('professionalId').value;
 			if (!proId)
 				return;
-			const proData = this.professionalsForFilter.find((el) => el.id == proId.id);
+			const proData = this.professionalsForFilter.find((el) => el.id == proId);
 			const ptFee = proData.ptFees;
 			const proFee = proData.proFees;
 			if (ptFee) {
@@ -1023,7 +1028,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		var serviceControls = this.leadForm.get('services').controls[index];
 		var serviceObj = serviceControls.get('serviceId').value;
 		if (serviceObj) {
-			this.loadProfessionalsForFilter(serviceObj.id);
+			//this.loadProfessionalsForFilter(serviceObj.id);
 
 			//serviceControls.get('ptFeeId').setValue(serviceObj.ptFeeId);
 			//serviceControls.get('ptFeeA1').setValue(serviceObj.ptFeeA1);
@@ -1265,6 +1270,28 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 
 	/*End Filters Section*/
+
+	/*Start closed events */
+	controlFocusout(control) {
+		const val = this.leadForm.get(control).value;
+		if (val && val.id) return;
+		this.leadForm.get(control).setValue('');
+		this.cdr.markForCheck();
+	}
+
+	serviceControlFocusout(control, index) {
+		// @ts-ignore
+		var serviceControls = this.leadForm.get('services').controls[index];
+		const val = serviceControls.get('serviceId').value;
+		if (val && val.id) return;
+
+		serviceControls.get('serviceId').setValue('');
+		this.cdr.markForCheck();
+
+	}
+
+/*End Closed events */
+
 
 	detectChanges() {
 		try {

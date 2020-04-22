@@ -22,111 +22,140 @@
 		</ng-container>
 	</kt-portlet-header>
 	<kt-portlet-body id="invoice-container">
-		<div class="table">
-			<div class="row">
-				<div class="col">
-					<img src="../../../../../../assets/media/logos/logo-8-inverse.png" />
-					<p class="mt-5 text-capitalize">
-						<strong [innerText]="invoice.surName"></strong>
-						<strong class="ml-2" [innerText]="invoice.name"></strong>
-					</p>
-					<p class="mt-2 text-capitalize">
-						<strong [innerText]="invoice.homePostCode"></strong>,
-						<strong class="ml-2" [innerText]="invoice.city"></strong>
-					</p>
-					<p class="mt-2 text-capitalize">
-						<strong [innerText]="invoice.country"></strong>,
+		<div class="row justify-content-md-center">
+			<div class="col-md-10">
+				<div class="table">
+					<div class="row">
+						<div class="col-6">
+							<div class="row">
+								<div class="col-12">
+									<img src="../../../../../../assets/media/logos/invoice-image.png" width="180" />
+								</div>
 
-					</p>
-				</div>
-				<div class="col">
-					<p class="text-right"><strong>Medelit ltd.</strong></p>
-					<p class="text-right"><strong>74 Victoria Drive</strong></p>
-					<p class="text-right"><strong>SW196HL London</strong></p>
-					<p class="text-right"><strong>United Kingdom</strong></p>
-					<p class="text-right"><strong>Company number: 9455455</strong></p>
-					<p class="text-right"><strong>Tel.: +44(0)20.36.37.56.57</strong></p>
-					<p class="text-right"><strong>Email: info@medelit.com</strong></p>
-					<p class="text-right"><strong>Website: www.medelit.com</strong></p>
-				</div>
-			</div>
-			<div style="clear:both"></div>
-			<div class="row mb-4 mt-4">
-				<div class="col border">
-					<h3 class="text-center text-uppercase p-3">Invoice</h3>
-				</div>
-			</div>
-			<div class="row mt-2">
-				<div class="col border">
-					<div class="row">
-						<div class="col pt-2 border-bottom">
-							<p><strong>Payment Status: </strong><span [innerText]="invoice.status"></span> </p>
+							</div>
 						</div>
-						<div class="col border-left border-bottom pt-2">
-							<p><strong>Invoice no.: </strong> <span [innerText]="invoice.invoiceNumber"></span></p>
-							<p><strong>Date : </strong> <span [innerText]="invoice.dueDate | date: 'MM/dd/yyyy'"></span></p>
-							<p><strong>Method of payment : </strong> <span [innerText]="invoice.paymentMethod"></span></p>
-							<p><strong>Date of payment : </strong> <span [innerText]="invoice.paymentDue | date: 'MM/dd/yyyy'"></span></p>
+						<div class="col-6">
+							<p class="text-right font-16 font-500"><strong>Medelit srl.</strong></p>
+							<p class="text-right font-16 font-500"><strong>Via Privata Grado 5, 20125, Milano</strong></p>
+							<p class="text-right font-16 font-500"><strong>P.IVA e Codice Fiscale: 06580850961</strong></p>
+							<p class="text-right font-16 font-500"><strong>Tel: +39 02.87.366.070 </strong></p>
+							<p class="text-right font-16 font-500"><strong>Fax: +39 02.94.195.125 </strong></p>
+							<p class="text-right font-16 font-500"><strong>Email: info@medelit.com </strong></p>
+							<p class="text-right font-16 font-500"><strong>Web: www.medelit.com </strong></p>
+
 						</div>
 					</div>
-					<div class="row mt-3">
-						<div class="col mb-3">
-							<h3>Bookings</h3>
+					<div style="clear:both"></div>
+					<div class="row mb-5 mt-5">
+						<div class="col-6">
+							<h4 class="text-uppercase pt-3 pb-3 pl-0">Billing Address:</h4>
+							<p class="font-16 font-500">{{invoice?.name}} {{invoice?.surName}}</p>
+							<p class="font-16 font-500">
+								{{invoice?.billingAddress}} ,
+								{{invoice?.billingCity}} ,
+								{{invoice?.billingPostCode}} ,
+								{{invoice?.billingCountry}}
+							</p>
+						</div>
+						<div class="col-6">
+							<h4 class="pt-3 pb-3 pl-0">To the Kind of Attention of :</h4>
+							<p class="font-16 font-500"> {{invoice?.name}} {{invoice?.surName}}</p>
+							<p class="font-16 font-500">
+								{{invoice?.mailingAddress}} ,
+								{{invoice?.mailingCity}} ,
+								{{invoice?.mailingPostCode}} ,
+								{{invoice?.mailingCountry}}
+							</p>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col">
+					<div class="row mt-2">
+						<div class="col-12 border">
+							<div class="row">
+								<div class="col pt-2 border-bottom">
+									<p class="font-14 font-500"><strong>Date of Birth: </strong><span [innerHtml]="invoice.dateOfBirth | date: 'dd/MM/yyyy'"></span> </p>
+									<p class="font-14 font-500"><strong>VAT Number: </strong><span [innerHtml]="invoice.vatNumber"></span> </p>
+								</div>
+								<div class="col border-left border-bottom pt-2">
+									<p class="font-14 font-500"><strong>Invoice N°: </strong> <span [innerText]="invoice.invoiceNumber"></span></p>
+									<p class="font-14 font-500"><strong>Date : </strong> <span [innerText]="invoice.dueDate | date: 'MM/dd/yyyy'"></span></p>
+									<p class="font-14 font-500"><strong>Method of payment : </strong> <span [innerText]="invoice.paymentMethod"></span></p>
+									<!--<p><strong>Date of payment : </strong> <span [innerText]="invoice.paymentDue | date: 'MM/dd/yyyy'"></span></p>-->
+								</div>
+							</div>
+							<!--<div class="row mt-3">
+								<div class="col mb-3">
+									<h3>Booking</h3>
+								</div>
+							</div>-->
+							<div class="row">
+								<div class="col-12 p-0">
+									<table class="table table-bordered">
+										<thead>
+											<tr>
+												<th class="font-14 font-weight-bold">Service</th>
+												<th class="font-14 font-weight-bold">Quantity</th>
+												<th class="font-14 font-weight-bold">Subtotal</th>
+												<th class="font-14 font-weight-bold">Discount</th>
+												<th class="font-14 font-weight-bold">Taxes</th>
+												<th class="font-14 font-weight-bold">Total</th>
+
+											</tr>
+										</thead>
+										<tbody>
+											<tr *ngFor="let b of invoice.bookings">
+												<td class="font-13 font-500" [innerText]="b.itemNameOnInvoice"></td>
+												<td class="font-13 font-500" [innerText]="b.quantityHours"></td>
+												<td class="font-13 font-500" [innerText]="b.subTotal"></td>
+												<td class="font-13 font-500" [innerText]="b.patientDiscount"></td>
+												<td class="font-13 font-500" [innerText]="b.taxAmount"></td>
+												<td class="font-13 font-500" [innerText]="b.grossTotal"></td>
+											</tr>
+										</tbody>
+										<tbody>
+											<tr>
+												<td colspan="5" class="text-right font-500">Total (<i class="la la-gbp"></i>)</td>
+												<td class="text-left font-500" [innerText]="invoice.totalInvoice"></td>
+											</tr>
+										</tbody>
+
+									</table>
+								</div>
+							</div>
+						</div>
+
+						
+					</div>
+
+					<div class="row mt-4">
+						<div class="col-12 p-0">
 							<table class="table table-bordered">
 								<thead>
 									<tr>
-										<th>Booking Name</th>
-										<th>Service Code</th>
-										<th>Service Name</th>
-										<th>PT Fee (<i class="la la-gbp"></i>)</th>
-										<th>Tax Amount (<i class="la la-gbp"></i>)</th>
-										<th>Sub Total (<i class="la la-gbp"></i>)</th>
-										<th>Gross Total (<i class="la la-gbp"></i>)</th>
+										<th class="font-14 font-weight-bold">Terms and Conditions</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr *ngFor="let b of invoice.bookings">
-										<td [innerText]="b.name"></td>
-										<td [innerText]="b.service.serviceCode"></td>
-										<td [innerText]="b.service.name"></td>
-										<td [innerText]="b.ptFee"></td>
-										<td [innerText]="b.taxAmount"></td>
-										<td [innerText]="b.subTotal"></td>
-										<td [innerText]="b.grossTotal"></td>
-									</tr>
-								</tbody>
-								<tbody>
 									<tr>
-										<td colspan="6" class="text-right font-500">Total Due (<i class="la la-gbp"></i>)</td>
-										<td class="text-left font-500" [innerText]="invoice.totalInvoice"></td>
+										<td class="font-13 font-500" [innerHtml]="invoice?.termsAndConditions"></td>
 									</tr>
 								</tbody>
 
 							</table>
 						</div>
-
 					</div>
-
-				</div>
-			</div>
-
-			<div class="row mt-5">
-				<div class="col mb-4">
-					<h5 class="">Bank Account Details:</h5>
-				</div>
-				</div>
-			<div class="row">
-				<div class="col mt-1">
-					<p class="font-500" [innerText]="invoice.bankName"></p>
-					<p class="font-500"><strong>Sort Code : </strong><span [innerText]="invoice.sortCode"></span></p>
-					<p class="font-500"><strong>Account Number : </strong><span [innerText]="invoice.accountNumber"></span></p>
+					<div class="row mt-2">
+						<div class="col-12 mt-1">
+							<p class="font-500 font-16 text-uppercase my-0">medelit ltd</p>
+							<p class="font-500 font-16 text-uppercase my-0" [innerText]="invoice?.bankName"></p>
+							<p class="font-500 font-16 text-uppercase my-0"><span>Sort Code : </span><span [innerText]="invoice?.sortCode"></span></p>
+							<p class="font-500 font-16 text-uppercase my-0"><span>Account Number : </span><span [innerText]="invoice?.accountNumber"></span></p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
+
+
 
 	</kt-portlet-body>
 </kt-portlet>

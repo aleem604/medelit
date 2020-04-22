@@ -24,13 +24,14 @@ import { FakeApiService } from '../../../core/_base/layout';
 import { ModuleGuard } from '../../../core/auth';
 // Core => Services
 import {
-    bookingsReducer,
-    BookingService,
+	bookingsReducer,
+	BookingService,
 
-    BookingEffects
+	BookingEffects
 } from '../../../core/medelit';
 // Core => Utils
-import { HttpUtilsService,
+import {
+	HttpUtilsService,
 	TypesUtilsService,
 	InterceptService,
 	LayoutUtilsService
@@ -68,7 +69,7 @@ import {
 	MatSnackBarModule,
 	MatTooltipModule,
 
-    MatChipsModule
+	MatChipsModule
 } from '@angular/material';
 import { environment } from '../../../../environments/environment';
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
@@ -76,16 +77,18 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { StaticDataService, InvoicesService } from '../../../core/medelit/_services';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { BookingsComponent } from './bookings.component';
-import { BookingsListComponent } from './bookings/bookings-list/bookings-list.component';
-import { BookingEditComponent } from './bookings/booking-edit/booking-edit.component';
-import { BookingCloneDialog } from './bookings/booking-clone-dialog/booking-clone-dialog';
-import { BookingCycleDialog } from './bookings/booking-cycle-dialog/booking-cycle-dialog';
-import { BookingToInvoiceDialog } from './bookings/booking-to-invoice/booking-to-invoice-dialog';
-import { BookingConnectedBookingsComponent } from './bookings/booking-connected-bookings/booking-connected-bookings.component';
-import { BookingConnectedProfessinalsComponent } from './bookings/booking-connected-professionals/booking-connected-professionals.component';
-import { BookingConnectedInvoicesComponent } from './bookings/booking-connected-invoices/booking-connected-invoices.component';
 import { AlertDialogComponent } from '../../partials/alert-dialog/alert-dialog.component';
 import { NgxMaskModule } from 'ngx-mask';
+import {
+	BookingsListComponent,
+	BookingEditComponent,
+	BookingCloneDialog,
+	BookingCycleDialog,
+	BookingToInvoiceDialog,
+	BookingConnectedBookingsComponent,
+	BookingConnectedProfessinalsComponent,
+	BookingConnectedInvoicesComponent
+} from '.';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -104,7 +107,7 @@ const routes: Routes = [
 				path: 'bookings',
 				component: BookingsListComponent
 			},
-			
+
 			{
 				path: 'bookings/add',
 				component: BookingEditComponent
@@ -133,7 +136,7 @@ const routes: Routes = [
 		MatButtonModule,
 		MatMenuModule,
 		MatSelectModule,
-        MatInputModule,
+		MatInputModule,
 		MatTableModule,
 		MatChipsModule,
 		MatAutocompleteModule,
@@ -158,7 +161,7 @@ const routes: Routes = [
 
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
-        	dataEncapsulation: false
+			dataEncapsulation: false
 		}) : [],
 		StoreModule.forFeature('bookings', bookingsReducer),
 		EffectsModule.forFeature([BookingEffects]),
@@ -166,11 +169,11 @@ const routes: Routes = [
 	providers: [
 		ModuleGuard,
 		InterceptService,
-      	{
-        	provide: HTTP_INTERCEPTORS,
-       	 	useClass: InterceptService,
-        	multi: true
-      	},
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: InterceptService,
+			multi: true
+		},
 		{
 			provide: MAT_DIALOG_DEFAULT_OPTIONS,
 			useValue: {

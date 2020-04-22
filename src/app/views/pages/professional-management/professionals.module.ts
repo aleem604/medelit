@@ -9,6 +9,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 // Translate Module
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { NgxMaskModule } from 'ngx-mask';
 // NGRX
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -72,18 +74,19 @@ import { environment } from '../../../../environments/environment';
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { ProfessionalsComponent } from './professionals.component';
-import { ProfessionalsListComponent } from './professionals/professionals-list/professionals-list.component';
-import { ProfessionalEditComponent } from './professionals/professinal-edit/professional-edit.component';
-import { NgxSpinnerModule } from 'ngx-spinner';
+import {
+	ProfessionalsListComponent,
+	ProfessionalEditComponent,
+	AttachServiceToProDialogComponent,
+	AddFeeToServiceDialogComponent,
+	ConnectedCustomersComponent,
+	ConnectedBookingsComponent,
+	ConnectedInvoicesComponent,
+	ConnectedLeadsComponent,
+	ProfessionalConnectedServicesComponent
+} from '.';
 import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
-import { ConnectedCustomersComponent } from './professionals/connected-customers/connected-customers.component';
-import { ConnectedBookingsComponent } from './professionals/connected-bookings/connected-bookings.component';
-import { ConnectedInvoicesComponent } from './professionals/connected-invoices/connected-invoies.component';
-import { ConnectedLeadsComponent } from './professionals/connected-leads/connected-leads.component';
-import { AttachServiceToProDialogComponent } from './professionals/attach-service-to-pro-dialog/attach-service-to-pro.dialog.component';
-import { ProfessionalConnectedServicesComponent } from './professionals/professional-connected-services/professional-connected-services.component';
-import { AddFeeToServiceDialogComponent } from './professionals/add-fee-to-service-dialog/add-fee-to-service.dialog.component';
-import { NgxMaskModule } from 'ngx-mask';
+
 
 
 // tslint:disable-next-line:class-name

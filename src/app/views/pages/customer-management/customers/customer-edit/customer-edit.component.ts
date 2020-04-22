@@ -24,12 +24,13 @@ import {
 	FilterModel,
 	ApiResponse,
 
-    InvoiceEntityModel,
-    MedelitStaticData,
+	InvoiceEntityModel,
+	MedelitStaticData,
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { CreateInvoiceEntityDialogComponent } from '../../../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
 import { TranslateService } from '@ngx-translate/core';
+import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
 
 
 @Component({
@@ -85,7 +86,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	servicesForFilter: FilterModel[] = [];
 	filteredServices: Observable<FilterModel[]>;
 
-	
+
 	paymentMethodsOptions: FilterModel[];
 	listedDiscountNetworkOptions: FilterModel[];
 	buildingTypeOptions: FilterModel[];
@@ -228,12 +229,12 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			languageId: [this.customer.languageId, [Validators.required]],
 			leadSourceId: [this.customer.leadSourceId, [Validators.required]],
 
-			mainPhone: [this.customer.mainPhone, [Validators.required]],
+			mainPhone: [this.customer.mainPhone, [Validators.required, Validators.pattern(MedelitConstants.mobnumPattern)]],
 			mainPhoneOwner: [this.customer.mainPhoneOwner, []],
-			contactPhone: [this.customer.contactPhone, [Validators.required]],
-			phone2: [this.customer.phone2, []],
+			contactPhone: [this.customer.contactPhone, [Validators.required, Validators.pattern(MedelitConstants.mobnumPattern)]],
+			phone2: [this.customer.phone2, [Validators.pattern(MedelitConstants.mobnumPattern)]],
 			phone2Owner: [this.customer.phone2Owner, []],
-			phone3: [this.customer.phone3, []],
+			phone3: [this.customer.phone3, [Validators.pattern(MedelitConstants.mobnumPattern)]],
 			phone3Owner: [this.customer.phone3Owner, []],
 			email: [this.customer.email, [Validators.required, Validators.email,]],
 			email2: [this.customer.email2, [Validators.email]],
@@ -490,7 +491,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	}
 
 	getComponentTitle() {
-		
+
 		let result = 'Create service';
 		if (this.selectedTab == 0) {
 			if (!this.customer || !this.customer.id) {
@@ -527,7 +528,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 				if (obj)
 					this.customerForm.get('paymentMethodId').setValue(obj.id);
 			}
-		
+
 			this.listedDiscountNetworkOptions = data.map((el) => { return { id: el.id, value: el.discountNetworks }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });;
 
 			if (this.customer.listedDiscountNetworkId) {
@@ -535,7 +536,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 				if (obj)
 					this.customerForm.get('listedDiscountNetworkId').setValue(obj.id);
 			}
-		
+
 			this.buildingTypeOptions = data.map((el) => { return { id: el.id, value: el.buildingTypes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.customer.buildingTypeId) {
@@ -543,7 +544,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 				if (obj)
 					this.customerForm.get('buildingTypeId').setValue(obj.id);
 			}
-		
+
 			this.visitVenueOptions = data.map((el) => { return { id: el.id, value: el.visitVenues }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.customer.visitVenueId) {
@@ -551,7 +552,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 				if (obj)
 					this.customerForm.get('visitVenueId').setValue(obj.id);
 			}
-		
+
 			this.contactMethodOptions = data.map((el) => { return { id: el.id, value: el.contactMethods }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
 
 			if (this.customer.contactMethodId) {
@@ -932,6 +933,17 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	}
 
 	/*End Filters Section*/
+
+	/*Start closed events */
+
+	controlFocusout(control) {
+		const val = this.customerForm.get(control).value;
+		if (val && val.id) return;
+		this.customerForm.get(control).setValue('');
+		this.cdr.markForCheck();
+	}
+
+	/*End Closed events */
 
 	detectChanges() {
 		try {

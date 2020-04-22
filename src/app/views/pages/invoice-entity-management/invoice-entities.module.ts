@@ -66,15 +66,9 @@ import {
 import { environment } from '../../../../environments/environment';
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
-import { InvoiceEntitiesListComponent } from './invoice-entities/invoice-entities-list/invoice-entities-list.component';
-import { InvoiceEntitiesComponent } from './invoice-entities.component';
-import { InvoiceEntityEditComponent } from './invoice-entities/invoice-entity-edit/invoice-entity-edit.component';
-import { InvoiceEntityConnectedServicesComponent } from './invoice-entities/ie-connected-services/ie-connected-services.component';
-import { InvoiceEntityConnectedCustomersComponent } from './invoice-entities/ie-connected-customers/ie-connected-customers.component';
-import { InvoiceEntityConnectedProfessinalsComponent } from './invoice-entities/ie-connected-professionals/ie-connected-professionals.component';
-import { InvoieEntityConnectedBookingsComponent } from './invoice-entities/ie-connected-bookings/ie-connected-bookings.component';
-import { InvoiceEntityConnectedInvoicesComponent } from './invoice-entities/ie-connected-invoices/ie-connected-invoices.component';
 import { NgxMaskModule } from 'ngx-mask';
+import { InvoiceEntitiesComponent } from './invoice-entities.component';
+import { InvoiceEntitiesListComponent, InvoiceEntityEditComponent, InvoiceEntityConnectedServicesComponent, InvoiceEntityConnectedCustomersComponent, InvoiceEntityConnectedProfessinalsComponent, InvoieEntityConnectedBookingsComponent, InvoiceEntityConnectedInvoicesComponent } from '.';
 
 
 // tslint:disable-next-line:class-name

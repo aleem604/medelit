@@ -34,6 +34,7 @@ import {
 	MedelitStaticData
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
 
 
 @Component({
@@ -178,7 +179,7 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 			this.loadingSubject.next(false);
 			let data = res as unknown as ApiResponse;
 			this.loadInvoiceEntity(data.data, true);
-			
+
 		}).catch((e) => {
 			this.spinner.hide();
 		}).finally(() => {
@@ -216,11 +217,11 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 	createForm() {
 		this.invoiceEntityForm = this.invoiceEntityFB.group({
 			name: [this.invoiceEntity.name, Validators.required],
-			mainPhoneNumber: [this.invoiceEntity.mainPhoneNumber, Validators.required],
+			mainPhoneNumber: [this.invoiceEntity.mainPhoneNumber, [Validators.required, Validators.pattern(MedelitConstants.mobnumPattern)]],
 			mainPhoneNumberOwner: [this.invoiceEntity.mainPhoneNumberOwner, Validators.required],
-			phone2: [this.invoiceEntity.phone2, []],
+			phone2: [this.invoiceEntity.phone2, [Validators.pattern(MedelitConstants.mobnumPattern)]],
 			phone2Owner: [this.invoiceEntity.phone2Owner, []],
-			phone3: [this.invoiceEntity.phone3, []],
+			phone3: [this.invoiceEntity.phone3, [Validators.pattern(MedelitConstants.mobnumPattern)]],
 			phone3Owner: [this.invoiceEntity.phone3Owner, []],
 			email: [this.invoiceEntity.email, [Validators.required, Validators.email]],
 			email2: [this.invoiceEntity.email2, [Validators.email]],
@@ -639,6 +640,20 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 	}
 
 	/*End Filters Section*/
+
+	/*Start closed events */
+
+	controlFocusout(control) {
+		const val = this.invoiceEntityForm.get(control).value;
+		if (val && val.id) return;
+		this.invoiceEntityForm.get(control).setValue('');
+		this.cdr.markForCheck();
+	}
+
+	/*End Closed events */
+
+
+
 	tabChanged(event: MatTabChangeEvent) {
 		this.tabTitle = event.tab.textLabel;
 	}

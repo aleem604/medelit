@@ -1,6 +1,7 @@
 export { ECommerceDataContext } from './_server/_e-commerce.data-context';
 export { eFeeType } from './_enums/e-fee-type.enum';
 export { MyFilterPipe } from './_filters/mFilter';
+export { StringFilterByPipe } from './_filters/string-filter-by.pipe';
 export * from './_adapter/app-date.adapter';
 
 export { DashboardModel } from './_models/dashboard.model';

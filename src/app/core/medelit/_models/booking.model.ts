@@ -103,6 +103,7 @@ export class BookingModel extends BaseModel {
 	proFeeA1: number;
 	proFeeA2: number;
 	isProFeeA1: number;
+	itemNameOnInvoice: string;
 
 	quantityHours?: number;
 	taxType?: number;

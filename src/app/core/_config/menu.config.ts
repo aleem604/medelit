@@ -703,6 +703,24 @@ export class MenuConfig {
 						//},
 					]
 				},
+				
+				{
+					title: 'Invoicing Entities',
+					bullet: 'dot',
+					icon: 'flaticon2-list-2',
+					root: true,
+					permission: 'invoiceEntityManagementModule',
+					submenu: [
+						{
+							title: 'Invoice Entities',
+							page: '/invoice-entity-management/invoice-entities'
+						},
+						{
+							title: 'Add Invoice Entity',
+							page: '/invoice-entity-management/invoice-entities/add'
+						},
+					]
+				},	
 				{
 					title: 'Bookings',
 					bullet: 'dot',
@@ -734,57 +752,6 @@ export class MenuConfig {
 					]
 				},
 				{
-					title: 'Invoicing Entities',
-					bullet: 'dot',
-					icon: 'flaticon2-list-2',
-					root: true,
-					permission: 'invoiceEntityManagementModule',
-					submenu: [
-						{
-							title: 'Invoice Entities',
-							page: '/invoice-entity-management/invoice-entities'
-						},
-						{
-							title: 'Add Invoice Entity',
-							page: '/invoice-entity-management/invoice-entities/add'
-						},
-					]
-				},				
-				{
-					title: 'Fees',
-					bullet: 'dot',
-					icon: 'flaticon2-list-2',
-					root: true,
-					permission: 'feeManagementModule',
-					submenu: [
-						{
-							title: 'Fees',
-							page: '/fee-management/fees'
-						},
-						//{
-						//	title: 'Add Fees',
-						//	page: '/fee-management/fees/add'
-						//},
-					]
-				},
-				{
-					title: 'Professionals',
-					bullet: 'dot',
-					icon: 'flaticon2-list-2',
-					root: true,
-					permission: 'professionalManagementModule',
-					submenu: [
-						{
-							title: 'Professionals',
-							page: '/professional-management/professionals'
-						},
-						{
-							title: 'Add Professional',
-							page: '/professional-management/professionals/add'
-						},
-					]
-				},
-				{
 					title: 'Services',
 					bullet: 'dot',
 					icon: 'flaticon2-list-2',
@@ -803,6 +770,40 @@ export class MenuConfig {
 							title: 'Fields and SubCategories',
 							page: '/service-management/fields'
 						},
+					]
+				},						
+				{
+					title: 'Professionals',
+					bullet: 'dot',
+					icon: 'flaticon2-list-2',
+					root: true,
+					permission: 'professionalManagementModule',
+					submenu: [
+						{
+							title: 'Professionals',
+							page: '/professional-management/professionals'
+						},
+						{
+							title: 'Add Professional',
+							page: '/professional-management/professionals/add'
+						},
+					]
+				},
+				{
+					title: 'Fees',
+					bullet: 'dot',
+					icon: 'flaticon2-list-2',
+					root: true,
+					permission: 'feeManagementModule',
+					submenu: [
+						{
+							title: 'Fees',
+							page: '/fee-management/fees'
+						},
+						//{
+						//	title: 'Add Fees',
+						//	page: '/fee-management/fees/add'
+						//},
 					]
 				}
 			]

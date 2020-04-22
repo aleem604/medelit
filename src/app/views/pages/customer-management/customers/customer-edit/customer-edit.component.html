@@ -60,7 +60,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Title" aria-label="Number" matInput [matAutocomplete]="titleAuto" #titleId [formControlName]="'titleId'">
+												<input type="text" placeholder="Title" aria-label="Number" matInput [matAutocomplete]="titleAuto" #titleId [formControlName]="'titleId'" (focusout)="controlFocusout('titleId')">
 												<button mat-button *ngIf="titleId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('titleId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -118,7 +118,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Invoice entity" aria-label="Number" #invoiceEntityId matInput [matAutocomplete]="ieAuto" [formControlName]="'invoiceEntityId'">
+												<input type="text" placeholder="Invoice entity" aria-label="Number" #invoiceEntityId matInput [matAutocomplete]="ieAuto" [formControlName]="'invoiceEntityId'" (focusout)="controlFocusout('invoiceEntityId')">
 												<button mat-button *ngIf="invoiceEntityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('invoiceEntityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -148,17 +148,17 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Main phone" #mainPhone mask="+(00)-000-000-0000" formControlName="mainPhone">
+												<input matInput placeholder="Main phone" #mainPhone formControlName="mainPhone">
 												<button mat-button *ngIf="mainPhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('mainPhone').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-error>
-													Main phone is
-													<strong>required</strong>
-												</mat-error>
 												<mat-hint align="start">
 													<strong class="required-star">Main Phone</strong>
 												</mat-hint>
+												<mat-error *ngIf="customerForm.get('mainPhone').errors?.pattern">
+													Main phone should start with
+													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+												</mat-error>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -178,33 +178,33 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Contact phone" #contactPhone mask="+(00)-000-000-0000" formControlName="contactPhone">
+												<input matInput placeholder="Contact phone" #contactPhone formControlName="contactPhone">
 												<button mat-button *ngIf="contactPhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('contactPhone').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-error>
-													Contact phone
-													<strong>required</strong>
-												</mat-error>
 												<mat-hint align="start">
 													<strong>Contact Phone</strong>
 												</mat-hint>
+												<mat-error *ngIf="customerForm.get('contactPhone').errors?.pattern">
+													Contact phone should start with
+													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+												</mat-error>
 											</mat-form-field>
 										</div>
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Phone 2" #phone2 mask="+(00)-000-000-0000" formControlName="phone2">
+												<input matInput placeholder="Phone 2" #phone2 formControlName="phone2">
 												<button mat-button *ngIf="phone2.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('phone2').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-error>
-													Phone 2
-													<strong>required</strong>
-												</mat-error>
 												<mat-hint align="start">
 													<strong>Phone 2</strong>
 												</mat-hint>
+												<mat-error *ngIf="customerForm.get('phone2').errors?.pattern">
+													Phone 2 should start with
+													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+												</mat-error>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -228,13 +228,14 @@
 												<button mat-button *ngIf="phone3.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('phone3').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-error>
-													Phone 3
-													<strong>required</strong>
-												</mat-error>
+
 												<mat-hint align="start">
 													<strong>Phone 3</strong>
 												</mat-hint>
+												<mat-error *ngIf="customerForm.get('phone3').errors?.pattern">
+													Phone 3 should start with
+													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+												</mat-error>
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
@@ -341,7 +342,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Country of birth" aria-label="Number" matInput #countryOfBirthId [matAutocomplete]="countryOfBirthAuto" [formControlName]="'countryOfBirthId'">
+												<input type="text" placeholder="Country of birth" aria-label="Number" matInput #countryOfBirthId [matAutocomplete]="countryOfBirthAuto" [formControlName]="'countryOfBirthId'" (focusout)="controlFocusout('countryOfBirthId')">
 												<button mat-button *ngIf="countryOfBirthId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('countryOfBirthId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -363,7 +364,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Language" aria-label="Number" matInput #languageId [matAutocomplete]="languageAuto" [formControlName]="'languageId'">
+												<input type="text" placeholder="Language" aria-label="Number" matInput #languageId [matAutocomplete]="languageAuto" [formControlName]="'languageId'" (focusout)="controlFocusout('languageId')">
 												<button mat-button *ngIf="languageId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('languageId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -400,7 +401,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Requesting person relationship" aria-label="Number" #visitRequestingPersonRelationId matInput [matAutocomplete]="relationshipAuto" [formControlName]="'visitRequestingPersonRelationId'">
+												<input type="text"
+													   placeholder="Requesting person relationship"
+													   aria-label="Number"
+													   #visitRequestingPersonRelationId matInput
+													   [matAutocomplete]="relationshipAuto"
+													   [formControlName]="'visitRequestingPersonRelationId'" (focusout)="controlFocusout('visitRequestingPersonRelationId')">
 												<button mat-button *ngIf="visitRequestingPersonRelationId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('visitRequestingPersonRelationId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -509,7 +515,12 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Visit city/town" aria-label="Number" matInput #visitCityId [matAutocomplete]="visitCityIdAuto" [formControlName]="'visitCityId'">
+												<input type="text"
+													   placeholder="Visit city/town"
+													   aria-label="Number"
+													   matInput #visitCityId
+													   [matAutocomplete]="visitCityIdAuto"
+													   [formControlName]="'visitCityId'" (focusout)="controlFocusout('visitCityId')">
 												<button mat-button *ngIf="visitCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('visitCityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -531,7 +542,12 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Country" aria-label="Number" matInput #visitCountryId [matAutocomplete]="visitCountryAuto" [formControlName]="'visitCountryId'">
+												<input type="text"
+													   placeholder="Country"
+													   aria-label="Number"
+													   matInput #visitCountryId
+													   [matAutocomplete]="visitCountryAuto"
+													   [formControlName]="'visitCountryId'" (focusout)="controlFocusout('visitCountryId')">
 												<button mat-button *ngIf="visitCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('visitCountryId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -670,7 +686,13 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Home city / town" aria-label="Number" matInput #homeCityId [matAutocomplete]="homeCityAuto" [formControlName]="'homeCityId'">
+												<input type="text"
+													   placeholder="Home city / town"
+													   aria-label="Number"
+													   matInput
+													   #homeCityId
+													   [matAutocomplete]="homeCityAuto"
+													   [formControlName]="'homeCityId'" (focusout)="controlFocusout('homeCityId')">
 												<button mat-button *ngIf="homeCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('homeCityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -690,7 +712,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Home country" aria-label="Number" matInput #homeCountryId [matAutocomplete]="homeCountryAuto" [formControlName]="'homeCountryId'">
+												<input type="text"
+													   placeholder="Home country"
+													   aria-label="Number"
+													   matInput #homeCountryId
+													   [matAutocomplete]="homeCountryAuto"
+													   [formControlName]="'homeCountryId'" (focusout)="controlFocusout('homeCountryId')">
 												<button mat-button *ngIf="homeCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('homeCountryId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>

@@ -98,58 +98,74 @@
 													<button mat-button *ngIf="mobilePhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('mobilePhone').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
-													<mat-error>
-														Mobile Phone is
-														<strong>required</strong>
-													</mat-error>
 													<mat-hint align="start">
 														<strong class="required-star">Mobile Phone</strong>
 													</mat-hint>
+													<mat-error *ngIf="professionalForm.get('mobilePhone').errors?.required">
+														Mobile Phone is
+														<strong>required</strong>
+													</mat-error>
+													<mat-error *ngIf="professionalForm.get('mobilePhone').errors?.pattern">
+														Mobile Phone should start with
+														<strong><i class="la la-plus"></i> sign and numbers only </strong>
+													</mat-error>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Main telephone" #telephone mask="+(00)-000-000-0000" formControlName="telephone" maxlength="50">
+													<input matInput placeholder="Main telephone" #telephone formControlName="telephone" maxlength="50">
 													<button mat-button *ngIf="telephone.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('telephone').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
-													<mat-error>
-														Main Telephone is
-														<strong>required</strong>
-													</mat-error>
 													<mat-hint align="start">
 														<strong class="required-star">Main Telephone</strong>
 													</mat-hint>
+													<mat-error *ngIf="professionalForm.get('telephone').errors?.required">
+														Main Telephone is
+														<strong>required</strong>
+													</mat-error>
+													<mat-error *ngIf="professionalForm.get('telephone').errors?.pattern">
+														Main Telephone should start with
+														<strong><i class="la la-plus"></i> sign and numbers only </strong>
+													</mat-error>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Home phone" mask="+(00)-000-000-0000" #homePhone formControlName="homePhone" maxlength="50">
+													<input matInput placeholder="Home phone" #homePhone formControlName="homePhone" maxlength="50">
 													<button mat-button *ngIf="homePhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('homePhone').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
-													<mat-error>
-														Home Phone is
-														<strong>required</strong>
-													</mat-error>
 													<mat-hint align="start">
 														<strong>Home Phone</strong>
 													</mat-hint>
+													<mat-error *ngIf="professionalForm.get('homePhone').errors?.required">
+														Home Phone is
+														<strong>required</strong>
+													</mat-error>
+													<mat-error *ngIf="professionalForm.get('homePhone').errors?.pattern">
+														Home Phone should start with
+														<strong><i class="la la-plus"></i> sign and numbers only </strong>
+													</mat-error>
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput placeholder="Clinic phone number" #clinicPhoneNumber mask="+(00)-000-000-0000" formControlName="clinicPhoneNumber" maxlength="50">
+													<input matInput placeholder="Clinic phone number" #clinicPhoneNumber formControlName="clinicPhoneNumber" maxlength="50">
 													<button mat-button *ngIf="clinicPhoneNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="professionalForm.get('clinicPhoneNumber').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
-													<mat-error>
-														Clinic Phone Number is
-														<strong>required</strong>
-													</mat-error>
 													<mat-hint align="start">
 														<strong>Clinic Phone Number</strong>
 													</mat-hint>
+													<mat-error *ngIf="professionalForm.get('clinicPhoneNumber').errors?.required">
+														Clinic Phone Numbere is
+														<strong>required</strong>
+													</mat-error>
+													<mat-error *ngIf="professionalForm.get('clinicPhoneNumber').errors?.pattern">
+														Clinic Phone Number should start with
+														<strong><i class="la la-plus"></i> sign and numbers only </strong>
+													</mat-error>
 												</mat-form-field>
 											</div>
 
@@ -413,7 +429,12 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="example-full-width">
-													<input type="text" placeholder="City" #cityId aria-label="Number" matInput [matAutocomplete]="cityAuto" formControlName="cityId">
+													<input type="text"
+														   placeholder="City"
+														   #cityId aria-label="Number"
+														   matInput
+														   [matAutocomplete]="cityAuto"
+														   formControlName="cityId" (focusout)="controlFocusout('cityId')">
 													<button mat-button *ngIf="cityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('cityId').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
@@ -435,7 +456,12 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="example-full-width">
-													<input type="text" placeholder="Country" aria-label="Number" #countryId matInput [matAutocomplete]="countryAuto" formControlName="countryId">
+													<input type="text"
+														   placeholder="Country"
+														   aria-label="Number"
+														   #countryId matInput
+														   [matAutocomplete]="countryAuto"
+														   formControlName="countryId" (focusout)="controlFocusout('countryId')">
 													<button mat-button *ngIf="countryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('countryId').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
@@ -496,7 +522,12 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="example-full-width">
-													<input type="text" placeholder="Clinic city" aria-label="Number" #clinicCityId matInput [matAutocomplete]="clinicCityAuto" [formControlName]="'clinicCityId'">
+													<input type="text"
+														   placeholder="Clinic city"
+														   aria-label="Number"
+														   #clinicCityId matInput
+														   [matAutocomplete]="clinicCityAuto"
+														   [formControlName]="'clinicCityId'" (focusout)="controlFocusout('clinicCityId')">
 													<button mat-button *ngIf="clinicCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('clinicCityId').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
@@ -725,7 +756,7 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														<strong> Contract Date</strong>
+														<strong class="required-star"> Contract Date</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>

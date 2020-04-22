@@ -102,7 +102,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Field" aria-label="Number" matInput [matAutocomplete]="fieldAuto" [formControlName]="'fieldId'">
+												<input type="text"
+													   placeholder="Field"
+													   aria-label="Number"
+													   matInput
+													   [matAutocomplete]="fieldAuto"
+													   [formControlName]="'fieldId'" (focusout)="controlFocusout('fieldId')">
 												<mat-autocomplete autoActiveFirstOption #fieldAuto="matAutocomplete"
 																  (optionSelected)="loadCategoriesForFilter()"
 																  [displayWith]="displayFn">
@@ -121,7 +126,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Subcategory" aria-label="Number" matInput [matAutocomplete]="catAuto" [formControlName]="'subcategoryId'">
+												<input type="text"
+													   placeholder="Subcategory"
+													   aria-label="Number"
+													   matInput
+													   [matAutocomplete]="catAuto"
+													   [formControlName]="'subcategoryId'" (focusout)="controlFocusout('subcategoryId')">
 												<mat-autocomplete autoActiveFirstOption #catAuto="matAutocomplete"
 																  [displayWith]="displayFn">
 													<mat-option *ngFor="let cat of filteredCategories | async" [value]="cat">
@@ -166,7 +176,11 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Duration" aria-label="Number" matInput [matAutocomplete]="dAuto" [formControlName]="'durationId'">
+												<input type="text"
+													   placeholder="Duration"
+													   aria-label="Number" matInput
+													   [matAutocomplete]="dAuto"
+													   [formControlName]="'durationId'" (focusout)="controlFocusout('durationId')">
 												<mat-autocomplete autoActiveFirstOption #dAuto="matAutocomplete"
 																  [displayWith]="displayFn">
 													<mat-option *ngFor="let elem of filteredDurations | async" [value]="elem">
@@ -184,7 +198,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Vat" aria-label="Number" matInput [matAutocomplete]="vatAuto" [formControlName]="'vatId'">
+												<input type="text"
+													   placeholder="Vat"
+													   aria-label="Number"
+													   matInput
+													   [matAutocomplete]="vatAuto"
+													   [formControlName]="'vatId'" (focusout)="controlFocusout('vatId')">
 												<mat-autocomplete autoActiveFirstOption #vatAuto="matAutocomplete"
 																  [displayWith]="displayFn">
 													<mat-option *ngFor="let elem of filteredVats | async" [value]="elem">

@@ -24,6 +24,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmDialogComponent } from '../../../../partials/confirm-dialog/confirm-dialog.component';
 import { urlReg } from '../../../../../core/medelit/_consts/specification.dictionary';
 import { AttachServiceToProDialogComponent } from '../attach-service-to-pro-dialog/attach-service-to-pro.dialog.component';
+import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -213,10 +214,10 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			email: [this.professional.email, [Validators.required, Validators.email]],
 			email2: [this.professional.email2, [Validators.email]],
 			dateOfBirth: [this.professional.dateOfBirth, [Validators.required]],
-			mobilePhone: [this.professional.mobilePhone, [Validators.required]],
-			telephone: [this.professional.telephone, [Validators.required]],
-			homePhone: [this.professional.homePhone],
-			clinicPhoneNumber: [this.professional.clinicPhoneNumber],
+			mobilePhone: [this.professional.mobilePhone, [Validators.required, Validators.pattern(MedelitConstants.mobnumPattern)]],
+			telephone: [this.professional.telephone, [Validators.required, Validators.pattern(MedelitConstants.mobnumPattern)]],
+			homePhone: [this.professional.homePhone, [Validators.pattern(MedelitConstants.mobnumPattern)]],
+			clinicPhoneNumber: [this.professional.clinicPhoneNumber, [Validators.pattern(MedelitConstants.mobnumPattern)]],
 			professionalLanguages: [this.professional.professionalLanguages, [Validators.required]],
 			professionalFields: [this.professional.professionalFields, [Validators.required]],
 			professionalSubCategories: [this.professional.professionalSubCategories, [Validators.required]],
@@ -913,4 +914,14 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		return this.professionalForm.get(controlName);
 	}
 
+	/*Start closed events */
+
+	controlFocusout(control) {
+		const val = this.professionalForm.get(control).value;
+		if (val && val.id) return;
+		this.professionalForm.get(control).setValue('');
+		this.cdr.markForCheck();
+	}
+
+/*End Closed events */
 }

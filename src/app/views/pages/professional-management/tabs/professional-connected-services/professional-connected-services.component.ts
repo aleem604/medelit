@@ -3,13 +3,12 @@ import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/m
 import { SelectionModel } from '@angular/cdk/collections';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';
-import { ApiResponse, FeesService, ProfessionalConnectedServicesModel, ProfessionalsService, ServiceModel, ServicesService } from '../../../../../core/medelit';
+import { ApiResponse, ProfessionalConnectedServicesModel, ProfessionalsService } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
-import { AttachServiceToProDialogComponent } from '../attach-service-to-pro-dialog/attach-service-to-pro.dialog.component';
 import { ConfirmDialogComponent } from '../../../../partials/confirm-dialog/confirm-dialog.component';
-import { AddFeeToServiceDialogComponent } from '../add-fee-to-service-dialog/add-fee-to-service.dialog.component';
-
+import { AttachServiceToProDialogComponent } from '../../professionals/attach-service-to-pro-dialog/attach-service-to-pro.dialog.component';
+import { AddFeeToServiceDialogComponent } from '../../professionals/add-fee-to-service-dialog/add-fee-to-service.dialog.component';
 
 @Component({
 	// tslint:disable-next-line:component-selector
