@@ -106,8 +106,8 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-error *ngIf="professionalForm.get('mobilePhone').errors?.pattern">
-														Mobile Phone should start with
-														<strong><i class="la la-plus"></i> sign and numbers only </strong>
+														Mobile Phone should contain
+														<strong><i class="la la-plus"></i> sign or numbers only </strong>
 													</mat-error>
 												</mat-form-field>
 											</div>
@@ -125,8 +125,8 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-error *ngIf="professionalForm.get('telephone').errors?.pattern">
-														Main Telephone should start with
-														<strong><i class="la la-plus"></i> sign and numbers only </strong>
+														Main Telephone should contain
+														<strong><i class="la la-plus"></i> sign or numbers only </strong>
 													</mat-error>
 												</mat-form-field>
 											</div>
@@ -144,8 +144,8 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-error *ngIf="professionalForm.get('homePhone').errors?.pattern">
-														Home Phone should start with
-														<strong><i class="la la-plus"></i> sign and numbers only </strong>
+														Home Phone should contain
+														<strong><i class="la la-plus"></i> sign or numbers only </strong>
 													</mat-error>
 												</mat-form-field>
 											</div>
@@ -163,8 +163,8 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-error *ngIf="professionalForm.get('clinicPhoneNumber').errors?.pattern">
-														Clinic Phone Number should start with
-														<strong><i class="la la-plus"></i> sign and numbers only </strong>
+														Clinic Phone should contain
+														<strong><i class="la la-plus"></i> sign or numbers only </strong>
 													</mat-error>
 												</mat-form-field>
 											</div>
@@ -246,7 +246,7 @@
 												<div class="row">
 													<div [ngClass]="{'col-md-11': professionalForm.get('website').valid, 'col-md-12':!professionalForm.get('website').valid}">
 														<mat-form-field class="mat-form-field-fluid">
-															<input matInput placeholder="Website" #website formControlName="website" maxlength="250">
+															<input matInput placeholder="Website" #website formControlName="website" maxlength="4000">
 															<button mat-button *ngIf="website.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('website').setValue('')">
 																<mat-icon>close</mat-icon>
 															</button>
@@ -265,8 +265,8 @@
 															</mat-error>
 														</mat-form-field>
 													</div>
-													<div class="col-md-1" *ngIf="getControl('website').valid">
-														<a class="view-link" href="website.value" target="_blank"><i class="la la-2x la-eye"></i></a>
+													<div class="col-md-1" *ngIf="website.value">
+														<a class="view-link" href="//{{website.value}}" target="_blank"><i class="la la-2x la-eye"></i></a>
 													</div>
 												</div>
 											</div>
@@ -278,8 +278,6 @@
 															<button mat-button *ngIf="proOnlineCV.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('proOnlineCV').setValue('')">
 																<mat-icon>close</mat-icon>
 															</button>
-
-
 															<mat-hint align="start">
 																<strong>Online CV link</strong>
 															</mat-hint>
@@ -294,8 +292,8 @@
 															</mat-error>
 														</mat-form-field>
 													</div>
-													<div class="col-md-1" *ngIf="professionalForm.get('proOnlineCV').valid">
-														<a class="view-link" href="{{getUrl('proOnlineCV')}}" target="_blank"><i class="la la-2x la-eye"></i></a>
+													<div class="col-md-1" *ngIf="proOnlineCV.value">
+														<a class="view-link" href="//{{proOnlineCV.value}}" target="_blank"><i class="la la-2x la-eye"></i></a>
 													</div>
 												</div>	
 											</div>
@@ -363,7 +361,7 @@
 												<div class="row">
 													<div [ngClass]="{'col-md-11': professionalForm.get('coverMap').valid, 'col-md-12':!professionalForm.get('coverMap').valid}">
 														<mat-form-field class="mat-form-field-fluid">
-															<input matInput placeholder="Covermap" #coverMap formControlName="coverMap" maxlength="250">
+															<input matInput placeholder="Covermap" #coverMap formControlName="coverMap" maxlength="4000">
 															<button mat-button *ngIf="coverMap.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('coverMap').setValue('')">
 																<mat-icon>close</mat-icon>
 															</button>
@@ -382,8 +380,8 @@
 															</mat-error>
 														</mat-form-field>
 													</div>
-													<div class="col-md-1" *ngIf="getControl('coverMap').valid">
-														<a class="view-link" [href]="coverMap.value" target="_blank"><i class="la la-2x la-eye"></i></a>
+													<div class="col-md-1" *ngIf="coverMap.value">
+														<a class="view-link" href="//{{coverMap.value}}" target="_blank"><i class="la la-2x la-eye"></i></a>
 													</div>
 												</div>
 											</div>
@@ -428,29 +426,18 @@
 												</mat-form-field>
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-												<mat-form-field class="example-full-width">
-													<input type="text"
-														   placeholder="City"
-														   #cityId aria-label="Number"
-														   matInput
-														   [matAutocomplete]="cityAuto"
-														   formControlName="cityId" (focusout)="controlFocusout('cityId')">
-													<button mat-button *ngIf="cityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('cityId').setValue('')">
+												<mat-form-field class="mat-form-field-fluid">
+													<input matInput placeholder="City" #city formControlName="city" maxlength="250">
+													<button mat-button *ngIf="city.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('city').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
 
-													<mat-autocomplete autoActiveFirstOption #cityAuto="matAutocomplete"
-																	  [displayWith]="displayFn">
-														<mat-option *ngFor="let t of filteredCities | async" [value]="t">
-															{{t.value}}
-														</mat-option>
-													</mat-autocomplete>
 													<mat-error>
 														City is
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														<strong class="required-star">City </strong>
+														<strong class="required-star">City</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
@@ -523,21 +510,13 @@
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="example-full-width">
 													<input type="text"
-														   placeholder="Clinic city"
-														   aria-label="Number"
-														   #clinicCityId matInput
-														   [matAutocomplete]="clinicCityAuto"
+														   placeholder="Clinic city"														  
+														   #clinicCityId matInput														   
 														   [formControlName]="'clinicCityId'" (focusout)="controlFocusout('clinicCityId')">
 													<button mat-button *ngIf="clinicCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('clinicCityId').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
-													<mat-autocomplete autoActiveFirstOption #clinicCityAuto="matAutocomplete"
-																	  [displayWith]="displayFn">
-														<mat-option *ngFor="let t of filteredClinicCities | async" [value]="t">
-															{{t.value}}
-														</mat-option>
-													</mat-autocomplete>
-
+													
 													<mat-error>
 														Clinic City is
 														<strong>required</strong>
@@ -555,7 +534,7 @@
 											</div>
 											<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<textarea matInput rows="7" placeholder="Description" #description formControlName="description"></textarea>
+													<textarea matInput rows="3" placeholder="Description" #description formControlName="description"></textarea>
 													<button mat-button *ngIf="description.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('description').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
@@ -706,7 +685,7 @@
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<textarea matInput rows="7" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
+													<textarea matInput rows="3" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
 													<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('invoicingNotes').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
@@ -756,7 +735,7 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														<strong class="required-star"> Contract Date</strong>
+														<strong> Contract Date</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
@@ -809,7 +788,7 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														<strong>First Contact Date</strong>
+														<strong class="required-star">First Contact Date</strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>
@@ -967,7 +946,7 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														<strong>Calendar Actication Option </strong>option
+														<strong>Calendar Actication </strong>option
 													</mat-hint>
 												</mat-form-field>
 											</div>

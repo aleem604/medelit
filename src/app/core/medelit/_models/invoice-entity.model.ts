@@ -27,10 +27,8 @@ export class InvoiceEntityModel extends BaseModel {
 	billingAddress: string;
 	mailingAddress: string;
 	billingPostCode: string;
-	billingCityId: number;
-	billingCity: string;
-	mailingCityId: number;
-	mailingCity: string;
+	billingCity: string = 'London';
+	mailingCity: string = 'London';
 	billingCountryId: number;
 	billingCountry: string;
 	mailingCountryId: number;

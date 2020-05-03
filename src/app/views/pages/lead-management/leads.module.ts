@@ -4,19 +4,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { Select2Module } from 'ng2-select2';
-
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-
 import { TranslateModule } from '@ngx-translate/core';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-
 import { PartialsModule } from '../../partials/partials.module';
-
-import { FakeApiService } from '../../../core/_base/layout';
-
 import { ModuleGuard } from '../../../core/auth';
 
 import {
@@ -116,7 +108,7 @@ const routes: Routes = [
 		PartialsModule,
 		NgxPermissionsModule.forChild(),
 		RouterModule.forChild(routes),
-		Select2Module,
+	
 		FormsModule,
 		ReactiveFormsModule,
 		TranslateModule.forChild(),
@@ -144,10 +136,6 @@ const routes: Routes = [
 		NgxMatSelectSearchModule,
 		NgbModule,
 		NgxMaskModule.forRoot(),
-		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
-			passThruUnknownUrl: true,
-        	dataEncapsulation: false
-		}) : [],
 		StoreModule.forFeature('leads', leadsReducer),
 		EffectsModule.forFeature([LeadEffects]),
 	],

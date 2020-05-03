@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs';
 
 import { SelectionModel } from '@angular/cdk/collections';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { BookingsToAddToInvoiceDialogModel, InvoicesService, ApiResponse } from '../../../../../core/medelit';
-import { LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
+import { BookingsToAddToInvoiceDialogModel, InvoicesService, ApiResponse } from '../../../../../../core/medelit';
+import { LayoutUtilsService, MessageType } from '../../../../../../core/_base/crud';
 
 
 @Component({

@@ -1,11 +1,14 @@
 <kt-portlet>
-	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
+	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'"
+		[viewLoading$]="loading$">
 		<ng-container ktPortletTools>
-			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the products list">
+			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button
+				matTooltip="Back to the products list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
-			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="generatePdf()" mat-raised-button matTooltip="Invoice to PDF">
+			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="generatePdf()" mat-raised-button
+				matTooltip="Invoice to PDF">
 				<i class="la la-file-pdf-o"></i>
 				<span class="kt-hidden-mobile">Generate PDF</span>
 			</a>
@@ -28,29 +31,31 @@
 					<div class="row">
 						<div class="col-6">
 							<div class="row">
-								<div class="col-12">
-									<img src="../../../../../../assets/media/logos/invoice-image.png" width="180" />
+								<div class="col-12 py-2">
+									<img src="../../../../../../assets/media/logos/invoice-image.png" width="130" />
 								</div>
 
 							</div>
 						</div>
 						<div class="col-6">
-							<p class="text-right font-16 font-500"><strong>Medelit srl.</strong></p>
-							<p class="text-right font-16 font-500"><strong>Via Privata Grado 5, 20125, Milano</strong></p>
-							<p class="text-right font-16 font-500"><strong>P.IVA e Codice Fiscale: 06580850961</strong></p>
-							<p class="text-right font-16 font-500"><strong>Tel: +39 02.87.366.070 </strong></p>
-							<p class="text-right font-16 font-500"><strong>Fax: +39 02.94.195.125 </strong></p>
-							<p class="text-right font-16 font-500"><strong>Email: info@medelit.com </strong></p>
-							<p class="text-right font-16 font-500"><strong>Web: www.medelit.com </strong></p>
+							<p class="text-right font-14 font-500 mb-0"><strong>Medelit srl.</strong></p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Via Privata Grado 5, 20125,
+									Milano</strong></p>
+							<p class="text-right font-13 font-500 mb-0"><strong>P.IVA e Codice Fiscale:
+									06580850961</strong></p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Tel: +39 02.87.366.070 </strong></p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Fax: +39 02.94.195.125 </strong></p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Email: info@medelit.com </strong></p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Web: www.medelit.com </strong></p>
 
 						</div>
 					</div>
 					<div style="clear:both"></div>
 					<div class="row mb-5 mt-5">
 						<div class="col-6">
-							<h4 class="text-uppercase pt-3 pb-3 pl-0">Billing Address:</h4>
-							<p class="font-16 font-500">{{invoice?.name}} {{invoice?.surName}}</p>
-							<p class="font-16 font-500">
+							<h6 class="text-uppercase pt-3 pb-3 pl-0 pb-2">Billing Address:</h6>
+							<p class="font-13 font-500 pb-0">{{invoice?.name}} {{invoice?.surName}}</p>
+							<p class="font-13 font-500 pb-0">
 								{{invoice?.billingAddress}} ,
 								{{invoice?.billingCity}} ,
 								{{invoice?.billingPostCode}} ,
@@ -58,9 +63,9 @@
 							</p>
 						</div>
 						<div class="col-6">
-							<h4 class="pt-3 pb-3 pl-0">To the Kind of Attention of :</h4>
-							<p class="font-16 font-500"> {{invoice?.name}} {{invoice?.surName}}</p>
-							<p class="font-16 font-500">
+							<h6 class="pt-3 pb-3 pl-0">To the Kind of Attention of :</h6>
+							<p class="font-13 font-500 pb-0"> {{invoice?.name}} {{invoice?.surName}}</p>
+							<p class="font-13 font-500 pb-0">
 								{{invoice?.mailingAddress}} ,
 								{{invoice?.mailingCity}} ,
 								{{invoice?.mailingPostCode}} ,
@@ -72,13 +77,18 @@
 						<div class="col-12 border">
 							<div class="row">
 								<div class="col pt-2 border-bottom">
-									<p class="font-14 font-500"><strong>Date of Birth: </strong><span [innerHtml]="invoice.dateOfBirth | date: 'dd/MM/yyyy'"></span> </p>
-									<p class="font-14 font-500"><strong>VAT Number: </strong><span [innerHtml]="invoice.vatNumber"></span> </p>
+									<p class="font-13"><span class="font-500">Date of Birth: </span><span
+											[innerHtml]="invoice?.dateOfBirth | date: 'dd/MM/yyyy'"></span> </p>
+									<p class="font-13"><span class="font-500">VAT Number: </span><span
+											[innerHtml]="invoice?.vatNumber"></span> </p>
 								</div>
 								<div class="col border-left border-bottom pt-2">
-									<p class="font-14 font-500"><strong>Invoice N°: </strong> <span [innerText]="invoice.invoiceNumber"></span></p>
-									<p class="font-14 font-500"><strong>Date : </strong> <span [innerText]="invoice.dueDate | date: 'MM/dd/yyyy'"></span></p>
-									<p class="font-14 font-500"><strong>Method of payment : </strong> <span [innerText]="invoice.paymentMethod"></span></p>
+									<p class="font-13 pb-0"><span class="font-500">Invoice N°: </span> <span
+											[innerText]="invoice?.invoiceNumber"></span></p>
+									<p class="font-13 pb-0"><span class="font-500">Date : </span> <span
+											[innerText]="invoice?.dueDate | date: 'MM/dd/yyyy'"></span></p>
+									<p class="font-13 pb-0"><span class="font-500">Method of payment : </span> <span
+											[innerText]="invoice?.paymentMethod"></span></p>
 									<!--<p><strong>Date of payment : </strong> <span [innerText]="invoice.paymentDue | date: 'MM/dd/yyyy'"></span></p>-->
 								</div>
 							</div>
@@ -89,15 +99,15 @@
 							</div>-->
 							<div class="row">
 								<div class="col-12 p-0">
-									<table class="table table-bordered">
+									<table class="table table-bordered mb-0">
 										<thead>
-											<tr>
-												<th class="font-14 font-weight-bold">Service</th>
-												<th class="font-14 font-weight-bold">Quantity</th>
-												<th class="font-14 font-weight-bold">Subtotal</th>
-												<th class="font-14 font-weight-bold">Discount</th>
-												<th class="font-14 font-weight-bold">Taxes</th>
-												<th class="font-14 font-weight-bold">Total</th>
+											<tr class="font-500 font-13">
+												<th>Service</th>
+												<th>Quantity</th>
+												<th>Subtotal</th>
+												<th>Discount</th>
+												<th>Taxes</th>
+												<th>Total</th>
 
 											</tr>
 										</thead>
@@ -113,7 +123,8 @@
 										</tbody>
 										<tbody>
 											<tr>
-												<td colspan="5" class="text-right font-500">Total (<i class="la la-gbp"></i>)</td>
+												<td colspan="5" class="text-right font-500">Total (<i
+														class="la la-gbp"></i>)</td>
 												<td class="text-left font-500" [innerText]="invoice.totalInvoice"></td>
 											</tr>
 										</tbody>
@@ -123,7 +134,7 @@
 							</div>
 						</div>
 
-						
+
 					</div>
 
 					<div class="row mt-4">
@@ -146,9 +157,13 @@
 					<div class="row mt-2">
 						<div class="col-12 mt-1">
 							<p class="font-500 font-16 text-uppercase my-0">medelit ltd</p>
-							<p class="font-500 font-16 text-uppercase my-0" [innerText]="invoice?.bankName"></p>
-							<p class="font-500 font-16 text-uppercase my-0"><span>Sort Code : </span><span [innerText]="invoice?.sortCode"></span></p>
-							<p class="font-500 font-16 text-uppercase my-0"><span>Account Number : </span><span [innerText]="invoice?.accountNumber"></span></p>
+							<p class="font-500 font-16 text-uppercase my-0">
+								74 VICTORIA DRIVE<br/>
+								SW196HL LONDON<br/>
+								UNITED KINGDOM
+							</p>
+							<p class="font-500 font-16 text-uppercase my-0"><span>Sort Code : </span><span>30-96-64</span></p>
+							<p class="font-500 font-16 text-uppercase my-0"><span>Account N° : </span><span>32422868</span></p>
 						</div>
 					</div>
 				</div>

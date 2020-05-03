@@ -1,6 +1,5 @@
 import { BaseModel } from '../../_base/crud';
 import { eRecordStatus } from '../_enums/e-record-status.enum';
-import { DateTimeAdapter } from 'ng-pick-datetime';
 
 export class InvoiceModel extends BaseModel {
 	id: number;
@@ -14,7 +13,7 @@ export class InvoiceModel extends BaseModel {
 	invoiceDate: Date;
 
 	statusId?: number;
-	paymentDue?: Date;
+	paymentDueDate?: Date;
 	invoiceDeliveryDate: Date;
 	invoiceSentByEmailId?: number = 0;
 	invoiceSentByMailId?: number = 0;
@@ -24,8 +23,8 @@ export class InvoiceModel extends BaseModel {
 	mailingAddress: string;
 	ieBillingPostCode: string;
 	mailingPostCode: string;
-	ieBillingCityId?: number;
-	mailingCityId?: number;
+	ieBillingCity: string;
+	mailingCity: string;
 	ieBillingCountryId?: number;
 	mailingCountryId?: number;
 	invoiceNotes: string;
@@ -128,4 +127,18 @@ export interface BookingsToAddToInvoiceDialogModel{
 	name: string;
 	phoneNumber: string;
 	feeName:string
+}
+
+export interface EditInvoiceBookingsViewModel {
+	id: number;
+	bookingName: string;
+	serviceName: string;
+	itemNameOnInvoice: string;
+	quantityHours: string;
+	feeName: string;
+	taxes: string;
+	subTotal: string;
+	discount: string;
+	total: string;
+	inoviceTotal: string;
 }

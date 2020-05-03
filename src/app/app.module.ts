@@ -119,7 +119,6 @@ export function hljsLanguages(): HighlightLanguage[] {
 		NgxMaterialTimepickerModule,
 		DateValueAccessorModule,
 		NgxMaskModule.forRoot(),
-
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forRoot(FakeApiService, {
 			passThruUnknownUrl: true,
 			dataEncapsulation: false

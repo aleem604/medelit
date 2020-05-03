@@ -205,7 +205,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 				{ title: 'Edit booking', page: `/booking-management/bookings/edit`, queryParams: { id: this.booking.id } }
 			]);
 		} catch (e) {
-			//console.log(e);
+			console.log(e);
 		}
 	}
 
@@ -233,8 +233,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			homeStreetName: [this.booking.homeStreetName, [Validators.required]],
 			homePostCode: [this.booking.homePostCode, [Validators.required]],
 			visitPostCode: [this.booking.visitPostCode, [Validators.required]],
-			homeCityId: [this.booking.homeCityId, [Validators.required]],
-			visitCityId: [this.booking.visitCityId, [Validators.required]],
+			homeCity: [this.booking.homeCity, [Validators.required]],
+			visitCity: [this.booking.visitCity, [Validators.required]],
 			phoneNumber: [this.booking.phoneNumber, [Validators.required, Validators.pattern(MedelitConstants.mobnumPattern)]],
 			email: [this.booking.email, [Validators.required]],
 			phone2: [this.booking.phone2, [Validators.pattern(MedelitConstants.mobnumPattern)]],
@@ -279,7 +279,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			excemptionCode: [this.booking.excemptionCode, []],
 			nhsOrPrivateId: [this.booking.nhsOrPrivateId, []],
 
-			visitDate: [this.booking.visitDate, []],
 			isAllDayVisit: [this.booking.isAllDayVisit, []],
 			visitStartDate: [this.booking.visitStartDate, []],
 			visitEndDate: [this.booking.visitEndDate, []],
@@ -359,7 +358,14 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		//	}
 		//});
 
-		this.bookingForm.get('ptFee').valueChanges.subscribe((d) => {
+		this.bookingForm.get('ptFeeA1').valueChanges.subscribe((d) => {
+			var paymentMethodId = this.bookingForm.get('paymentMethodId').value;
+			if (paymentMethodId === '2' || paymentMethodId === '3') {
+				this.bookingForm.get('cashReturn').setValue(d);
+			}
+		});
+
+		this.bookingForm.get('ptFeeA2').valueChanges.subscribe((d) => {
 			var paymentMethodId = this.bookingForm.get('paymentMethodId').value;
 			if (paymentMethodId === '2' || paymentMethodId === '3') {
 				this.bookingForm.get('cashReturn').setValue(d);
@@ -379,14 +385,14 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 
 		if (!isNaN(subTotal)) {
-			this.bookingForm.get('subTotal').setValue(subTotal);
+			this.bookingForm.get('subTotal').setValue(subTotal.toFixed(2));
 		}
 		else {
 			this.bookingForm.get('subTotal').setValue('');
 		}
 
 		if (!isNaN(taxAmount)) {
-			this.bookingForm.get('taxAmount').setValue(taxAmount);
+			this.bookingForm.get('taxAmount').setValue(taxAmount.toFixed(2));
 		} else {
 			this.bookingForm.get('taxAmount').setValue('');
 		}
@@ -395,7 +401,7 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			grossTotal -= patientDiscount;
 		}
 
-		this.bookingForm.get('grossTotal').setValue(grossTotal);
+		this.bookingForm.get('grossTotal').setValue(grossTotal.toFixed(2));
 	}
 
 
@@ -488,10 +494,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		_booking.homeStreetName = controls.homeStreetName.value;
 		_booking.homePostCode = controls.homePostCode.value;
 		_booking.visitPostCode = controls.visitPostCode.value;
-		if (controls.homeCityId.value)
-			_booking.homeCityId = controls.homeCityId.value.id;
-		if (controls.visitCityId.value)
-			_booking.visitCityId = controls.visitCityId.value.id;
+		_booking.homeCity = controls.homeCity.value;
+		_booking.visitCity = controls.visitCity.value;
 		_booking.phoneNumber = controls.phoneNumber.value;
 		_booking.email = controls.email.value;
 		_booking.phone2 = controls.phone2.value;
@@ -545,7 +549,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		_booking.patientDiscount = controls.patientDiscount.value;
 		_booking.grossTotal = controls.grossTotal.value;
 
-		_booking.visitDate = controls.visitDate.value;
 		_booking.isAllDayVisit = controls.isAllDayVisit.value;
 		_booking.visitStartDate = controls.visitStartDate.value;
 		_booking.visitEndDate = controls.visitEndDate.value;
@@ -888,7 +891,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 	loadStaticResources() {
 		this.loadLanguagesForFilter();
 		this.loadCountriesFilter();
-		this.loadCitiesForFilter();
 		this.loadCountiesForFilter();
 		this.loadServicesForFilter();
 
@@ -1258,44 +1260,6 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 
 	// end Invoice Entities
-
-	// cities
-	loadCitiesForFilter() {
-		this.staticService.getCitiesForFilter().subscribe(res => {
-			this.citiesForFilter = res.data;
-
-			this.filteredCitiesHome = this.bookingForm.get('homeCityId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterCities(value))
-				);
-			if (this.booking.homeCityId > 0) {
-				var elem = this.citiesForFilter.find(x => x.id == this.booking.homeCityId);
-				if (elem) {
-					this.bookingForm.patchValue({ 'homeCityId': { id: elem.id, value: elem.value } });
-				}
-			}
-
-			this.filteredCitiesVisit = this.bookingForm.get('visitCityId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterCities(value))
-				);
-			if (this.booking.visitCityId > 0) {
-				var elem = this.citiesForFilter.find(x => x.id == this.booking.visitCityId);
-				if (elem) {
-					this.bookingForm.patchValue({ 'visitCityId': { id: elem.id, value: elem.value } });
-				}
-			}
-
-		});
-
-	}
-	private _filterCities(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.citiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end clinic cities
 
 	// countries
 	loadCountiesForFilter() {

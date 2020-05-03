@@ -21,13 +21,13 @@ export class ProfessionalModel extends BaseModel {
 	fax: string;
 	coverMap: string;
 	streetName: string;
-	cityId: number = 1002;
+	city: string = 'London';
 	postCode: string;
 	countryId: number = 1022;
 	description: string;
 	clinicStreetName: string;
 	clinicPostCode: string;
-	clinicCityId?: number = 1002;
+	clinicCity:string = 'London';
 	clinicPhoneNumber: string;
 	dateOfBirth: Date;
 	companyName: string;

@@ -235,8 +235,8 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 			mailingAddress: [this.invoiceEntity.mailingAddress, [Validators.required]],
 			billingPostCode: [this.invoiceEntity.billingPostCode, []],
 			mailingPostCode: [this.invoiceEntity.mailingPostCode, []],
-			billingCityId: [this.invoiceEntity.billingCityId, [Validators.required]],
-			mailingCityId: [this.invoiceEntity.mailingCityId, [Validators.required]],
+			billingCity: [this.invoiceEntity.billingCity, [Validators.required]],
+			mailingCity: [this.invoiceEntity.mailingCity, [Validators.required]],
 			billingCountryId: [this.invoiceEntity.billingCountryId, [Validators.required]],
 			mailingCountryId: [this.invoiceEntity.mailingCountryId, [Validators.required]],
 			description: [this.invoiceEntity.description, []],
@@ -341,10 +341,8 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 		_invoiceEntity.mailingAddress = controls.mailingAddress.value;
 		_invoiceEntity.billingPostCode = controls.billingPostCode.value;
 		_invoiceEntity.mailingPostCode = controls.mailingPostCode.value;
-		if (controls.billingCityId.value)
-			_invoiceEntity.billingCityId = controls.billingCityId.value.id;
-		if (controls.mailingCityId.value)
-			_invoiceEntity.mailingCityId = controls.mailingCityId.value.id;
+		_invoiceEntity.billingCity = controls.billingCity.value;
+		_invoiceEntity.mailingCity = controls.mailingCity.value;
 
 		if (controls.billingCountryId.value)
 			_invoiceEntity.billingCountryId = controls.billingCountryId.value.id;
@@ -472,7 +470,6 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 	/*Fitlers Section*/
 	loadStaticResources() {
 		this.loadCountriesFilter();
-		this.loadCitiesForFilter();
 
 		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
 			this.relationshipsForFilter = data.map((el) => { return { id: el.id, value: el.relationships }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
@@ -586,46 +583,6 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 		return this.countriesForCountryOfBirthForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
 	}
 	// end Country of Birth
-
-
-	// cities
-	loadCitiesForFilter() {
-		this.staticService.getCitiesForFilter().subscribe(res => {
-			this.citiesForFilter = res.data;
-
-			this.filteredBillingCities = this.invoiceEntityForm.get('billingCityId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterCities(value))
-				);
-			if (this.invoiceEntity.billingCityId > 0) {
-				var elem = this.citiesForFilter.find(x => x.id == this.invoiceEntity.billingCityId);
-				if (elem) {
-					this.invoiceEntityForm.patchValue({ 'billingCityId': { id: elem.id, value: elem.value } });
-				}
-			}
-
-			this.filteredMailingCities = this.invoiceEntityForm.get('mailingCityId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterCities(value))
-				);
-			if (this.invoiceEntity.mailingCityId > 0) {
-				var elem = this.citiesForFilter.find(x => x.id == this.invoiceEntity.mailingCityId);
-				if (elem) {
-					this.invoiceEntityForm.patchValue({ 'mailingCityId': { id: elem.id, value: elem.value } });
-				}
-			}
-
-		});
-
-	}
-	private _filterCities(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.citiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end clinic cities
-
 
 	displayFn(option: FilterModel): string {
 		if (option)

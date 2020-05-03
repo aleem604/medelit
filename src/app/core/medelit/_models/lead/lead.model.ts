@@ -57,8 +57,7 @@ export class LeadModel extends BaseModel {
 	gpCode: string;
 	addressStreetName: string;
 	postalCode: string;
-	cityId?: number = 1002;
-	city: string;
+	city: string = 'London';
 	countryId?: number = 1022;
 	country: string;
 	buildingTypeId?: number;

@@ -23,7 +23,8 @@ export {
 	InvoiceConnectedCustomers,
 	InvoiceConnectedInvoiceEntities,
 	InvoiceConnectedProfessionals,
-	BookingsToAddToInvoiceDialogModel
+	BookingsToAddToInvoiceDialogModel,
+	EditInvoiceBookingsViewModel
 } from './_models/invoice.model';
 export {
 	InvoiceEntityModel,

@@ -134,15 +134,22 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 	}
 
 	generatePdf() {
-		let data = document.getElementById('invoice-container');
-		html2canvas(data).then(canvas => {
-			const contentDataURL = canvas.toDataURL('image/png');
-			let pdf = new jspdf('l', 'cm', 'a4'); //Generates PDF in landscape mode
-			//let pdf = new jspdf('p', 'cm', 'a4'); //Generates PDF in portrait mode
-			pdf.addImage(contentDataURL, 'PNG', 0, 0, 29.7, 21.0);
-			pdf.save(`${this.invoice.subject}-${this.invoice.invoiceNumber}.pdf`);
-			window.open(pdf.output('bloburl', { filename: `${this.invoice.subject}-${this.invoice.invoiceNumber}.pdf` }), '_blank');
+		try{
+			this.spinner.show();
+			let data = document.getElementById('invoice-container');
+			html2canvas(data).then(canvas => {
+				const contentDataURL = canvas.toDataURL('image/png');
+				let pdf = new jspdf('l', 'cm', 'a4'); //Generates PDF in landscape mode
+				//let pdf = new jspdf('p', 'cm', 'a4'); //Generates PDF in portrait mode
+				pdf.addImage(contentDataURL, 'PNG', 0, 0, 29.7, 21.0);
+				pdf.save(`${this.invoice.invoiceNumber}.pdf`);
+				window.open(pdf.output('bloburl', { filename: `${this.invoice.invoiceNumber}.pdf` }), '_blank');
 		});
+	}catch{	
+	}
+	finally{
+		this.spinner.hide();
+	}
 	}
 
 	generatePdf1() {

@@ -27,8 +27,8 @@ export class BookingModel extends BaseModel {
 	homeStreetName: string;
 	homePostCode: string;
 	visitPostCode: string;
-	homeCityId?: number;
-	visitCityId?: number;
+	homeCity: string;
+	visitCity: string;
 	phoneNumber: string;
 	email: string;
 	phone2: string;
@@ -77,7 +77,6 @@ export class BookingModel extends BaseModel {
 	taxAmount?: number;
 	patientDiscount?: number;
 	grossTotal?: number;
-	visitDate?: Date;
 	isAllDayVisit: number;
 	visitStartDate?: Date;
 	visitEndDate?: Date;

@@ -392,15 +392,11 @@
 					</div>
 					<div class="col-lg-6 kt-margin-bottom-20-mobile pt-3">
 						<mat-form-field class="example-full-width">
-							<input type="text" placeholder="City / town" aria-label="Number" matInput #billingCityId [matAutocomplete]="billingCityAuto" [formControlName]="'billingCityId'">
-							<button mat-button *ngIf="billingCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('billingCityId').setValue('')">
+							<input type="text" placeholder="City / town" aria-label="Number" matInput #billingCity [formControlName]="'billingCity'">
+							<button mat-button *ngIf="billingCity.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('billingCity').setValue('')">
 								<mat-icon>close</mat-icon>
 							</button>
-							<mat-autocomplete autoActiveFirstOption #billingCityAuto="matAutocomplete" [displayWith]="displayFn">
-								<mat-option *ngFor="let t of filteredBillingCities | async" [value]="t">
-									{{t.value}}
-								</mat-option>
-							</mat-autocomplete>
+							
 							<mat-hint align="start">
 								<strong>Billing City/Town </strong>
 							</mat-hint>
@@ -472,15 +468,11 @@
 					</div>
 					<div class="col-lg-6 kt-margin-bottom-20-mobile pt-3">
 						<mat-form-field class="example-full-width">
-							<input type="text" placeholder="City / town" aria-label="Number" matInput #mailingCityId [matAutocomplete]="mailingCityAuto" [formControlName]="'mailingCityId'">
-							<button mat-button *ngIf="mailingCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('mailingCityId').setValue('')">
+							<input type="text" placeholder="City / town" aria-label="Number" matInput #mailingCity [formControlName]="'mailingCity'">
+							<button mat-button *ngIf="mailingCity.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('mailingCity').setValue('')">
 								<mat-icon>close</mat-icon>
 							</button>
-							<mat-autocomplete autoActiveFirstOption #mailingCityAuto="matAutocomplete" [displayWith]="displayFn">
-								<mat-option *ngFor="let t of filteredMailingCities | async" [value]="t">
-									{{t.value}}
-								</mat-option>
-							</mat-autocomplete>
+							
 							<mat-hint align="start">
 								<strong>Mailing City/Town </strong>
 							</mat-hint>

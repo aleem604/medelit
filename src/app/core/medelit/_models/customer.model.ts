@@ -25,8 +25,8 @@ export class CustomerModel extends BaseModel {
 	visitRequestingPersonRelationId?: number;
 	homeStreetName: string;
 	visitStreetName: string;
-	homeCityId: number = 1002;
-	visitCityId: number = 1002;
+	homeCity: string = 'London';
+	visitCity: string = 'London';
 	homePostCode: string;
 	visitPostCode: string;
 	homeCountryId?: number = 1022;

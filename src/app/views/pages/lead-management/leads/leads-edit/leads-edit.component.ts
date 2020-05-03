@@ -1,5 +1,5 @@
 // Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 // Material
@@ -32,8 +32,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { TranslateService } from '@ngx-translate/core';
 import { CreateInvoiceEntityDialogComponent } from '../../../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
 import { AlertDialogComponent } from '../../../../partials/alert-dialog/alert-dialog.component';
-import { PasswordValidation } from '../../../user-management/users/_subs/change-password/change-password.component';
 import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
+import * as jquery from 'jquery';
 
 
 @Component({
@@ -126,6 +126,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
+
 		//this.loading$ = this.loadingSubject.asObservable();
 		//this.loadingSubject.next(true);
 
@@ -164,7 +165,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			const style = getComputedStyle(document.getElementById('kt_header'));
 			this.headerMargin = parseInt(style.height, 0);
 		};
+
 	}
+
 
 	loadLead(_lead, fromService: boolean = false) {
 		if (!_lead) {
@@ -256,7 +259,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			// address info
 			addressStreetName: [this.lead.addressStreetName, [Validators.required]],
 			postalCode: [this.lead.postalCode, [Validators.required]],
-			cityId: [this.lead.cityId, [Validators.required]],
+			city: [this.lead.city, [Validators.required]],
 			countryId: [this.lead.countryId, [Validators.required]],
 			buildingTypeId: [this.lead.buildingTypeId, []],
 			buzzer: [this.lead.buzzer, []],
@@ -313,6 +316,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		} else {
 			this.addService();
 		}
+
 	}
 
 	addService() {
@@ -358,7 +362,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 				proFeeSubTotal += +control.controls[i].get('proFeeA2').value;
 		}
 
-		return { ptFeeSubTotal: ptFeeSubTotal, proFeeSubTotal: proFeeSubTotal };
+		return { ptFeeSubTotal: ptFeeSubTotal.toFixed(2), proFeeSubTotal: proFeeSubTotal.toFixed(2) };
 	}
 
 	removeService(index) {
@@ -451,13 +455,12 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			let dateOfBirth = this.leadForm.get('dateOfBirth').value;
 			let addressStreetName = this.leadForm.get('addressStreetName').value;
 			let postalCode = this.leadForm.get('postalCode').value;
-			let cityId = this.leadForm.get('cityId').value;
+			let city = this.leadForm.get('city').value;
 			let visitVenueId = this.leadForm.get('visitVenueId').value;
 			let contactMethodId = this.leadForm.get('contactMethodId').value;
 			let buildingTypeId = this.leadForm.get('buildingTypeId').value;
 			let paymentMethodId = this.leadForm.get('preferredPaymentMethodId').value;
 			let insuranceCoverId = this.leadForm.get('insuranceCoverId').value;
-			let visitVenueDetail = this.leadForm.get('visitVenueDetail').value;
 
 			let message = '';
 			if (!name)
@@ -472,12 +475,11 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 				message += '<span class="font-500">Street name</span> is required. <br/>';
 			if (!postalCode)
 				message += '<span class="font-500">Postal code</span> is required. <br/>';
-			if (!cityId)
+			if (!city)
 				message += '<span class="font-500">City</span> is required. <br/>';
 			if (!visitVenueId)
 				message += '<span class="font-500">Visit Venue</span> is required. <br/>';
-			if (!visitVenueDetail)
-				message += '<span class="font-500">Visit Venue Detail</span> is required. <br/>';
+
 			if (!contactMethodId)
 				message += '<span class="font-500">Contact Method</span> is required. <br/>';
 			if (!buildingTypeId)
@@ -554,8 +556,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		// address info
 		_lead.addressStreetName = controls.addressStreetName.value;
 		_lead.postalCode = controls.postalCode.value;
-		if (controls.cityId.value)
-			_lead.cityId = controls.cityId.value.id;
+		_lead.city = controls.city.value;
 		if (controls.countryId.value)
 			_lead.countryId = controls.countryId.value.id;
 		_lead.buildingTypeId = controls.buildingTypeId.value;
@@ -589,7 +590,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 				s.serviceId = +control.controls[i].get('serviceId').value.id;
 
 			if (control.controls[i].get('professionalId').value)
-			s.professionalId = +control.controls[i].get('professionalId').value;
+				s.professionalId = +control.controls[i].get('professionalId').value;
 
 			s.ptFeeId = +control.controls[i].get('ptFeeId').value
 			s.isPtFeeA1 = +control.controls[i].get('isPtFeeA1').value
@@ -708,7 +709,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.loadLanguagesForFilter();
 		this.loadCountriesForCountryOfBirthFilter();
 		this.subscribeInvoiceEntity();
-		this.loadCitiesForFilter();
 		this.loadCountiesForFilter();
 		this.loadServicesForFilter();
 		this.loadProfessionalsForFilter(1);
@@ -922,7 +922,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 					});
 					if (sobj) {
 						control.controls[i].patchValue({ 'serviceId': sobj[0] });
-						this.loadProfessionalsForFilter(sobj[0].id);
+						//	this.loadProfessionalsForFilter(sobj[0].id);
 					}
 				}
 
@@ -995,12 +995,18 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 		if (serviceControls.get('professionalId').value) {
 
+			const sid = serviceControls.get('serviceId').value.id;
 			var proId = serviceControls.get('professionalId').value;
 			if (!proId)
 				return;
-			const proData = this.professionalsForFilter.find((el) => el.id == proId);
+			// @ts-ignore
+			const proData = this.professionalsForFilter.find((el) => el.id == proId && el.sid === sid);
 			const ptFee = proData.ptFees;
 			const proFee = proData.proFees;
+			console.log('pt fee ', ptFee);
+			console.log('pro fee ', proFee);
+
+
 			if (ptFee) {
 				serviceControls.get('ptFeeId').setValue(ptFee.id);
 				serviceControls.get('ptFeeA1').setValue(ptFee.a1);
@@ -1167,10 +1173,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		ieModel.mailingAddress = controls.addressStreetName.value;
 		ieModel.billingPostCode = controls.postalCode.value;
 		ieModel.mailingPostCode = controls.postalCode.value;
-		if (controls.cityId.value)
-			ieModel.billingCityId = controls.cityId.value.id;
-		if (controls.cityId.value)
-			ieModel.mailingCityId = controls.cityId.value.id;
+		ieModel.billingCity = controls.city.value;
+		ieModel.mailingCity = controls.city.value;
+
 		if (controls.countryId.value)
 			ieModel.billingCountryId = controls.countryId.value.id;
 		if (controls.countryId.value)
@@ -1205,31 +1210,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 	}
 
 	// end Invoice Entities
-
-	// cities
-	loadCitiesForFilter() {
-		this.staticService.getCitiesForFilter().subscribe(res => {
-			this.citiesForFilter = res.data;
-
-			this.filteredCities = this.leadForm.get('cityId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterCities(value))
-				);
-			if (this.lead.cityId > 0) {
-				var elem = this.citiesForFilter.find(x => x.id == this.lead.cityId);
-				if (elem) {
-					this.leadForm.patchValue({ 'cityId': { id: elem.id, value: elem.value } });
-				}
-			}
-		});
-
-	}
-	private _filterCities(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.citiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end clinic cities
 
 	// countries
 	loadCountiesForFilter() {
@@ -1290,7 +1270,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 	}
 
-/*End Closed events */
+	/*End Closed events */
 
 
 	detectChanges() {

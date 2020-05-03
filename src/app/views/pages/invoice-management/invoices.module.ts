@@ -19,14 +19,15 @@ import { FakeApiService } from '../../../core/_base/layout';
 import { ModuleGuard } from '../../../core/auth';
 // Core => Services
 import {
-	
-    invoicesReducer,
-    InvoiceEffects,
-    StaticDataService,
-    InvoicesService
+
+	invoicesReducer,
+	InvoiceEffects,
+	StaticDataService,
+	InvoicesService
 } from '../../../core/medelit';
 // Core => Utils
-import { HttpUtilsService,
+import {
+	HttpUtilsService,
 	TypesUtilsService,
 	InterceptService,
 	LayoutUtilsService
@@ -90,7 +91,7 @@ const routes: Routes = [
 				path: 'invoices',
 				component: _index.InvoicesListComponent
 			},
-			
+
 			{
 				path: 'invoices/add',
 				component: _index.InvoiceEditComponent
@@ -121,7 +122,7 @@ const routes: Routes = [
 		MatButtonModule,
 		MatMenuModule,
 		MatSelectModule,
-        MatInputModule,
+		MatInputModule,
 		MatTableModule,
 		MatAutocompleteModule,
 		MatRadioModule,
@@ -141,20 +142,20 @@ const routes: Routes = [
 		NgxMaskModule.forRoot(),
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
-        	dataEncapsulation: false
+			dataEncapsulation: false
 		}) : [],
 		StoreModule.forFeature('invoices', invoicesReducer),
 		EffectsModule.forFeature([InvoiceEffects]),
-		
+
 	],
 	providers: [
 		ModuleGuard,
 		InterceptService,
-      	{
-        	provide: HTTP_INTERCEPTORS,
-       	 	useClass: InterceptService,
-        	multi: true
-      	},
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: InterceptService,
+			multi: true
+		},
 		{
 			provide: MAT_DIALOG_DEFAULT_OPTIONS,
 			useValue: {
@@ -189,7 +190,8 @@ const routes: Routes = [
 		_index.InvoiceConnectedCustomersComponent,
 		_index.InvoiceConnectedInvoieEntitiesComponent,
 		_index.InvoiceConnectedBookingsComponent,
-		_index.AddBookingToInvoiceDialog
+		_index.AddBookingToInvoiceDialog,
+		_index.InvoiceAddbookingComponent
 	]
 })
 export class InvoicesModule { }

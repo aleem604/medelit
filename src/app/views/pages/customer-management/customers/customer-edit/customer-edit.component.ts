@@ -86,7 +86,6 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 	servicesForFilter: FilterModel[] = [];
 	filteredServices: Observable<FilterModel[]>;
 
-
 	paymentMethodsOptions: FilterModel[];
 	listedDiscountNetworkOptions: FilterModel[];
 	buildingTypeOptions: FilterModel[];
@@ -99,10 +98,6 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
 	invoiceEntitiesForFilter: FilterModel[] = [];
 	filteredInvoiceEntities: Observable<FilterModel[]>;
-
-	citiesForFilter: FilterModel[] = [];
-	visitFilteredCities: Observable<FilterModel[]>;
-	homeFilteredCities: Observable<FilterModel[]>;
 
 	countriesForFilter: FilterModel[] = [];
 	visitFilteredCountries: Observable<FilterModel[]>;
@@ -256,8 +251,8 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			homeStreetName: [this.customer.homeStreetName, [Validators.required]],
 			visitPostCode: [this.customer.visitPostCode, [Validators.required]],
 			homePostCode: [this.customer.homePostCode, [Validators.required]],
-			visitCityId: [this.customer.visitCityId, [Validators.required]],
-			homeCityId: [this.customer.homeCityId, [Validators.required]],
+			visitCity: [this.customer.visitCity, [Validators.required]],
+			homeCity: [this.customer.homeCity, [Validators.required]],
 			visitCountryId: [this.customer.visitCountryId, [Validators.required]],
 			homeCountryId: [this.customer.homeCountryId, [Validators.required]],
 			buildingTypeId: [this.customer.buildingTypeId, [Validators.required]],
@@ -378,10 +373,8 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		_customer.homeStreetName = controls.homeStreetName.value;
 		_customer.visitPostCode = controls.visitPostCode.value;
 		_customer.homePostCode = controls.homePostCode.value;
-		if (controls.visitCityId.value)
-			_customer.visitCityId = controls.visitCityId.value.id;
-		if (controls.homeCityId.value)
-			_customer.homeCityId = controls.homeCityId.value.id;
+			_customer.visitCity = controls.visitCity.value.id;
+			_customer.homeCity = controls.homeCity.value.id;
 
 		if (controls.visitCountryId.value)
 			_customer.visitCountryId = controls.visitCountryId.value.id;
@@ -517,7 +510,6 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		this.loadCountriesForCountryOfBirthFilter();
 		this.loadRelationshipsForFilter();
 		this.subscribeInvoiceEntity();
-		this.loadVisitCitiesForFilter();
 		this.loadCountiesForFilter();
 		this.loadProfessionalsForFilter();
 
@@ -755,10 +747,9 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		ieModel.mailingAddress = controls.addressStreetName.value;
 		ieModel.billingPostCode = controls.postalCode.value;
 		ieModel.mailingPostCode = controls.postalCode.value;
-		if (controls.cityId.value)
-			ieModel.billingCityId = controls.cityId.value.id;
-		if (controls.cityId.value)
-			ieModel.mailingCityId = controls.cityId.value.id;
+		if (controls.city.value)
+			ieModel.billingCity = controls.city.value;
+			ieModel.mailingCity = controls.city.value;
 		if (controls.countryId.value)
 			ieModel.billingCountryId = controls.countryId.value.id;
 		if (controls.countryId.value)
@@ -796,43 +787,6 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
 	// end Invoice Entities
 
-	// cities
-	loadVisitCitiesForFilter() {
-		this.staticService.getCitiesForFilter().subscribe(res => {
-			this.citiesForFilter = res.data;
-
-			this.visitFilteredCities = this.customerForm.get('visitCityId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterCities(value))
-				);
-			this.homeFilteredCities = this.customerForm.get('homeCityId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterCities(value))
-				);
-
-
-			if (this.customer.visitCityId > 0) {
-				var elem = this.citiesForFilter.find(x => x.id == this.customer.visitCityId);
-				if (elem) {
-					this.customerForm.patchValue({ 'visitCityId': { id: elem.id, value: elem.value } });
-				}
-			}
-
-			if (this.customer.homeCityId > 0) {
-				var elem = this.citiesForFilter.find(x => x.id == this.customer.homeCityId);
-				if (elem) {
-					this.customerForm.patchValue({ 'homeCityId': { id: elem.id, value: elem.value } });
-				}
-			}
-		});
-	}
-	private _filterCities(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.citiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end clinic cities
 
 	// countries
 	loadCountiesForFilter() {

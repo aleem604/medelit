@@ -1,7 +1,9 @@
 <kt-portlet>
-	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
+	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'"
+		[viewLoading$]="loading$">
 		<ng-container ktPortletTools>
-			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the products list">
+			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button
+			   matTooltip="Back to the products list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
@@ -9,15 +11,24 @@
 		<i class="la la-cog"></i>
 		<span class="kt-hidden-mobile">Reset</span>
 	</a>-->
-			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
+			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)"
+			   mat-raised-button matTooltip="Save & Continue">
 				<i class="la la-save"></i>
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
 
-			<a *ngIf="invoice && invoice.isProforma" href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="invoiceEmission()" mat-raised-button matTooltip="Confirm Invoice Emission">
+			<a *ngIf="invoice && invoice.isProforma" href="javascript:;" class="btn btn-secondary kt-margin-r-10"
+			   (click)="invoiceEmission()" mat-raised-button matTooltip="Confirm Invoice Emission">
 				<i class="la la-mail-forward"></i>
 				<span class="kt-hidden-mobile">Confirm Invoice Emission</span>
 			</a>
+
+			<a *ngIf="invoice && !invoice.isProforma" href="javascript:;" class="btn btn-secondary btn-warning kt-margin-r-10"
+			    [routerLink]="['/invoice-management/invoices/view/', invoice.id]" matTooltip="View invoice" mat-raised-button>
+				<mat-icon>remove_red_eye</mat-icon>
+				<span class="kt-hidden-mobile">View Invoice</span>
+			</a>
+
 			<!--<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
 		<mat-icon>more_vert</mat-icon>
 	</button>-->
@@ -32,11 +43,12 @@
 		<mat-tab label="Invoice Info">
 			<ng-template matTabContent>
 				<kt-portlet-body class="pt-0">
-					<div *ngIf="invoice">
+					<div *ngIf="invoiceForm">
 
 						<form [formGroup]="invoiceForm" class="kt-form kt-form--group-seperator-dashed">
 
-							<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+							<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000"
+								(close)="onAlertClose($event)">
 								Oh snap! Change a few things up and try submitting again.
 							</kt-alert>
 
@@ -51,7 +63,8 @@
 											<label>Last Changed : </label> {{invoice.updateDate | date:'dd/MM/yyyy'}}
 										</div>
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-											<label class="pr-2">Assigned To : </label> <span class="text-capitalize">{{invoice.assignedTo}}</span>
+											<label class="pr-2">Assigned To : </label> <span
+												class="text-capitalize">{{invoice.assignedTo}}</span>
 										</div>
 
 									</div>
@@ -65,8 +78,11 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Subject" #subject formControlName="subject">
-												<button mat-button *ngIf="subject.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('subject').setValue('')">
+												<input matInput placeholder="Subject" #subject
+													formControlName="subject">
+												<button mat-button *ngIf="subject.value" matSuffix mat-icon-button
+													aria-label="Clear"
+													(click)="invoiceForm.get('subject').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -80,8 +96,11 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Invoice number" #invoiceNumber formControlName="invoiceNumber">
-												<button mat-button *ngIf="invoiceNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('invoiceNumber').setValue('')">
+												<input matInput placeholder="Invoice number" #invoiceNumber
+													formControlName="invoiceNumber">
+												<button mat-button *ngIf="invoiceNumber.value" matSuffix mat-icon-button
+													aria-label="Clear"
+													(click)="invoiceForm.get('invoiceNumber').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -95,18 +114,16 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text"
-													   placeholder="Customer Name"
-													   aria-label="Number"
-													   matInput #customerId
-													   [matAutocomplete]="customerIdAuto"
-													   [formControlName]="'customerId'"
-													   readonly="readonly">
-												<button mat-button *ngIf="customerId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('customerId').setValue('')">
+												<input type="text" placeholder="Customer Name" aria-label="Number"
+													matInput #customerId [matAutocomplete]="customerIdAuto"
+													[formControlName]="'customerId'" readonly="readonly">
+												<button mat-button *ngIf="customerId.value" matSuffix mat-icon-button
+													aria-label="Clear"
+													(click)="invoiceForm.get('customerId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-autocomplete autoActiveFirstOption #customerIdAuto="matAutocomplete"
-																  [displayWith]="displayFn">
+												<mat-autocomplete autoActiveFirstOption
+													#customerIdAuto="matAutocomplete" [displayWith]="displayFn">
 													<mat-option *ngFor="let t of filteredCustomers | async" [value]="t">
 														{{t.value}}
 													</mat-option>
@@ -123,18 +140,19 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text"
-													   placeholder="Invoice entity"
-													   aria-label="Number" matInput
-													   #invoiceEntityId
-													   [matAutocomplete]="invocingEntityAuto"
-													   [formControlName]="'invoiceEntityId'" (focusout)="controlFocusout('invoiceEntityId')">
-												<button mat-button *ngIf="invoiceEntityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('invoiceEntityId').setValue('')">
+												<input type="text" placeholder="Invoice entity" aria-label="Number"
+													matInput #invoiceEntityId [matAutocomplete]="invocingEntityAuto"
+													[formControlName]="'invoiceEntityId'"
+													(focusout)="controlFocusout('invoiceEntityId')">
+												<button mat-button *ngIf="invoiceEntityId.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('invoiceEntityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-autocomplete autoActiveFirstOption #invocingEntityAuto="matAutocomplete"
-																  [displayWith]="displayFn">
-													<mat-option *ngFor="let t of filteredInvoiceEntities | async" [value]="t">
+												<mat-autocomplete autoActiveFirstOption
+													#invocingEntityAuto="matAutocomplete" [displayWith]="displayFn">
+													<mat-option *ngFor="let t of filteredInvoiceEntities | async"
+														[value]="t">
 														{{t.value}}
 													</mat-option>
 												</mat-autocomplete>
@@ -149,11 +167,16 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput [matDatepicker]="patientDateOfBirthPicker" #patientDateOfBirth placeholder="Patient date of birth" [formControlName]="'patientDateOfBirth'">
-												<button mat-button *ngIf="patientDateOfBirth.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('patientDateOfBirth').setValue('')">
+												<input matInput [matDatepicker]="patientDateOfBirthPicker"
+													#patientDateOfBirth placeholder="Patient date of birth"
+													[formControlName]="'patientDateOfBirth'">
+												<button mat-button *ngIf="patientDateOfBirth.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('patientDateOfBirth').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-datepicker-toggle matSuffix [for]="patientDateOfBirthPicker"></mat-datepicker-toggle>
+												<mat-datepicker-toggle matSuffix [for]="patientDateOfBirthPicker">
+												</mat-datepicker-toggle>
 												<mat-datepicker #patientDateOfBirthPicker></mat-datepicker>
 												<mat-error>
 													Patient Date of birth
@@ -168,7 +191,8 @@
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<mat-select [formControlName]="'statusId'">
-													<mat-option *ngFor="let val of invoiceStatusOptions" [value]="val.id">
+													<mat-option *ngFor="let val of invoiceStatusOptions"
+														[value]="val.id">
 														{{ val.value }}
 													</mat-option>
 												</mat-select>
@@ -183,11 +207,15 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput [matDatepicker]="dueDatePicker" #dueDate placeholder="Due date" [formControlName]="'dueDate'">
-												<button mat-button *ngIf="dueDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('dueDate').setValue('')">
+												<input matInput [matDatepicker]="dueDatePicker" #dueDate
+													placeholder="Due date" [formControlName]="'dueDate'">
+												<button mat-button *ngIf="dueDate.value" matSuffix mat-icon-button
+													aria-label="Clear"
+													(click)="invoiceForm.get('dueDate').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+												<mat-datepicker-toggle matSuffix [for]="dueDatePicker">
+												</mat-datepicker-toggle>
 												<mat-datepicker #dueDatePicker></mat-datepicker>
 												<mat-error>
 													Due Date is
@@ -200,11 +228,15 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput [matDatepicker]="invoiceDatePicker" #invoiceDate placeholder="Invoice date" [formControlName]="'invoiceDate'">
-												<button mat-button *ngIf="invoiceDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('invoiceDate').setValue('')">
+												<input matInput [matDatepicker]="invoiceDatePicker" #invoiceDate
+													placeholder="Invoice date" [formControlName]="'invoiceDate'">
+												<button mat-button *ngIf="invoiceDate.value" matSuffix mat-icon-button
+													aria-label="Clear"
+													(click)="invoiceForm.get('invoiceDate').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-datepicker-toggle matSuffix [for]="invoiceDatePicker"></mat-datepicker-toggle>
+												<mat-datepicker-toggle matSuffix [for]="invoiceDatePicker">
+												</mat-datepicker-toggle>
 												<mat-datepicker #invoiceDatePicker></mat-datepicker>
 												<mat-error>
 													Invoice Date is
@@ -217,11 +249,16 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput [matDatepicker]="invoiceDeliveryDatePicker" #invoiceDeliveryDate placeholder="Delivery date" [formControlName]="'invoiceDeliveryDate'">
-												<button mat-button *ngIf="invoiceDeliveryDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('invoiceDeliveryDate').setValue('')">
+												<input matInput [matDatepicker]="invoiceDeliveryDatePicker"
+													#invoiceDeliveryDate placeholder="Delivery date"
+													[formControlName]="'invoiceDeliveryDate'">
+												<button mat-button *ngIf="invoiceDeliveryDate.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('invoiceDeliveryDate').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-datepicker-toggle matSuffix [for]="invoiceDeliveryDatePicker"></mat-datepicker-toggle>
+												<mat-datepicker-toggle matSuffix [for]="invoiceDeliveryDatePicker">
+												</mat-datepicker-toggle>
 												<mat-datepicker #invoiceDeliveryDatePicker></mat-datepicker>
 												<mat-error>
 													Delivery Date is
@@ -236,15 +273,19 @@
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div>Invoice Sent By Email:</div>
 											<mat-radio-group formControlName="invoiceSentByEmailId">
-												<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+												<mat-radio-button class="example-radio-button" value="0">No
+												</mat-radio-button>
+												<mat-radio-button class="example-radio-button" value="1">Yes
+												</mat-radio-button>
 											</mat-radio-group>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div>Invoice Sent By Mail:</div>
 											<mat-radio-group formControlName="invoiceSentByMailId">
-												<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+												<mat-radio-button class="example-radio-button" value="0">No
+												</mat-radio-button>
+												<mat-radio-button class="example-radio-button" value="1">Yes
+												</mat-radio-button>
 											</mat-radio-group>
 										</div>
 
@@ -259,8 +300,11 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Billing address street name" #ieBillingAddress formControlName="ieBillingAddress">
-												<button mat-button *ngIf="ieBillingAddress.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('ieBillingAddress').setValue('')">
+												<input matInput placeholder="Billing address street name"
+													#ieBillingAddress formControlName="ieBillingAddress">
+												<button mat-button *ngIf="ieBillingAddress.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('ieBillingAddress').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -274,8 +318,11 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Billing post code" #ieBillingPostCode formControlName="ieBillingPostCode">
-												<button mat-button *ngIf="ieBillingPostCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('ieBillingPostCode').setValue('')">
+												<input matInput placeholder="Billing post code" #ieBillingPostCode
+													formControlName="ieBillingPostCode">
+												<button mat-button *ngIf="ieBillingPostCode.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('ieBillingPostCode').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -289,18 +336,19 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text"
-													   placeholder="Billing city/town"
-													   aria-label="Number" matInput
-													   #ieBillingCityId
-													   [matAutocomplete]="ieBillingCityAuto"
-													   [formControlName]="'ieBillingCityId'" (focusout)="controlFocusout('ieBillingCityId')">
-												<button mat-button *ngIf="ieBillingCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('ieBillingCityId').setValue('')">
+												<input type="text" placeholder="Billing city/town" aria-label="Number"
+													matInput #ieBillingCityId [matAutocomplete]="ieBillingCityAuto"
+													[formControlName]="'ieBillingCityId'"
+													(focusout)="controlFocusout('ieBillingCityId')">
+												<button mat-button *ngIf="ieBillingCityId.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('ieBillingCityId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-autocomplete autoActiveFirstOption #ieBillingCityAuto="matAutocomplete"
-																  [displayWith]="displayFn">
-													<mat-option *ngFor="let t of filteredBillingCities | async" [value]="t">
+												<mat-autocomplete autoActiveFirstOption
+													#ieBillingCityAuto="matAutocomplete" [displayWith]="displayFn">
+													<mat-option *ngFor="let t of filteredBillingCities | async"
+														[value]="t">
 														{{t.value}}
 													</mat-option>
 												</mat-autocomplete>
@@ -316,18 +364,20 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text"
-													   placeholder="Billing country"
-													   aria-label="Number" matInput
-													   #ieBillingCountryId
-													   [matAutocomplete]="ieBillingCountryAuto"
-													   [formControlName]="'ieBillingCountryId'" (focusout)="controlFocusout('ieBillingCountryId')">
-												<button mat-button *ngIf="ieBillingCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('ieBillingCountryId').setValue('')">
+												<input type="text" placeholder="Billing country" aria-label="Number"
+													matInput #ieBillingCountryId
+													[matAutocomplete]="ieBillingCountryAuto"
+													[formControlName]="'ieBillingCountryId'"
+													(focusout)="controlFocusout('ieBillingCountryId')">
+												<button mat-button *ngIf="ieBillingCountryId.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('ieBillingCountryId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-autocomplete autoActiveFirstOption #ieBillingCountryAuto="matAutocomplete"
-																  [displayWith]="displayFn">
-													<mat-option *ngFor="let t of filteredBillingCountries | async" [value]="t">
+												<mat-autocomplete autoActiveFirstOption
+													#ieBillingCountryAuto="matAutocomplete" [displayWith]="displayFn">
+													<mat-option *ngFor="let t of filteredBillingCountries | async"
+														[value]="t">
 														{{t.value}}
 													</mat-option>
 												</mat-autocomplete>
@@ -350,8 +400,11 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Mailing address street name" #mailingAddress formControlName="mailingAddress">
-												<button mat-button *ngIf="mailingAddress.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('mailingAddress').setValue('')">
+												<input matInput placeholder="Mailing address street name"
+													#mailingAddress formControlName="mailingAddress">
+												<button mat-button *ngIf="mailingAddress.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('mailingAddress').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -365,8 +418,11 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Mailing post code" #mailingPostCode formControlName="mailingPostCode">
-												<button mat-button *ngIf="mailingPostCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('mailingPostCode').setValue('')">
+												<input matInput placeholder="Mailing post code" #mailingPostCode
+													formControlName="mailingPostCode">
+												<button mat-button *ngIf="mailingPostCode.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('mailingPostCode').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -380,20 +436,14 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text"
-													   placeholder="Mailing city/town"
-													   aria-label="Number" matInput #mailingCityId
-													   [matAutocomplete]="mailingCityAuto"
-													   [formControlName]="'mailingCityId'" (focusout)="controlFocusout('mailingCityId')">
-												<button mat-button *ngIf="mailingCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('mailingCityId').setValue('')">
+												<input type="text" placeholder="Mailing city/town" aria-label="Number"
+													matInput #mailingCity
+													[formControlName]="'mailingCity'" />
+												<button mat-button *ngIf="mailingCity.value" matSuffix mat-icon-button
+													aria-label="Clear"
+													(click)="invoiceForm.get('mailingCity').setValue('')">
 													<mat-icon>close</mat-icon>
-												</button>
-												<mat-autocomplete autoActiveFirstOption #mailingCityAuto="matAutocomplete"
-																  [displayWith]="displayFn">
-													<mat-option *ngFor="let t of filteredMailingCities | async" [value]="t">
-														{{t.value}}
-													</mat-option>
-												</mat-autocomplete>
+												</button>												
 												<mat-hint align="start">
 													<strong>Mailing City/Town </strong>
 												</mat-hint>
@@ -406,19 +456,19 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text"
-													   placeholder="Mailing country"
-													   aria-label="Number" matInput
-													   #mailingCountryId
-													   [matAutocomplete]="mailingCountryAuto"
-													   [formControlName]="'mailingCountryId'"
-													   (focusout)="controlFocusout('mailingCountryId')">
-												<button mat-button *ngIf="mailingCountryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('mailingCountryId').setValue('')">
+												<input type="text" placeholder="Mailing country" aria-label="Number"
+													matInput #mailingCountryId [matAutocomplete]="mailingCountryAuto"
+													[formControlName]="'mailingCountryId'"
+													(focusout)="controlFocusout('mailingCountryId')">
+												<button mat-button *ngIf="mailingCountryId.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('mailingCountryId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-autocomplete autoActiveFirstOption #mailingCountryAuto="matAutocomplete"
-																  [displayWith]="displayFn">
-													<mat-option *ngFor="let t of filteredMailingCountries | async" [value]="t">
+												<mat-autocomplete autoActiveFirstOption
+													#mailingCountryAuto="matAutocomplete" [displayWith]="displayFn">
+													<mat-option *ngFor="let t of filteredMailingCountries | async"
+														[value]="t">
 														{{t.value}}
 													</mat-option>
 												</mat-autocomplete>
@@ -441,14 +491,19 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput [matDatepicker]="paymentArrivalDatePicker" #paymentArrivalDate placeholder="Payment arrival date" [formControlName]="'paymentArrivalDate'">
-												<button mat-button *ngIf="paymentArrivalDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('paymentArrivalDate').setValue('')">
+												<input matInput [matDatepicker]="paymentArrivalDatePicker"
+													#paymentArrivalDate placeholder="Payment arrival date"
+													[formControlName]="'paymentArrivalDate'">
+												<button mat-button *ngIf="paymentArrivalDate.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('paymentArrivalDate').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-datepicker-toggle matSuffix [for]="paymentArrivalDatePicker"></mat-datepicker-toggle>
+												<mat-datepicker-toggle matSuffix [for]="paymentArrivalDatePicker">
+												</mat-datepicker-toggle>
 												<mat-datepicker #paymentArrivalDatePicker></mat-datepicker>
 												<mat-error>
-													Payment Due Date
+													Payment Arrival Date
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
@@ -456,10 +511,36 @@
 												</mat-hint>
 											</mat-form-field>
 										</div>
-										<!--<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Discount" #discount formControlName="discount">
-												<button mat-button *ngIf="discount.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('discount').setValue('')">
+												<input matInput [matDatepicker]="paymentDueDatePicker" #paymentDueDate
+													placeholder="Payment due date" [formControlName]="'paymentDueDate'">
+												<button mat-button *ngIf="paymentDueDate.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('paymentDueDate').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
+												<mat-datepicker-toggle matSuffix [for]="paymentDueDatePicker">
+												</mat-datepicker-toggle>
+												<mat-datepicker #paymentDueDatePicker></mat-datepicker>
+												<mat-error>
+													Payment Due Date
+													<strong>required</strong>
+												</mat-error>
+												<mat-hint align="start">
+													<strong class="required-star">Payment Due Date</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<!--<mat-form-field class="mat-form-field-fluid">
+												<input matInput type="number" placeholder="Discount" #discount
+													formControlName="discount">
+												<button mat-button *ngIf="discount.value" matSuffix mat-icon-button
+													aria-label="Clear"
+													(click)="invoiceForm.get('discount').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -469,12 +550,13 @@
 												<mat-hint align="start">
 													<strong>Discount</strong>
 												</mat-hint>
-											</mat-form-field>
-										</div>-->
+											</mat-form-field>-->
+										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<mat-select [formControlName]="'paymentMethodId'">
-													<mat-option *ngFor="let val of paymentMethodsOptions" [value]="val.id">
+													<mat-option *ngFor="let val of paymentMethodsOptions"
+														[value]="val.id">
 														{{ val.value }}
 													</mat-option>
 												</mat-select>
@@ -491,15 +573,20 @@
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div>Insurance Cover:</div>
 											<mat-radio-group formControlName="insuranceCoverId">
-												<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
+												<mat-radio-button class="example-radio-button" value="0">No
+												</mat-radio-button>
+												<mat-radio-button class="example-radio-button" value="1">Yes
+												</mat-radio-button>
 											</mat-radio-group>
 										</div>
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="4" placeholder="Invoice notes" #invoiceNotes formControlName="invoiceNotes"></textarea>
-												<button mat-button *ngIf="invoiceNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('invoiceNotes').setValue('')">
+												<textarea matInput rows="3" placeholder="Invoice notes" #invoiceNotes
+													formControlName="invoiceNotes"></textarea>
+												<button mat-button *ngIf="invoiceNotes.value" matSuffix mat-icon-button
+													aria-label="Clear"
+													(click)="invoiceForm.get('invoiceNotes').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -514,8 +601,11 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="4" placeholder="Invoice diagnosis" #invoiceDiagnosis formControlName="invoiceDiagnosis"></textarea>
-												<button mat-button *ngIf="invoiceDiagnosis.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('invoiceDiagnosis').setValue('')">
+												<textarea matInput rows="3" placeholder="Invoice diagnosis"
+													#invoiceDiagnosis formControlName="invoiceDiagnosis"></textarea>
+												<button mat-button *ngIf="invoiceDiagnosis.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('invoiceDiagnosis').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -529,8 +619,11 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="4" placeholder="Term and conditions" #termsAndConditions formControlName="termsAndConditions"></textarea>
-												<button mat-button *ngIf="termsAndConditions.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('termsAndConditions').setValue('')">
+												<textarea matInput rows="3" placeholder="Term and conditions"
+													#termsAndConditions formControlName="termsAndConditions"></textarea>
+												<button mat-button *ngIf="termsAndConditions.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('termsAndConditions').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -551,8 +644,11 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="4" placeholder="Invoice description" #invoiceDescription formControlName="invoiceDescription"></textarea>
-												<button mat-button *ngIf="invoiceDescription.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('invoiceDescription').setValue('')">
+												<textarea matInput rows="3" placeholder="Invoice description"
+													#invoiceDescription formControlName="invoiceDescription"></textarea>
+												<button mat-button *ngIf="invoiceDescription.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('invoiceDescription').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -566,8 +662,11 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Item name on invoice" #itemNameOnInvoice formControlName="itemNameOnInvoice">
-												<button mat-button *ngIf="itemNameOnInvoice.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceForm.get('itemNameOnInvoice').setValue('')">
+												<input matInput placeholder="Item name on invoice" #itemNameOnInvoice
+													formControlName="itemNameOnInvoice">
+												<button mat-button *ngIf="itemNameOnInvoice.value" matSuffix
+													mat-icon-button aria-label="Clear"
+													(click)="invoiceForm.get('itemNameOnInvoice').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-error>
@@ -580,56 +679,11 @@
 											</mat-form-field>
 										</div>
 									</div>
-
-
-									<div class="row">
-										<div class="col-md-12 heading-wrapper mt-4 mb-2">
-											<div class="title-wrapper">
-												<h5>Bookings</h5>
-												<button class="btn btn-sm btn-primary" (click)="addBooking()">Add Booking</button>
-											</div>
-										</div>
-										<div class="col-md-12">
-											<div class="table-responsive">
-												<table class="table table-bordered">
-													<thead>
-														<tr>
-															<th></th>
-															<th>Booking</th>
-															<th>Service Provided</th>
-															<th>Quantity</th>
-															<th>Fee</th>
-															<th>Subtotal</th>
-															<th>Taxes</th>
-															<th>Discount</th>
-															<th>Total</th>
-														</tr>
-													</thead>
-													<tbody>
-														<tr *ngFor="let b of invoice.invoiceBookingView">
-															<td class="text-center"><i class="la la-trash-o cursor-pointer font-16" (click)="deleteBookingFromInvoice(b)"></i></td>
-															<td [innerText]="b.booking.name"></td>
-															<td [innerText]="b.booking.service"></td>
-															<td [innerText]="b.booking.quantity"></td>
-															<td [innerText]="b.booking.feeName"></td>
-															<td [innerText]="b.booking.subTotal"></td>
-															<td [innerText]="b.booking.taxAmount"></td>
-															<td [innerText]="b.booking.patientDiscount"></td>
-															<td [innerText]="b.booking.grossTotal"></td>
-														</tr>
-														<tr>
-															<td class="text-right font-500" colspan="8">Invoice Total</td>
-															<td [innerText]="invoice.totalInvoice"></td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										</div>
-									</div>
 								</div>
 							</div>
 						</form>
 					</div>
+					<invoice-add-booking *ngIf="invoice && invoice.id"  [invoiceId]="invoice.id"></invoice-add-booking>
 				</kt-portlet-body>
 			</ng-template>
 		</mat-tab>
@@ -643,7 +697,8 @@
 				<invoice-connected-customers [invoiceId]="invoice.id"></invoice-connected-customers>
 			</ng-template>
 		</mat-tab>
-		<mat-tab *ngIf="invoice && invoice.invoiceEntityId" label="Connected Invoice Entities" [disabled]='!(invoice && invoice.id)'>
+		<mat-tab *ngIf="invoice && invoice.invoiceEntityId" label="Connected Invoice Entities"
+			[disabled]='!(invoice && invoice.id)'>
 			<ng-template matTabContent>
 				<invoice-connected-invoice-entities [invoiceId]="invoice.id"></invoice-connected-invoice-entities>
 			</ng-template>
@@ -653,7 +708,7 @@
 				<invoice-connected-bookings [invoiceId]="invoice.id"></invoice-connected-bookings>
 			</ng-template>
 		</mat-tab>
-	
+
 	</mat-tab-group>
 
 </kt-portlet>

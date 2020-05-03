@@ -81,8 +81,8 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-error *ngIf="invoiceEntityForm.get('mainPhoneNumber').errors?.pattern">
-													Main phone should start with
-													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+													Main phone should contain
+													<strong><i class="la la-plus"></i> sign or numbers only </strong>
 												</mat-error>
 											</mat-form-field>
 										</div>
@@ -115,8 +115,8 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-error *ngIf="invoiceEntityForm.get('phone2').errors?.pattern">
-													Phone 2 should start with
-													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+													Phone 2 should contain
+													<strong><i class="la la-plus"></i> sign or numbers only </strong>
 												</mat-error>
 											</mat-form-field>
 										</div>
@@ -387,7 +387,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="4" placeholder="Description" #description formControlName="description"></textarea>
+												<textarea matInput rows="3" placeholder="Description" #description formControlName="description"></textarea>
 												<button mat-button *ngIf="description.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('description').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -446,16 +446,12 @@
 												<input type="text"
 													   placeholder="Pick a city / town"
 													   aria-label="Number" matInput
-													   #billingCityId [matAutocomplete]="billingCityAuto"
-													   [formControlName]="'billingCityId'" (focusout)="controlFocusout('billingCityId')">
-												<button mat-button *ngIf="billingCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('billingCityId').setValue('')">
+													   #billingCity
+													   [formControlName]="'billingCity'">
+												<button mat-button *ngIf="billingCity.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('billingCity').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-autocomplete autoActiveFirstOption #billingCityAuto="matAutocomplete" [displayWith]="displayFn">
-													<mat-option *ngFor="let t of filteredBillingCities | async" [value]="t">
-														{{t.value}}
-													</mat-option>
-												</mat-autocomplete>
+											
 												<mat-hint align="start">
 													<strong>Billing City/Town </strong>
 												</mat-hint>
@@ -537,17 +533,11 @@
 												<input type="text"
 													   placeholder="Pick a city / town"
 													   aria-label="Number" matInput
-													   #mailingCityId
-													   [matAutocomplete]="mailingCityAuto"
-													   [formControlName]="'mailingCityId'" (focusout)="controlFocusout('mailingCityId')">
-												<button mat-button *ngIf="mailingCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('mailingCityId').setValue('')">
+													   #mailingCity
+													   [formControlName]="'mailingCity'">
+												<button mat-button *ngIf="mailingCity.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('mailingCity').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-autocomplete autoActiveFirstOption #mailingCityAuto="matAutocomplete" [displayWith]="displayFn">
-													<mat-option *ngFor="let t of filteredMailingCities | async" [value]="t">
-														{{t.value}}
-													</mat-option>
-												</mat-autocomplete>
 												<mat-hint align="start">
 													Select a <strong>Mailing City/Town </strong>
 												</mat-hint>
@@ -743,7 +733,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="4" placeholder="Enter invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
+												<textarea matInput rows="3" placeholder="Enter invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
 												<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('invoicingNotes').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>

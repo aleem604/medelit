@@ -221,24 +221,24 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			professionalLanguages: [this.professional.professionalLanguages, [Validators.required]],
 			professionalFields: [this.professional.professionalFields, [Validators.required]],
 			professionalSubCategories: [this.professional.professionalSubCategories, [Validators.required]],
-			website: [this.professional.website, [Validators.pattern(urlReg)]],
-			proOnlineCV: [this.professional.proOnlineCV, [Validators.pattern(urlReg)]],
+			website: [this.professional.website, []],
+			proOnlineCV: [this.professional.proOnlineCV, []],
 			fax: [this.professional.fax],
 
 			// conver maps
-			coverMap: [this.professional.coverMap, [Validators.pattern(urlReg)]],
+			coverMap: [this.professional.coverMap, []],
 
 			// Addresses
 			// home address
 			streetName: [this.professional.streetName, [Validators.required]],
-			cityId: [this.professional.cityId, [Validators.required]],
+			city: [this.professional.city, [Validators.required]],
 			countryId: [this.professional.countryId, [Validators.required]],
 			postCode: [this.professional.postCode, [Validators.required]],
 
 			// work clinic address
 			clinicStreetName: [this.professional.clinicStreetName],
 			clinicPostCode: [this.professional.clinicPostCode],
-			clinicCityId: [this.professional.clinicCityId, Validators.required],
+			clinicCity: [this.professional.clinicCity, Validators.required],
 
 			// notes
 			description: [this.professional.description],
@@ -285,8 +285,6 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		this.loadFieldsForFilter();
 		//this.loadSubCatsForFilter();
 		this.loadCountiesForFilter();
-		this.loadCitiesForFilter();
-		this.loadClinicCitiesForFilter();
 
 		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
 			this.titlesForFilter = data.map((el) => { return { id: el.id, value: el.titles }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
@@ -439,16 +437,14 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		_professional.fax = controls.fax.value;
 		_professional.coverMap = controls.coverMap.value;
 		_professional.streetName = controls.streetName.value;
-		if (controls.cityId.value)
-			_professional.cityId = controls.cityId.value.id;
+		_professional.city = controls.city.value;
 		if (controls.countryId.value)
 			_professional.countryId = controls.countryId.value.id;
 
 		_professional.postCode = controls.postCode.value;
 		_professional.clinicStreetName = controls.clinicStreetName.value;
 		_professional.clinicPostCode = controls.clinicPostCode.value;
-		if (controls.clinicCityId.value)
-			_professional.clinicCityId = controls.clinicCityId.value.id;
+		_professional.clinicCity = controls.clinicCity.value;
 
 		_professional.description = controls.description.value;
 		_professional.invoicingNotes = controls.invoicingNotes.value;
@@ -718,63 +714,6 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	}
 	// end fields fitler
 
-
-
-
-
-
-
-	// cities
-	loadCitiesForFilter() {
-		this.staticService.getCitiesForFilter().subscribe(res => {
-			this.citiesForFilter = res.data;
-
-			this.filteredCities = this.professionalForm.get('cityId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterCities(value))
-				);
-			if (this.professional.cityId > 0) {
-				var elem = this.citiesForFilter.find(x => x.id == this.professional.cityId);
-				if (elem) {
-					this.professionalForm.patchValue({ 'cityId': { id: elem.id, value: elem.value } });
-				}
-			}
-		});
-
-	}
-	private _filterCities(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.citiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end clinic cities
-	//clinic  cities
-
-	loadClinicCitiesForFilter() {
-		this.staticService.getCitiesForFilter().subscribe(res => {
-			this.clinicCitiesForFilter = res.data;
-
-			this.filteredClinicCities = this.professionalForm.get('clinicCityId').valueChanges
-				.pipe(
-					startWith(''),
-					map(value => this._filterClinicCities(value))
-				);
-			if (this.professional.cityId > 0) {
-				var elem = this.clinicCitiesForFilter.find(x => x.id == this.professional.clinicCityId);
-				if (elem) {
-					this.professionalForm.patchValue({ 'clinicCityId': { id: elem.id, value: elem.value } });
-				}
-			}
-		});
-
-	}
-
-	private _filterClinicCities(value: string): FilterModel[] {
-		const filterValue = this._normalizeValue(value);
-		return this.clinicCitiesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
-	}
-	// end account code id filter
-
 	// countries
 	loadCountiesForFilter() {
 		this.staticService.getCountriesForFilter().subscribe(res => {
@@ -923,5 +862,9 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		this.cdr.markForCheck();
 	}
 
-/*End Closed events */
+	/*End Closed events */
+
+	goToLink(url: string) {
+		window.open(`//${url}`, "_blank");
+	}
 }

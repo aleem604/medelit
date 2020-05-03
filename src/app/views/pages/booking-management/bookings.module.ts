@@ -80,7 +80,6 @@ import { BookingsComponent } from './bookings.component';
 import { AlertDialogComponent } from '../../partials/alert-dialog/alert-dialog.component';
 import { NgxMaskModule } from 'ngx-mask';
 import {
-	BookingsListComponent,
 	BookingEditComponent,
 	BookingCloneDialog,
 	BookingCycleDialog,
@@ -89,6 +88,7 @@ import {
 	BookingConnectedProfessinalsComponent,
 	BookingConnectedInvoicesComponent
 } from '.';
+import { BookingsListComponent } from './bookings/bookings-list/bookings-list.component';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [

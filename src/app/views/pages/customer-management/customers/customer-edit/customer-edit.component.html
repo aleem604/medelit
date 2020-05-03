@@ -156,8 +156,8 @@
 													<strong class="required-star">Main Phone</strong>
 												</mat-hint>
 												<mat-error *ngIf="customerForm.get('mainPhone').errors?.pattern">
-													Main phone should start with
-													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+													Main phone should contain
+													<strong><i class="la la-plus"></i> sign or numbers only </strong>
 												</mat-error>
 											</mat-form-field>
 										</div>
@@ -186,8 +186,8 @@
 													<strong>Contact Phone</strong>
 												</mat-hint>
 												<mat-error *ngIf="customerForm.get('contactPhone').errors?.pattern">
-													Contact phone should start with
-													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+													Contact phone should contain
+													<strong><i class="la la-plus"></i> sign or numbers only </strong>
 												</mat-error>
 											</mat-form-field>
 										</div>
@@ -202,8 +202,8 @@
 													<strong>Phone 2</strong>
 												</mat-hint>
 												<mat-error *ngIf="customerForm.get('phone2').errors?.pattern">
-													Phone 2 should start with
-													<strong><i class="la la-plus"></i> sign and numbers only </strong>
+													Phone 2 should contain
+													<strong><i class="la la-plus"></i> sign or numbers only </strong>
 												</mat-error>
 											</mat-form-field>
 										</div>
@@ -518,17 +518,12 @@
 												<input type="text"
 													   placeholder="Visit city/town"
 													   aria-label="Number"
-													   matInput #visitCityId
-													   [matAutocomplete]="visitCityIdAuto"
-													   [formControlName]="'visitCityId'" (focusout)="controlFocusout('visitCityId')">
-												<button mat-button *ngIf="visitCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('visitCityId').setValue('')">
+													   matInput #visitCityId													   
+													   [formControlName]="'visitCity'" (focusout)="controlFocusout('visitCity')">
+												<button mat-button *ngIf="visitCity.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('visitCity').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												<mat-autocomplete autoActiveFirstOption #visitCityIdAuto="matAutocomplete" [displayWith]="displayFn">
-													<mat-option *ngFor="let t of visitFilteredCities | async" [value]="t">
-														{{t.value}}
-													</mat-option>
-												</mat-autocomplete>
+												
 												<mat-hint align="start">
 													<strong>Visit City/Town </strong>
 												</mat-hint>
@@ -811,7 +806,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="4" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
+												<textarea matInput rows="3" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
 												<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('invoicingNotes').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>

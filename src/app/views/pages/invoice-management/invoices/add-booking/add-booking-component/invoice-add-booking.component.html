@@ -1,0 +1,82 @@
+
+<div class="row" *ngIf="!isLoading">
+	<div class="col-md-12 heading-wrapper mt-4 mb-2">
+		<div class="title-wrapper">
+			<h5>Bookings</h5>
+			<button class="btn btn-sm btn-save btn-warning btn-font-light" *ngIf="showSave()" (click)="saveChanges()">
+				Save Change
+			</button>
+			<button class="btn btn-sm btn-primary" (click)="addBooking()">
+				Add
+				Booking
+			</button>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="table-responsive">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Booking</th>
+						<th>Service Provided</th>
+						<th>Quantity</th>
+						<th>Fee</th>
+						<th>Subtotal</th>
+						<th>Taxes</th>
+						<th>Discount</th>
+						<th>Total</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let b of viewModel">
+						<td class="text-center">
+							<i class="la la-trash-o cursor-pointer font-16"
+							   (click)="deleteBookingFromInvoice(b.id)"></i>
+						</td>
+						<td [innerText]="b.bookingName"></td>
+						<td>
+							<p [innerText]="b.serviceName"></p>
+							<div>
+								<mat-form-field class="mat-form-field-fluid">
+									<textarea matInput placeholder="Item name on invoice" rows="5"
+											  #itemNameOnInvoice
+											  [(ngModel)]="b.itemNameOnInvoice"></textarea>
+									<mat-error>
+										Item Name on Invoice is
+										<strong>required</strong>
+									</mat-error>
+									<mat-hint align="start">
+										<strong>
+											Item Name on
+											Invoice
+										</strong>
+									</mat-hint>
+								</mat-form-field>
+							</div>
+
+						</td>
+						<td [innerText]="b.quantityHours"></td>
+						<td [innerText]="b.feeName"></td>
+						<td [innerText]="b.subTotal"></td>
+						<td [innerText]="b.taxes"></td>
+						<td [innerText]="b.discount"></td>
+						<td [innerText]="b.total"></td>
+					</tr>
+					<tr>
+						<td class="text-right font-500" colspan="8">
+							Invoice Total
+						</td>
+						<td [innerText]="inoviceTotal"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="row mt-3" *ngIf="isLoading">
+	<div class="col-12 d-flex jumbotron justify-content-around text-center">
+		<mat-spinner [diameter]="50"></mat-spinner>
+	</div>
+</div>
+
