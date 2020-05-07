@@ -387,7 +387,7 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="3" placeholder="Description" #description formControlName="description"></textarea>
+												<textarea matInput rows="2" placeholder="Description" #description formControlName="description"></textarea>
 												<button mat-button *ngIf="description.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('description').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -733,7 +733,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="3" placeholder="Enter invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
+												<textarea matInput rows="2" placeholder="Enter invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
 												<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('invoicingNotes').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>

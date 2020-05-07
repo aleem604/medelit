@@ -534,7 +534,7 @@
 											</div>
 											<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<textarea matInput rows="3" placeholder="Description" #description formControlName="description"></textarea>
+													<textarea matInput rows="2" placeholder="Description" #description formControlName="description"></textarea>
 													<button mat-button *ngIf="description.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('description').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
@@ -685,7 +685,7 @@
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<textarea matInput rows="3" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
+													<textarea matInput rows="2" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
 													<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('invoicingNotes').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
@@ -946,7 +946,7 @@
 														<strong>required</strong>
 													</mat-error>
 													<mat-hint align="start">
-														<strong>Calendar Actication </strong>option
+														<strong>Calendar Actication </strong>
 													</mat-hint>
 												</mat-form-field>
 											</div>

@@ -451,10 +451,8 @@
 								</div>
 							</div>
 							<div class="col-12">
-
+								
 							</div>
-
-
 
 							<div class="table-wrapper" formArrayName="services">
 								<table class="table table-bordered table-head-solid">
@@ -478,7 +476,7 @@
 														   #serviceId matInput
 														   [matAutocomplete]="serviceIdAuto"
 														   [formControlName]="'serviceId'"
-														   (focusout)="serviceControlFocusout(serviceId, i)">
+														   (focusout)="serviceControlFocusout($event, serviceId, i)">
 													<button mat-button *ngIf="serviceId.value"
 															matSuffix mat-icon-button aria-label="Clear"
 															(click)="leadForm.get('services').controls[i].get('serviceId').setValue('')">
@@ -487,7 +485,7 @@
 													<mat-autocomplete autoActiveFirstOption #serviceIdAuto="matAutocomplete"
 																	  (optionSelected)="serviceSelected($event, i)"
 																	  [displayWith]="displayFn">
-														<mat-option *ngFor="let t of servicesForFilter" [value]="t">
+														<mat-option *ngFor="let t of getFilteredServices(i)" [value]="t">
 															{{t.value}}
 														</mat-option>
 													</mat-autocomplete>
@@ -500,7 +498,7 @@
 														<strong>required</strong>
 													</mat-error>
 												</mat-form-field>
-
+												
 											</td>
 											<td style="width:20%;">
 												<mat-form-field class="example-full-width">
@@ -906,7 +904,7 @@
 
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<textarea matInput rows="4" placeholder="Visit Venue Details" #visitVenueDetail formControlName="visitVenueDetail"></textarea>
+									<textarea matInput rows="2" placeholder="Visit Venue Details" #visitVenueDetail formControlName="visitVenueDetail"></textarea>
 									<button mat-button *ngIf="visitVenueDetail.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('visitVenueDetail').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
@@ -1075,7 +1073,7 @@
 									</mat-hint>
 								</mat-form-field>
 							</div>
-
+							
 						</div>
 					</div>
 				</div>

@@ -54,11 +54,8 @@ import {
 	MAT_DIALOG_DEFAULT_OPTIONS,
 	MatSnackBarModule,
 	MatTooltipModule,
-
-    MatChipsModule
-} from '@angular/material';
-import { environment } from '../../../../environments/environment';
-import { NgbProgressbarModule, NgbProgressbarConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+    MatChipsModule} from '@angular/material';
+import { NgbProgressbarModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { LeadsComponent } from './leads.component';
 import { LeadsListComponent } from './leads/leads-list/leads-list.component';
@@ -69,6 +66,7 @@ import { CreateInvoiceEntityDialogComponent } from '../../partials/create-invoic
 import { AlertDialogComponent } from '../../partials/alert-dialog/alert-dialog.component';
 import { CSVFileUploadDialogComponent } from '../../partials/csv-file-upload-dialog/csv-file-upload.dialog.component';
 import { NgxMaskModule } from 'ngx-mask';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -135,9 +133,12 @@ const routes: Routes = [
 		NgbProgressbarModule,
 		NgxMatSelectSearchModule,
 		NgbModule,
+		OwlDateTimeModule,
+		OwlNativeDateTimeModule,
 		NgxMaskModule.forRoot(),
 		StoreModule.forFeature('leads', leadsReducer),
 		EffectsModule.forFeature([LeadEffects]),
+		
 	],
 	providers: [
 		ModuleGuard,
@@ -156,6 +157,7 @@ const routes: Routes = [
 				width: '900px'
 			}
 		},
+		
 		TypesUtilsService,
 		LayoutUtilsService,
 		HttpUtilsService,

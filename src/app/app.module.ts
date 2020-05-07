@@ -4,7 +4,7 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { GestureConfig, MatProgressSpinnerModule, MAT_DATE_LOCALE } from '@angular/material';
+import { GestureConfig, MatProgressSpinnerModule, MAT_DATE_LOCALE, DateAdapter } from '@angular/material';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
@@ -65,8 +65,9 @@ import * as typescript from 'highlight.js/lib/languages/typescript';
 import * as scss from 'highlight.js/lib/languages/scss';
 import * as xml from 'highlight.js/lib/languages/xml';
 import * as json from 'highlight.js/lib/languages/json';
-import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { JwtModule } from '@auth0/angular-jwt';
 import { OWL_DATE_TIME_LOCALE } from 'ng-pick-datetime';
+
 
 // tslint:disable-next-line:class-name
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -75,19 +76,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 	minScrollbarLength: 40,
 	maxScrollbarLength: 300,
 };
-
-export const MY_FORMATS = {
-	parse: {
-		dateInput: 'LL',
-	},
-	display: {
-		dateInput: 'DD/MM/YYYY',
-		monthYearLabel: 'YYYY',
-		dateA11yLabel: 'LL',
-		monthYearA11yLabel: 'YYYY',
-	},
-};
-
 
 
 export function initializeLayoutConfig(appConfig: LayoutConfigService) {

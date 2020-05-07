@@ -518,7 +518,7 @@
 												<input type="text"
 													   placeholder="Visit city/town"
 													   aria-label="Number"
-													   matInput #visitCityId													   
+													   matInput #visitCity													   
 													   [formControlName]="'visitCity'" (focusout)="controlFocusout('visitCity')">
 												<button mat-button *ngIf="visitCity.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('visitCity').setValue('')">
 													<mat-icon>close</mat-icon>
@@ -806,7 +806,7 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="3" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
+												<textarea matInput rows="2" placeholder="Invoicing notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
 												<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="customerForm.get('invoicingNotes').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>

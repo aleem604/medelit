@@ -1,9 +1,9 @@
 // Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 // Material
-import { MatDialog } from '@angular/material';
+import { MatDialog, MAT_DATE_LOCALE } from '@angular/material';
 // RxJS
 import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -33,8 +33,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { CreateInvoiceEntityDialogComponent } from '../../../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
 import { AlertDialogComponent } from '../../../../partials/alert-dialog/alert-dialog.component';
 import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
-import * as jquery from 'jquery';
-
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -165,9 +163,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			const style = getComputedStyle(document.getElementById('kt_header'));
 			this.headerMargin = parseInt(style.height, 0);
 		};
-
 	}
-
 
 	loadLead(_lead, fromService: boolean = false) {
 		if (!_lead) {
@@ -316,7 +312,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		} else {
 			this.addService();
 		}
-
 	}
 
 	addService() {
@@ -915,7 +910,9 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 			const control = <FormArray>this.leadForm.controls['services'];
 			for (let i = 0; i < control.length; i++) {
-				const serviceObj = control.controls[i].get('serviceId').value;
+				const sControl = control.controls[i].get('serviceId');
+
+				const serviceObj = sControl.value;
 				if (serviceObj) {
 					const sobj = this.servicesForFilter.filter((ele) => {
 						return ele.id == serviceObj;
@@ -968,6 +965,15 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		return this.servicesForFilter.filter(title => this._normalizeValue(title.value).includes(filterValue));
 	}
 
+	getFilteredServices(index) {
+		// @ts-ignore
+		var serviceControls = this.leadForm.get('services').controls[index];
+		const val = serviceControls.get('serviceId').value;
+
+		return this._filterServices(val);
+	}
+
+
 	serviceDrpClosed() {
 
 	}
@@ -1003,9 +1009,6 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			const proData = this.professionalsForFilter.find((el) => el.id == proId && el.sid === sid);
 			const ptFee = proData.ptFees;
 			const proFee = proData.proFees;
-			console.log('pt fee ', ptFee);
-			console.log('pro fee ', proFee);
-
 
 			if (ptFee) {
 				serviceControls.get('ptFeeId').setValue(ptFee.id);
@@ -1259,14 +1262,14 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		this.cdr.markForCheck();
 	}
 
-	serviceControlFocusout(control, index) {
+	serviceControlFocusout(event, control, index) {
 		// @ts-ignore
 		var serviceControls = this.leadForm.get('services').controls[index];
 		const val = serviceControls.get('serviceId').value;
-		if (val && val.id) return;
 
-		serviceControls.get('serviceId').setValue('');
-		this.cdr.markForCheck();
+		if (val && val.id) return val;
+		//serviceControls.get('serviceId').setValue('');
+		//this.cdr.markForCheck();
 
 	}
 

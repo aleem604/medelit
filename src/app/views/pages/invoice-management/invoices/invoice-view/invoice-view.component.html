@@ -1,14 +1,14 @@
 <kt-portlet>
 	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'"
-		[viewLoading$]="loading$">
+					   [viewLoading$]="loading$">
 		<ng-container ktPortletTools>
 			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button
-				matTooltip="Back to the products list">
+			   matTooltip="Back to the products list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
-			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="generatePdf()" mat-raised-button
-				matTooltip="Invoice to PDF">
+			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="dowonloadPdf()" mat-raised-button
+			   matTooltip="Invoice to PDF">
 				<i class="la la-file-pdf-o"></i>
 				<span class="kt-hidden-mobile">Generate PDF</span>
 			</a>
@@ -24,25 +24,27 @@
 			</mat-menu>
 		</ng-container>
 	</kt-portlet-header>
-	<kt-portlet-body id="invoice-container">
-		<div class="row justify-content-md-center">
+	<kt-portlet-body>
+
+		<div class="row justify-content-md-center" id="container" #content>
+
 			<div class="col-md-10">
 				<div class="table">
 					<div class="row">
 						<div class="col-6">
 							<div class="row">
 								<div class="col-12 py-2">
-									<img src="../../../../../../assets/media/logos/invoice-image.png" width="130" />
+									<img src="../../../../../../assets/media/logos/invoice-image.png" width="150" />
 								</div>
 
 							</div>
 						</div>
 						<div class="col-6">
 							<p class="text-right font-14 font-500 mb-0"><strong>Medelit srl.</strong></p>
-							<p class="text-right font-13 font-500 mb-0"><strong>Via Privata Grado 5, 20125,
-									Milano</strong></p>
-							<p class="text-right font-13 font-500 mb-0"><strong>P.IVA e Codice Fiscale:
-									06580850961</strong></p>
+							<p class="text-right font-13 font-500 mb-0">
+								<strong>Via Privata Grado 5, 20125, Milano</strong>
+							</p>
+							<p class="text-right font-13 font-500 mb-0"><strong>P.IVA e Codice Fiscale:	06580850961</strong></p>
 							<p class="text-right font-13 font-500 mb-0"><strong>Tel: +39 02.87.366.070 </strong></p>
 							<p class="text-right font-13 font-500 mb-0"><strong>Fax: +39 02.94.195.125 </strong></p>
 							<p class="text-right font-13 font-500 mb-0"><strong>Email: info@medelit.com </strong></p>
@@ -77,26 +79,31 @@
 						<div class="col-12 border">
 							<div class="row">
 								<div class="col pt-2 border-bottom">
-									<p class="font-13"><span class="font-500">Date of Birth: </span><span
-											[innerHtml]="invoice?.dateOfBirth | date: 'dd/MM/yyyy'"></span> </p>
-									<p class="font-13"><span class="font-500">VAT Number: </span><span
-											[innerHtml]="invoice?.vatNumber"></span> </p>
+									<p class="font-13">
+										<span class="font-500">Date of Birth: </span><span [innerHtml]="invoice?.dateOfBirth | date: 'dd/MM/yyyy'"></span>
+									</p>
+									<p class="font-13">
+										<span class="font-500">VAT Number: </span><span [innerHtml]="invoice?.vatNumber"></span>
+									</p>
 								</div>
 								<div class="col border-left border-bottom pt-2">
-									<p class="font-13 pb-0"><span class="font-500">Invoice N°: </span> <span
-											[innerText]="invoice?.invoiceNumber"></span></p>
-									<p class="font-13 pb-0"><span class="font-500">Date : </span> <span
-											[innerText]="invoice?.dueDate | date: 'MM/dd/yyyy'"></span></p>
-									<p class="font-13 pb-0"><span class="font-500">Method of payment : </span> <span
-											[innerText]="invoice?.paymentMethod"></span></p>
+									<p class="font-13 pb-0">
+										<span class="font-500">Invoice N°: </span> <span [innerText]="invoice?.invoiceNumber"></span>
+									</p>
+									<p class="font-13 pb-0">
+										<span class="font-500">Date : </span> <span [innerText]="invoice?.dueDate | date: 'MM/dd/yyyy'"></span>
+									</p>
+									<p class="font-13 pb-0">
+										<span class="font-500">Method of payment : </span> <span [innerText]="invoice?.paymentMethod"></span>
+									</p>
 									<!--<p><strong>Date of payment : </strong> <span [innerText]="invoice.paymentDue | date: 'MM/dd/yyyy'"></span></p>-->
 								</div>
 							</div>
 							<!--<div class="row mt-3">
-								<div class="col mb-3">
-									<h3>Booking</h3>
-								</div>
-							</div>-->
+					<div class="col mb-3">
+						<h3>Booking</h3>
+					</div>
+				</div>-->
 							<div class="row">
 								<div class="col-12 p-0">
 									<table class="table table-bordered mb-0">
@@ -120,12 +127,14 @@
 												<td class="font-13 font-500" [innerText]="b.taxAmount"></td>
 												<td class="font-13 font-500" [innerText]="b.grossTotal"></td>
 											</tr>
+										
 										</tbody>
 										<tbody>
 											<tr>
-												<td colspan="5" class="text-right font-500">Total (<i
-														class="la la-gbp"></i>)</td>
-												<td class="text-left font-500" [innerText]="invoice.totalInvoice"></td>
+												<td colspan="5" class="text-right font-500">
+													Total (<i class="la la-gbp"></i>)
+												</td>
+												<td class="text-left font-500" [innerText]="invoice?.totalInvoice"></td>
 											</tr>
 										</tbody>
 
@@ -158,8 +167,8 @@
 						<div class="col-12 mt-1">
 							<p class="font-500 font-16 text-uppercase my-0">medelit ltd</p>
 							<p class="font-500 font-16 text-uppercase my-0">
-								74 VICTORIA DRIVE<br/>
-								SW196HL LONDON<br/>
+								74 VICTORIA DRIVE<br />
+								SW196HL LONDON<br />
 								UNITED KINGDOM
 							</p>
 							<p class="font-500 font-16 text-uppercase my-0"><span>Sort Code : </span><span>30-96-64</span></p>

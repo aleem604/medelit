@@ -719,7 +719,25 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 			this.selectedTab = 0;
 			return;
 		}
+
 		let editedBooking = this.prepareBooking();
+
+		const invoiceNumber = this.booking.invoiceNumber;
+		const paymentStatus = +this.bookingForm.get('paymentStatusId').value;
+		const paymentConcluded = +this.bookingForm.get('paymentConcludedId').value;
+		const paymentMethod = +this.bookingForm.get('paymentMethodId').value;
+		const bookingStatus = +this.bookingForm.get('bookingStatusId').value;
+
+		if ((invoiceNumber == null && paymentStatus === 3 && paymentConcluded === 1 && paymentMethod !== 4) || (invoiceNumber === null && paymentStatus == 2 && (bookingStatus === 4 || bookingStatus === 6))) {
+			
+
+		} else {
+			this.dialog.open(AlertDialogComponent, {
+				width: '300px',
+				data: { title: 'Create Invoice', message: 'This booking is not viable for invoicing.' }
+			});
+			return;
+		}
 
 		this.spinner.show();
 		this.bookingService.updateBooking(editedBooking).toPromise().then((res) => {
@@ -735,7 +753,8 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 
 				dialogRef.afterClosed().subscribe(result => {
 					if (result) {
-						console.log(result);
+						this.layoutUtilsService.showActionNotification("Booking added to invoice successfully.", MessageType.Create, 5000, true);
+						this.loadBookingFromService(this.booking.id);
 					}
 				});
 			} else {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
@@ -13,6 +13,8 @@ import {
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
+import * as $ from 'jquery';
+
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -23,6 +25,7 @@ import html2canvas from 'html2canvas';
 })
 export class InvoiceViewComponent implements OnInit, OnDestroy {
 	// Public properties
+	@ViewChild('content', { static: true }) content: ElementRef;
 	invoice: InvoiceView = new InvoiceView();
 	selectedTab = 0;
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -30,14 +33,10 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 	private headerMargin: number;
 
 	constructor(
-		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
-		private typesUtilsService: TypesUtilsService,
 		public dialog: MatDialog,
 		private subheaderService: SubheaderService,
-		private layoutUtilsService: LayoutUtilsService,
-		private layoutConfigService: LayoutConfigService,
 		private invoiceService: InvoicesService,
 		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
@@ -133,42 +132,78 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 		return result;
 	}
 
-	generatePdf() {
-		try{
-			this.spinner.show();
-			let data = document.getElementById('invoice-container');
-			html2canvas(data).then(canvas => {
-				const contentDataURL = canvas.toDataURL('image/png');
-				let pdf = new jspdf('l', 'cm', 'a4'); //Generates PDF in landscape mode
-				//let pdf = new jspdf('p', 'cm', 'a4'); //Generates PDF in portrait mode
-				pdf.addImage(contentDataURL, 'PNG', 0, 0, 29.7, 21.0);
-				pdf.save(`${this.invoice.invoiceNumber}.pdf`);
-				window.open(pdf.output('bloburl', { filename: `${this.invoice.invoiceNumber}.pdf` }), '_blank');
-		});
-	}catch{	
-	}
-	finally{
-		this.spinner.hide();
-	}
-	}
-
-	generatePdf1() {
-		//const fileName = String(new Date().valueOf());
-		
+	dowonloadPdf() {
 		try {
-			const fileName = `${this.invoice.subject}-${this.invoice.invoiceNumber}`;
-			const element: HTMLElement = document.querySelector('#invoice-container');
-			const regionCanvas = element.getBoundingClientRect();
-			html2canvas(element, { scale: 3 }).then(async canvas => {				
-				const pdf = new jspdf('p', 'mm', 'a4');
-				pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 3, 0, 205, (205 / regionCanvas.width) * regionCanvas.height);
-				await pdf.save(fileName, { returnPromise: true });
+			window.scroll(0, 0);
+			const fileName = `${this.invoice.invoiceNumber}.pdf`;
+			this.spinner.show();
+			let data = document.getElementById('container');
+			html2canvas(data).then(canvas => {
+				const contentDataURL = canvas.toDataURL('image/jpeg', 1.0);
+				let pdf = new jspdf('p', 'cm', 'a4');
+				pdf.addImage(contentDataURL, 'jpeg', 0, 1, 20.7, 17.0);
+				pdf.save(fileName);
 				window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
 			});
-		} catch(e){
-			console.log(e);
-		} 
+		} catch{
+		}
+		finally {
+			this.spinner.hide();
+		}
 	}
+
+	generatePdf() {
+		const elem = document.getElementById('container');
+		const fileName = `${this.invoice.invoiceNumber}.pdf`;
+
+		var divHeight = $(elem).height();
+		var divWidth = $(elem).width();
+		var ratio = divHeight / divWidth;
+		let data = document.getElementById('container');
+		html2canvas(data).then(canvas => {
+			var imgData = canvas.toDataURL('image/jpeg', 1.0);
+			let pdf = new jspdf("l", "mm", "a4");
+			pdf.addImage(imgData, 'JPEG', 10, 10, 170, 150);
+			pdf.save(fileName);
+			window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
+		});
+	}
+
+
+	dowonloadPdf1() {
+		const fileName = `${this.invoice.invoiceNumber}.pdf`;
+		var pdf = new jspdf('p', 'pt', 'a4');
+		const source = document.getElementById('container');
+		const specialElementHandlers = {
+			'#bypassme': function (element, renderer) {
+				return true
+			}
+		};
+		const margins = {
+			top: 30,
+			bottom: 30,
+			left: 20,
+			width: 790,
+			height: 1122
+		};
+
+		pdf.fromHTML(
+			source,
+			margins.left,
+			margins.top, {
+			'width': margins.width,
+			'elementHandlers': specialElementHandlers
+		},
+
+			function (dispose) {
+				pdf.save(fileName);
+				window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
+			}, margins);
+	}
+
+
+
+
 
 	getMilliSeconds(date: string): any {
 		try {
