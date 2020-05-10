@@ -67,6 +67,7 @@ import { AlertDialogComponent } from '../../partials/alert-dialog/alert-dialog.c
 import { CSVFileUploadDialogComponent } from '../../partials/csv-file-upload-dialog/csv-file-upload.dialog.component';
 import { NgxMaskModule } from 'ngx-mask';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker'
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -135,6 +136,7 @@ const routes: Routes = [
 		NgbModule,
 		OwlDateTimeModule,
 		OwlNativeDateTimeModule,
+		BsDatepickerModule,
 		NgxMaskModule.forRoot(),
 		StoreModule.forFeature('leads', leadsReducer),
 		EffectsModule.forFeature([LeadEffects]),

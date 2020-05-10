@@ -4,12 +4,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { TranslateModule } from '@ngx-translate/core';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+
 import { PartialsModule } from '../../partials/partials.module';
-import { FakeApiService } from '../../../core/_base/layout';
 import { ModuleGuard } from '../../../core/auth';
 // Core => Services
 import {
@@ -61,7 +61,7 @@ import {
 
     MatChipsModule
 } from '@angular/material';
-import { environment } from '../../../../environments/environment';
+
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { ServicesComponent } from './services.component';
@@ -147,10 +147,8 @@ const routes: Routes = [
 		MatChipsModule,
 		NgxMatSelectSearchModule,
 		NgxMaskModule.forRoot(),
-		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
-			passThruUnknownUrl: true,
-        	dataEncapsulation: false
-		}) : [],
+		BsDatepickerModule,
+
 		StoreModule.forFeature('fields', fieldsReducer),
 		EffectsModule.forFeature([FieldEffects]),
 		StoreModule.forFeature('services', servicesReducer),

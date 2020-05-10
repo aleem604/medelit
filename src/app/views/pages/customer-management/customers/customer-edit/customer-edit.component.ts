@@ -31,6 +31,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { CreateInvoiceEntityDialogComponent } from '../../../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
 import { TranslateService } from '@ngx-translate/core';
 import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
+import { MedelitBaseComponent } from '../../../../../core/_base/components/medelit-base.component';
 
 
 @Component({
@@ -40,7 +41,7 @@ import { MedelitConstants } from '../../../../../core/_base/constants/medelit-co
 	styleUrls: ['./customer-edit.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CustomerEditComponent implements OnInit, OnDestroy {
+export class CustomerEditComponent extends MedelitBaseComponent implements OnInit, OnDestroy {
 	// Public properties
 	customer: CustomerModel;
 	customerId$: Observable<number>;
@@ -128,6 +129,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		private spinner: NgxSpinnerService,
 		private translate: TranslateService,
 		private cdr: ChangeDetectorRef) {
+		super();
 	}
 
 	ngOnInit() {
@@ -234,7 +236,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 			email: [this.customer.email, [Validators.required, Validators.email,]],
 			email2: [this.customer.email2, [Validators.email]],
 			fax: [this.customer.fax, []],
-			dateOfBirth: [this.customer.dateOfBirth, [Validators.required]],
+			dateOfBirth: [this.formatDate(this.customer.dateOfBirth), [Validators.required]],
 			countryOfBirthId: [this.customer.countryOfBirthId, []],
 			visitRequestingPerson: [this.customer.visitRequestingPerson, []],
 			visitRequestingPersonRelationId: [this.customer.visitRequestingPersonRelationId, []],
@@ -353,7 +355,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 		_customer.phone3Owner = controls.phone3Owner.value;
 		_customer.email = controls.email.value;
 		_customer.fax = controls.fax.value;
-		_customer.dateOfBirth = controls.dateOfBirth.value;
+		_customer.dateOfBirth = this.toDateFormat(controls.dateOfBirth.value);
 		if (controls.countryOfBirthId.value)
 			_customer.countryOfBirthId = controls.countryOfBirthId.value.id;
 		_customer.visitRequestingPerson = controls.visitRequestingPerson.value;

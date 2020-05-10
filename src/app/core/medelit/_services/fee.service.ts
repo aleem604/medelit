@@ -12,6 +12,7 @@ import { ApiResponse } from '../_models/apireponse.model';
 import { eFeeType } from '../_enums/e-fee-type.enum';
 import { ServiceModel } from '../_models/service.model';
 import { FeeConnectedProfessionalsModel } from '../_models/fee.model';
+import { map } from 'rxjs/operators';
 
 
 const API_FEES_URL = `${environment.apiEndpoint}/fees`;
@@ -44,6 +45,10 @@ export class FeesService {
 		return this.http.post<QueryResultsModel>(url, queryParams, {
 			headers: httpHeaders
 		});
+	}
+
+	getFeeTags(): Observable<string[]> {
+		return this.http.get<ApiResponse>(API_FEES_URL + `/tags`).pipe(map(m => m.data as string[]));
 	}
 
 	// UPDATE => PUT: update the fee on the server

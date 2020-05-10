@@ -344,12 +344,10 @@
 
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput [matDatepicker]="dateOfBirthPicker" #dateOfBirth placeholder="Date of birth" [formControlName]="'dateOfBirth'">
+									<input matInput #dateOfBirth placeholder="Date of birth" [formControlName]="'dateOfBirth'" bsDatepicker [bsConfig]="datePickerConfig">
 									<button mat-button *ngIf="dateOfBirth.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('dateOfBirth').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
-									<mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
-									<mat-datepicker #dateOfBirthPicker></mat-datepicker>
 									<mat-error>
 										Date of birth
 										<strong>required</strong>
@@ -606,8 +604,8 @@
 									<tbody>
 										<tr>
 											<td colspan="2"><strong class="pull-right">SubTotal:</strong></td>
-											<td>{{feesSubTotals.ptFeeSubTotal}}</td>
-											<td>{{feesSubTotals.proFeeSubTotal}}</td>
+											<td>{{feesSubTotals.ptFeeSubTotal | number : '1.2-2'}}</td>
+											<td>{{feesSubTotals.proFeeSubTotal | number : '1.2-2'}}</td>
 											<td></td>
 										</tr>
 									</tbody>

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 // Fake API Angular-in-memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 // Translate Module
@@ -130,6 +131,7 @@ const routes: Routes = [
 		NgbProgressbarModule,
 		NgxMatSelectSearchModule,
 		NgxMaskModule.forRoot(),
+		BsDatepickerModule,
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,
         	dataEncapsulation: false

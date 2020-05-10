@@ -7,7 +7,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { TextMaskModule } from 'angular2-text-mask';
-
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 // Fake API Angular-in-memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
@@ -158,6 +158,7 @@ const routes: Routes = [
 		OwlDateTimeModule,
 		OwlNativeDateTimeModule,
 		NgxMaskModule.forRoot(),
+		BsDatepickerModule,
 
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
 			passThruUnknownUrl: true,

@@ -1,6 +1,6 @@
 import { BaseModel } from '../../_base/crud';
 import { eRecordStatus } from '../_enums/e-record-status.enum';
-import { DateTimeAdapter } from 'ng-pick-datetime';
+
 
 export class InvoiceEntityModel extends BaseModel {
 	id: number;
@@ -21,7 +21,7 @@ export class InvoiceEntityModel extends BaseModel {
 	ieTypeId: number;
 	ieType: string;
 	fax: string;
-	dateOfBirth: Date;
+	dateOfBirth: string;
 	countryOfBirthId: number;
 	countryOfBirth: string;
 	billingAddress: string;

@@ -3,7 +3,7 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRe
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 // Material
-import { MatDialog, MatChipInputEvent, MatSelect, MatTabChangeEvent, getMatFormFieldPlaceholderConflictError } from '@angular/material';
+import { MatDialog, MatChipInputEvent, MatSelect, MatTabChangeEvent, getMatFormFieldPlaceholderConflictError, MatAutocompleteSelectedEvent } from '@angular/material';
 // RxJS
 import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
 import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
@@ -80,6 +80,9 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	vatsForFilter: FilterModel[] = [];
 	filteredVats: Observable<FilterModel[]>;
 
+	serviceTagsForFilter: string[] = [];
+	filteredTags: Observable<string[]>;
+
 	tagsArray: string[];
 
 	constructor(
@@ -139,6 +142,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.loadFieldsForFilter();
 		this.loadCategoriesForFilter();
 		this.loadDurationsForFilter();
+		this.loadTagsForFilter();
 		this.loadVatsForFilter();
 
 		if (fromService) {
@@ -482,11 +486,29 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 	// Tags
 
+	loadTagsForFilter() {
+
+		this.serviceService.getServiceTags().subscribe(res => {
+			this.serviceTagsForFilter = res;
+
+			this.filteredTags = this.serviceForm.get('tags').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterTags(value))
+				);
+		});
+	}
+	private _filterTags(value: string): string[] {
+		const filterValue = this._normalizeValue(value);
+		const tempTags = this.serviceTagsForFilter.filter(f => this.tagsArray.indexOf(f) === -1);
+
+		return tempTags.filter(elem => this._normalizeValue(elem).includes(filterValue));
+	}
+
 	add(event: MatChipInputEvent): void {
 		const input = event.input;
 		const value = event.value;
 
-		// Add our fruit
 		if (this.tagsArray.length < 5 && (value || '').trim()) {
 			this.tagsArray.push(value.trim());
 		}
@@ -504,6 +526,14 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			this.tagsArray.splice(index, 1);
 		}
 	}
+
+	selected(event: MatAutocompleteSelectedEvent): void {
+		const val = event.option.value;
+		if (this.tagsArray.indexOf(val) === -1)
+			this.tagsArray.push(event.option.value);
+	}
+
+
 	// End Tags
 
 	// Categories Filter
@@ -589,5 +619,5 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.cdr.markForCheck();
 	}
 
-/*End Closed events */
+	/*End Closed events */
 }

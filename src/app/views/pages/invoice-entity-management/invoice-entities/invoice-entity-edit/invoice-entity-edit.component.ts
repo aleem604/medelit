@@ -35,6 +35,7 @@ import {
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
+import { MedelitBaseComponent } from '../../../../../core/_base/components/medelit-base.component';
 
 
 @Component({
@@ -44,7 +45,7 @@ import { MedelitConstants } from '../../../../../core/_base/constants/medelit-co
 	styleUrls: ['./invoice-entity-edit.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
+export class InvoiceEntityEditComponent extends MedelitBaseComponent implements OnInit, OnDestroy {
 	// Public properties
 
 	invoiceEntity: InvoiceEntityModel;
@@ -127,6 +128,7 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 		private staticService: StaticDataService,
 		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
+		super();
 	}
 
 	ngOnInit() {
@@ -229,7 +231,7 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 			relationshipWithCustomerId: [this.invoiceEntity.relationshipWithCustomerId, []],
 			ieTypeId: [this.invoiceEntity.ieTypeId, [Validators.required]],
 			fax: [this.invoiceEntity.fax, []],
-			dateOfBirth: [this.invoiceEntity.dateOfBirth, []],
+			dateOfBirth: [this.formatDate(this.invoiceEntity.dateOfBirth), []],
 			countryOfBirthId: [this.invoiceEntity.countryOfBirthId, []],
 			billingAddress: [this.invoiceEntity.billingAddress, [Validators.required]],
 			mailingAddress: [this.invoiceEntity.mailingAddress, [Validators.required]],
@@ -334,7 +336,7 @@ export class InvoiceEntityEditComponent implements OnInit, OnDestroy {
 		_invoiceEntity.relationshipWithCustomerId = controls.relationshipWithCustomerId.value;
 		_invoiceEntity.ieTypeId = controls.ieTypeId.value;
 		_invoiceEntity.fax = controls.fax.value;
-		_invoiceEntity.dateOfBirth = controls.dateOfBirth.value;
+		_invoiceEntity.dateOfBirth = this.toDateFormat(controls.dateOfBirth.value);
 		if (controls.countryOfBirthId.value)
 			_invoiceEntity.countryOfBirthId = controls.countryOfBirthId.value.id;
 		_invoiceEntity.billingAddress = controls.billingAddress.value;

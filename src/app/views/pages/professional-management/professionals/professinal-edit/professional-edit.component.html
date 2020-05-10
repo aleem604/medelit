@@ -335,13 +335,15 @@
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="dateOfBirthPicker" #dateOfBirth placeholder="Date of birth" [formControlName]="'dateOfBirth'">
+													<input matInput
+														   #dateOfBirth
+														   placeholder="Date of birth"
+														   [formControlName]="'dateOfBirth'"
+														   bsDatepicker [bsConfig]="datePickerConfig" />
 													<button mat-button *ngIf="dateOfBirth.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('dateOfBirth').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
 
-													<mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
-													<mat-datepicker #dateOfBirthPicker></mat-datepicker>
 													<mat-error>
 														Date of birth
 														<strong>required</strong>
@@ -511,9 +513,9 @@
 												<mat-form-field class="example-full-width">
 													<input type="text"
 														   placeholder="Clinic city"														  
-														   #clinicCityId matInput														   
-														   [formControlName]="'clinicCityId'" (focusout)="controlFocusout('clinicCityId')">
-													<button mat-button *ngIf="clinicCityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('clinicCityId').setValue('')">
+														   #clinicCity matInput														   
+														   [formControlName]="'clinicCity'" (focusout)="controlFocusout('clinicCity')">
+													<button mat-button *ngIf="clinicCity.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('clinicCity').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
 													
@@ -723,13 +725,15 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="contractDatePicker" #contractDate placeholder="Contract date" [formControlName]="'contractDate'">
+													<input matInput
+														   #contractDate
+														   placeholder="Contract date"
+														   [formControlName]="'contractDate'"
+														   bsDatepicker [bsConfig]="datePickerConfig" />
 													<button mat-button *ngIf="contractDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('contractDate').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
-
-													<mat-datepicker-toggle matSuffix [for]="contractDatePicker"></mat-datepicker-toggle>
-													<mat-datepicker #contractDatePicker></mat-datepicker>
+													
 													<mat-error>
 														Contract Date is
 														<strong>required</strong>
@@ -741,13 +745,15 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="contractEndDatePicker" #contractEndDate placeholder="Contract end date" [formControlName]="'contractEndDate'">
+													<input matInput
+														   #contractEndDate
+														   placeholder="Contract end date"
+														   [formControlName]="'contractEndDate'"
+														   bsDatepicker [bsConfig]="datePickerConfig" />
 													<button mat-button *ngIf="contractEndDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('contractEndDate').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
 
-													<mat-datepicker-toggle matSuffix [for]="contractEndDatePicker"></mat-datepicker-toggle>
-													<mat-datepicker #contractEndDatePicker></mat-datepicker>
 													<mat-error>
 														Contract End Date is
 														<strong>required</strong>
@@ -775,14 +781,14 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="firstContactDatePicker" #firstContactDate placeholder="First contact date" [formControlName]="'firstContactDate'" />
+													<input matInput #firstContactDate
+														   placeholder="First contact date"
+														   [formControlName]="'firstContactDate'"
+														   bsDatepicker [bsConfig]="datePickerConfig" />
 													<button mat-button *ngIf="firstContactDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('firstContactDate').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
 
-
-													<mat-datepicker-toggle matSuffix [for]="firstContactDatePicker"></mat-datepicker-toggle>
-													<mat-datepicker #firstContactDatePicker></mat-datepicker>
 													<mat-error>
 														First Contact Date is
 														<strong>required</strong>
@@ -794,14 +800,15 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="lastContactDatePicker" #lastContactDate placeholder="Last contact date" [formControlName]="'lastContactDate'" />
+													<input matInput
+														   #lastContactDate
+														   placeholder="Last contact date"
+														   [formControlName]="'lastContactDate'"
+														   bsDatepicker [bsConfig]="datePickerConfig" />
 													<button mat-button *ngIf="lastContactDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('lastContactDate').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
 
-
-													<mat-datepicker-toggle matSuffix [for]="lastContactDatePicker"></mat-datepicker-toggle>
-													<mat-datepicker #lastContactDatePicker></mat-datepicker>
 													<mat-error>
 														Last Contact Date is
 														<strong>required</strong>
@@ -887,13 +894,15 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="mat-form-field-fluid">
-													<input matInput [matDatepicker]="insuranceExpiryDatePicker" placeholder="Insurance expiry date" #insuranceExpiryDate [formControlName]="'insuranceExpiryDate'">
+													<input matInput
+														   placeholder="Insurance expiry date"
+														   #insuranceExpiryDate
+														   [formControlName]="'insuranceExpiryDate'"
+														   bsDatepicker [bsConfig]="datePickerConfig" />
 													<button mat-button *ngIf="insuranceExpiryDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="getControl('insuranceExpiryDate').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
 
-													<mat-datepicker-toggle matSuffix [for]="insuranceExpiryDatePicker"></mat-datepicker-toggle>
-													<mat-datepicker #insuranceExpiryDatePicker></mat-datepicker>
 													<mat-error>
 														Insurance Expiry Date is
 														<strong>required</strong>
@@ -952,8 +961,8 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field class="common-form-field">
-													<mat-select [formControlName]="'proTaxCodeId'">
-														<mat-option *ngFor="let val of proTaxCodesForFilter" [value]="val.id">
+													<mat-select [formControlName]="'protaxCodeId'">
+														<mat-option *ngFor="let val of protaxCodesForFilter" [value]="val.id">
 															{{ val.value }}
 														</mat-option>
 													</mat-select>

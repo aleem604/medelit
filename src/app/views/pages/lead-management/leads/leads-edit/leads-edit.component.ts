@@ -11,9 +11,9 @@ import { map, startWith } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
 // Layout
-import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
+import { SubheaderService } from '../../../../../core/_base/layout';
 // CRUD
-import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
+import { LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Services and Models
 import {
 	LeadModel,
@@ -33,6 +33,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { CreateInvoiceEntityDialogComponent } from '../../../../partials/create-invoice-entity/create-invoice-entity.dialog.component';
 import { AlertDialogComponent } from '../../../../partials/alert-dialog/alert-dialog.component';
 import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
+import { MedelitBaseComponent } from '../../../../../core/_base/components/medelit-base.component';
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -41,7 +42,8 @@ import { MedelitConstants } from '../../../../../core/_base/constants/medelit-co
 	styleUrls: ['./leads-edit.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LeadEditComponent implements OnInit, OnDestroy {
+export class LeadEditComponent extends MedelitBaseComponent implements OnInit, OnDestroy {
+
 	// Public properties
 	fromCustomerId: number;
 	lead: LeadModel;
@@ -121,6 +123,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		private spinner: NgxSpinnerService,
 		private translate: TranslateService,
 		private cdr: ChangeDetectorRef) {
+		super();
 	}
 
 	ngOnInit() {
@@ -237,7 +240,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 			email: [this.lead.email, [Validators.email,]],
 			email2: [this.lead.email2, [Validators.email,]],
 			fax: [this.lead.fax, []],
-			dateOfBirth: [this.lead.dateOfBirth, []],
+			dateOfBirth: [this.formatDate(this.lead.dateOfBirth), []],
 			countryOfBirthId: [this.lead.countryOfBirthId, []],
 			visitRequestingPerson: [this.lead.visitRequestingPerson, []],
 			visitRequestingPersonRelationId: [this.lead.visitRequestingPersonRelationId, []],
@@ -298,13 +301,13 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 					ptFeeId: [service.ptFeeId, [Validators.required]],
 					isPtFeeA1: [service.isPtFeeA1, [Validators.required]],
 
-					ptFeeA1: [service.ptFeeA1, [Validators.required]],
-					ptFeeA2: [service.ptFeeA2, [Validators.required]],
+					ptFeeA1: [parseFloat(service.ptFeeA1).toFixed(2), [Validators.required]],
+					ptFeeA2: [parseFloat(service.ptFeeA2).toFixed(2), [Validators.required]],
 					proFeeId: [service.proFeeId, [Validators.required]],
 					isProFeeA1: [service.isProFeeA1, [Validators.required]],
 
-					proFeeA1: [service.proFeeA1, [Validators.required]],
-					proFeeA2: [service.proFeeA2, [Validators.required]],
+					proFeeA1: [parseFloat(service.proFeeA1).toFixed(2), [Validators.required]],
+					proFeeA2: [parseFloat(service.proFeeA2).toFixed(2), [Validators.required]],
 				});
 				(<FormArray>this.leadForm.get('services')).push(group);
 			});
@@ -357,7 +360,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 				proFeeSubTotal += +control.controls[i].get('proFeeA2').value;
 		}
 
-		return { ptFeeSubTotal: ptFeeSubTotal.toFixed(2), proFeeSubTotal: proFeeSubTotal.toFixed(2) };
+		return { ptFeeSubTotal: ptFeeSubTotal, proFeeSubTotal: proFeeSubTotal };
 	}
 
 	removeService(index) {
@@ -530,7 +533,7 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 		_lead.email = controls.email.value;
 		_lead.email2 = controls.email2.value;
 		_lead.fax = controls.fax.value;
-		_lead.dateOfBirth = controls.dateOfBirth.value;
+		_lead.dateOfBirth = this.toDateFormat(controls.dateOfBirth.value);
 		if (controls.countryOfBirthId.value)
 			_lead.countryOfBirthId = controls.countryOfBirthId.value.id;
 		_lead.visitRequestingPerson = controls.visitRequestingPerson.value;
@@ -589,13 +592,13 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 			s.ptFeeId = +control.controls[i].get('ptFeeId').value
 			s.isPtFeeA1 = +control.controls[i].get('isPtFeeA1').value
-			s.ptFeeA1 = +control.controls[i].get('ptFeeA1').value
-			s.ptFeeA2 = +control.controls[i].get('ptFeeA2').value
+			s.ptFeeA1 = control.controls[i].get('ptFeeA1').value
+			s.ptFeeA2 = control.controls[i].get('ptFeeA2').value
 
 			s.proFeeId = +control.controls[i].get('proFeeId').value
 			s.isProFeeA1 = +control.controls[i].get('isProFeeA1').value
-			s.proFeeA1 = +control.controls[i].get('proFeeA1').value
-			s.proFeeA2 = +control.controls[i].get('proFeeA2').value
+			s.proFeeA1 = control.controls[i].get('proFeeA1').value
+			s.proFeeA2 = control.controls[i].get('proFeeA2').value
 
 			_lead.services.push(s);
 		}
@@ -1012,8 +1015,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 			if (ptFee) {
 				serviceControls.get('ptFeeId').setValue(ptFee.id);
-				serviceControls.get('ptFeeA1').setValue(ptFee.a1);
-				serviceControls.get('ptFeeA2').setValue(ptFee.a2);
+				serviceControls.get('ptFeeA1').setValue(parseFloat(ptFee.a1).toFixed(2));
+				serviceControls.get('ptFeeA2').setValue(parseFloat(ptFee.a2).toFixed(2));
 			} else {
 				serviceControls.get('ptFeeId').setValue('');
 				serviceControls.get('ptFeeA1').setValue('');
@@ -1022,8 +1025,8 @@ export class LeadEditComponent implements OnInit, OnDestroy {
 
 			if (proFee) {
 				serviceControls.get('proFeeId').setValue(proFee.id);
-				serviceControls.get('proFeeA1').setValue(proFee.a1);
-				serviceControls.get('proFeeA2').setValue(proFee.a2);
+				serviceControls.get('proFeeA1').setValue(parseFloat(proFee.a1).toFixed(2));
+				serviceControls.get('proFeeA2').setValue(parseFloat(proFee.a2).toFixed(2));
 			} else {
 				serviceControls.get('proFeeId').setValue('');
 				serviceControls.get('proFeeA1').setValue('');

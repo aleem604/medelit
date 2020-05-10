@@ -149,11 +149,17 @@
 													</mat-chip>
 													<input placeholder="Insert tags"
 														   [formControlName]="'tags'"
+														   [matAutocomplete]="auto"
 														   [matChipInputFor]="chipList"
 														   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
 														   [matChipInputAddOnBlur]="addOnBlur"
 														   (matChipInputTokenEnd)="add($event)">
 												</mat-chip-list>
+												<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+													<mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+														{{tag}}
+													</mat-option>
+												</mat-autocomplete>
 												<mat-hint align="start">
 													Create <strong>Tags </strong> by hitting enter or separated by comma
 												</mat-hint>

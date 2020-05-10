@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { MatDialog, MatChipInputEvent, MatSelect, MatTabChangeEvent } from '@angular/material';
+import { MatDialog, MatChipInputEvent, MatSelect, MatTabChangeEvent, MatAutocompleteSelectedEvent } from '@angular/material';
 import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
@@ -11,6 +11,7 @@ import { TypesUtilsService, LayoutUtilsService, MessageType } from '../../../../
 import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as _ from 'lodash';
+import { startWith, map } from 'rxjs/operators';
 
 export interface Fruit {
 	name: string;
@@ -50,6 +51,8 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 	protected _onDestroy = new Subject<void>();
 
 	tagsArray: string[];
+	tagsForFilter: string[] = [];
+	filteredTags: Observable<string[]>;
 
 	constructor(
 		private store: Store<AppState>,
@@ -61,7 +64,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		private subheaderFee: SubheaderService,
 		private layoutUtilsFee: LayoutUtilsService,
 		private layoutConfigFee: LayoutConfigService,
-		private feeFee: FeesService,
+		private feeService: FeesService,
 		private staticFee: StaticDataService,
 		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
@@ -106,7 +109,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		this.feeId$ = of(_fee.id);
 		this.oldFee = Object.assign({}, _fee);
 		this.initFee();
-
+		this.loadTagsForFilter();
 		if (fromFee) {
 			this.cdr.detectChanges();
 		}
@@ -114,7 +117,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 
 	loadFeeFromFee(feeId) {
 		this.spinner.show();
-		this.feeFee.getFeeById(feeId, this.feeType).toPromise().then(res => {
+		this.feeService.getFeeById(feeId, this.feeType).toPromise().then(res => {
 			this.loadFee((res as unknown as ApiResponse).data, true);
 		}).catch(() => {
 			this.spinner.hide();
@@ -240,7 +243,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 
 	addFee(_fee: FeeModel, withBack: boolean = false) {
 		this.spinner.show();
-		this.feeFee.createFee(_fee).toPromise().then((res) => {
+		this.feeService.createFee(_fee).toPromise().then((res) => {
 			this.loadingSubject.next(false);
 			var resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
@@ -251,7 +254,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 					this.layoutUtilsFee.showActionNotification(message, MessageType.Create, 10000, true, true);
 					this.feeType = resp.data.feeTypeId;
 					this.refreshFee(true, resp.data.id, resp.data.feeTypeId);
-					
+
 
 				}
 			} else {
@@ -270,7 +273,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 
 	updateFee(_fee: FeeModel, withBack: boolean = false) {
 		this.spinner.show();
-		this.feeFee.createFee(_fee).toPromise().then((res) => {
+		this.feeService.createFee(_fee).toPromise().then((res) => {
 			this.loadingSubject.next(false);
 			var resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
@@ -308,7 +311,30 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		this.hasFormErrors = false;
 	}
 
-	/*fitlers aread*/
+/*fitlers aread*/
+	loadTagsForFilter() {
+
+		this.feeService.getFeeTags().subscribe(res => {
+			this.tagsForFilter = res;
+
+			this.filteredTags = this.feeForm.get('tags').valueChanges
+				.pipe(
+					startWith(''),
+					map(value => this._filterTags(value))
+				);
+		});
+	}
+	private _filterTags(value: string): string[] {
+		const filterValue = this._normalizeValue(value);
+		const tempTags = this.tagsForFilter.filter(f => this.tagsArray.indexOf(f) === -1);
+		return tempTags.filter(elem => this._normalizeValue(elem).includes(filterValue));
+	}
+
+	private _normalizeValue(value: string): string {
+		if (value && value.length > 0)
+			return value.toLowerCase().replace(/\s/g, '');
+		return value;
+	}
 
 	add(event: MatChipInputEvent): void {
 		const input = event.input;
@@ -331,6 +357,12 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		if (index >= 0) {
 			this.tagsArray.splice(index, 1);
 		}
+	}
+
+	selected(event: MatAutocompleteSelectedEvent): void {
+		const val = event.option.value;
+		if (this.tagsArray.indexOf(val) === -1)
+			this.tagsArray.push(event.option.value);
 	}
 
 	tabChanged(event: MatTabChangeEvent) {

@@ -7,7 +7,7 @@
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
-			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="dowonloadPdf()" mat-raised-button
+			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="createPdf()" mat-raised-button
 			   matTooltip="Invoice to PDF">
 				<i class="la la-file-pdf-o"></i>
 				<span class="kt-hidden-mobile">Generate PDF</span>
@@ -30,25 +30,24 @@
 
 			<div class="col-md-10">
 				<div class="table">
-					<div class="row">
+					<div class="row" *ngIf="invoice && invoice.accountInfo">
 						<div class="col-6">
 							<div class="row">
 								<div class="col-12 py-2">
-									<img src="../../../../../../assets/media/logos/invoice-image.png" width="150" />
+									<img src="../../../../../../assets/media/logos/invoice-image.png" width="120" />
 								</div>
-
 							</div>
 						</div>
 						<div class="col-6">
-							<p class="text-right font-14 font-500 mb-0"><strong>Medelit srl.</strong></p>
+							<p class="text-right font-14 font-500 mb-0 text-capitalize"><strong [innerHtml]="invoice.accountInfo.title">Medelit srl.</strong></p>
 							<p class="text-right font-13 font-500 mb-0">
-								<strong>Via Privata Grado 5, 20125, Milano</strong>
+								<strong [innerHtml]="invoice.accountInfo.address">Via Privata Grado 5, 20125, Milano</strong>
 							</p>
-							<p class="text-right font-13 font-500 mb-0"><strong>P.IVA e Codice Fiscale:	06580850961</strong></p>
-							<p class="text-right font-13 font-500 mb-0"><strong>Tel: +39 02.87.366.070 </strong></p>
-							<p class="text-right font-13 font-500 mb-0"><strong>Fax: +39 02.94.195.125 </strong></p>
-							<p class="text-right font-13 font-500 mb-0"><strong>Email: info@medelit.com </strong></p>
-							<p class="text-right font-13 font-500 mb-0"><strong>Web: www.medelit.com </strong></p>
+							<p class="text-right font-13 font-500 mb-0"><strong>{{invoice.accountInfo.city}}, {{invoice.accountInfo.country}}</strong></p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Tel: </strong> {{invoice.accountInfo.telephone}}</p>
+							<p class="text-right font-13 font-500 mb-0" *ngIf="invoice.accountInfo.fax"><strong>Fax: </strong>{{invoice.accountInfo.fax}}</p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Email: </strong>{{invoice.accountInfo.email}}</p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Web: </strong>{{invoice.accountInfo.website}}</p>
 
 						</div>
 					</div>
@@ -106,7 +105,7 @@
 				</div>-->
 							<div class="row">
 								<div class="col-12 p-0">
-									<table class="table table-bordered mb-0">
+									<table class="table table-bordered mb-0 table-invoice">
 										<thead>
 											<tr class="font-500 font-13">
 												<th>Service</th>
@@ -127,7 +126,14 @@
 												<td class="font-13 font-500" [innerText]="b.taxAmount"></td>
 												<td class="font-13 font-500" [innerText]="b.grossTotal"></td>
 											</tr>
-										
+											<tr *ngFor="let b of [1,2,3,4,5,6,7,8,9]">
+												<td class="font-13 font-500"></td>
+												<td class="font-13 font-500"></td>
+												<td class="font-13 font-500"></td>
+												<td class="font-13 font-500"></td>
+												<td class="font-13 font-500"></td>
+												<td class="font-13 font-500"></td>
+											</tr>
 										</tbody>
 										<tbody>
 											<tr>

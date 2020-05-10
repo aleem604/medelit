@@ -10,6 +10,7 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { DateValueAccessorModule } from 'angular-date-value-accessor';
 import { NgxMaskModule } from 'ngx-mask'
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 // Angular in memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
@@ -107,6 +108,7 @@ export function hljsLanguages(): HighlightLanguage[] {
 		NgxMaterialTimepickerModule,
 		DateValueAccessorModule,
 		NgxMaskModule.forRoot(),
+		BsDatepickerModule.forRoot(),
 		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forRoot(FakeApiService, {
 			passThruUnknownUrl: true,
 			dataEncapsulation: false

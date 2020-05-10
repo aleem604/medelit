@@ -5,9 +5,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-// Fake API Angular-in-memory
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-// Translate Module
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { NgxMaskModule } from 'ngx-mask';
@@ -154,10 +153,8 @@ const routes: Routes = [
 		NgxMatSelectSearchModule,
 		NgxSpinnerModule,
 		NgxMaskModule.forRoot(),
-		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
-			passThruUnknownUrl: true,
-        	dataEncapsulation: false
-		}) : [],
+		BsDatepickerModule,
+
 		StoreModule.forFeature('professionals', professionalsReducer),
 		EffectsModule.forFeature([ProfessionalEffects]),
 	],

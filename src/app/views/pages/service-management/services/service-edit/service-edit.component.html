@@ -165,16 +165,23 @@
 											<mat-form-field class="example-chip-list">
 												<mat-chip-list #chipList aria-label="Tag selection">
 													<mat-chip *ngFor="let tag of tagsArray" [selectable]="selectable"
-														[removable]="removable" (removed)="remove(tag)">
+															  [removable]="removable" (removed)="remove(tag)">
 														{{tag}}
 														<mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
 													</mat-chip>
-													<input placeholder="Insert tags" [formControlName]="'tags'"
-														[matChipInputFor]="chipList"
-														[matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-														[matChipInputAddOnBlur]="addOnBlur"
-														(matChipInputTokenEnd)="add($event)">
+													<input placeholder="Insert tags"
+														   [formControlName]="'tags'"
+														   [matAutocomplete]="auto"
+														   [matChipInputFor]="chipList"
+														   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+														   [matChipInputAddOnBlur]="addOnBlur"
+														   (matChipInputTokenEnd)="add($event)">
 												</mat-chip-list>
+												<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+													<mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+														{{tag}}
+													</mat-option>
+												</mat-autocomplete>
 												<mat-hint align="start">
 													Create <strong>Tags </strong> by hitting enter or separated by comma
 												</mat-hint>

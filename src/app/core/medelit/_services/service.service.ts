@@ -9,8 +9,8 @@ import { HttpUtilsService, QueryParamsModel, QueryResultsModel } from '../../_ba
 import { ServiceModel } from '..';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../_models/apireponse.model';
-import { FeeDialogModel, ProfessionalConnectedServicesModel } from '../_models/fee.model';
-import { ServiceConnectedPtFeeDialogModel, ServiceConnectedPtFeeModel, AttachProfessionalToServiceDialogModel, ServiceConnectedProFeeDialogModel, ServiceConnectedProFeeModel } from '../_models/service.model';
+import { FeeDialogModel } from '../_models/fee.model';
+import { map } from 'rxjs/operators';
 
 
 const API_SERVICES_URL = `${environment.apiEndpoint}/services`;
@@ -33,6 +33,10 @@ export class ServicesService {
 
 	getServiceById(serviceId: number): Observable<ServiceModel> {
 		return this.http.get<ServiceModel>(API_SERVICES_URL + `/${serviceId}`);
+	}
+
+	getServiceTags(): Observable<string[]> {
+		return this.http.get<ApiResponse>(API_SERVICES_URL + `/tags`).pipe(map(m =>m.data as string[]));
 	}
 
 	findServices(queryParams: QueryParamsModel): Observable<QueryResultsModel> {

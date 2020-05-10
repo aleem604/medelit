@@ -1,11 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { MatDialog, MatSelect, MatTabChangeEvent } from '@angular/material';
+import { MatDialog, MatTabChangeEvent } from '@angular/material';
 import { Observable, BehaviorSubject, Subscription, of, Subject, ReplaySubject } from 'rxjs';
-import { map, startWith, delay, first, takeUntil } from 'rxjs/operators';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash';
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
 import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
 import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
@@ -22,9 +22,9 @@ import {
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmDialogComponent } from '../../../../partials/confirm-dialog/confirm-dialog.component';
-import { urlReg } from '../../../../../core/medelit/_consts/specification.dictionary';
 import { AttachServiceToProDialogComponent } from '../attach-service-to-pro-dialog/attach-service-to-pro.dialog.component';
 import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
+import { MedelitBaseComponent } from '../../../../../core/_base/components/medelit-base.component';
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -33,7 +33,7 @@ import { MedelitConstants } from '../../../../../core/_base/constants/medelit-co
 	styleUrls: ['./professional-edit.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProfessionalEditComponent implements OnInit, OnDestroy {
+export class ProfessionalEditComponent extends MedelitBaseComponent implements OnInit, OnDestroy {
 	proId: number;
 	visible = true;
 	selectable = true;
@@ -84,7 +84,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 	documentListSentOptionsForFilter: FilterModel[];
 	contractStatusOptionsForFilter: FilterModel[];
 
-	proTaxCodesForFilter: FilterModel[] = [];
+	protaxCodesForFilter: FilterModel[] = [];
 
 	languagesForFilter: FilterModel[] = [];
 	filteredLanguages: ReplaySubject<FilterModel[]> = new ReplaySubject<FilterModel[]>(1);
@@ -119,6 +119,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		private staticService: StaticDataService,
 		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
+		super();
 	}
 
 	ngOnInit() {
@@ -213,7 +214,7 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			name: [this.professional.name, [Validators.required]],
 			email: [this.professional.email, [Validators.required, Validators.email]],
 			email2: [this.professional.email2, [Validators.email]],
-			dateOfBirth: [this.professional.dateOfBirth, [Validators.required]],
+			dateOfBirth: [this.formatDate(this.professional.dateOfBirth), [Validators.required]],
 			mobilePhone: [this.professional.mobilePhone, [Validators.required, Validators.pattern(MedelitConstants.mobnumPattern)]],
 			telephone: [this.professional.telephone, [Validators.required, Validators.pattern(MedelitConstants.mobnumPattern)]],
 			homePhone: [this.professional.homePhone, [Validators.pattern(MedelitConstants.mobnumPattern)]],
@@ -259,11 +260,11 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			// hr information
 			// : contract information
 			activeCollaborationId: [this.professional.activeCollaborationId, Validators.required],
-			contractDate: [this.professional.contractDate],
-			contractEndDate: [this.professional.contractEndDate],
+			contractDate: [this.formatDate(this.professional.contractDate)],
+			contractEndDate: [this.formatDate(this.professional.contractEndDate)],
 			clinicAgreement: [this.professional.clinicAgreement.toString(), Validators.required],
-			firstContactDate: [this.professional.firstContactDate, Validators.required],
-			lastContactDate: [this.professional.lastContactDate],
+			firstContactDate: [this.formatDate(this.professional.firstContactDate), Validators.required],
+			lastContactDate: [this.formatDate(this.professional.lastContactDate)],
 
 			// Application
 			applicationMethodId: [this.professional.applicationMethodId, Validators.required],
@@ -272,11 +273,11 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 
 			// HR Status
 			workPlace: [this.professional.workPlace],
-			insuranceExpiryDate: [this.professional.insuranceExpiryDate],
+			insuranceExpiryDate: [this.formatDate(this.professional.insuranceExpiryDate)],
 			contractStatusId: [this.professional.contractStatusId],
 			documentListSentId: [this.professional.documentListSentId, Validators.required],
 			calendarActivation: [this.professional.calendarActivation.toString(), Validators.required],
-			proTaxCodeId: [this.professional.proTaxCodeId]
+			protaxCodeId: [this.professional.protaxCodeId]
 		});
 	}
 
@@ -342,11 +343,11 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 			}
 
 			// pro tax codes for filter
-			this.proTaxCodesForFilter = data.map((el) => { return { id: el.id, value: el.proTaxCodes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
-			if (this.professional.proTaxCodeId) {
-				var obj = data.find((e) => { return e.id == this.professional.proTaxCodeId });
+			this.protaxCodesForFilter = data.map((el) => { return { id: el.id, value: el.proTaxCodes }; }).filter((e) => { if (e.value && e.value.length > 0) return e; });
+			if (this.professional.protaxCodeId) {
+				var obj = data.find((e) => { return e.id == this.professional.protaxCodeId });
 				if (obj)
-					this.professionalForm.get('proTaxCodeId').setValue(obj.id);
+					this.professionalForm.get('protaxCodeId').setValue(obj.id);
 			}
 
 		}).catch(() => {
@@ -424,7 +425,8 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		_professional.email = controls.email.value;
 		_professional.email2 = controls.email2.value;
 
-		_professional.dateOfBirth = controls.dateOfBirth.value;
+		_professional.dateOfBirth = this.toDateFormat(controls.dateOfBirth.value);
+
 		_professional.mobilePhone = controls.mobilePhone.value;
 		_professional.telephone = controls.telephone.value;
 		_professional.homePhone = controls.homePhone.value;
@@ -457,20 +459,25 @@ export class ProfessionalEditComponent implements OnInit, OnDestroy {
 		_professional.sortCode = controls.sortCode.value;
 		_professional.accountingCodeId = controls.accountingCodeId.value;
 		_professional.activeCollaborationId = controls.activeCollaborationId.value;
-		_professional.contractDate = controls.contractDate.value;
-		_professional.contractEndDate = controls.contractEndDate.value;
+
 		_professional.clinicAgreement = +controls.clinicAgreement.value;
-		_professional.firstContactDate = controls.firstContactDate.value;
-		_professional.lastContactDate = controls.lastContactDate.value;
+
+		_professional.contractDate = this.toDateFormat(controls.contractDate.value);
+		_professional.contractEndDate = this.toDateFormat(controls.contractEndDate.value);
+		_professional.firstContactDate = this.toDateFormat(controls.firstContactDate.value);
+		_professional.lastContactDate = this.toDateFormat(controls.lastContactDate.value);
+
 		_professional.applicationMethodId = +controls.applicationMethodId.value;
 		_professional.applicationMeansId = +controls.applicationMeansId.value;
 		_professional.colleagueReferring = controls.colleagueReferring.value;
 		_professional.workPlace = controls.workPlace.value;
-		_professional.insuranceExpiryDate = controls.insuranceExpiryDate.value;
+
+		_professional.insuranceExpiryDate = this.toDateFormat(controls.insuranceExpiryDate.value);
+
 		_professional.contractStatusId = +controls.contractStatusId.value;
 		_professional.documentListSentId = controls.documentListSentId.value;
 		_professional.calendarActivation = +controls.calendarActivation.value;
-		_professional.proTaxCodeId = controls.proTaxCodeId.value;
+		_professional.protaxCodeId = controls.protaxCodeId.value;
 
 		return _professional;
 	}

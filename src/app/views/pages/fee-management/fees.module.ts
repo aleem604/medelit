@@ -4,33 +4,24 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-// Fake API Angular-in-memory
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-// Translate Module
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TranslateModule } from '@ngx-translate/core';
-// NGRX
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-// UI
 import { PartialsModule } from '../../partials/partials.module';
-// Core
 import { FakeApiService } from '../../../core/_base/layout';
-// Auth
 import { ModuleGuard } from '../../../core/auth';
-// Core => Services
 import {
     feesReducer,
     FeeEffects,
     StaticDataService,
     FeesService
 } from '../../../core/medelit';
-// Core => Utils
 import { HttpUtilsService,
 	TypesUtilsService,
 	InterceptService,
 	LayoutUtilsService
 } from '../../../core/_base/crud';
-// Shared
 import {
 	ActionNotificationComponent,
 	DeleteEntityDialogComponent,
@@ -38,8 +29,6 @@ import {
 	UpdateStatusDialogComponent
 } from '../../partials/content/crud';
 
-
-// Material
 import {
 	MatInputModule,
 	MatPaginatorModule,
@@ -141,10 +130,8 @@ const routes: Routes = [
 		NgbProgressbarModule,
 		MatChipsModule,
 		NgxMaskModule.forRoot(),
-		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
-			passThruUnknownUrl: true,
-        	dataEncapsulation: false
-		}) : [],
+		BsDatepickerModule,
+
 		StoreModule.forFeature('fees', feesReducer),
 		EffectsModule.forFeature([FeeEffects]),
 	],

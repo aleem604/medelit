@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-// Fake API Angular-in-memory
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+
 // Translate Module
 import { TranslateModule } from '@ngx-translate/core';
 // NGRX
@@ -133,10 +133,8 @@ const routes: Routes = [
 		MatTooltipModule,
 		NgbProgressbarModule,
 		NgxMaskModule.forRoot(),
-		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forFeature(FakeApiService, {
-			passThruUnknownUrl: true,
-        	dataEncapsulation: false
-		}) : [],
+		BsDatepickerModule,
+
 		StoreModule.forFeature('invoiceEntities', invoiceEntitiesReducer),
 		EffectsModule.forFeature([InvoiceEntityEffects]),		
 	],

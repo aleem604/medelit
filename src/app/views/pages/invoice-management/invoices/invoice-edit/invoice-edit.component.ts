@@ -24,6 +24,7 @@ import {
 	ApiResponse
 } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { MedelitBaseComponent } from '../../../../../core/_base/components/medelit-base.component';
 
 
 @Component({
@@ -33,7 +34,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 	styleUrls: ['./invoice-edit.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InvoiceEditComponent implements OnInit, OnDestroy {
+export class InvoiceEditComponent extends MedelitBaseComponent implements OnInit, OnDestroy {
 	// Public properties
 	invoice: InvoiceModel;
 	invoiceId$: Observable<number>;
@@ -97,6 +98,7 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		private staticService: StaticDataService,
 		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
+		super();
 	}
 
 	ngOnInit() {
@@ -194,9 +196,9 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			invoiceEntityId: [this.invoice.invoiceEntityId],
 			patientDateOfBirth: [this.invoice.patientDateOfBirth],
 			statusId: [this.invoice.statusId, [Validators.required]],
-			dueDate: [this.invoice.dueDate, [Validators.required]],
-			invoiceDate: [this.invoice.invoiceDate, [Validators.required]],
-			invoiceDeliveryDate: [this.invoice.invoiceDeliveryDate, [Validators.required]],
+			dueDate: [this.formatDate(this.invoice.dueDate), [Validators.required]],
+			invoiceDate: [this.formatDate(this.invoice.invoiceDate), [Validators.required]],
+			invoiceDeliveryDate: [this.formatDate(this.invoice.invoiceDeliveryDate), [Validators.required]],
 			invoiceSentByEmailId: [this.invoice.invoiceSentByEmailId.toString(), [Validators.required]],
 			invoiceSentByMailId: [this.invoice.invoiceSentByMailId.toString(), [Validators.required]],
 			// Billing Address
@@ -212,8 +214,8 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			mailingCountryId: [this.invoice.mailingCountryId, [Validators.required]],
 
 			// payment and invoicing
-			paymentArrivalDate: [this.invoice.paymentArrivalDate, [Validators.required]],
-			paymentDueDate: [this.invoice.paymentDueDate, [Validators.required]],
+			paymentArrivalDate: [this.formatDate(this.invoice.paymentArrivalDate), [Validators.required]],
+			paymentDueDate: [this.formatDate(this.invoice.paymentDueDate), [Validators.required]],
 			//discount: [this.invoice.discount],
 			paymentMethodId: [this.invoice.paymentMethodId, [Validators.required]],
 			insuranceCoverId: [this.invoice.insuranceCoverId],
@@ -333,13 +335,13 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 		_invoice.invoiceNumber = controls.invoiceNumber.value;
 		if (controls.customerId.value)
 			_invoice.customerId = +controls.customerId.value.id;
-		_invoice.patientDateOfBirth = controls.patientDateOfBirth.value;
+		_invoice.patientDateOfBirth = this.toDateFormat(controls.patientDateOfBirth.value);
 		if (controls.invoiceEntityId.value)
 			_invoice.invoiceEntityId = +controls.invoiceEntityId.value.id;
 		_invoice.statusId = controls.statusId.value;
-		_invoice.dueDate = controls.dueDate.value;
-		_invoice.invoiceDate = controls.invoiceDate.value;
-		_invoice.invoiceDeliveryDate = controls.invoiceDeliveryDate.value;
+		_invoice.dueDate = this.toDateFormat(controls.dueDate.value);
+		_invoice.invoiceDate = this.toDateFormat(controls.invoiceDate.value);
+		_invoice.invoiceDeliveryDate = this.toDateFormat(controls.invoiceDeliveryDate.value);
 		_invoice.invoiceSentByEmailId = +controls.invoiceSentByEmailId.value;
 		_invoice.invoiceSentByMailId = +controls.invoiceSentByMailId.value;
 		// billing address
@@ -356,8 +358,8 @@ export class InvoiceEditComponent implements OnInit, OnDestroy {
 			_invoice.mailingCountryId = controls.mailingCountryId.value.id;
 
 		//payment and invoicing
-		_invoice.paymentArrivalDate = controls.paymentArrivalDate.value;
-		_invoice.paymentDueDate = controls.paymentDueDate.value;
+		_invoice.paymentArrivalDate = this.toDateFormat(controls.paymentArrivalDate.value);
+		_invoice.paymentDueDate = this.toDateFormat(controls.paymentDueDate.value);
 		//_invoice.discount = controls.discount.value;
 		_invoice.paymentMethodId = controls.paymentMethodId.value;
 		_invoice.insuranceCoverId = controls.insuranceCoverId.value;

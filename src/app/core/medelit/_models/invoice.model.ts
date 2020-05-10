@@ -9,16 +9,16 @@ export class InvoiceModel extends BaseModel {
 	customerId?: number;
 	customer: string;
 	invoiceNumber: string;
-	dueDate: Date;
-	invoiceDate: Date;
+	dueDate: string;
+	invoiceDate: string;
 
 	statusId?: number;
-	paymentDueDate?: Date;
-	invoiceDeliveryDate: Date;
+	paymentDueDate?: string;
+	invoiceDeliveryDate: string;
 	invoiceSentByEmailId?: number = 0;
 	invoiceSentByMailId?: number = 0;
 	paymentMethodId: number;
-	patientDateOfBirth?: Date;
+	patientDateOfBirth?: string;
 	ieBillingAddress: string;
 	mailingAddress: string;
 	ieBillingPostCode: string;
@@ -30,12 +30,12 @@ export class InvoiceModel extends BaseModel {
 	invoiceNotes: string;
 	insuranceCoverId?: number;
 	invoiceDiagnosis: string;
-	dateOfVisit?: Date;
+	dateOfVisit?: string;
 	termsAndConditions: string;
 	invoiceDescription: string;
 	itemNameOnInvoice: string;
-	paymentArrivalDate?: Date;
-	proInvoiceDate?: Date;
+	paymentArrivalDate?: string;
+	proInvoiceDate?: string;
 
 	subTotal?: number;
 	discount?: number;

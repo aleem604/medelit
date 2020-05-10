@@ -29,7 +29,7 @@ export class ProfessionalModel extends BaseModel {
 	clinicPostCode: string;
 	clinicCity:string = 'London';
 	clinicPhoneNumber: string;
-	dateOfBirth: Date;
+	dateOfBirth: string;
 	companyName: string;
 	companyNumber: string;
 	invoicingNotes: string;
@@ -38,23 +38,23 @@ export class ProfessionalModel extends BaseModel {
 	accountName: string;
 	accountNumber: string;
 	sortCode: string;
-	contractDate?: Date;
-	contractEndDate?: Date;
+	contractDate: string;
+	contractEndDate: string;
 	workPlace: string;
 	colleagueReferring: string;
-	insuranceExpiryDate: Date;
+	insuranceExpiryDate: string;
 	activeCollaborationId: number;
 	clinicAgreement: number;
 	applicationMethodId: number;
 	applicationMeansId: number;
-	firstContactDate: Date;
-	lastContactDate?: Date;
+	firstContactDate: string;
+	lastContactDate: string;
 	contractStatusId: number;
 	contractStatus: string;
 	documentListSentId: number;
 	calendarActivation: number;
 	proOnlineCV: string;
-	proTaxCodeId: number;
+	protaxCodeId: number;
 
 	status: eRecordStatus;
 	createDate: Date;

@@ -10,6 +10,7 @@ import { ProfessionalModel } from '..';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../_models/apireponse.model';
 import { FeeDialogModel, ProfessionalConnectedServicesModel } from '../_models/fee.model';
+import { map } from 'rxjs/operators';
 
 
 const API_PROFESSIONALS_URL = `${environment.apiEndpoint}/professionals`;

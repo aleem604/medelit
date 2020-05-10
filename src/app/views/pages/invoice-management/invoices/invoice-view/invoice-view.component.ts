@@ -145,7 +145,8 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 				pdf.save(fileName);
 				window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
 			});
-		} catch{
+		}
+		catch{
 		}
 		finally {
 			this.spinner.hide();
@@ -169,8 +170,7 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 		});
 	}
 
-
-	dowonloadPdf1() {
+	createPdf() {
 		const fileName = `${this.invoice.invoiceNumber}.pdf`;
 		var pdf = new jspdf('p', 'pt', 'a4');
 		const source = document.getElementById('container');
@@ -200,10 +200,6 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 				window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
 			}, margins);
 	}
-
-
-
-
 
 	getMilliSeconds(date: string): any {
 		try {

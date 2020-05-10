@@ -32,6 +32,7 @@ import { BookingCloneDialog } from '../booking-clone-dialog/booking-clone-dialog
 import { BookingCycleDialog } from '../booking-cycle-dialog/booking-cycle-dialog';
 import { AlertDialogComponent } from '../../../../partials/alert-dialog/alert-dialog.component';
 import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
+import { MedelitBaseComponent } from '../../../../../core/_base/components/medelit-base.component';
 
 @Component({
 	selector: 'kt-booking-edit',
@@ -39,7 +40,7 @@ import { MedelitConstants } from '../../../../../core/_base/constants/medelit-co
 	styleUrls: ['./booking-edit.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BookingEditComponent implements OnInit, OnDestroy {
+export class BookingEditComponent extends MedelitBaseComponent implements OnInit, OnDestroy {
 	// Public properties
 	booking: BookingModel;
 	bookingId$: Observable<number>;
@@ -114,17 +115,16 @@ export class BookingEditComponent implements OnInit, OnDestroy {
 		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
-		private typesUtilsService: TypesUtilsService,
 		private bookingFB: FormBuilder,
 		public dialog: MatDialog,
 		private subheaderService: SubheaderService,
 		private layoutUtilsService: LayoutUtilsService,
-		private layoutConfigService: LayoutConfigService,
 		private bookingService: BookingService,
 		private staticService: StaticDataService,
 		private invoiceService: InvoicesService,
 		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
+		super();
 	}
 
 	ngOnInit() {

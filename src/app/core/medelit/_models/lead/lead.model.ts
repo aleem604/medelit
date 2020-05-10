@@ -43,7 +43,7 @@ export class LeadModel extends BaseModel {
 	leadCategoryId?: number;
 	leadCategory: string;
 	contactMethodId?: number;
-	dateOfBirth?: Date;
+	dateOfBirth?: string;
 	countryOfBirthId?: number;
 	countryOfBirth: string;
 	preferredPaymentMethodId?: number;
@@ -109,12 +109,12 @@ export class LeadServicesModel {
 	professionalSearchCtrl: FilterModel;
 	isPtFeeA1: number = 1;
 	ptFeeId: number;
-	ptFeeA1: number;
-	ptFeeA2: number;
+	ptFeeA1: string;
+	ptFeeA2: string;
 	
 	proFeeId: number;
 	isProFeeA1: number = 1;
-	proFeeA1: number;
-	proFeeA2: number;
+	proFeeA1: string;
+	proFeeA2: string;
 
 }
