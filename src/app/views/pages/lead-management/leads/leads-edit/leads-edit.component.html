@@ -360,7 +360,14 @@
 
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Country of birth" aria-label="Number" matInput #countryOfBirthId [matAutocomplete]="countryOfBirthAuto" [formControlName]="'countryOfBirthId'" (focusout)="controlFocusout('countryOfBirthId')">
+									<input type="text"
+										   placeholder="Country of birth"
+										   aria-label="Number"
+										   matInput
+										   #countryOfBirthId
+										   [matAutocomplete]="countryOfBirthAuto"
+										   [formControlName]="'countryOfBirthId'"
+										   (focusout)="controlFocusout('countryOfBirthId')">
 									<button mat-button *ngIf="countryOfBirthId.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('countryOfBirthId').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>

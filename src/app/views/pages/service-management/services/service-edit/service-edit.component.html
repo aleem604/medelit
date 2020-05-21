@@ -170,6 +170,7 @@
 														<mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
 													</mat-chip>
 													<input placeholder="Insert tags"
+														   #serviceTagsInput
 														   [formControlName]="'tags'"
 														   [matAutocomplete]="auto"
 														   [matChipInputFor]="chipList"

@@ -37,6 +37,7 @@
 				"src/assets/plugins/line-awesome/css/line-awesome.css",
 				"src/assets/plugins/flaticon/flaticon.css",
 				"src/assets/plugins/flaticon2/flaticon.css",
+				"node_modules/ngx-toastr/toastr.css",
 				"src/assets/sass/style.angular.scss"
 			],
 			"scripts": [

@@ -11,6 +11,7 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { DateValueAccessorModule } from 'angular-date-value-accessor';
 import { NgxMaskModule } from 'ngx-mask'
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ToastrModule } from 'ngx-toastr';
 
 // Angular in memory
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
@@ -114,6 +115,7 @@ export function hljsLanguages(): HighlightLanguage[] {
 			dataEncapsulation: false
 		}) : [],
 		NgxPermissionsModule.forRoot(),
+		ToastrModule.forRoot(),
 		PartialsModule,
 		CoreModule,
 		OverlayModule,

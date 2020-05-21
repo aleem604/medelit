@@ -31,6 +31,7 @@ import {
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Update } from '@ngrx/entity';
+import { ToastrService } from 'ngx-toastr';
 
 export interface Fruit {
 	name: string;
@@ -85,6 +86,8 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 	tagsArray: string[];
 
+	@ViewChild('serviceTagsInput', { static: false }) serviceTagsInput;
+
 	constructor(
 		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
@@ -94,7 +97,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		public dialog: MatDialog,
 		private subheaderService: SubheaderService,
 		private layoutUtilsService: LayoutUtilsService,
-		private layoutConfigService: LayoutConfigService,
+		private toaster: ToastrService,
 		private serviceService: ServicesService,
 		private staticService: StaticDataService,
 		private spinner: NgxSpinnerService,
@@ -529,8 +532,13 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 	selected(event: MatAutocompleteSelectedEvent): void {
 		const val = event.option.value;
+		if (this.tagsArray.length < 5) {
 		if (this.tagsArray.indexOf(val) === -1)
 			this.tagsArray.push(event.option.value);
+			this.serviceTagsInput.nativeElement.value = '';
+		} else {
+			this.toaster.warning(`Can't add more than 5 tags`);
+		}
 	}
 
 

@@ -42,10 +42,7 @@ export class InvoiceModel extends BaseModel {
 	totalInvoice?: number;
 	isProforma: boolean;
 
-
-
 	invoiceBookingView: InvoiceBookings[];
-
 	assignedToId?: number;
 	status: eRecordStatus;
 	createDate: Date;

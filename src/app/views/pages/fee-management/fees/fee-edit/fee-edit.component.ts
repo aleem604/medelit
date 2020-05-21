@@ -2,17 +2,17 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRe
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDialog, MatChipInputEvent, MatSelect, MatTabChangeEvent, MatAutocompleteSelectedEvent } from '@angular/material';
-import { Observable, BehaviorSubject, Subscription, of, ReplaySubject, Subject } from 'rxjs';
+import { Observable, BehaviorSubject, Subscription, of, Subject } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
-import { FeeModel, FilterModel, selectFeeById, FeesService, StaticDataService, ApiResponse } from '../../../../../core/medelit';
+import { FeeModel, selectFeeById, FeesService, ApiResponse } from '../../../../../core/medelit';
 import { TypesUtilsService, LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
 import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as _ from 'lodash';
 import { startWith, map } from 'rxjs/operators';
-import { DecimalPipe } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 
 export interface Fruit {
 	name: string;
@@ -55,19 +55,20 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 	tagsForFilter: string[] = [];
 	filteredTags: Observable<string[]>;
 
+	@ViewChild('tagsInput', { static: false }) tagsInput;
+
 	constructor(
 		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
-		private typesUtilsFee: TypesUtilsService,
 		private feeFB: FormBuilder,
 		public dialog: MatDialog,
 		private subheaderFee: SubheaderService,
 		private layoutUtilsFee: LayoutUtilsService,
-		private layoutConfigFee: LayoutConfigService,
 		private feeService: FeesService,
-		private staticFee: StaticDataService,
+		private toaster: ToastrService,
 		private spinner: NgxSpinnerService,
+	
 		private cdr: ChangeDetectorRef) {
 	}
 
@@ -312,7 +313,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		this.hasFormErrors = false;
 	}
 
-/*fitlers aread*/
+	/*fitlers aread*/
 	loadTagsForFilter() {
 
 		this.feeService.getFeeTags().subscribe(res => {
@@ -342,9 +343,9 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		const value = event.value;
 
 		// Add our fruit
-		if (this.tagsArray.length < 5 && (value || '').trim()) {
-			this.tagsArray.push(value.trim());
-		}
+		//if (this.tagsArray.length < 5 && (value || '').trim()) {
+		//	this.tagsArray.push(value.trim());
+		//}
 
 		// Reset the input value
 		if (input) {
@@ -362,8 +363,13 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 
 	selected(event: MatAutocompleteSelectedEvent): void {
 		const val = event.option.value;
-		if (this.tagsArray.indexOf(val) === -1)
-			this.tagsArray.push(event.option.value);
+		if (this.tagsArray.length < 5) {
+			if (this.tagsArray.indexOf(val) === -1)
+				this.tagsArray.push(event.option.value);
+			this.tagsInput.nativeElement.value = '';
+		} else {
+			this.toaster.warning(`Can't add more than 5 tags`);
+		}
 	}
 
 	tabChanged(event: MatTabChangeEvent) {

@@ -11,9 +11,9 @@ import { map, startWith } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
 // Layout
-import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
+import { SubheaderService } from '../../../../../core/_base/layout';
 // CRUD
-import { LayoutUtilsService, TypesUtilsService, MessageType } from '../../../../../core/_base/crud';
+import { LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Services and Models
 import {
 	BookingModel,

@@ -252,7 +252,8 @@
 												<input matInput
 													   #invoiceDeliveryDate placeholder="Delivery date"
 													   [formControlName]="'invoiceDeliveryDate'"
-													   bsDatepicker [bsConfig]="datePickerConfig"
+													   bsDatepicker
+													   [bsConfig]="datePickerConfig"
 													   [dateCustomClasses]="dateCustomClasses">
 												<button mat-button *ngIf="invoiceDeliveryDate.value" matSuffix
 														mat-icon-button aria-label="Clear"

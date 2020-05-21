@@ -39,7 +39,7 @@ import { FormControl } from '@angular/forms';
 export class InvoicesListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: InvoiceDataSource;
-	displayedColumns = ['select', 'createDate', 'subject', 'invoiceNumber', 'customer', 'invoiceStatus', 'dueDate', 'amount', 'actions'];
+	displayedColumns = ['select', 'createDate', 'invoiceNumber', 'customer', 'invoiceEntity', 'invoiceStatus', 'dueDate', 'amount', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields

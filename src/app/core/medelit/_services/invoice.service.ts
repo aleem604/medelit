@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { HttpUtilsService, QueryParamsModel, QueryResultsModel } from '../../_base/crud';
 // Models
 import { InvoiceModel } from '..';
-import { environment } from '../../../../environments/environment.prod';
+import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../_models/apireponse.model';
 import { FilterModel } from '../_models/filter.model';
 

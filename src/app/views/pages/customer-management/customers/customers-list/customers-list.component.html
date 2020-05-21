@@ -91,22 +91,22 @@
 				</ng-container>
 
 				<ng-container matColumnDef="age">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Age</mat-header-cell>
-					<mat-cell *matCellDef="let customer">{{customer.age}}</mat-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="m-auto">Age</mat-header-cell>
+					<mat-cell *matCellDef="let customer" class="m-auto"><span class="px-3">{{customer.age}}</span></mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="phone">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Phone</mat-header-cell>
-					<mat-cell *matCellDef="let customer">{{customer.mainPhone}}</mat-cell>
+					<mat-cell *matCellDef="let customer"><span class="px-2">{{customer.mainPhone}}</span></mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="email">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
-					<mat-cell *matCellDef="let customer">{{customer.email}}</mat-cell>
+					<mat-cell *matCellDef="let customer"><span class="px-2">{{customer.email}}</span></mat-cell>
 				</ng-container>
 				<ng-container matColumnDef="address">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Address</mat-header-cell>
-					<mat-cell *matCellDef="let customer">{{customer.address}}</mat-cell>
+					<mat-cell *matCellDef="let customer"><span class="px-2">{{customer.address}}</span></mat-cell>
 				</ng-container>
 				
 				<ng-container matColumnDef="actions">

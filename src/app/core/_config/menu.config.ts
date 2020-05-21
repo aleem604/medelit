@@ -672,7 +672,7 @@ export class MenuConfig {
 				{
 					title: 'Leads',
 					bullet: 'dot',
-					icon: 'flaticon2-list-2',
+					icon: 'flaticon-bell-1',
 					root: true,
 					permission: 'leadManagementModule',
 					submenu: [
@@ -689,7 +689,7 @@ export class MenuConfig {
 				{
 					title: 'Customers',
 					bullet: 'dot',
-					icon: 'flaticon2-list-2',
+					icon: 'flaticon2-user',
 					root: true,
 					permission: 'customerManagementModule',
 					submenu: [
@@ -707,7 +707,7 @@ export class MenuConfig {
 				{
 					title: 'Invoicing Entities',
 					bullet: 'dot',
-					icon: 'flaticon2-list-2',
+					icon: 'flaticon2-avatar fa fa-user-secret',
 					root: true,
 					permission: 'invoiceEntityManagementModule',
 					submenu: [
