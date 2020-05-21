@@ -194,7 +194,7 @@ export class InvoiceEditComponent extends MedelitBaseComponent implements OnInit
 			customerId: [this.invoice.customerId, [Validators.required]],
 			subject: [this.invoice.subject, [Validators.required]],
 			invoiceEntityId: [this.invoice.invoiceEntityId],
-			patientDateOfBirth: [this.invoice.patientDateOfBirth],
+			patientDateOfBirth: [this.formatDate(this.invoice.patientDateOfBirth)],
 			statusId: [this.invoice.statusId, [Validators.required]],
 			dueDate: [this.formatDate(this.invoice.dueDate), [Validators.required]],
 			invoiceDate: [this.formatDate(this.invoice.invoiceDate), [Validators.required]],
@@ -214,7 +214,7 @@ export class InvoiceEditComponent extends MedelitBaseComponent implements OnInit
 			mailingCountryId: [this.invoice.mailingCountryId, [Validators.required]],
 
 			// payment and invoicing
-			paymentArrivalDate: [this.formatDate(this.invoice.paymentArrivalDate), [Validators.required]],
+			paymentArrivalDate: [this.formatDate(this.invoice.paymentArrivalDate), []],
 			paymentDueDate: [this.formatDate(this.invoice.paymentDueDate), [Validators.required]],
 			//discount: [this.invoice.discount],
 			paymentMethodId: [this.invoice.paymentMethodId, [Validators.required]],

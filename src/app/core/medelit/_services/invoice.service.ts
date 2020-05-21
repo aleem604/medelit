@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { HttpUtilsService, QueryParamsModel, QueryResultsModel } from '../../_base/crud';
 // Models
 import { InvoiceModel } from '..';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment.prod';
 import { ApiResponse } from '../_models/apireponse.model';
 import { FilterModel } from '../_models/filter.model';
 
@@ -148,5 +148,8 @@ export class InvoicesService {
 		return this.http.post<ApiResponse>(url, data, { headers: httpHeaders });
 	}
 
+	downloadpdf(invoiceId: number): Observable<any> {
+		return this.http.get<any>(`${environment.apiEndpoint}/pdf/generate-pdf/${invoiceId}`);
+	}
 
 }

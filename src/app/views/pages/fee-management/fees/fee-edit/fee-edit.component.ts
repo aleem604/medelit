@@ -12,6 +12,7 @@ import { SubheaderService, LayoutConfigService } from '../../../../../core/_base
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as _ from 'lodash';
 import { startWith, map } from 'rxjs/operators';
+import { DecimalPipe } from '@angular/common';
 
 export interface Fruit {
 	name: string;

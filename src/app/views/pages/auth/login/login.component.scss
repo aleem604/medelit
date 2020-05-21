@@ -1,0 +1,18 @@
+.btn-danger {
+	background-color: #606060;
+	border: none;
+
+	&:hover, &:active, &:focus {
+		background-color: #606060;
+	}
+}
+
+.btn.btn-danger.btn-elevate {
+	box-shadow: 0px 4px 16px 0px rgba(103, 101, 101, 0.15)
+}
+
+.btn-danger:not(:disabled):not(.disabled):active, .btn-danger:not(:disabled):not(.disabled).active, .show > .btn-danger.dropdown-toggle {
+	color: #fff;
+	background-color: #606060;
+	border-color: #606060;
+}

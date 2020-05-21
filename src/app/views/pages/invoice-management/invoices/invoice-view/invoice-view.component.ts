@@ -1,11 +1,8 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../../../../core/reducers';
-import { SubheaderService, LayoutConfigService } from '../../../../../core/_base/layout';
-import { LayoutUtilsService, TypesUtilsService } from '../../../../../core/_base/crud';
+import { BehaviorSubject, Subscription, of } from 'rxjs';
+import { SubheaderService } from '../../../../../core/_base/layout';
 import {
 	InvoicesService,
 	InvoiceView
@@ -14,6 +11,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import * as jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
 import * as $ from 'jquery';
+import * as html2pdf from 'html2pdf.js';
 
 
 @Component({
@@ -31,6 +29,7 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	private componentSubscriptions: Subscription;
 	private headerMargin: number;
+	emptyArray: number[] = [];
 
 	constructor(
 		private activatedRoute: ActivatedRoute,
@@ -62,6 +61,8 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 		this.spinner.show();
 		this.invoiceService.getInvoiceView(invoiceId).toPromise().then(res => {
 			this.invoice = res.data;
+			if(this.invoice.bookings)
+			this.createEmptyArray(this.invoice.bookings.length);
 			this.cdr.markForCheck();
 		})
 			.catch(() => {
@@ -72,6 +73,15 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 				this.initInvoice();
 			});
 	}
+
+	createEmptyArray(length:number) {
+		const num = 10 - length;
+		for (var i = 0; i < num; i++) {
+			this.emptyArray.push(i);
+			this.cdr.markForCheck();
+		}
+	}
+
 
 	ngOnDestroy() {
 		if (this.componentSubscriptions) {
@@ -133,73 +143,96 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 	}
 
 	dowonloadPdf() {
-		try {
-			window.scroll(0, 0);
-			const fileName = `${this.invoice.invoiceNumber}.pdf`;
-			this.spinner.show();
-			let data = document.getElementById('container');
-			html2canvas(data).then(canvas => {
-				const contentDataURL = canvas.toDataURL('image/jpeg', 1.0);
-				let pdf = new jspdf('p', 'cm', 'a4');
-				pdf.addImage(contentDataURL, 'jpeg', 0, 1, 20.7, 17.0);
-				pdf.save(fileName);
-				window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
-			});
-		}
-		catch{
-		}
-		finally {
-			this.spinner.hide();
-		}
-	}
-
-	generatePdf() {
-		const elem = document.getElementById('container');
-		const fileName = `${this.invoice.invoiceNumber}.pdf`;
-
-		var divHeight = $(elem).height();
-		var divWidth = $(elem).width();
-		var ratio = divHeight / divWidth;
-		let data = document.getElementById('container');
-		html2canvas(data).then(canvas => {
-			var imgData = canvas.toDataURL('image/jpeg', 1.0);
-			let pdf = new jspdf("l", "mm", "a4");
-			pdf.addImage(imgData, 'JPEG', 10, 10, 170, 150);
-			pdf.save(fileName);
-			window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
+		this.invoiceService.downloadpdf(1).subscribe((res) => {
+			console.log(res);
 		});
+
+
+
+		//try {
+		//	window.scroll(0, 0);
+		//	const fileName = `${this.invoice.invoiceNumber}.pdf`;
+		//	this.spinner.show();
+		//	let data = document.getElementById('container');
+		//	html2canvas(data, {scale: 10}).then(canvas => {
+		//		const contentDataURL = canvas.toDataURL('image/jpeg', 1.0);
+		//		let pdf = new jspdf('p', 'cm', 'a4');
+		//		pdf.addImage(contentDataURL, 'jpeg', 1.3, 1, 17.7, 17.0);
+		//		pdf.save(fileName);
+		//		window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
+		//	});
+		//}
+		//catch{
+		//}
+		//finally {
+		//	this.spinner.hide();
+		//}
 	}
 
-	createPdf() {
-		const fileName = `${this.invoice.invoiceNumber}.pdf`;
-		var pdf = new jspdf('p', 'pt', 'a4');
-		const source = document.getElementById('container');
-		const specialElementHandlers = {
-			'#bypassme': function (element, renderer) {
-				return true
-			}
-		};
-		const margins = {
-			top: 30,
-			bottom: 30,
-			left: 20,
-			width: 790,
-			height: 1122
-		};
+	//generatePdf() {
+	//	const elem = document.getElementById('container');
+	//	const fileName = `${this.invoice.invoiceNumber}.pdf`;
 
-		pdf.fromHTML(
-			source,
-			margins.left,
-			margins.top, {
-			'width': margins.width,
-			'elementHandlers': specialElementHandlers
-		},
+	//	var divHeight = $(elem).height();
+	//	var divWidth = $(elem).width();
+	//	var ratio = divHeight / divWidth;
+	//	let data = document.getElementById('container');
+	//	html2canvas(data).then(canvas => {
+	//		var imgData = canvas.toDataURL('image/jpeg', 1.0);
+	//		let pdf = new jspdf("p", "mm", "a4");
+	//		pdf.addImage(imgData, 'JPEG', 10, 10, 170, 150);
+	//		pdf.save(fileName);
+	//		window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
+	//	});
+	//}
 
-			function (dispose) {
-				pdf.save(fileName);
-				window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
-			}, margins);
-	}
+	//createPdf() {
+	//	const fileName = `${this.invoice.invoiceNumber}.pdf`;
+	//	var pdf = new jspdf('p', 'pt', 'a4');
+	//	const source = document.getElementById('container');
+	//	const specialElementHandlers = {
+	//		'#bypassme': function (element, renderer) {
+	//			return true
+	//		}
+	//	};
+	//	const margins = {
+	//		top: 30,
+	//		bottom: 30,
+	//		left: 20,
+	//		width: 790,
+	//		height: 1122
+	//	};
+
+	//	pdf.fromHTML(
+	//		source,
+	//		margins.left,
+	//		margins.top, {
+	//		'width': margins.width,
+	//		'elementHandlers': specialElementHandlers
+	//	},
+
+	//		function (dispose) {
+	//			pdf.save(fileName);
+	//			window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
+	//		}, margins);
+	//}
+
+	//onExportClick() {
+	//	const options = {
+	//		fileName: '',
+	//		image: { type: 'jpeg' },
+	//		html2canvas: {},
+	//		jsPDF: {orientation: 'portrait'}
+	//	};
+	//	const content: Element = document.getElementById('container');
+
+	//	html2pdf().from(content)
+	//		.set(options)
+	//		.save();
+
+	//}
+
+
 
 	getMilliSeconds(date: string): any {
 		try {

@@ -289,12 +289,12 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 
 			serviceId: [this.booking.serviceId, [Validators.required]],
 			professionalId: [this.booking.professionalId, [Validators.required]],
-			ptFeeA1: [this.booking.ptFeeA1, [Validators.required]],
-			ptFeeA2: [this.booking.ptFeeA2, [Validators.required]],
+			ptFeeA1: [this.toDec(this.booking.ptFeeA1), [Validators.required]],
+			ptFeeA2: [this.toDec(this.booking.ptFeeA2), [Validators.required]],
 			isPtFeeA1: [this.booking.isPtFeeA1, [Validators.required]],
 
-			proFeeA1: [this.booking.proFeeA1, [Validators.required]],
-			proFeeA2: [this.booking.proFeeA2, [Validators.required]],
+			proFeeA1: [this.toDec(this.booking.proFeeA1), [Validators.required]],
+			proFeeA2: [this.toDec(this.booking.proFeeA2), [Validators.required]],
 			isProFeeA1: [this.booking.isProFeeA1, [Validators.required]],
 
 			itemNameOnInvoice: [this.booking.itemNameOnInvoice, [Validators.required]],
@@ -305,12 +305,12 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 			proInvoiceNumber: [this.booking.proInvoiceNumber, []],
 
 			taxType: [this.booking.taxType, [Validators.required]],
-			subTotal: [this.booking.subTotal, []],
-			taxAmount: [this.booking.taxAmount, []],
-			patientDiscount: [this.booking.patientDiscount, []],
-			grossTotal: [this.booking.grossTotal, []],
-			totalDue: [this.booking.totalDue, []],
-			totalPaid: [this.booking.totalPaid, []],
+			subTotal: [this.toDec(this.booking.subTotal), []],
+			taxAmount: [this.toDec(this.booking.taxAmount), []],
+			patientDiscount: [this.toDec(this.booking.patientDiscount), []],
+			grossTotal: [this.toDec(this.booking.grossTotal), []],
+			totalDue: [this.toDec(this.booking.totalDue), []],
+			totalPaid: [this.toDec(this.booking.totalPaid), []],
 
 		}, { validator: this.dateLessThan() });
 
@@ -321,7 +321,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		return (group: FormGroup): { [key: string]: any } => {
 			let f = group.controls['visitStartDate'];
 			let t = group.controls['visitEndDate'];
-			if (f.value > t.value) {
+			if (f.value && t.value && f.value > t.value) {
 				return {
 					dates: "Visit End Date should be less than Date to"
 				};

@@ -170,7 +170,8 @@
 													   #patientDateOfBirth
 													   placeholder="Patient date of birth"
 													   [formControlName]="'patientDateOfBirth'"
-													   bsDatepicker [bsConfig]="datePickerConfig">
+													   bsDatepicker [bsConfig]="datePickerConfig"
+													   [dateCustomClasses]="dateCustomClasses">
 												<button mat-button *ngIf="patientDateOfBirth.value" matSuffix
 														mat-icon-button aria-label="Clear"
 														(click)="invoiceForm.get('patientDateOfBirth').setValue('')">
@@ -207,7 +208,8 @@
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput #dueDate
 													   placeholder="Due date" [formControlName]="'dueDate'"
-													   bsDatepicker [bsConfig]="datePickerConfig">
+													   bsDatepicker [bsConfig]="datePickerConfig"
+													   [dateCustomClasses]="dateCustomClasses">
 												<button mat-button *ngIf="dueDate.value" matSuffix mat-icon-button
 														aria-label="Clear"
 														(click)="invoiceForm.get('dueDate').setValue('')">
@@ -227,7 +229,8 @@
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput #invoiceDate
 													   placeholder="Invoice date" [formControlName]="'invoiceDate'"
-													   bsDatepicker [bsConfig]="datePickerConfig">
+													   bsDatepicker [bsConfig]="datePickerConfig"
+													   [dateCustomClasses]="dateCustomClasses">
 												<button mat-button *ngIf="invoiceDate.value" matSuffix mat-icon-button
 														aria-label="Clear"
 														(click)="invoiceForm.get('invoiceDate').setValue('')">
@@ -243,12 +246,14 @@
 												</mat-hint>
 											</mat-form-field>
 										</div>
+										
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput
 													   #invoiceDeliveryDate placeholder="Delivery date"
 													   [formControlName]="'invoiceDeliveryDate'"
-													   bsDatepicker [bsConfig]="datePickerConfig">
+													   bsDatepicker [bsConfig]="datePickerConfig"
+													   [dateCustomClasses]="dateCustomClasses">
 												<button mat-button *ngIf="invoiceDeliveryDate.value" matSuffix
 														mat-icon-button aria-label="Clear"
 														(click)="invoiceForm.get('invoiceDeliveryDate').setValue('')">
@@ -494,7 +499,8 @@
 													   #paymentArrivalDate
 													   placeholder="Payment arrival date"
 													   [formControlName]="'paymentArrivalDate'"
-													   bsDatepicker [bsConfig]="datePickerConfig">
+													   bsDatepicker [bsConfig]="datePickerConfig"
+													   [dateCustomClasses]="dateCustomClasses">
 												<button mat-button *ngIf="paymentArrivalDate.value" matSuffix
 														mat-icon-button aria-label="Clear"
 														(click)="invoiceForm.get('paymentArrivalDate').setValue('')">
@@ -506,7 +512,7 @@
 													<strong>required</strong>
 												</mat-error>
 												<mat-hint align="start">
-													<strong class="required-star">Payment Arrival Date</strong>
+													<strong>Payment Arrival Date</strong>
 												</mat-hint>
 											</mat-form-field>
 										</div>
@@ -516,7 +522,8 @@
 												<input matInput #paymentDueDate
 													   placeholder="Payment due date"
 													   [formControlName]="'paymentDueDate'"
-													   bsDatepicker [bsConfig]="datePickerConfig">
+													   bsDatepicker [bsConfig]="datePickerConfig"
+													   [dateCustomClasses]="dateCustomClasses">
 												<button mat-button *ngIf="paymentDueDate.value" matSuffix
 														mat-icon-button aria-label="Clear"
 														(click)="invoiceForm.get('paymentDueDate').setValue('')">

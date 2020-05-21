@@ -7,7 +7,7 @@
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
-			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="createPdf()" mat-raised-button
+			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="dowonloadPdf()" mat-raised-button
 			   matTooltip="Invoice to PDF">
 				<i class="la la-file-pdf-o"></i>
 				<span class="kt-hidden-mobile">Generate PDF</span>
@@ -29,8 +29,8 @@
 		<div class="row justify-content-md-center" id="container" #content>
 
 			<div class="col-md-10">
-				<div class="table">
-					<div class="row" *ngIf="invoice && invoice.accountInfo">
+				<div class="table" *ngIf="invoice && invoice.accountInfo">
+					<div class="row mb-3">
 						<div class="col-6">
 							<div class="row">
 								<div class="col-12 py-2">
@@ -43,7 +43,8 @@
 							<p class="text-right font-13 font-500 mb-0">
 								<strong [innerHtml]="invoice.accountInfo.address">Via Privata Grado 5, 20125, Milano</strong>
 							</p>
-							<p class="text-right font-13 font-500 mb-0"><strong>{{invoice.accountInfo.city}}, {{invoice.accountInfo.country}}</strong></p>
+							<p class="text-right font-13 font-500 mb-0"><strong>{{invoice.accountInfo.city}}</strong></p>
+							<p class="text-right font-13 font-500 mb-0"><strong>{{invoice.accountInfo.country}}</strong></p>
 							<p class="text-right font-13 font-500 mb-0"><strong>Tel: </strong> {{invoice.accountInfo.telephone}}</p>
 							<p class="text-right font-13 font-500 mb-0" *ngIf="invoice.accountInfo.fax"><strong>Fax: </strong>{{invoice.accountInfo.fax}}</p>
 							<p class="text-right font-13 font-500 mb-0"><strong>Email: </strong>{{invoice.accountInfo.email}}</p>
@@ -51,7 +52,7 @@
 
 						</div>
 					</div>
-					<div style="clear:both"></div>
+					<div class="d-block pt-3 pb-3"></div>
 					<div class="row mb-5 mt-5">
 						<div class="col-6">
 							<h6 class="text-uppercase pt-3 pb-3 pl-0 pb-2">Billing Address:</h6>
@@ -126,7 +127,7 @@
 												<td class="font-13 font-500" [innerText]="b.taxAmount"></td>
 												<td class="font-13 font-500" [innerText]="b.grossTotal"></td>
 											</tr>
-											<tr *ngFor="let b of [1,2,3,4,5,6,7,8,9]">
+											<tr *ngFor="let b of emptyArray">
 												<td class="font-13 font-500"></td>
 												<td class="font-13 font-500"></td>
 												<td class="font-13 font-500"></td>
@@ -171,21 +172,21 @@
 					</div>
 					<div class="row mt-2">
 						<div class="col-12 mt-1">
-							<p class="font-500 font-16 text-uppercase my-0">medelit ltd</p>
-							<p class="font-500 font-16 text-uppercase my-0">
+							<p class="font-500 font-16 text-uppercase my-0" [innerHtml]="invoice.accountInfo.title">medelit ltd</p>
+							<p class="font-500 font-16 text-uppercase my-0" [innerHtml]="invoice.accountInfo.address">
 								74 VICTORIA DRIVE<br />
 								SW196HL LONDON<br />
 								UNITED KINGDOM
 							</p>
-							<p class="font-500 font-16 text-uppercase my-0"><span>Sort Code : </span><span>30-96-64</span></p>
-							<p class="font-500 font-16 text-uppercase my-0"><span>Account N° : </span><span>32422868</span></p>
+							<p class="font-500 font-16 text-uppercase my-0">{{invoice.accountInfo.city}}</p>
+							<p class="font-500 font-16 text-uppercase my-0">{{invoice.accountInfo.country}}</p>
+							<p class="font-500 font-16 text-uppercase my-0"><span>Sort Code : </span><span [innerHtml]="invoice.accountInfo.sortCode">30-96-64</span></p>
+							<p class="font-500 font-16 text-uppercase my-0"><span>Account N° : </span><span [innerHtml]="invoice.accountInfo.accountNumber">32422868</span></p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
-
 
 	</kt-portlet-body>
 </kt-portlet>

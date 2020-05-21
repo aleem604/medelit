@@ -121,7 +121,7 @@
 
 				<ng-container matColumnDef="amount">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Total</mat-header-cell>
-					<mat-cell *matCellDef="let invoice">£{{invoice.amount}}</mat-cell>
+					<mat-cell *matCellDef="let invoice">£{{invoice.amount | number: '1.2-2'}}</mat-cell>
 				</ng-container>
 
 			

@@ -130,12 +130,12 @@
 				</ng-container>
 
 				<ng-container matColumnDef="a1">
-					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">A1</mat-header-cell>
-					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.a1}}</mat-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Fee A1</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.a1 | number: '1.2-2'}}</mat-cell>
 				</ng-container>
 				<ng-container matColumnDef="a2">
-					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">A2</mat-header-cell>
-					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.a2}}</mat-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Fee A2</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.a2 | number: '1.2-2'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="status">

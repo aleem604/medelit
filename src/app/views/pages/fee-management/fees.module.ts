@@ -53,19 +53,13 @@ import {
 	MatTooltipModule,
     MatChipsModule
 } from '@angular/material';
-import { environment } from '../../../../environments/environment';
+
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { FeesListComponent } from './fees/fees-list/fees-list.component';
 import { FeesComponent } from './fees.component';
-import { FeeEditDialogComponent } from './fees/fee-edit-dialog/fee-edit.dialog.component';
-import { FeeEditComponent } from './fees/fee-edit/fee-edit.component';
-import { AttachServiceToFeeDialogComponent } from './fees/attach-service-to-fee-dialog/attach-service-to-fee.dialog.component';
-import { AttachProToFeeDialogComponent } from './fees/attach-pro-to-fee-dialog/attach-pro-to-fee.dialog.component';
-import { FeeConnectedProfessionalsComponent } from './fees/connected-professionals/fee-connected-professionals.component';
-import { FeeConnectedServicesComponent } from './fees/connected-services/fee-connected-services.component';
-import { AttachFeesToProServiceDialogComponent } from './fees/attach-fees-to-pro-service-dialog/attach-fees-to-pro-service.dialog.component';
 import { NgxMaskModule } from 'ngx-mask';
+import { FeeEditComponent, FeeEditDialogComponent, AttachProToFeeDialogComponent, AttachServiceToFeeDialogComponent, AttachFeesToProServiceDialogComponent, FeeConnectedProfessionalsComponent, FeeConnectedServicesComponent } from '.';
 
 
 // tslint:disable-next-line:class-name

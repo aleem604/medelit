@@ -200,7 +200,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			subcategoryId: [this.service.subcategoryId, [Validators.required]],
 			tags: [this.service.tags, []],
 			description: [this.service.description, []],
-			durationId: [this.service.durationId, [Validators.required]],
+			durationId: [this.service.durationId, []],
 			vatId: [this.service.vatId, [Validators.required]],
 
 			covermap: [this.service.covermap, []],

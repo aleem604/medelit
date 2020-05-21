@@ -142,7 +142,7 @@
 
 				<ng-container matColumnDef="ptFee">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>PT <br /> Fee</mat-header-cell>
-					<mat-cell *matCellDef="let booking">{{booking.ptFee}}</mat-cell>
+					<mat-cell *matCellDef="let booking">{{booking.ptFee | number: '1.2-2'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="actions">

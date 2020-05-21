@@ -6,7 +6,7 @@ import { MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 // RXJS
 import { debounceTime, distinctUntilChanged, tap, skip, delay, startWith, map } from 'rxjs/operators';
-import { fromEvent, merge, Observable, of, Subscription } from 'rxjs';
+import { fromEvent, merge, of, Subscription } from 'rxjs';
 // NGRX
 import { Store, select } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
@@ -22,12 +22,9 @@ import {
 	OneCustomerDeleted,
 	ManyCustomersDeleted,
 	CustomersStatusUpdated,
-	FilterModel,
-	CustomerServicesModel,
 } from '../../../../../core/medelit';
 
-import { FormControl } from '@angular/forms';
-import { StaticDataService, CustomersService } from '../../../../../core/medelit/_services';
+import { CustomersService } from '../../../../../core/medelit/_services';
 import { selectCustomersPageLastQuery } from '../../../../../core/medelit/_selectors/customer.selectors';
 import { NgxSpinnerService } from 'ngx-spinner';
 

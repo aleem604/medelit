@@ -112,3 +112,22 @@ strong.required-star::after {
 	top:1.5em;
 }
 
+::ng-deep .theme-dark-blue {
+	.bs-datepicker-body {
+		table {
+			td {
+				span.selected {
+					background-color: #337ab7 !important;
+				}
+			}
+		}
+	}
+}
+.bg-calendar-current {
+	background-color: #afd2f9;
+
+	&:hover, &:focus {
+		background-color: #337ab7;
+		color:darkslateblue;
+	}
+}

@@ -32,6 +32,7 @@ const DEMO_PARAMS = {
 @Component({
 	selector: 'kt-login',
 	templateUrl: './login.component.html',
+	styleUrls: ['./login.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
 export class LoginComponent implements OnInit, OnDestroy {

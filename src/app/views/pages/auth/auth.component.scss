@@ -1,9 +1,13 @@
 // import login css
 @import "sass/pages/login/login-1";
+.kt-login__logo{
+	justify-content:center;
+}
+
 
 kt-auth, .kt-login {
 	height: 100%;
-
+	justify-content: center;
 
 
 	.mat-form-field {

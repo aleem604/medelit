@@ -51,3 +51,16 @@
 .mat-form-field {
 	width: 100%;
 }
+
+
+::ng-deep .theme-dark-blue {
+	.bs-datepicker-body {
+		table {
+			td {
+				span.selected {
+					background-color: #337ab7 !important;
+				}
+			}
+		}
+	}
+}
