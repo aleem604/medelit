@@ -1146,7 +1146,6 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 
 	//// services
 	loadServicesForFilter() {
-		this.spinner.show();
 		this.staticService.getServicesForFilter().toPromise().then(res => {
 			this.servicesForFilter = res.data;
 
@@ -1238,7 +1237,6 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 
 	// Service Professionals
 	loadProfessionalsForFilter(serviceId?: number) {
-		this.spinner.show();
 		this.staticService.getProfessionalsForFilter(serviceId).toPromise().then(res => {
 			this.professionalsForFilter = res.data.filter(m => m.sid == serviceId);
 
@@ -1254,11 +1252,6 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 					this.bookingForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value, ptFees: professional.ptFees[0], proFees: professional.proFees[0] } });
 				}
 			}
-		}).catch(() => {
-			this.spinner.hide();
-		}).finally(() => {
-			this.spinner.hide();
-			this.updateAccountings();
 		});
 	}
 

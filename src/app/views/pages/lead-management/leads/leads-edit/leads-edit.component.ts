@@ -190,10 +190,6 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 		this.leadService.getLeadById(leadId, fromCustomerId).toPromise().then(res => {
 			let data = res as unknown as ApiResponse;
 			this.loadLead(data.data, true);
-		}).catch((e) => {
-			this.spinner.hide();
-		}).finally(() => {
-			//this.spinner.hide();
 		});
 	}
 
@@ -221,7 +217,6 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 			{ title: 'Leads', page: `/lead-management/leads` },
 			{ title: 'Edit lead', page: `/lead-management/leads/edit`, queryParams: { id: this.lead.id } }
 		]);
-
 	}
 
 	createForm() {
@@ -499,8 +494,6 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 				}
 			}
 
-
-
 			if (message) {
 				const dialogRef = this.dialog.open(AlertDialogComponent, {
 					width: '300px',
@@ -512,7 +505,6 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 				return;
 			}
 		}
-
 
 		// tslint:disable-next-line:prefer-const
 		let editedLead = this.prepareLead();
@@ -648,8 +640,6 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 		}).catch((e) => {
 			this.spinner.hide();
 		});
-
-
 
 		//this.store.dispatch(new LeadOnServerCreated({ lead: _lead }));
 		//this.componentSubscriptions = this.store.pipe(
@@ -934,7 +924,6 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 
 	//// services
 	loadServicesForFilter() {
-		this.spinner.show();
 		this.staticService.getServicesForFilter().toPromise().then(res => {
 			this.servicesForFilter = res.data;
 
