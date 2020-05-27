@@ -148,8 +148,8 @@ export class InvoicesService {
 		return this.http.post<ApiResponse>(url, data, { headers: httpHeaders });
 	}
 
-	downloadpdf(invoiceId: number): Observable<any> {
-		return this.http.get<any>(`${environment.apiEndpoint}/pdf/generate-pdf/${invoiceId}`);
+	downloadpdf(invoiceId: number): Observable<ApiResponse> {
+		return this.http.get<ApiResponse>(`${environment.apiEndpoint}/pdf/generate-pdf/${invoiceId}`);
 	}
 
 }

@@ -12,15 +12,12 @@ import { DateValueAccessorModule } from 'angular-date-value-accessor';
 import { NgxMaskModule } from 'ngx-mask'
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ToastrModule } from 'ngx-toastr';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 
-// Angular in memory
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 // Perfect Scroll bar
 import { PERFECT_SCROLLBAR_CONFIG, PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 // SVG inline
 import { InlineSVGModule } from 'ng-inline-svg';
-// Env
-import { environment } from '../environments/environment';
 // Hammer JS
 import 'hammerjs';
 // NGX Permissions
@@ -43,7 +40,6 @@ import { PartialsModule } from './views/partials/partials.module';
 // Layout Services
 import {
 	DataTableService,
-	FakeApiService,
 	KtDialogService,
 	LayoutConfigService,
 	LayoutRefService,
@@ -79,7 +75,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 	maxScrollbarLength: 300,
 };
 
-
 export function initializeLayoutConfig(appConfig: LayoutConfigService) {
 	// initialize app by loading default demo layout config
 	return () => {
@@ -110,10 +105,7 @@ export function hljsLanguages(): HighlightLanguage[] {
 		DateValueAccessorModule,
 		NgxMaskModule.forRoot(),
 		BsDatepickerModule.forRoot(),
-		environment.isMockEnabled ? HttpClientInMemoryWebApiModule.forRoot(FakeApiService, {
-			passThruUnknownUrl: true,
-			dataEncapsulation: false
-		}) : [],
+		TimepickerModule.forRoot(),
 		NgxPermissionsModule.forRoot(),
 		ToastrModule.forRoot(),
 		PartialsModule,

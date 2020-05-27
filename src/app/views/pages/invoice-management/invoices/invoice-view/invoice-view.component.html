@@ -82,7 +82,7 @@
 									<p class="font-13">
 										<span class="font-500">Date of Birth: </span><span [innerHtml]="invoice?.dateOfBirth | date: 'dd/MM/yyyy'"></span>
 									</p>
-									<p class="font-13">
+									<p class="font-13" *ngIf="invoice?.vatNumber">
 										<span class="font-500">VAT Number: </span><span [innerHtml]="invoice?.vatNumber"></span>
 									</p>
 								</div>
@@ -122,10 +122,10 @@
 											<tr *ngFor="let b of invoice.bookings">
 												<td class="font-13 font-500" [innerText]="b.itemNameOnInvoice"></td>
 												<td class="font-13 font-500" [innerText]="b.quantityHours"></td>
-												<td class="font-13 font-500" [innerText]="b.subTotal"></td>
-												<td class="font-13 font-500" [innerText]="b.patientDiscount"></td>
-												<td class="font-13 font-500" [innerText]="b.taxAmount"></td>
-												<td class="font-13 font-500" [innerText]="b.grossTotal"></td>
+												<td class="font-13 font-500">{{b.subTotal | number: '1.2-2'}}</td>
+												<td class="font-13 font-500">{{b.patientDiscount |number: '1.2-2'}}</td>
+												<td class="font-13 font-500">{{b.taxAmount | number: '1.2-2'}}</td>
+												<td class="font-13 font-500">{{b.grossTotal | number: '1.2-2'}}</td>
 											</tr>
 											<tr *ngFor="let b of emptyArray">
 												<td class="font-13 font-500"></td>
@@ -141,7 +141,7 @@
 												<td colspan="5" class="text-right font-500">
 													Total (<i class="la la-gbp"></i>)
 												</td>
-												<td class="text-left font-500" [innerText]="invoice?.totalInvoice"></td>
+												<td class="text-left font-500">{{invoice?.totalInvocie | number: '1.2-2'}}</td>
 											</tr>
 										</tbody>
 
@@ -172,16 +172,9 @@
 					</div>
 					<div class="row mt-2">
 						<div class="col-12 mt-1">
-							<p class="font-500 font-16 text-uppercase my-0" [innerHtml]="invoice.accountInfo.title">medelit ltd</p>
-							<p class="font-500 font-16 text-uppercase my-0" [innerHtml]="invoice.accountInfo.address">
-								74 VICTORIA DRIVE<br />
-								SW196HL LONDON<br />
-								UNITED KINGDOM
-							</p>
-							<p class="font-500 font-16 text-uppercase my-0">{{invoice.accountInfo.city}}</p>
-							<p class="font-500 font-16 text-uppercase my-0">{{invoice.accountInfo.country}}</p>
-							<p class="font-500 font-16 text-uppercase my-0"><span>Sort Code : </span><span [innerHtml]="invoice.accountInfo.sortCode">30-96-64</span></p>
-							<p class="font-500 font-16 text-uppercase my-0"><span>Account N° : </span><span [innerHtml]="invoice.accountInfo.accountNumber">32422868</span></p>
+							<p class="font-500 font-16 text-capitalize mb-0" [innerHtml]="invoice.accountInfo.title">medelit ltd</p>							
+							<p class="text-capitalize mb-0"><span class="font-500">Sort Code : </span><span [innerHtml]="invoice.accountInfo.sortCode"></span></p>
+							<p class="text-capitalize mb-0"><span class="font-500">Account N° : </span><span [innerHtml]="invoice.accountInfo.accountNumber"></span></p>
 						</div>
 					</div>
 				</div>

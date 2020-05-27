@@ -2,8 +2,9 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
+import * as _ from 'lodash';
 // Material
-import { MatDialog, MAT_DATE_LOCALE } from '@angular/material';
+import { MatDialog } from '@angular/material';
 // RxJS
 import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -296,18 +297,18 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 					id: [service.id, []],
 					serviceId: [service.serviceId, [Validators.required]],
 					serviceSearchCtrl: [''],
-					professionalId: [service.professionalId, [Validators.required]],
+					professionalId: [service.professionalId, []],
 					professionalSearchCtrl: [''],
-					ptFeeId: [service.ptFeeId, [Validators.required]],
-					isPtFeeA1: [service.isPtFeeA1, [Validators.required]],
+					ptFeeId: [service.ptFeeId, []],
+					isPtFeeA1: [service.isPtFeeA1, []],
 
-					ptFeeA1: [parseFloat(service.ptFeeA1).toFixed(2), [Validators.required]],
-					ptFeeA2: [parseFloat(service.ptFeeA2).toFixed(2), [Validators.required]],
-					proFeeId: [service.proFeeId, [Validators.required]],
-					isProFeeA1: [service.isProFeeA1, [Validators.required]],
+					ptFeeA1: [parseFloat(service.ptFeeA1).toFixed(2), []],
+					ptFeeA2: [parseFloat(service.ptFeeA2).toFixed(2), []],
+					proFeeId: [service.proFeeId, []],
+					isProFeeA1: [service.isProFeeA1, []],
 
-					proFeeA1: [parseFloat(service.proFeeA1).toFixed(2), [Validators.required]],
-					proFeeA2: [parseFloat(service.proFeeA2).toFixed(2), [Validators.required]],
+					proFeeA1: [parseFloat(service.proFeeA1).toFixed(2), []],
+					proFeeA2: [parseFloat(service.proFeeA2).toFixed(2), []],
 				});
 				(<FormArray>this.leadForm.get('services')).push(group);
 			});
@@ -328,15 +329,15 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 		const group = this.leadFB.group({
 			id: [null, []],
 			serviceId: [null, [Validators.required]],
-			professionalId: [null, [Validators.required]],
-			ptFeeId: [null, [Validators.required]],
-			isPtFeeA1: ['1', [Validators.required]],
-			ptFeeA1: [null, [Validators.required]],
-			ptFeeA2: [null, [Validators.required]],
-			proFeeId: [null, [Validators.required]],
-			isProFeeA1: ['1', [Validators.required]],
-			proFeeA1: [null, [Validators.required]],
-			proFeeA2: [null, [Validators.required]],
+			professionalId: [null, []],
+			ptFeeId: [null, []],
+			isPtFeeA1: ['1', []],
+			ptFeeA1: [null, []],
+			ptFeeA2: [null, []],
+			proFeeId: [null, []],
+			isProFeeA1: ['1', []],
+			proFeeA1: [null, []],
+			proFeeA2: [null, []],
 		});
 		(<FormArray>this.leadForm.get('services')).push(group);
 		//this.selected.setValue(this.lead.services.length - 1);
@@ -430,14 +431,6 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 					if (scontrols[controlName].status === 'INVALID')
 						console.log('invlaid service controls', controlName);
 				});
-
-
-
-				//(<any>Object).values(group.controls).forEach((control: FormControl) => {
-				//	control.markAsTouched();
-				//	if (control.status === 'INVALID')
-				//		console.log('invlaid controls', control);
-				//});
 			});
 
 			this.hasFormErrors = true;
@@ -486,6 +479,26 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 				message += '<span class="font-500">Payment Method</span> is required. <br/>';
 			if (!insuranceCoverId)
 				message += '<span class="font-500">Insurance Cover</span> is required. <br/>';
+
+			const control = <FormArray>this.leadForm.controls['services'];
+			for (let i = 0; i < control.length; i++) {
+				var s = new LeadServicesModel();
+				if (control.controls[i].get('serviceId').value) {
+					let service = control.controls[i].get('serviceId').value.value;
+
+					if (!control.controls[i].get('professionalId').value)
+						message += `<span class="font-500">${service} professional</span> is required. <br/>`;
+
+					let ptFeeId = +control.controls[i].get('ptFeeId').value;
+					if (!ptFeeId)
+						message += `<span class="font-500">${service} Pt Fee</span> is required. <br/>`;
+
+					let proFeeId = +control.controls[i].get('proFeeId').value;
+					if (!proFeeId)
+						message += `<span class="font-500">${service} Pro Fee</span> is required. <br/>`;
+				}
+			}
+
 
 
 			if (message) {
@@ -588,17 +601,31 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 				s.serviceId = +control.controls[i].get('serviceId').value.id;
 
 			if (control.controls[i].get('professionalId').value)
-				s.professionalId = +control.controls[i].get('professionalId').value;
+				s.professionalId = control.controls[i].get('professionalId').value;
 
-			s.ptFeeId = +control.controls[i].get('ptFeeId').value
-			s.isPtFeeA1 = +control.controls[i].get('isPtFeeA1').value
-			s.ptFeeA1 = control.controls[i].get('ptFeeA1').value
-			s.ptFeeA2 = control.controls[i].get('ptFeeA2').value
+			if (!isNaN(control.controls[i].get('ptFeeId').value))
+				s.ptFeeId = control.controls[i].get('ptFeeId').value;
 
-			s.proFeeId = +control.controls[i].get('proFeeId').value
-			s.isProFeeA1 = +control.controls[i].get('isProFeeA1').value
-			s.proFeeA1 = control.controls[i].get('proFeeA1').value
-			s.proFeeA2 = control.controls[i].get('proFeeA2').value
+			if (!isNaN(control.controls[i].get('isPtFeeA1').value))
+				s.isPtFeeA1 = control.controls[i].get('isPtFeeA1').value;
+
+			if (!isNaN(control.controls[i].get('ptFeeA1').value))
+				s.ptFeeA1 = control.controls[i].get('ptFeeA1').value;
+
+			if (!isNaN(control.controls[i].get('ptFeeA2').value))
+				s.ptFeeA2 = control.controls[i].get('ptFeeA2').value;
+
+			if (!isNaN(control.controls[i].get('proFeeId').value))
+				s.proFeeId = control.controls[i].get('proFeeId').value;
+
+			if (!isNaN(control.controls[i].get('isProFeeA1').value))
+				s.isProFeeA1 = control.controls[i].get('isProFeeA1').value;
+
+			if (!isNaN(control.controls[i].get('proFeeA1').value))
+				s.proFeeA1 = control.controls[i].get('proFeeA1').value;
+
+			if (!isNaN(control.controls[i].get('proFeeA2').value))
+			s.proFeeA2 = control.controls[i].get('proFeeA2').value;
 
 			_lead.services.push(s);
 		}
@@ -1260,9 +1287,10 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 	/*Start closed events */
 	controlFocusout(control) {
 		const val = this.leadForm.get(control).value;
-		if (val && val.id) return;
-		this.leadForm.get(control).setValue('');
-		this.cdr.markForCheck();
+		if (!(val && val.id)) {
+			this.leadForm.get(control).setValue('');
+			this.cdr.markForCheck();
+		}
 	}
 
 	serviceControlFocusout(event, control, index) {

@@ -216,7 +216,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 			invoiceEntityName: [this.booking.invoiceEntityName, []],
 			bookingName: [this.booking.bookingName, []],
 			bookingStatusId: [this.booking.bookingStatusId, [Validators.required]],
-			bookingDate: [this.booking.bookingDate, [Validators.required]],
+			bookingDate: [this.formatDate(this.booking.bookingDate), [Validators.required]],
 
 			bookingTypeId: [this.booking.bookingTypeId, [Validators.required]],
 			visitLanguageId: [this.booking.visitLanguageId, [Validators.required]],
@@ -280,8 +280,10 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 			nhsOrPrivateId: [this.booking.nhsOrPrivateId, []],
 
 			isAllDayVisit: [this.booking.isAllDayVisit, []],
-			visitStartDate: [this.booking.visitStartDate, []],
-			visitEndDate: [this.booking.visitEndDate, []],
+			visitStartDate: [this.formatDate(this.booking.visitStartDate), []],
+			visitStartTime: [this.setTime(this.booking.visitStartDate), []],
+			visitEndDate: [this.formatDate(this.booking.visitEndDate), []],
+			visitEndTime: [this.setTime(this.booking.visitEndDate), []],
 
 			proDiscount: [this.booking.proDiscount, []],
 			cashConfirmationMailId: [this.booking.cashConfirmationMailId, []],
@@ -315,16 +317,23 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		}, { validator: this.dateLessThan() });
 
 		this.setConstants();
+		this.setEndDateTime();
 	}
 
 	dateLessThan(): ValidatorFn {
 		return (group: FormGroup): { [key: string]: any } => {
-			let f = group.controls['visitStartDate'];
-			let t = group.controls['visitEndDate'];
-			if (f.value && t.value && f.value > t.value) {
-				return {
-					dates: "Visit End Date should be less than Date to"
-				};
+			let s = group.controls['visitStartDate'];
+			let e = group.controls['visitEndDate'];
+			if (s.value && e.value) {
+
+				let fromDate = new Date(this.formatDateWithTimeToServer(group.controls['visitStartDate'].value, group.controls['visitStartTime'].value));
+				let toDate = new Date(this.formatDateWithTimeToServer(group.controls['visitEndDate'].value, group.controls['visitEndTime'].value));
+
+				if (fromDate.getTime() > toDate.getTime()) {
+					return {
+						dates: "Visit End Date should be less than Date to"
+					};
+				}
 			}
 			return {};
 		}
@@ -340,6 +349,17 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 				this.bookingForm.get('visitEndDate').setValue(sdate);
 		}
 	}
+	setEndDateTime() {
+		this.bookingForm.get('visitStartDate').valueChanges.subscribe(v => {
+			let sdate = new Date(v);
+			let edate = new Date(sdate.getFullYear(), sdate.getMonth(), sdate.getDate(), sdate.getHours() + 1, sdate.getMinutes());
+
+			this.bookingForm.get('visitEndDate').setValue(edate);
+			this.bookingForm.updateValueAndValidity();
+		});
+
+	}
+
 
 	setConstants() {
 		this.bookingForm.get('visitStartDate').valueChanges.subscribe((d) => {
@@ -476,7 +496,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 
 		_booking.bookingName = controls.bookingName.value;
 		_booking.bookingStatusId = +controls.bookingStatusId.value;
-		_booking.bookingDate = controls.bookingDate.value;
+		_booking.bookingDate = this.toDateFormat(controls.bookingDate.value);
 
 		_booking.bookingTypeId = +controls.bookingTypeId.value;
 		if (controls.visitLanguageId.value)
@@ -550,8 +570,8 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		_booking.grossTotal = controls.grossTotal.value;
 
 		_booking.isAllDayVisit = controls.isAllDayVisit.value;
-		_booking.visitStartDate = controls.visitStartDate.value;
-		_booking.visitEndDate = controls.visitEndDate.value;
+		_booking.visitStartDate = this.formatDateWithTimeToServer(controls.visitStartDate.value, controls.visitStartTime.value);
+		_booking.visitEndDate = this.formatDateWithTimeToServer(controls.visitEndDate.value, controls.visitEndTime.value);
 
 		_booking.proDiscount = controls.proDiscount.value;
 		_booking.cashConfirmationMailId = controls.cashConfirmationMailId.value;
@@ -606,7 +626,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
 				const _booking = resp.data as unknown as BookingModel;
-				this.loadBookingFromService(_booking.id);
+				//this.loadBookingFromService(_booking.id);
 
 				const message = `Booking successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
@@ -729,7 +749,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		const bookingStatus = +this.bookingForm.get('bookingStatusId').value;
 
 		if ((invoiceNumber == null && paymentStatus === 3 && paymentConcluded === 1 && paymentMethod !== 4) || (invoiceNumber === null && paymentStatus == 2 && (bookingStatus === 4 || bookingStatus === 6))) {
-			
+
 
 		} else {
 			this.dialog.open(AlertDialogComponent, {
@@ -1005,7 +1025,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		});
 
 
-		if (this.booking.insuranceCoverId) {
+		if (this.booking.insuranceCoverId !== undefined) {
 			this.bookingForm.get('insuranceCoverId').setValue(this.booking.insuranceCoverId.toString());
 		}
 
@@ -1309,6 +1329,30 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 				}
 			}
 		});
+
+		//if (this.bookingForm) {
+		//	this.bookingForm.get('visitStartDate').valueChanges.subscribe((v) => {
+		//		if (v) {
+		//			let d = new Date(v);
+					
+		//			let newDate = new Date(d.getFullYear(), d.getMonth(), d.getDay(), d.getHours() + 1, d.getMinutes());
+		//			this.bookingForm.get('visitEndDate').setValue(this.formatDate(newDate.toLocaleDateString()));
+		//			this.bookingForm.get('visitEndTime').setValue(newDate);
+		//			this.cdr.markForCheck();
+		//		}
+		//	});
+
+		//	this.bookingForm.get('visitStartTime').valueChanges.subscribe((v) => {
+		//		if (v) {
+					
+
+		//			this.bookingForm.get('visitEndTime').setValue(v);
+		//		}
+		//	});
+		//}
+
+
+
 
 	}
 	private _filterCountries(value: string): FilterModel[] {

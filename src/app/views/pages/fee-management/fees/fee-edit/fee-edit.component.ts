@@ -343,9 +343,12 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		const value = event.value;
 
 		// Add our fruit
-		//if (this.tagsArray.length < 5 && (value || '').trim()) {
-		//	this.tagsArray.push(value.trim());
-		//}
+		if (this.tagsArray.length < 5 && (value || '').trim()) {
+			this.tagsArray.push(value.trim());
+			this.cdr.markForCheck();
+		} else {
+			//this.toaster.warning(`Can't add more than 5 tags`);
+		}
 
 		// Reset the input value
 		if (input) {
@@ -367,6 +370,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 			if (this.tagsArray.indexOf(val) === -1)
 				this.tagsArray.push(event.option.value);
 			this.tagsInput.nativeElement.value = '';
+			this.cdr.markForCheck();
 		} else {
 			this.toaster.warning(`Can't add more than 5 tags`);
 		}

@@ -25,7 +25,12 @@
 
 		<ng-container matColumnDef="invoiceDate">
 			<th mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Date </th>
-			<td mat-cell *matCellDef="let element"> {{element.invoieDate | date: 'dd/MM/yyyy' }} </td>
+			<td mat-cell *matCellDef="let element"> {{element.invoiceDate | date: 'dd/MM/yyyy' }} </td>
+		</ng-container>
+
+		<ng-container matColumnDef="invoiceDueDate">
+			<th mat-header-cell *matHeaderCellDef mat-sort-header> Invoice Due Date </th>
+			<td mat-cell *matCellDef="let element"> {{element.invoiceDueDate | date: 'dd/MM/yyyy' }} </td>
 		</ng-container>
 
 		<ng-container matColumnDef="totalInvoice">

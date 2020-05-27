@@ -672,7 +672,7 @@ export class MenuConfig {
 				{
 					title: 'Leads',
 					bullet: 'dot',
-					icon: 'flaticon-bell-1',
+					icon: 'flaticon2-bell-4',
 					root: true,
 					permission: 'leadManagementModule',
 					submenu: [
@@ -689,7 +689,7 @@ export class MenuConfig {
 				{
 					title: 'Customers',
 					bullet: 'dot',
-					icon: 'flaticon2-user',
+					icon: 'flaticon-profile-1',
 					root: true,
 					permission: 'customerManagementModule',
 					submenu: [
@@ -707,7 +707,7 @@ export class MenuConfig {
 				{
 					title: 'Invoicing Entities',
 					bullet: 'dot',
-					icon: 'flaticon2-avatar fa fa-user-secret',
+					icon: 'flaticon-map',
 					root: true,
 					permission: 'invoiceEntityManagementModule',
 					submenu: [
@@ -724,7 +724,7 @@ export class MenuConfig {
 				{
 					title: 'Bookings',
 					bullet: 'dot',
-					icon: 'flaticon2-list-2',
+					icon: ' flaticon2-shopping-cart-1',
 					root: true,
 					permission: 'bookingManagementModule',
 					submenu: [
@@ -737,7 +737,7 @@ export class MenuConfig {
 				{
 					title: 'Invoices',
 					bullet: 'dot',
-					icon: 'flaticon2-list-2',
+					icon: 'flaticon2-layers-2',
 					root: true,
 					permission: 'invoiceManagementModule',
 					submenu: [
@@ -754,7 +754,7 @@ export class MenuConfig {
 				{
 					title: 'Services',
 					bullet: 'dot',
-					icon: 'flaticon2-list-2',
+					icon: 'flaticon2-hospital',
 					root: true,
 					permission: 'serviceManagementModule',
 					submenu: [
@@ -775,7 +775,7 @@ export class MenuConfig {
 				{
 					title: 'Professionals',
 					bullet: 'dot',
-					icon: 'flaticon2-list-2',
+					icon: 'flaticon2-position',
 					root: true,
 					permission: 'professionalManagementModule',
 					submenu: [
@@ -792,7 +792,7 @@ export class MenuConfig {
 				{
 					title: 'Fees',
 					bullet: 'dot',
-					icon: 'flaticon2-list-2',
+					icon: 'flaticon-price-tag',
 					root: true,
 					permission: 'feeManagementModule',
 					submenu: [

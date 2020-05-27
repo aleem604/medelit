@@ -122,17 +122,17 @@
 
 				<ng-container matColumnDef="bookingDate">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Booking <br /> Date</mat-header-cell>
-					<mat-cell *matCellDef="let booking">{{booking.bookingDate  | date: 'yyyy-MM-dd'}}</mat-cell>
+					<mat-cell *matCellDef="let booking">{{booking.bookingDate  | date: 'dd/MM/yyyy'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="visitDate">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Date of <br /> Visit</mat-header-cell>
-					<mat-cell *matCellDef="let booking">{{booking.visitDate  | date: 'yyyy-MM-dd'}}</mat-cell>
+					<mat-cell *matCellDef="let booking">{{booking.visitDate  | date: 'dd/MM/yyyy'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="visitTime">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Time of <br /> Visit</mat-header-cell>
-					<mat-cell *matCellDef="let booking">{{booking.visitDate  | date: 'h:mm:ss a'}}</mat-cell>
+					<mat-cell *matCellDef="let booking">{{booking.visitDate  | date: 'h:mm a'}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="paymentMethod">

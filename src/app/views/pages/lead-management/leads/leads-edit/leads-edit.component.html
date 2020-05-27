@@ -61,7 +61,7 @@
 
 							<div class="col-md-6 kt-margin-bottom-20-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Look up for a existing customer" aria-label="Number" matInput [matAutocomplete]="fromCutomerAuto" #fromCustomerId [formControlName]="'fromCustomerId'" (focusout)="controlFocusout('fromCustomerId')">
+									<input type="text" placeholder="Look up for a existing customer" aria-label="Number" matInput [matAutocomplete]="fromCutomerAuto" #fromCustomerId [formControlName]="'fromCustomerId'">
 									<button mat-button *ngIf="fromCustomerId.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('fromCustomerId').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
@@ -513,7 +513,7 @@
 														</mat-option>
 													</mat-select>
 													<mat-hint align="start">
-														<strong class="required-star">Professional </strong>
+														<strong>Professional </strong>
 													</mat-hint>
 													<mat-error>
 														Professional is
@@ -539,7 +539,7 @@
 														<mat-form-field>
 															<input type="number" matInput placeholder="PT Fee A1" formControlName="ptFeeA1" min="0">
 															<mat-hint align="start">
-																PT Fee <strong class="required-star">A1 </strong>
+																PT Fee <strong>A1 </strong>
 															</mat-hint>
 															<mat-error>
 																PT Fee A1
@@ -552,7 +552,7 @@
 														<mat-form-field>
 															<input type="number" matInput placeholder="PT Fee A2" formControlName="ptFeeA2" min="0">
 															<mat-hint align="start">
-																PT Fee <strong class="required-star">A2 </strong>
+																PT Fee <strong>A2 </strong>
 															</mat-hint>
 															<mat-error>
 																PT Fee A2
@@ -580,7 +580,7 @@
 														<mat-form-field>
 															<input type="number" matInput placeholder="PRO Fee A1" formControlName="proFeeA1" min="0">
 															<mat-hint align="start">
-																PRO Fee <strong class="required-star">A1 </strong>
+																PRO Fee <strong>A1 </strong>
 															</mat-hint>
 															<mat-error>
 																PRO Fee A1
@@ -593,7 +593,7 @@
 														<mat-form-field>
 															<input type="number" matInput placeholder="PRO Fee A2" formControlName="proFeeA2" min="0">
 															<mat-hint align="start">
-																PRO Fee <strong class="required-star">A2 </strong>
+																PRO Fee <strong>A2 </strong>
 															</mat-hint>
 															<mat-error>
 																PRO Fee A2

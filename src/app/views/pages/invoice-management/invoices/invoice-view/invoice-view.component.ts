@@ -12,6 +12,7 @@ import * as jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
 import * as $ from 'jquery';
 import * as html2pdf from 'html2pdf.js';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 @Component({
@@ -30,7 +31,7 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 	private componentSubscriptions: Subscription;
 	private headerMargin: number;
 	emptyArray: number[] = [];
-
+	fileUrl;
 	constructor(
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
@@ -38,6 +39,7 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 		private subheaderService: SubheaderService,
 		private invoiceService: InvoicesService,
 		private spinner: NgxSpinnerService,
+		private sanitizer: DomSanitizer,
 		private cdr: ChangeDetectorRef) {
 	}
 
@@ -61,8 +63,8 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 		this.spinner.show();
 		this.invoiceService.getInvoiceView(invoiceId).toPromise().then(res => {
 			this.invoice = res.data;
-			if(this.invoice.bookings)
-			this.createEmptyArray(this.invoice.bookings.length);
+			if (this.invoice.bookings)
+				this.createEmptyArray(this.invoice.bookings.length);
 			this.cdr.markForCheck();
 		})
 			.catch(() => {
@@ -74,7 +76,7 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	createEmptyArray(length:number) {
+	createEmptyArray(length: number) {
 		const num = 10 - length;
 		for (var i = 0; i < num; i++) {
 			this.emptyArray.push(i);
@@ -143,96 +145,13 @@ export class InvoiceViewComponent implements OnInit, OnDestroy {
 	}
 
 	dowonloadPdf() {
-		this.invoiceService.downloadpdf(1).subscribe((res) => {
-			console.log(res);
-		});
+		this.spinner.show();
+		this.invoiceService.downloadpdf(this.invoice.id).subscribe((res) => {
+			this.fileUrl = res.data.url;
+			window.open(this.fileUrl, '_blank');
+		}, () => { this.spinner.hide(); }, () => { this.spinner.hide(); });
 
-
-
-		//try {
-		//	window.scroll(0, 0);
-		//	const fileName = `${this.invoice.invoiceNumber}.pdf`;
-		//	this.spinner.show();
-		//	let data = document.getElementById('container');
-		//	html2canvas(data, {scale: 10}).then(canvas => {
-		//		const contentDataURL = canvas.toDataURL('image/jpeg', 1.0);
-		//		let pdf = new jspdf('p', 'cm', 'a4');
-		//		pdf.addImage(contentDataURL, 'jpeg', 1.3, 1, 17.7, 17.0);
-		//		pdf.save(fileName);
-		//		window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
-		//	});
-		//}
-		//catch{
-		//}
-		//finally {
-		//	this.spinner.hide();
-		//}
 	}
-
-	//generatePdf() {
-	//	const elem = document.getElementById('container');
-	//	const fileName = `${this.invoice.invoiceNumber}.pdf`;
-
-	//	var divHeight = $(elem).height();
-	//	var divWidth = $(elem).width();
-	//	var ratio = divHeight / divWidth;
-	//	let data = document.getElementById('container');
-	//	html2canvas(data).then(canvas => {
-	//		var imgData = canvas.toDataURL('image/jpeg', 1.0);
-	//		let pdf = new jspdf("p", "mm", "a4");
-	//		pdf.addImage(imgData, 'JPEG', 10, 10, 170, 150);
-	//		pdf.save(fileName);
-	//		window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
-	//	});
-	//}
-
-	//createPdf() {
-	//	const fileName = `${this.invoice.invoiceNumber}.pdf`;
-	//	var pdf = new jspdf('p', 'pt', 'a4');
-	//	const source = document.getElementById('container');
-	//	const specialElementHandlers = {
-	//		'#bypassme': function (element, renderer) {
-	//			return true
-	//		}
-	//	};
-	//	const margins = {
-	//		top: 30,
-	//		bottom: 30,
-	//		left: 20,
-	//		width: 790,
-	//		height: 1122
-	//	};
-
-	//	pdf.fromHTML(
-	//		source,
-	//		margins.left,
-	//		margins.top, {
-	//		'width': margins.width,
-	//		'elementHandlers': specialElementHandlers
-	//	},
-
-	//		function (dispose) {
-	//			pdf.save(fileName);
-	//			window.open(pdf.output('bloburl', { filename: fileName }), '_blank');
-	//		}, margins);
-	//}
-
-	//onExportClick() {
-	//	const options = {
-	//		fileName: '',
-	//		image: { type: 'jpeg' },
-	//		html2canvas: {},
-	//		jsPDF: {orientation: 'portrait'}
-	//	};
-	//	const content: Element = document.getElementById('container');
-
-	//	html2pdf().from(content)
-	//		.set(options)
-	//		.save();
-
-	//}
-
-
 
 	getMilliSeconds(date: string): any {
 		try {

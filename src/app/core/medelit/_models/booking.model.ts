@@ -11,7 +11,7 @@ export class BookingModel extends BaseModel {
 	invoiceEntityId: number;
 	invoiceEntityName: string;
 	bookingStatusId?: number = 1;
-	bookingDate?: Date;
+	bookingDate?: string;
 	bookingTypeId?: number;
 	visitLanguageId?: number;
 	visitVenueId?: number;
@@ -78,8 +78,9 @@ export class BookingModel extends BaseModel {
 	patientDiscount?: number;
 	grossTotal?: number;
 	isAllDayVisit: number;
-	visitStartDate?: Date;
-	visitEndDate?: Date;
+	visitStartDate?: string;
+	visitStartTime?: string;
+	visitEndDate?: string;
 
 
 	proDiscount?: number;

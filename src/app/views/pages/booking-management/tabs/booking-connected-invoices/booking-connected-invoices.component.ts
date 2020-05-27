@@ -21,7 +21,7 @@ export class BookingConnectedInvoicesComponent implements OnInit, OnDestroy {
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
 
-	displayedColumns: string[] = ['subject', 'invoiceNumber', 'ieName', 'invoiceDate', 'totalInvoice'];
+	displayedColumns: string[] = ['subject', 'invoiceNumber', 'ieName', 'invoiceDate', 'invoiceDueDate', 'totalInvoice'];
 	dataSource = new MatTableDataSource<BookingConnectedInvoices>();
 	selection = new SelectionModel<BookingConnectedInvoices>(true, []);
 	loadingSubject = new BehaviorSubject<boolean>(true);

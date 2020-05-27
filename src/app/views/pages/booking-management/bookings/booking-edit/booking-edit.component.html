@@ -47,13 +47,12 @@
 		</ng-container>
 	</kt-portlet-header>
 	<style>
-
 	</style>
 	<mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="tabChanged($event)">
 		<mat-tab label="Booking Info">
 			<ng-template matTabContent>
 				<kt-portlet-body class="pt-0">
-					<div *ngIf="booking">
+					<div *ngIf="bookingForm">
 						<form [formGroup]="bookingForm" class="kt-form kt-form--group-seperator-dashed">
 
 							<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
@@ -116,7 +115,7 @@
 													</mat-form-field>
 												</div>
 												<div class="col-md-2" *ngIf="booking && booking.customerId">
-													<a class="customer-link" [routerLink]="['/customer-management/customers/edit/', booking.customerId]" title="Edit customer"><i class="la la-eye la-2x"></i></a>
+													<a class="customer-link" [routerLink]="['/customer-management/customers/edit/', booking.customerId]" title="Edit customer"><i class="flaticon-infinity font-16"></i></a>
 												</div>
 											</div>
 										</div>
@@ -178,15 +177,11 @@
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput
-													   [owlDateTime]="bookingDatePicker"
-													   [owlDateTimeTrigger]="bookingDatePicker"
-													   [selectMode]="'single'"
 													   #bookingDate
-													   placeholder=""
+													   placeholder="Booking Date"
 													   [formControlName]="'bookingDate'"
-													   readonly="readonly"
-													   useValueAsDate>
-												<owl-date-time #bookingDatePicker></owl-date-time>
+													   bsDatepicker [bsConfig]="datePickerConfig"
+													   [dateCustomClasses]="dateCustomClasses">
 												<button mat-button *ngIf="bookingDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('bookingDate').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
@@ -201,71 +196,85 @@
 												</mat-error>
 											</mat-form-field>
 										</div>
-										
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+
+										<div class="col-md-6 kt-margin-bottom-10-mobile pt-3">
 											<div class="row pt-2">
-												<div class="col-md-4 font-500">Visit All Day :</div>
+												<div class="col-md-2 font-500">Visit All Day:</div>
 												<div class="col-md-8">
 													<mat-checkbox class="example-margin" [formControlName]="'isAllDayVisit'"></mat-checkbox>
 												</div>
 											</div>
-											<div class="row">
-												<div class="col-md-4 pt-4"><span class="required-star font-500">Visit Starts:</span> </div>
-												<div class="col-md-8">
+											<div class="row position-relative">
+												<div class="col-md-2 pt-5"><span class="required-star font-500">Visit Starts:</span> </div>
+												<div class="col-md-6 pt-4">
 													<mat-form-field class="mat-form-field-fluid">
-														<input matInput [owlDateTime]="visitStartDatePicker"
-															   [owlDateTimeTrigger]="visitStartDatePicker"
-															   [selectMode]="'single'"
+														<input matInput
 															   #visitStartDate
-															   placeholder=""
+															   placeholder="Visit Start Date"
 															   [formControlName]="'visitStartDate'"
-															   readonly="readonly"
-															   (dateTimeChange)="checkDates()"
-															   useValueAsDate>
-														<owl-date-time #visitStartDatePicker></owl-date-time>
-														<button mat-button *ngIf="visitStartDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitStartDate').setValue('')">
+															   bsDatepicker [bsConfig]="datePickerConfig"
+															   [dateCustomClasses]="dateCustomClasses"
+															   (change)="setEndDateTime()"
+															   >
+														<button mat-button *ngIf="visitStartDate.value" matSuffix
+																mat-icon-button aria-label="Clear"
+																(click)="bookingForm.get('visitStartDate').setValue('')">
 															<mat-icon>close</mat-icon>
 														</button>
 														<mat-error>
-															Visit Start Date
+															Visit Start Date is
 															<strong>required</strong>
 														</mat-error>
+														<mat-hint align="start">
+															<strong>Visit Start Date</strong>
+														</mat-hint>
 													</mat-form-field>
+												</div>
+												<div class="col-md-4">
+													<timepicker [formControlName]="'visitStartTime'"  [minuteStep]="'15'"></timepicker>
+													<mat-hint align="start">
+														<strong>Visit Start Time</strong>
+													</mat-hint>
 												</div>
 											</div>
 
-											<div class="row">
-												<div class="col-md-4 pt-4">
+											<div class="row position-relative">
+												<div class="col-md-2 pt-5">
 													<span class="required-star font-500">Visit Ends: </span>
 												</div>
 
-												<div class="col-md-8">
+												<div class="col-md-6 pt-4">
 													<mat-form-field class="mat-form-field-fluid">
 														<input matInput
-															   [owlDateTime]="visitEndDatePicker"
-															   [owlDateTimeTrigger]="visitEndDatePicker"
-															   [selectMode]="'single'"
 															   #visitEndDate
-															   placeholder=""
+															   placeholder="Visit End Date"
 															   [formControlName]="'visitEndDate'"
-															   readonly="readonly"
-															   useValueAsDate>
-														<owl-date-time #visitEndDatePicker></owl-date-time>
-														<button mat-button *ngIf="visitEndDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitEndDate').setValue('')">
+															   bsDatepicker [bsConfig]="datePickerConfig"
+															   [dateCustomClasses]="dateCustomClasses">
+														<button mat-button *ngIf="visitEndDate.value" matSuffix
+																mat-icon-button aria-label="Clear"
+																(click)="bookingForm.get('visitEndDate').setValue('')">
 															<mat-icon>close</mat-icon>
 														</button>
 														<mat-error>
-															<span *ngIf="this.bookingForm.get('visitEndDate').errors?.required">
-																Visit End Date
-																<strong>required</strong>
-															</span>
+															Visit End Date is
+															<strong>required</strong>
 														</mat-error>
-
+														<mat-hint align="start">
+															<strong>Visit End Date</strong>
+														</mat-hint>
 													</mat-form-field>
+
 													<p *ngIf="this.bookingForm.get('visitEndDate').errors?.required== null &&  this.bookingForm.hasError('dates')" class="mat-error">
 														Visit End Date
 														<strong>should be greater than Visit Start Date</strong>
 													</p>
+												</div>
+												<div class="col-md-4">
+													<timepicker [formControlName]="'visitEndTime'" [minuteStep]="'15'"></timepicker>
+													<mat-hint align="start">
+														<strong>Visit End Time</strong>
+													</mat-hint>
 												</div>
 											</div>
 										</div>
@@ -356,7 +365,7 @@
 													</mat-form-field>
 												</div>
 												<div class="col-md-4">
-													<button class="btn btn-primary btn-sm">Send Email</button>
+													<button class="btn btn-primary btn-sm font-14"><i class="flaticon-email-black-circular-button font-16"></i> Send Email</button>
 												</div>
 											</div>
 										</div>
@@ -511,7 +520,7 @@
 													   [formControlName]="'visitCity'" (focusout)="controlFocusout('visitCity')">
 												<button mat-button *ngIf="visitCity.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('visitCity').setValue('')">
 													<mat-icon>close</mat-icon>
-												</button>											
+												</button>
 												<mat-error>
 													Visit City / Town is
 													<strong>required</strong>
@@ -702,7 +711,7 @@
 													   [formControlName]="'homeCity'" (focusout)="controlFocusout('homeCity')">
 												<button mat-button *ngIf="homeCity.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('homeCity').setValue('')">
 													<mat-icon>close</mat-icon>
-												</button>												
+												</button>
 												<mat-error>
 													Home City / Town is
 													<strong>required</strong>
@@ -986,7 +995,7 @@
 											</mat-form-field>
 										</div>
 
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+										<!--<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput [matDatepicker]="invoiceDueDatePicker" #invoiceDueDate placeholder="Invoice date" [formControlName]="'invoiceDueDate'" readonly="readonly">
 												<button mat-button *ngIf="invoiceDueDate.value" matSuffix mat-icon-button aria-label="Clear" (click)="bookingForm.get('invoiceDueDate').setValue('')">
@@ -1002,7 +1011,7 @@
 													<strong>Invoice Due Date</strong>
 												</mat-hint>
 											</mat-form-field>
-										</div>
+										</div>-->
 
 										<div class="col-md-4 kt-margin-bottom-20-mobile pt-5">
 											<label>Invoice Number: </label> {{booking.invoiceNumber}}
