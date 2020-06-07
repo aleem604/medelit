@@ -20,6 +20,10 @@ const routes: Routes = [
 				loadChildren: () => import('./views/pages/dashboard/dashboard.module').then(m => m.DashboardModule),
 			},
 			{
+				path: 'search',
+				loadChildren: () => import('./views/pages/search/search.module').then(m => m.SearchModule),
+			},
+			{
 				path: 'lead-management',
 				loadChildren: () => import('./views/pages/lead-management/leads.module').then(m => m.LeadsModule),
 			},

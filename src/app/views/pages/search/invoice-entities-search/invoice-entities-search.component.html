@@ -1,0 +1,79 @@
+<kt-portlet>
+	<kt-portlet-body>
+		<kt-portlet-header [sticky]="true" [title]="'Invocie Entities List'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+		</kt-portlet-header>
+		<div class="mat-table__wrapper">
+			<mat-table class="lmat-elevation-z8"
+					   #table
+					   [dataSource]="dataSource"
+					   matSort
+					   #sort1="matSort"
+					   matSortActive="id"
+					   matSortDirection="desc"
+					   matSortDisableClear>
+
+				<ng-container matColumnDef="name">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+					<mat-cell *matCellDef="let invoiceEntity">
+						<!--<a class="cursor-pointer" [routerLink]="['/invoice-entity-management/invoice-entities/edit', invoiceEntity.id]">-->
+							{{invoiceEntity.name}}
+						<!--</a>-->
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="ieType">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Entity Type</mat-header-cell>
+					<mat-cell *matCellDef="let invoiceEntity">{{invoiceEntity.ieType}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="rating">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Rating</mat-header-cell>
+					<mat-cell *matCellDef="let invoiceEntity">{{invoiceEntity.rating}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="phone">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Phone</mat-header-cell>
+					<mat-cell *matCellDef="let invoiceEntity">{{invoiceEntity.phone}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="email">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
+					<mat-cell *matCellDef="let invoiceEntity">{{invoiceEntity.email}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="city">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>City</mat-header-cell>
+					<mat-cell *matCellDef="let invoiceEntity">{{invoiceEntity.city}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="country">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Country</mat-header-cell>
+					<mat-cell *matCellDef="let invoiceEntity">{{invoiceEntity.country}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="updateDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Last Changed</mat-header-cell>
+					<mat-cell *matCellDef="let invoiceEntity">{{invoiceEntity.updateDate | date: 'dd/MM/yyyy'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="assignedTo">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Assigned To</mat-header-cell>
+					<mat-cell *matCellDef="let lead" class="text-capitalize">{{lead.assignedTo}}</mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">No records found</div>
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">Please wait....</div>
+		</div>
+
+		<!-- start: BOTTOM -->
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+		<!-- end: BOTTOM -->
+	</kt-portlet-body>
+	<!-- end::Body -->
+</kt-portlet>

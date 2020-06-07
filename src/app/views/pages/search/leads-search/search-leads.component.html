@@ -1,0 +1,88 @@
+<kt-portlet>
+	<kt-portlet-header [sticky]="true" [title]="'Leads list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+	</kt-portlet-header>
+	<kt-portlet-body>
+		<div class="mat-table__wrapper">
+			<mat-table class="lmat-elevation-z8"
+					   #table
+					   [dataSource]="dataSource"
+					   matSort
+					   #sort1="matSort"
+					   matSortActive="createDate"
+					   matSortDirection="desc"
+					   matSortDisableClear>
+
+				<ng-container matColumnDef="surName">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Surname</mat-header-cell>
+					<mat-cell *matCellDef="let lead" class="text-capitalize">{{lead.surName}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="name">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+					<mat-cell *matCellDef="let lead" class="text-capitalize">
+						<!--<a class="cursor-pointer" [routerLink]="['/lead-management/leads/edit', lead.id]">-->
+							{{lead.name}}
+						<!--</a>-->
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="mainPhone">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Phone</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.mainPhone}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="email">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.email}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="city">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>City</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.city}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="country">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Country</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.country}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="createDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Created</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.createDate | date:'dd/MM/yyyy'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="updateDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Last Changed</mat-header-cell>
+					<mat-cell *matCellDef="let lead">{{lead.updateDate | date:'dd/MM/yyyy'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="assignedTo">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Assigned To</mat-header-cell>
+					<mat-cell *matCellDef="let lead" class="text-capitalize">{{lead.assignedTo}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>
+						Actions
+					</mat-header-cell>
+					<mat-cell *matCellDef="let lead">
+
+						<button type="button" (click)="editLead(lead.id)" mat-icon-button color="primary" matTooltip="Edit lead">
+							<mat-icon>create</mat-icon>
+						</button>&nbsp;
+					</mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">No records found</div>
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">Please wait....</div>
+		</div>
+
+		<!-- start: BOTTOM -->
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+		<!-- end: BOTTOM -->
+	</kt-portlet-body>
+	<!-- end::Body -->
+</kt-portlet>

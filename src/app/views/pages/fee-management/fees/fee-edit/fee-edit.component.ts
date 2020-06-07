@@ -329,7 +329,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 	private _filterTags(value: string): string[] {
 		const filterValue = this._normalizeValue(value);
 		const tempTags = this.tagsForFilter.filter(f => this.tagsArray.indexOf(f) === -1);
-		return tempTags.filter(elem => this._normalizeValue(elem).includes(filterValue));
+		return this.tagsForFilter.filter(elem => this._normalizeValue(elem).includes(filterValue));
 	}
 
 	private _normalizeValue(value: string): string {
@@ -342,18 +342,23 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		const input = event.input;
 		const value = event.value;
 
-		// Add our fruit
-		if (this.tagsArray.length < 5 && (value || '').trim()) {
+		if ((value || '').trim()) {
 			this.tagsArray.push(value.trim());
 			this.cdr.markForCheck();
-		} else {
-			//this.toaster.warning(`Can't add more than 5 tags`);
 		}
 
-		// Reset the input value
 		if (input) {
 			input.value = '';
 		}
+		this.tagsInput.nativeElement.value = '';
+	}
+
+	selected(event: MatAutocompleteSelectedEvent): void {
+		const val = event.option.value;
+		if (this.tagsArray.indexOf(val) === -1)
+			this.tagsArray.push(event.option.value);
+		this.tagsInput.nativeElement.value = '';
+		this.cdr.markForCheck();
 	}
 
 	remove(tag: string): void {
@@ -364,17 +369,7 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	selected(event: MatAutocompleteSelectedEvent): void {
-		const val = event.option.value;
-		if (this.tagsArray.length < 5) {
-			if (this.tagsArray.indexOf(val) === -1)
-				this.tagsArray.push(event.option.value);
-			this.tagsInput.nativeElement.value = '';
-			this.cdr.markForCheck();
-		} else {
-			this.toaster.warning(`Can't add more than 5 tags`);
-		}
-	}
+	
 
 	tabChanged(event: MatTabChangeEvent) {
 		this.tabTitle = event.tab.textLabel;

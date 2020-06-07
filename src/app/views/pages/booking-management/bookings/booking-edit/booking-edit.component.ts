@@ -1,20 +1,13 @@
-// Angular
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, HostListener } from '@angular/core';
+import { ActivatedRoute, Router, CanDeactivate } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, ValidatorFn } from '@angular/forms';
-// Material
 import { MatDialog, MatTabChangeEvent } from '@angular/material';
-// RxJS
 import { Observable, BehaviorSubject, Subscription, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-// NGRX
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
-// Layout
 import { SubheaderService } from '../../../../../core/_base/layout';
-// CRUD
 import { LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
-// Services and Models
 import {
 	BookingModel,
 	BookingService,
@@ -33,6 +26,8 @@ import { BookingCycleDialog } from '../booking-cycle-dialog/booking-cycle-dialog
 import { AlertDialogComponent } from '../../../../partials/alert-dialog/alert-dialog.component';
 import { MedelitConstants } from '../../../../../core/_base/constants/medelit-contstants';
 import { MedelitBaseComponent } from '../../../../../core/_base/components/medelit-base.component';
+import { ConfirmDialogComponent } from '../../../../partials/confirm-dialog/confirm-dialog.component';
+
 
 @Component({
 	selector: 'kt-booking-edit',
@@ -42,6 +37,7 @@ import { MedelitBaseComponent } from '../../../../../core/_base/components/medel
 })
 export class BookingEditComponent extends MedelitBaseComponent implements OnInit, OnDestroy {
 	// Public properties
+	isDirty: boolean = true;
 	booking: BookingModel;
 	bookingId$: Observable<number>;
 	timedService: boolean;
@@ -125,6 +121,17 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		private spinner: NgxSpinnerService,
 		private cdr: ChangeDetectorRef) {
 		super();
+	}
+
+	canDeactivate(): Observable<boolean> | boolean {
+
+		if (this.bookingForm.touched) {
+			if (confirm('Are you sure to leave without saving changes?')) {
+				return true;
+			} else
+				return false;
+		}
+		return true;
 	}
 
 	ngOnInit() {
@@ -352,9 +359,15 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 	setEndDateTime() {
 		this.bookingForm.get('visitStartDate').valueChanges.subscribe(v => {
 			let sdate = new Date(v);
-			let edate = new Date(sdate.getFullYear(), sdate.getMonth(), sdate.getDate(), sdate.getHours() + 1, sdate.getMinutes());
+			let edate = new Date(v);
+			//edate.setDate(sdate.getDay() + 1);
+			sdate.setMinutes(0);
+			edate.setHours(sdate.getHours() + 1);
+			edate.setMinutes(0);
 
+			this.bookingForm.get('visitStartTime').setValue(sdate);
 			this.bookingForm.get('visitEndDate').setValue(edate);
+			this.bookingForm.get('visitEndTime').setValue(edate);
 			this.bookingForm.updateValueAndValidity();
 		});
 
@@ -567,7 +580,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		_booking.subTotal = controls.subTotal.value;
 		_booking.taxAmount = controls.taxAmount.value;
 		_booking.patientDiscount = controls.patientDiscount.value;
-		_booking.grossTotal = controls.grossTotal.value;
+		_booking.grossTotal = isNaN(controls.grossTotal.value) ? null : controls.grossTotal.value;
 
 		_booking.isAllDayVisit = controls.isAllDayVisit.value;
 		_booking.visitStartDate = this.formatDateWithTimeToServer(controls.visitStartDate.value, controls.visitStartTime.value);
@@ -630,6 +643,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 
 				const message = `Booking successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+				this.bookingForm.markAsUntouched();
 				//this.refreshBooking(false);
 			} else {
 				const message = `An error occured while processing your request. Please try again later.`;
@@ -685,6 +699,8 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		const paymentConcluded = +this.bookingForm.get('paymentConcludedId').value;
 		const paymentMethod = +this.bookingForm.get('paymentMethodId').value;
 		const bookingStatus = +this.bookingForm.get('bookingStatusId').value;
+
+
 
 		if ((invoiceNumber == null && paymentStatus === 3 && paymentConcluded === 1 && paymentMethod !== 4) || (invoiceNumber === null && paymentStatus == 2 && (bookingStatus === 4 || bookingStatus === 6))) {
 			console.log(true);
@@ -1327,7 +1343,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		//	this.bookingForm.get('visitStartDate').valueChanges.subscribe((v) => {
 		//		if (v) {
 		//			let d = new Date(v);
-					
+
 		//			let newDate = new Date(d.getFullYear(), d.getMonth(), d.getDay(), d.getHours() + 1, d.getMinutes());
 		//			this.bookingForm.get('visitEndDate').setValue(this.formatDate(newDate.toLocaleDateString()));
 		//			this.bookingForm.get('visitEndTime').setValue(newDate);
@@ -1337,7 +1353,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 
 		//	this.bookingForm.get('visitStartTime').valueChanges.subscribe((v) => {
 		//		if (v) {
-					
+
 
 		//			this.bookingForm.get('visitEndTime').setValue(v);
 		//		}

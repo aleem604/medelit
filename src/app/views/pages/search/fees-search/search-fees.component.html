@@ -1,0 +1,85 @@
+<kt-portlet>
+	<kt-portlet-header [sticky]="true" [title]="'Fees list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+	</kt-portlet-header>
+	<!-- end::Header -->
+
+	<kt-portlet-body>
+		<!-- start::FILTERS & GROUP ACTIONS -->
+		<div class="kt-form kt-margin-b-30">
+
+		</div>
+
+		<div class="mat-table__wrapper">
+			<mat-table class="lmat-elevation-z8"
+					   #table
+					   [dataSource]="dataSource"
+					   matSort
+					   #sort1="matSort"
+					   matSortActive="feeName"
+					   matSortDirection="desc"
+					   matSortDisableClear>
+
+				<ng-container matColumnDef="feeCode">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Fee Code</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.feeCode}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="feeName">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Fee Name</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.feeName}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="feeType">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Fee Type</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.feeType}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="services">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Services</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell"><div [innerHtml]="fee.services"></div></mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="field">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Field</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell"><div [innerHtml]="fee.field"></div></mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="subCategory">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Subcategory</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell"><div [innerHtml]="fee.subCategory"></div></mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="professionals">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Professionals</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell"><div [innerHtml]="fee.professionals"></div></mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="a1">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">A1</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.a1 | number: '1.2-2'}}</mat-cell>
+				</ng-container>
+				<ng-container matColumnDef="a2">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">A2</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">{{fee.a2 | number: '1.2-2'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="tags">
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Tags</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell"><div [innerHtml]="fee.tags"></div></mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">No records found</div>
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">Please wait....</div>
+		</div>
+
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+	</kt-portlet-body>
+
+</kt-portlet>

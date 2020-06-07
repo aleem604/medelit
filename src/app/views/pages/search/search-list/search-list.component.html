@@ -1,0 +1,75 @@
+<kt-portlet>
+	<!-- end::Header -->
+
+	<kt-portlet-body>
+		<!-- start::FILTERS & GROUP ACTIONS -->
+		<div class="kt-form kt-margin-b-30">
+			<!-- start::FILTERS -->
+			<div class="kt-form__filtration">
+				<div class="row justify-content-end">
+
+					<div class="col-md-6 kt-margin-bottom-10-mobile">
+						<mat-form-field>
+							<input matInput placeholder="Search" #searchInput class="mat-form-field mat-form-field-fluid">
+							<button mat-button *ngIf="searchInput.value" matSuffix mat-icon-button aria-label="Clear" (click)="searchInput.value = ''">
+								<mat-icon>close</mat-icon>
+							</button>
+							<mat-hint align="start">
+								<strong>Search in all tables</strong>
+							</mat-hint>
+						</mat-form-field>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<kt-search-leads [searchInput]="searchInput.value"></kt-search-leads>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<kt-customers-search [searchInput]="searchInput.value"></kt-customers-search>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<kt-invoice-entities-search [searchInput]="searchInput.value"></kt-invoice-entities-search>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<kt-search-bookings [searchInput]="searchInput.value"></kt-search-bookings>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<kt-search-invocies [searchInput]="searchInput.value"></kt-search-invocies>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<kt-search-professionals [searchInput]="searchInput.value"></kt-search-professionals>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<kt-search-services [searchInput]="searchInput.value"></kt-search-services>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<kt-search-fees [searchInput]="searchInput.value"></kt-search-fees>
+			</div>
+		</div>
+
+
+		<!-- end: BOTTOM -->
+	</kt-portlet-body>
+	<!-- end::Body -->
+</kt-portlet>

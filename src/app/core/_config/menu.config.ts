@@ -387,6 +387,13 @@ export class MenuConfig {
 					translate: 'MENU.DASHBOARD',
 					bullet: 'dot',
 				},
+				{
+					title: 'Search',
+					root: true,
+					icon: 'flaticon-search',
+					page: '/search',
+					bullet: 'dot',
+				},
 				//{
 				//	title: 'Layout Builder',
 				//	root: true,

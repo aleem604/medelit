@@ -9,9 +9,6 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { TextMaskModule } from 'angular2-text-mask';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
-
-// Fake API Angular-in-memory
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 // Translate Module
 import { TranslateModule } from '@ngx-translate/core';
 // NGRX
@@ -19,8 +16,6 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 // UI
 import { PartialsModule } from '../../partials/partials.module';
-// Core
-import { FakeApiService } from '../../../core/_base/layout';
 // Auth
 import { ModuleGuard } from '../../../core/auth';
 // Core => Services
@@ -90,6 +85,8 @@ import {
 	BookingConnectedInvoicesComponent
 } from '.';
 import { BookingsListComponent } from './bookings/bookings-list/bookings-list.component';
+import { CanDeactivateGuard } from '../../../core/auth/_guards/component.guard';
+import { ConfirmDialogComponent } from '../../partials/confirm-dialog/confirm-dialog.component';
 
 // tslint:disable-next-line:class-name
 const routes: Routes = [
@@ -115,7 +112,8 @@ const routes: Routes = [
 			},
 			{
 				path: 'bookings/edit/:id',
-				component: BookingEditComponent
+				component: BookingEditComponent,
+				canDeactivate: [CanDeactivateGuard]
 			},
 		]
 	}
@@ -167,6 +165,7 @@ const routes: Routes = [
 	],
 	providers: [
 		ModuleGuard,
+		CanDeactivateGuard,
 		InterceptService,
 		{
 			provide: HTTP_INTERCEPTORS,
@@ -192,6 +191,7 @@ const routes: Routes = [
 		LayoutUtilsService
 	],
 	entryComponents: [
+		ConfirmDialogComponent,
 		ActionNotificationComponent,
 		DeleteEntityDialogComponent,
 		FetchEntityDialogComponent,

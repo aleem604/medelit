@@ -511,8 +511,8 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 	add(event: MatChipInputEvent): void {
 		const input = event.input;
 		const value = event.value;
-
-		if (this.tagsArray.length < 5 && (value || '').trim()) {
+		
+		if ((value || '').trim()) {
 			this.tagsArray.push(value.trim());
 		}
 
@@ -532,13 +532,10 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 	selected(event: MatAutocompleteSelectedEvent): void {
 		const val = event.option.value;
-		if (this.tagsArray.length < 5) {
+
 		if (this.tagsArray.indexOf(val) === -1)
 			this.tagsArray.push(event.option.value);
-			this.serviceTagsInput.nativeElement.value = '';
-		} else {
-			this.toaster.warning(`Can't add more than 5 tags`);
-		}
+		this.serviceTagsInput.nativeElement.value = '';
 	}
 
 

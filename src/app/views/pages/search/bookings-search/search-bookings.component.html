@@ -1,0 +1,110 @@
+<kt-portlet>
+
+	<kt-portlet-header [sticky]="true" [title]="'Bookings list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+
+	</kt-portlet-header>
+	<!-- end::Header -->
+
+	<kt-portlet-body>
+
+		<div class="mat-table__wrapper">
+			<mat-table class="lmat-elevation-z8"
+					   #table
+					   [dataSource]="dataSource"
+					   matSort
+					   #sort1="matSort"
+					   matSortActive="bookingDate"
+					   matSortDirection="desc"
+					   matSortDisableClear>
+
+				<ng-container matColumnDef="name">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Booking <br /> Name</mat-header-cell>
+					<mat-cell *matCellDef="let booking">
+						<!--<a [routerLink]="['/booking-management/bookings/edit/', booking.id]">-->
+						{{booking.name}}
+						<!--</a>-->
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="customer">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Customer <br /> Name</mat-header-cell>
+					<mat-cell *matCellDef="let booking">
+						<!--<a [routerLink]="['/customer-management/customers/edit/', booking.customerId]">-->
+						{{booking.customer}}
+						<!--</a>-->
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="invoicingEntity">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Invoicing <br /> Entity</mat-header-cell>
+					<mat-cell *matCellDef="let booking">
+						<!--<a [routerLink]="['/invoice-entity-management/invoice-entities/edit/', booking.invoiceEntityId]">-->
+						{{booking.invoicingEntity}}
+						<!--</a>-->
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="service">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Service</mat-header-cell>
+					<mat-cell *matCellDef="let booking">
+						<!--<a [routerLink]="['/booking-management/bookings/edit/', booking.serviceId]">-->
+						{{booking.service}}
+						<!--</a>-->
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="professional">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Professional</mat-header-cell>
+					<mat-cell *matCellDef="let booking">
+						<!--<a [routerLink]="['/professional-management/professionals/edit/', booking.professionalId]">-->
+							{{booking.professional}}
+						<!--</a>-->
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="bookingDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Booking <br /> Date</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.bookingDate  | date: 'dd/MM/yyyy'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="visitDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Date of <br /> Visit</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.visitDate  | date: 'dd/MM/yyyy'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="visitTime">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Time of <br /> Visit</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.visitDate  | date: 'h:mm a'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="paymentMethod">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Payment <br /> Method</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.paymentMethod}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="ptFee">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>PT <br /> Fee</mat-header-cell>
+					<mat-cell *matCellDef="let booking">{{booking.ptFee | number: '1.2-2'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="assignedTo">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Assigned To</mat-header-cell>
+					<mat-cell *matCellDef="let lead" class="text-capitalize">{{lead.assignedTo}}</mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">No records found</div>
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">Please wait....</div>
+		</div>
+
+		<!-- start: BOTTOM -->
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+		<!-- end: BOTTOM -->
+	</kt-portlet-body>
+	<!-- end::Body -->
+</kt-portlet>

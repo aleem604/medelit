@@ -88,6 +88,7 @@ export {
 export { AuthGuard } from './_guards/auth.guard';
 export { ModuleGuard } from './_guards/module.guard';
 
+
 // MODELS
 export { User } from './_models/user.model';
 export { Role } from './_models/role.model';

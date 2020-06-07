@@ -1,9 +1,5 @@
 <kt-portlet>
-
-	<kt-portlet-header [sticky]="true" [title]="'Services list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
-		<ng-container ktPortletTools>
-			<button (click)="createService()" mat-raised-button color="primary" matTooltip="Create new service">New service</button>
-		</ng-container>
+	<kt-portlet-header [sticky]="true" [title]="'Services list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">		
 	</kt-portlet-header>
 	<!-- end::Header -->
 
@@ -11,43 +7,7 @@
 		<!-- start::FILTERS & GROUP ACTIONS -->
 		<div class="kt-form kt-margin-b-30">
 			<!-- start::FILTERS -->
-			<div class="kt-form__filtration">
-				<div class="row align-items-center">
-				
-					<div class="col-md-3 kt-margin-bottom-10-mobile">
-						<mat-form-field>
-							<input matInput placeholder="Search" #searchInput class="mat-form-field mat-form-field-fluid">
-							<mat-hint align="start">
-								<strong>Search in all fields</strong>
-							</mat-hint>
-						</mat-form-field>
-					</div>
-				</div>
-			</div>
-
-			<div class="row align-items-center collapse kt-form__group-actions kt-margin-top-20 kt-margin-bottom-20" [ngClass]="{'show' : selection.selected.length > 0}">
-				<div class="col-xl-12">
-					<div class="kt-form__group kt-form__group--inline">
-						<div class="kt-form__label kt-form__label-no-wrap">
-							<label class="kt--font-bold kt-font-danger-">Selected records count: {{ selection.selected.length }}</label>
-						</div>
-						<div class="kt-form__control kt-form__group--inline">
-							<button mat-raised-button color="accent" (click)="deleteServices()" matTooltip="Delete selected services"  class="mat-button-mt-4">
-								<mat-icon>delete</mat-icon>
-								Delete All
-							</button>&nbsp;<!-- Call 'delete-entity-dialog' from _shared folder -->
-							<button mat-raised-button (click)="fetchServices()" matTooltip="Fetch selected services"  class="mat-button-mt-4">
-								<mat-icon>clear_all</mat-icon>
-								Fetch Selected Records
-							</button>&nbsp;<!-- Call 'fetch-entity-dialog' from _shared folder -->
-							<button mat-raised-button (click)="updateStatusForServices()" matTooltip="Update status for selected services"  class="mat-button-mt-4">
-								<mat-icon>update</mat-icon>
-								Update status
-							</button><!-- Call 'update-stated-dialog' from _shared folder -->
-						</div>
-					</div>
-				</div>
-			</div>
+					
 		</div>
 
 		<div class="mat-table__wrapper">
@@ -77,7 +37,7 @@
 				</ng-container>
 
 				<ng-container matColumnDef="id">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Service ID</mat-header-cell>
 					<mat-cell *matCellDef="let service">{{service.id}}</mat-cell>
 				</ng-container>
 
@@ -86,9 +46,20 @@
 					<mat-cell *matCellDef="let service" class="text-capitalize">{{service.name}}</mat-cell>
 				</ng-container>
 
+				<ng-container matColumnDef="field">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Field</mat-header-cell>
+					<mat-cell *matCellDef="let service"><span [innerHtml]="service.field"></span></mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="subCategory">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Subcategory</mat-header-cell>
+					<mat-cell *matCellDef="let service"><span [innerHtml]="service.subCategory"></span></mat-cell>
+				</ng-container>
+
+
 				<ng-container matColumnDef="professionals">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Professionals</mat-header-cell>
-					<mat-cell *matCellDef="let service" class="text-capitalize">{{service.professionals}}</mat-cell>
+					<mat-cell *matCellDef="let service"><span [innerHtml]="service.professionals"></span></mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="ptFeesA1">
@@ -119,10 +90,20 @@
 						</ng-container>
 					</mat-cell>
 				</ng-container>
+				
+				<ng-container matColumnDef="status">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+					<mat-cell *matCellDef="let service">
+						<span class="kt-badge kt-badge--inline kt-badge--pill kt-badge--{{ getItemCssClassByStatus(service.status) }} kt-badge--wide">{{ getItemStatusString(service.status) }}</span>
+					</mat-cell>
+				</ng-container>
 
-				<ng-container matColumnDef="createDate">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Date Created At</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.createDate | date: 'yyyy-MM-dd'}}</mat-cell>
+				<ng-container matColumnDef="condition">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Condition</mat-header-cell>
+					<mat-cell *matCellDef="let service">
+						<span class="kt-badge kt-badge--{{ getItemCssClassByCondition(service.condition) }} kt-badge--dot"></span>&nbsp;
+						<span class="kt--font-bold kt-font-{{ getItemCssClassByCondition(service.condition) }}">{{ getItemConditionString(service.condition) }}</span>
+					</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="actions">

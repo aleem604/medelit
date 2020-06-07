@@ -816,7 +816,7 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 
 		});
 
-		if (this.lead.insuranceCoverId) {
+		if (this.lead.insuranceCoverId !== undefined) {
 			this.leadForm.get('insuranceCoverId').setValue(this.lead.insuranceCoverId.toString());
 		}
 		if (this.lead.haveDifferentIEId !== null) {

@@ -137,7 +137,7 @@
 													</mat-form-field>
 												</div>
 												<div class="col-md-2" *ngIf="booking && booking.invoiceEntityId">
-													<a class="customer-link" [routerLink]="['/invoice-entity-management/invoice-entities/edit/', booking.invoiceEntityId]" title="Edit IE"><i class="la la-eye la-2x"></i></a>
+													<a class="customer-link" [routerLink]="['/invoice-entity-management/invoice-entities/edit/', booking.invoiceEntityId]" title="Edit IE"><i class="flaticon-infinity font-16"></i></a>
 												</div>
 											</div>
 										</div>
@@ -266,8 +266,8 @@
 													</mat-form-field>
 
 													<p *ngIf="this.bookingForm.get('visitEndDate').errors?.required== null &&  this.bookingForm.hasError('dates')" class="mat-error">
-														Visit End Date
-														<strong>should be greater than Visit Start Date</strong>
+														Visit End
+														<strong> must be greater than Visit Start</strong>
 													</p>
 												</div>
 												<div class="col-md-4">
@@ -940,11 +940,14 @@
 										</div>
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<div>Insurance Covered:</div>
+											<div>Insurance Covered<strong class="required-star">&nbsp;</strong>:</div>
 											<mat-radio-group class="example-radio-group" formControlName="insuranceCoverId">
 												<mat-radio-button class="example-radio-button" value="0">No</mat-radio-button>
 												<mat-radio-button class="example-radio-button" value="1">Yes</mat-radio-button>
 											</mat-radio-group>
+											<div *ngIf="bookingForm.get('insuranceCoverId').errors?.required">
+												<div class="">Insurance Covered is required</div>
+											</div>
 										</div>
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">

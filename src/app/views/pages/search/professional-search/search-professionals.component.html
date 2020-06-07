@@ -1,0 +1,113 @@
+<kt-portlet>
+	<kt-portlet-header [sticky]="true" [title]="'Professionals list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+	</kt-portlet-header>
+	<!-- end::Header -->
+
+	<kt-portlet-body>
+		<!-- start::FILTERS & GROUP ACTIONS -->
+		<div class="kt-form kt-margin-b-30">		
+		</div>
+
+		<div class="mat-table__wrapper">
+			<mat-table class="lmat-elevation-z8"
+					   #table
+					   [dataSource]="dataSource"
+					   matSort
+					   #sort1="matSort"
+					   matSortActive="id"
+					   matSortDirection="asc"
+					   matSortDisableClear>
+				<!-- Checkbox Column -->
+
+				<ng-container matColumnDef="name">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+					<mat-cell *matCellDef="let professional">{{professional.name}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="telephone">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Phone N°</mat-header-cell>
+					<mat-cell *matCellDef="let professional">{{professional.telephone}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="email">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
+					<mat-cell *matCellDef="let professional">{{professional.email}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="fields">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Fields</mat-header-cell>
+					<mat-cell *matCellDef="let professional"><span [innerHtml]="professional.field"></span></mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="subCategories">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Subcategories</mat-header-cell>
+					<mat-cell *matCellDef="let professional"><span [innerHtml]="professional.subCategory"></span></mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="coverMap">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Cover Map</mat-header-cell>
+					<mat-cell *matCellDef="let professional">
+						<ng-container *ngIf="professional.coverMap">
+							<a href="//{{professional.coverMap}}" target="_blank" title="{{professional.coverMap}}"><i class="flaticon-infinity font-16"></i></a>
+						</ng-container>
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="status">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+					<mat-cell *matCellDef="let professional"><span [innerHtml]="professional.status"></span></mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="contractDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Beginning of Contract</mat-header-cell>
+					<mat-cell *matCellDef="let professional">{{professional.contractDate | date: 'dd/MM/yyy'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="contractEndDate">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>End of Contract</mat-header-cell>
+					<mat-cell *matCellDef="let professional">{{professional.contractEndDate | date: 'dd/MM/yyy'}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef class="email">
+						Actions
+					</mat-header-cell>
+					<mat-cell *matCellDef="let professional" class="email">
+						<button type="button" (click)="editProfessional(professional.id)" mat-icon-button color="primary" matTooltip="Edit professional">
+							<mat-icon>create</mat-icon>
+						</button>&nbsp;
+						<button mat-icon-button color="warn" type="button" (click)="deleteProfessional(professional)" matTooltip="Delete professional">
+							<mat-icon>delete</mat-icon>
+						</button>&nbsp;
+						<!--<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
+				<mat-icon>more_vert</mat-icon>
+			</button>-->
+						<mat-menu #menu="matMenu">
+							<button mat-menu-item type="button">
+								<mat-icon>subject</mat-icon>
+								<span>Remarks</span>
+							</button>
+							<button mat-menu-item type="button">
+								<mat-icon>assignment</mat-icon>
+								<span>Specifications</span>
+							</button>
+						</mat-menu>
+					</mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+			</mat-table>
+			<div class="mat-table__message" *ngIf="!dataSource.hasItems">No records found</div>
+			<div class="mat-table__message" *ngIf="dataSource.isPreloadTextViewed$ | async">Please wait....</div>
+		</div>
+
+		<!-- start: BOTTOM -->
+		<div class="mat-table__bottom">
+			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+		</div>
+		<!-- end: BOTTOM -->
+	</kt-portlet-body>
+	<!-- end::Body -->
+</kt-portlet>
