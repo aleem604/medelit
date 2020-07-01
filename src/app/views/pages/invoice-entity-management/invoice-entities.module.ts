@@ -63,12 +63,20 @@ import {
 	MatSnackBarModule,
 	MatTooltipModule
 } from '@angular/material';
-import { environment } from '../../../../environments/environment';
 import { NgbProgressbarModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { NgxMaskModule } from 'ngx-mask';
 import { InvoiceEntitiesComponent } from './invoice-entities.component';
-import { InvoiceEntitiesListComponent, InvoiceEntityEditComponent, InvoiceEntityConnectedServicesComponent, InvoiceEntityConnectedCustomersComponent, InvoiceEntityConnectedProfessinalsComponent, InvoieEntityConnectedBookingsComponent, InvoiceEntityConnectedInvoicesComponent } from '.';
+import {
+	InvoiceEntitiesListComponent,
+	InvoiceEntityEditComponent,
+	InvoiceEntityConnectedServicesComponent,
+	InvoiceEntityConnectedCustomersComponent,
+	InvoiceEntityConnectedProfessinalsComponent,
+	InvoieEntityConnectedBookingsComponent,
+	InvoiceEntityConnectedInvoicesComponent,
+	InvoieEntityConnectedLeadsComponent
+} from '.';
 
 
 // tslint:disable-next-line:class-name
@@ -177,7 +185,8 @@ const routes: Routes = [
 		InvoiceEntityConnectedCustomersComponent,
 		InvoiceEntityConnectedProfessinalsComponent,
 		InvoieEntityConnectedBookingsComponent,
-		InvoiceEntityConnectedInvoicesComponent
+		InvoiceEntityConnectedInvoicesComponent,
+		InvoieEntityConnectedLeadsComponent,
 	]
 })
 export class InvoiceEntitiesModule { }

@@ -125,7 +125,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 
 	canDeactivate(): Observable<boolean> | boolean {
 
-		if (this.bookingForm.touched) {
+		if (this.bookingForm && this.bookingForm.touched) {
 			if (confirm('Are you sure to leave without saving changes?')) {
 				return true;
 			} else
@@ -220,7 +220,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		this.bookingForm = this.bookingFB.group({
 
 			customerName: [this.booking.customerName, [Validators.required]],
-			invoiceEntityName: [this.booking.invoiceEntityName, []],
+			invoiceEntityId: [this.booking.invoiceEntityId, []],
 			bookingName: [this.booking.bookingName, []],
 			bookingStatusId: [this.booking.bookingStatusId, [Validators.required]],
 			bookingDate: [this.formatDate(this.booking.bookingDate), [Validators.required]],
@@ -507,6 +507,9 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		const _booking = new BookingModel();
 		_booking.id = this.booking.id;
 
+		if (controls.invoiceEntityId.value)
+			_booking.invoiceEntityId = +controls.invoiceEntityId.value.id;
+
 		_booking.bookingName = controls.bookingName.value;
 		_booking.bookingStatusId = +controls.bookingStatusId.value;
 		_booking.bookingDate = this.toDateFormat(controls.bookingDate.value);
@@ -610,6 +613,8 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		_booking.totalDue = controls.totalDue.value;
 		_booking.totalPaid = controls.totalPaid.value;
 
+		_booking.updateDate = new Date();
+
 		return _booking;
 	}
 
@@ -639,12 +644,12 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
 				const _booking = resp.data as unknown as BookingModel;
-				//this.loadBookingFromService(_booking.id);
+				this.booking.updateDate = _booking.updateDate;
+				this.cdr.markForCheck();
 
 				const message = `Booking successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
 				this.bookingForm.markAsUntouched();
-				//this.refreshBooking(false);
 			} else {
 				const message = `An error occured while processing your request. Please try again later.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
@@ -948,6 +953,7 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		this.loadCountriesFilter();
 		this.loadCountiesForFilter();
 		this.loadServicesForFilter();
+		this.loadInvoiceEntitiesForFilter();
 
 		this.staticService.getStaticDataForFitler().pipe(map(n => n.data as unknown as MedelitStaticData[])).toPromise().then((data) => {
 

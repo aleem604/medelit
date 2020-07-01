@@ -5,3 +5,4 @@ export * from './tabs/ie-connected-customers/ie-connected-customers.component';
 export * from './tabs/ie-connected-invoices/ie-connected-invoices.component';
 export * from './tabs/ie-connected-professionals/ie-connected-professionals.component';
 export * from './tabs/ie-connected-services/ie-connected-services.component';
+export * from './tabs/ie-connected-leads/ie-connected-leads.component';

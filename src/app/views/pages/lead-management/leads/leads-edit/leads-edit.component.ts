@@ -584,6 +584,8 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 		_lead.sortCode = controls.sortCode.value;
 		_lead.iban = controls.iban.value;
 		_lead.blacklistId = +controls.blacklistId.value;
+		_lead.updateDate = new Date(),
+		_lead.createDate = new Date(),
 		_lead.services = [];
 
 		const control = <FormArray>this.leadForm.controls['services'];
@@ -676,6 +678,8 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 
 				const message = `Lead successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
+				this.lead.updateDate = new Date();
+				this.cdr.markForCheck();
 				this.refreshLead(false, resp.data);
 			} else {
 				const message = `An error occured while processing your request. Please try again later.`;
@@ -816,10 +820,10 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 
 		});
 
-		if (this.lead.insuranceCoverId !== undefined) {
+		if (this.lead.insuranceCoverId !== undefined && this.lead.insuranceCoverId != null) {
 			this.leadForm.get('insuranceCoverId').setValue(this.lead.insuranceCoverId.toString());
 		}
-		if (this.lead.haveDifferentIEId !== null) {
+		if (this.lead.haveDifferentIEId != null) {
 			this.leadForm.get('haveDifferentIEId').setValue(this.lead.haveDifferentIEId.toString());
 		}
 	}
@@ -924,6 +928,7 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 
 	//// services
 	loadServicesForFilter() {
+		this.spinner.show();
 		this.staticService.getServicesForFilter().toPromise().then(res => {
 			this.servicesForFilter = res.data;
 
@@ -1085,7 +1090,6 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 	// Service Professionals
 
 	loadProfessionalsForFilter(serviceId: number) {
-		this.spinner.show();
 		this.staticService.getProfessionalsForFilter(serviceId).subscribe(res => {
 			this.professionalsForFilter = res.data;
 
@@ -1095,13 +1099,7 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 					this.leadForm.patchValue({ 'professionalId': { id: professional.id, value: professional.value, ptFees: professional.ptFees, proFees: professional.proFees } });
 				}
 			}
-		},
-			() => {
-				this.spinner.hide();
-			},
-			() => {
-				this.spinner.hide();
-			});
+		});
 	}
 
 	private _filterProfessionals(value: string): FilterModel[] {
@@ -1282,16 +1280,16 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 		}
 	}
 
-	serviceControlFocusout(event, control, index) {
-		// @ts-ignore
-		var serviceControls = this.leadForm.get('services').controls[index];
-		const val = serviceControls.get('serviceId').value;
+	//serviceControlFocusout(event, control, index) {
+	//	// @ts-ignore
+	//	var serviceControls = this.leadForm.get('services').controls[index];
+	//	const val = serviceControls.get('serviceId').value;
 
-		if (val && val.id) return val;
-		//serviceControls.get('serviceId').setValue('');
-		//this.cdr.markForCheck();
+	//	if (val && val.id) return val;
+	//	//serviceControls.get('serviceId').setValue('');
+	//	//this.cdr.markForCheck();
 
-	}
+	//}
 
 	/*End Closed events */
 

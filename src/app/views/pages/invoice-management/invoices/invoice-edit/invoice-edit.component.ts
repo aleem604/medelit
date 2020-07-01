@@ -194,6 +194,7 @@ export class InvoiceEditComponent extends MedelitBaseComponent implements OnInit
 			customerId: [this.invoice.customerId, [Validators.required]],
 			subject: [this.invoice.subject, [Validators.required]],
 			invoiceEntityId: [this.invoice.invoiceEntityId],
+			dateOfVisit: [this.formatDate(this.invoice.dateOfVisit)],
 			patientDateOfBirth: [this.formatDate(this.invoice.patientDateOfBirth)],
 			statusId: [this.invoice.statusId, [Validators.required]],
 			dueDate: [this.formatDate(this.invoice.dueDate), [Validators.required]],
@@ -335,6 +336,7 @@ export class InvoiceEditComponent extends MedelitBaseComponent implements OnInit
 		_invoice.invoiceNumber = controls.invoiceNumber.value;
 		if (controls.customerId.value)
 			_invoice.customerId = +controls.customerId.value.id;
+		_invoice.dateOfVisit = this.toDateFormat(controls.dateOfVisit.value);
 		_invoice.patientDateOfBirth = this.toDateFormat(controls.patientDateOfBirth.value);
 		if (controls.invoiceEntityId.value)
 			_invoice.invoiceEntityId = +controls.invoiceEntityId.value.id;
@@ -368,6 +370,7 @@ export class InvoiceEditComponent extends MedelitBaseComponent implements OnInit
 		_invoice.termsAndConditions = controls.termsAndConditions.value;
 		_invoice.invoiceDescription = controls.invoiceDescription.value;
 		_invoice.itemNameOnInvoice = controls.itemNameOnInvoice.value;
+		_invoice.updateDate = new Date();
 
 		return _invoice;
 	}

@@ -21,7 +21,7 @@ export class InvoiceEntityConnectedInvoicesComponent implements OnInit, OnDestro
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
 
-	displayedColumns: string[] = ['subject', 'invoiceNumber', 'ieName', 'invoiceDate', 'totalInvoice'];
+	displayedColumns: string[] = ['subject', 'invoiceNumber', 'invoiceDate', 'totalInvoice'];
 	dataSource = new MatTableDataSource<InvoiceEntityConnectedInvoices>();
 	selection = new SelectionModel<InvoiceEntityConnectedInvoices>(true, []);
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -36,7 +36,7 @@ export class InvoiceEntityConnectedInvoicesComponent implements OnInit, OnDestro
 	ngOnInit(): void {
 		
 		this.spinner.show();
-		this.invoiceEntityService.getInvoiceEntityConnectedBookings(this.ieId).toPromise().then((resp) => {
+		this.invoiceEntityService.getInvoiceEntityConnectedInvoices(this.ieId).toPromise().then((resp) => {
 			var res = resp as unknown as ApiResponse;
 			if (res.success) {
 				this.dataSource = new MatTableDataSource<InvoiceEntityConnectedInvoices>(res.data);

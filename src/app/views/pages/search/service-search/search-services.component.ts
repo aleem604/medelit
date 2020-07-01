@@ -5,7 +5,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { distinctUntilChanged, skip, delay, tap } from 'rxjs/operators';
 import { of, Subscription, BehaviorSubject, merge } from 'rxjs';
 import { Store, select } from '@ngrx/store';
-import {ServiceDataSource, selectProfessionalsPageLastQuery, ServicesPageRequested, ServiceModel, selectServicesPageLastQuery } from '../../../../core/medelit';
+import {ServiceDataSource, ServicesPageRequested, ServiceModel, selectServicesPageLastQuery } from '../../../../core/medelit';
 import { QueryParamsModel } from '../../../../core/_base/crud';
 import { AppState } from '../../../../core/reducers';
 
@@ -19,7 +19,7 @@ import { AppState } from '../../../../core/reducers';
 export class SearchServiceComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() searchInput: string;
 	dataSource: ServiceDataSource;
-	displayedColumns = ['id', 'name', 'field', 'subCategory', 'professionals', 'ptFeesA1', 'ptFeesA2', 'proFeesA1', 'proFeesA2', 'covermap'];
+	displayedColumns = ['id', 'name', 'field', 'subCategory', 'professionals', 'ptFeesA1', 'ptFeesA2', 'proFeesA1', 'proFeesA2', 'covermap', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -90,7 +90,8 @@ export class SearchServiceComponent implements OnInit, OnDestroy, OnChanges {
 			this.sort.direction,
 			this.sort.active,
 			this.paginator.pageIndex,
-			this.paginator.pageSize
+			this.paginator.pageSize,
+			true
 		);
 		// Call request from server
 		this.store.dispatch(new ServicesPageRequested({ page: queryParams }));

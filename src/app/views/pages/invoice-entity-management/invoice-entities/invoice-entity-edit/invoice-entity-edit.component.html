@@ -36,10 +36,10 @@
 								<div class="kt-form__group pt-1">
 									<div class="form-group kt-form__group row" *ngIf="invoiceEntity.id">
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-											<label class="font-500">Created : </label> {{invoiceEntity.createDate | date:'dd/MM/yyyy'}}
+											<label class="font-500">Created : </label> {{invoiceEntity.createDate | date:'dd/MM/yyyy HH:mm:ss'}}
 										</div>
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-											<label class="font-500">Last Changed : </label> {{invoiceEntity.updateDate | date:'dd/MM/yyyy'}}
+											<label class="font-500">Last Changed : </label> {{invoiceEntity.updateDate | date:'dd/MM/yyyy HH:mm:ss'}}
 										</div>
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
 											<label class="font-500">Assigned To : </label> <span class="text-capitalize">{{invoiceEntity.assignedTo}}</span>
@@ -219,7 +219,7 @@
 										</div>
 
 
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">											
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div class="row">
 												<div class="col-md-8">
 													<mat-form-field class="mat-form-field-fluid">
@@ -246,7 +246,7 @@
 											</div>
 
 										</div>
-										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">										
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div class="row">
 												<div class="col-md-8">
 													<mat-form-field class="mat-form-field-fluid">
@@ -301,7 +301,7 @@
 												<button mat-button *ngIf="dateOfBirth.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('dateOfBirth').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-												
+
 												<mat-error>
 													Date of birth
 													<strong>required</strong>
@@ -424,7 +424,7 @@
 													Billing Address Street Name is
 													<strong>required</strong>
 												</mat-error>
-												<mat-hint align="start">													
+												<mat-hint align="start">
 													<strong>Billing Address Street Name</strong>
 												</mat-hint>
 											</mat-form-field>
@@ -456,7 +456,7 @@
 												<button mat-button *ngIf="billingCity.value" matSuffix mat-icon-button aria-label="Clear" (click)="invoiceEntityForm.get('billingCity').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
-											
+
 												<mat-hint align="start">
 													<strong>Billing City/Town </strong>
 												</mat-hint>
@@ -786,7 +786,11 @@
 				<invoice-entity-connected-invoices [ieId]="invoiceEntity.id"></invoice-entity-connected-invoices>
 			</ng-template>
 		</mat-tab>
-
+		<mat-tab label="Leads" [disabled]='!(invoiceEntity && invoiceEntity.id)'>
+			<ng-template matTabContent>
+				<invoice-entity-connected-leads [ieId]="invoiceEntity.id"></invoice-entity-connected-leads>
+			</ng-template>
+		</mat-tab>
 
 	</mat-tab-group>
 </kt-portlet>

@@ -28,6 +28,7 @@ export class ServiceModel extends BaseModel {
 	status: eRecordStatus;
 	assignedToId: number;
 	assignedTo: string;
+	updateDate: Date;
 	createDate: Date;
 	createdById: number;
 	createdBy: string;

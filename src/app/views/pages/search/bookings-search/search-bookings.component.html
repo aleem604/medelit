@@ -1,6 +1,6 @@
 <kt-portlet>
 
-	<kt-portlet-header [sticky]="true" [title]="'Bookings list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+	<kt-portlet-header [sticky]="true" [title]="'Bookings List'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
 
 	</kt-portlet-header>
 	<!-- end::Header -->
@@ -57,7 +57,7 @@
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Professional</mat-header-cell>
 					<mat-cell *matCellDef="let booking">
 						<!--<a [routerLink]="['/professional-management/professionals/edit/', booking.professionalId]">-->
-							{{booking.professional}}
+						{{booking.professional}}
 						<!--</a>-->
 					</mat-cell>
 				</ng-container>
@@ -89,8 +89,20 @@
 
 				<ng-container matColumnDef="assignedTo">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Assigned To</mat-header-cell>
-					<mat-cell *matCellDef="let lead" class="text-capitalize">{{lead.assignedTo}}</mat-cell>
+					<mat-cell *matCellDef="let booking" class="text-capitalize">{{booking.assignedTo}}</mat-cell>
 				</ng-container>
+
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>
+						Actions
+					</mat-header-cell>
+					<mat-cell *matCellDef="let booking">
+						<a [routerLink]="['/booking-management/bookings/edit/', booking.id]" mat-icon-button color="primary" matTooltip="Edit booking">
+							<mat-icon>create</mat-icon>
+						</a>
+					</mat-cell>
+				</ng-container>
+
 
 				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 				<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>

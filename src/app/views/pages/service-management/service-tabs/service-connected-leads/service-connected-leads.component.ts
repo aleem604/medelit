@@ -3,7 +3,6 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRe
 import { ActivatedRoute, Router } from '@angular/router';
 // Material
 import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
-import { SelectionModel } from '@angular/cdk/collections';
 import { fromEvent, merge, Observable, of, BehaviorSubject } from 'rxjs';
 import { ApiResponse, ServicesService, ServiceConnectedLeads } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';

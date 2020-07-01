@@ -11,7 +11,7 @@
 					<div class="col-md-6 kt-margin-bottom-10-mobile">
 						<mat-form-field>
 							<input matInput placeholder="Search" #searchInput class="mat-form-field mat-form-field-fluid">
-							<button mat-button *ngIf="searchInput.value" matSuffix mat-icon-button aria-label="Clear" (click)="searchInput.value = ''">
+							<button mat-button *ngIf="searchInput.value" matSuffix mat-icon-button aria-label="Clear" (click)="searchInput.value = ''; triggerSearch('')">
 								<mat-icon>close</mat-icon>
 							</button>
 							<mat-hint align="start">
@@ -19,55 +19,57 @@
 							</mat-hint>
 						</mat-form-field>
 					</div>
+					<div class="col-md-2 kt-margin-bottom-10-mobile">
+						<button class="btn btn-sm btn-primary" (click)="triggerSearch(searchInput.value)"><i class="la la-search"></i> Search</button>
+					</div>
 				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-12">
-				<kt-search-leads [searchInput]="searchInput.value"></kt-search-leads>
+				<kt-search-leads [searchInput]="searchText"></kt-search-leads>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-12">
-				<kt-customers-search [searchInput]="searchInput.value"></kt-customers-search>
+				<kt-customers-search [searchInput]="searchText"></kt-customers-search>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-md-12">
-				<kt-invoice-entities-search [searchInput]="searchInput.value"></kt-invoice-entities-search>
+				<kt-invoice-entities-search [searchInput]="searchText"></kt-invoice-entities-search>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-md-12">
-				<kt-search-bookings [searchInput]="searchInput.value"></kt-search-bookings>
+				<kt-search-bookings [searchInput]="searchText"></kt-search-bookings>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-md-12">
-				<kt-search-invocies [searchInput]="searchInput.value"></kt-search-invocies>
+				<kt-search-invocies [searchInput]="searchText"></kt-search-invocies>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-md-12">
-				<kt-search-professionals [searchInput]="searchInput.value"></kt-search-professionals>
+				<kt-search-professionals [searchInput]="searchText"></kt-search-professionals>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-12">
-				<kt-search-services [searchInput]="searchInput.value"></kt-search-services>
+				<kt-search-services [searchInput]="searchText"></kt-search-services>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-md-12">
-				<kt-search-fees [searchInput]="searchInput.value"></kt-search-fees>
+				<kt-search-fees [searchInput]="searchText"></kt-search-fees>
 			</div>
 		</div>
-
 
 		<!-- end: BOTTOM -->
 	</kt-portlet-body>

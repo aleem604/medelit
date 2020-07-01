@@ -20,7 +20,7 @@ import { AppState } from '../../../../core/reducers';
 export class InvoiceEntitiesSearchComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() searchInput: string;
 	dataSource: InvoiceEntityDataSource;
-	displayedColumns = ['name', 'ieType', 'rating', 'phone', 'email', 'city', 'country', 'updateDate', 'assignedTo'];
+	displayedColumns = ['name', 'ieType', 'rating', 'phone', 'email', 'city', 'country', 'updateDate', 'assignedTo', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	lastQuery: QueryParamsModel;
@@ -89,7 +89,8 @@ export class InvoiceEntitiesSearchComponent implements OnInit, OnDestroy, OnChan
 			this.sort.direction,
 			this.sort.active,
 			this.paginator.pageIndex,
-			this.paginator.pageSize
+			this.paginator.pageSize,
+			true
 		);
 		this.store.dispatch(new InvoiceEntitiesPageRequested({ page: queryParams }));
 		this.selection.clear();

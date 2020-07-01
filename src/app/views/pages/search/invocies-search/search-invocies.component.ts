@@ -19,7 +19,7 @@ import { AppState } from '../../../../core/reducers';
 export class SearchInvociesComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() searchInput: string;
 	dataSource: InvoiceDataSource;
-	displayedColumns = ['invoiceNumber', 'createDate', 'customer', 'invoiceEntity', 'status', 'paymentStatus', 'paymentMethod', 'dateOfVisit', 'amount', 'assignedTo'];
+	displayedColumns = ['invoiceNumber', 'createDate', 'customer', 'invoiceEntity', 'status', 'paymentStatus', 'paymentMethod', 'dateOfVisit', 'amount', 'assignedTo', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -86,7 +86,8 @@ export class SearchInvociesComponent implements OnInit, OnDestroy, OnChanges {
 			this.sort.direction,
 			this.sort.active,
 			this.paginator.pageIndex,
-			this.paginator.pageSize
+			this.paginator.pageSize,
+			true
 		);
 		// Call request from server
 		this.store.dispatch(new InvoicesPageRequested({ page: queryParams }));

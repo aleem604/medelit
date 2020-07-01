@@ -57,10 +57,10 @@
 									<div class="form-group kt-form__group row" *ngIf="invoice.id">
 
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-											<label>Created : </label> {{invoice.createDate | date:'dd/MM/yyyy'}}
+											<label>Created : </label> {{invoice.createDate | date:'dd/MM/yyyy HH:mm:ss'}}
 										</div>
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-											<label>Last Changed : </label> {{invoice.updateDate | date:'dd/MM/yyyy'}}
+											<label>Last Changed : </label> {{invoice.updateDate | date:'dd/MM/yyyy HH:mm:ss'}}
 										</div>
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
 											<label class="pr-2">Assigned To : </label> <span class="text-capitalize">{{invoice.assignedTo}}</span>
@@ -204,6 +204,32 @@
 												</mat-error>
 											</mat-form-field>
 										</div>
+										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
+											<mat-form-field class="mat-form-field-fluid">
+												<input matInput
+													   #dateOfVisit placeholder="Date of visits"
+													   [formControlName]="'dateOfVisit'"
+													   bsDatepicker
+													   [bsConfig]="datePickerConfig"
+													   [dateCustomClasses]="dateCustomClasses">
+												<button mat-button *ngIf="dateOfVisit.value" matSuffix
+														mat-icon-button aria-label="Clear"
+														(click)="invoiceForm.get('dateOfVisit').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
+												
+												<mat-error>
+													Date of Visit is
+													<strong>required</strong>
+												</mat-error>
+												<mat-hint align="start">
+													Please enter
+													<strong>Date of Visit</strong>
+												</mat-hint>
+											</mat-form-field>
+										</div>
+
+
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
 												<input matInput #dueDate

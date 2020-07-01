@@ -13,7 +13,7 @@
 			<!-- start::FILTERS -->
 			<div class="kt-form__filtration">
 				<div class="row align-items-center">
-				
+
 					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field>
 							<input matInput placeholder="Search" #searchInput class="mat-form-field mat-form-field-fluid">
@@ -32,15 +32,15 @@
 							<label class="kt--font-bold kt-font-danger-">Selected records count: {{ selection.selected.length }}</label>
 						</div>
 						<div class="kt-form__control kt-form__group--inline">
-							<button mat-raised-button color="accent" (click)="deleteServices()" matTooltip="Delete selected services"  class="mat-button-mt-4">
+							<button mat-raised-button color="accent" (click)="deleteServices()" matTooltip="Delete selected services" class="mat-button-mt-4">
 								<mat-icon>delete</mat-icon>
 								Delete All
 							</button>&nbsp;<!-- Call 'delete-entity-dialog' from _shared folder -->
-							<button mat-raised-button (click)="fetchServices()" matTooltip="Fetch selected services"  class="mat-button-mt-4">
+							<button mat-raised-button (click)="fetchServices()" matTooltip="Fetch selected services" class="mat-button-mt-4">
 								<mat-icon>clear_all</mat-icon>
 								Fetch Selected Records
 							</button>&nbsp;<!-- Call 'fetch-entity-dialog' from _shared folder -->
-							<button mat-raised-button (click)="updateStatusForServices()" matTooltip="Update status for selected services"  class="mat-button-mt-4">
+							<button mat-raised-button (click)="updateStatusForServices()" matTooltip="Update status for selected services" class="mat-button-mt-4">
 								<mat-icon>update</mat-icon>
 								Update status
 							</button><!-- Call 'update-stated-dialog' from _shared folder -->
@@ -77,7 +77,7 @@
 				</ng-container>
 
 				<ng-container matColumnDef="id">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Service ID</mat-header-cell>
 					<mat-cell *matCellDef="let service">{{service.id}}</mat-cell>
 				</ng-container>
 
@@ -86,30 +86,53 @@
 					<mat-cell *matCellDef="let service" class="text-capitalize">{{service.name}}</mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="professionals">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Professionals</mat-header-cell>
-					<mat-cell *matCellDef="let service" class="text-capitalize">{{service.professionals}}</mat-cell>
+				<ng-container matColumnDef="field">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Field</mat-header-cell>
+					<mat-cell *matCellDef="let service"><span [innerHtml]="service.field"></span></mat-cell>
 				</ng-container>
 
-				<ng-container matColumnDef="ptFeesA1">
+				<ng-container matColumnDef="subCategory">
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Subcategory</mat-header-cell>
+					<mat-cell *matCellDef="let service"><span [innerHtml]="service.subCategory"></span></mat-cell>
+				</ng-container>
+
+
+				<ng-container matColumnDef="pros">
+					<mat-header-cell *matHeaderCellDef mat-sort-header style="min-width:450px;">
+						<table class="table">
+							<thead>
+								<tr>
+									<td style="width:200px; text-align:left;">Professional</td>
+									<td style="width:75px;">Pt Fee A1</td>
+									<td style="width:75px;">Pt Fee A2</td>
+									<td style="width:75px;">Pro Fee A1</td>
+									<td style="width:75px;">Pro Fee A2</td>
+								</tr>
+							</thead>
+						</table>
+					</mat-header-cell>
+					<mat-cell *matCellDef="let service" style="min-width:450px;"><span [innerHtml]="service.pros"></span></mat-cell>
+				</ng-container>
+
+				<!--<ng-container matColumnDef="ptFeesA1">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>PT Fees A1</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.ptFeesA1}}</mat-cell>
+					<mat-cell *matCellDef="let service"><span [innerHtml]="service.ptFeesA1"></span></mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="ptFeesA2">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>PT Fees A2</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.ptFeesA2}}</mat-cell>
+					<mat-cell *matCellDef="let service"><span [innerHtml]="service.ptFeesA2"></span></mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="proFeesA1">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>PRO Fees A1</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.proFeesA1}}</mat-cell>
+					<mat-cell *matCellDef="let service"><span [innerHtml]="service.proFeesA1"></span></mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="proFeesA2">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>PRO Fees A2</mat-header-cell>
-					<mat-cell *matCellDef="let service">{{service.proFeesA2}}</mat-cell>
-				</ng-container>
+					<mat-cell *matCellDef="let service"><span [innerHtml]="service.proFeesA2"></span></mat-cell>
+				</ng-container>-->
 
 				<ng-container matColumnDef="covermap">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Cover Map</mat-header-cell>
@@ -137,8 +160,8 @@
 							<mat-icon>delete</mat-icon>
 						</button>&nbsp;
 						<!--<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
-				<mat-icon>more_vert</mat-icon>
-			</button>-->
+							<mat-icon>more_vert</mat-icon>
+						</button>-->
 						<mat-menu #menu="matMenu">
 							<button mat-menu-item type="button">
 								<mat-icon>subject</mat-icon>

@@ -1,3 +1,4 @@
+import { Update } from '@ngrx/entity';
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
@@ -108,12 +109,10 @@ export class ProfessionalEditComponent extends MedelitBaseComponent implements O
 		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
-		private typesUtilsService: TypesUtilsService,
 		private professionalFB: FormBuilder,
 		public dialog: MatDialog,
 		private subheaderService: SubheaderService,
 		private layoutUtilsService: LayoutUtilsService,
-		private layoutConfigService: LayoutConfigService,
 		private professionalService: ProfessionalsService,
 		private servicesService: ServicesService,
 		private staticService: StaticDataService,
@@ -478,6 +477,8 @@ export class ProfessionalEditComponent extends MedelitBaseComponent implements O
 		_professional.documentListSentId = controls.documentListSentId.value;
 		_professional.calendarActivation = +controls.calendarActivation.value;
 		_professional.protaxCodeId = controls.protaxCodeId.value;
+		_professional.createDate = new Date();
+		_professional.updateDate = new Date();
 
 		return _professional;
 	}
@@ -528,7 +529,8 @@ export class ProfessionalEditComponent extends MedelitBaseComponent implements O
 			if (resp.success && resp.data > 0) {
 				const message = `Professional successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-				this.loadProfessionalFromService(this.professional.id);
+				this.professional.updateDate = new Date();
+				this.cdr.markForCheck();
 			} else {
 				const message = resp.errors.join('<br/>');
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);

@@ -20,7 +20,7 @@ import { selectBookingsPageLastQuery } from '../../../../core/medelit/_selectors
 export class SearchBookingsComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() searchInput: string;
 	dataSource: BookingDataSource;
-	displayedColumns = ['name', 'customer', 'invoicingEntity', 'service', 'professional', 'bookingDate', 'visitDate', 'paymentMethod', 'ptFee', 'assignedTo'];
+	displayedColumns = ['name', 'customer', 'invoicingEntity', 'service', 'professional', 'bookingDate', 'visitDate', 'paymentMethod', 'ptFee', 'assignedTo', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -92,7 +92,8 @@ export class SearchBookingsComponent implements OnInit, OnDestroy, OnChanges {
 			this.sort.direction,
 			this.sort.active,
 			this.paginator.pageIndex,
-			this.paginator.pageSize
+			this.paginator.pageSize,
+			true
 		);
 		// Call request from server
 		this.store.dispatch(new BookingsPageRequested({ page: queryParams }));

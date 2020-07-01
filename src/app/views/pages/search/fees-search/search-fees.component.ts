@@ -20,7 +20,7 @@ import { AppState } from '../../../../core/reducers';
 export class SearchFeesComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() searchInput: string;
 	dataSource: FeesDataSource;
-	displayedColumns = ['feeCode', 'feeName', 'feeType','services', 'field', 'subCategory', 'professionals', 'a1', 'a2', 'tags'];
+	displayedColumns = ['feeCode', 'feeName', 'feeType','services', 'field', 'subCategory', 'professionals', 'a1', 'a2', 'tags', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	loadingSubject = new BehaviorSubject<boolean>(true);
@@ -92,7 +92,8 @@ export class SearchFeesComponent implements OnInit, OnDestroy, OnChanges {
 			this.sort.direction,
 			this.sort.active,
 			this.paginator.pageIndex,
-			this.paginator.pageSize
+			this.paginator.pageSize,
+			true
 		);
 		// Call request from server
 		this.store.dispatch(new FeesPageRequested({ page: queryParams }));

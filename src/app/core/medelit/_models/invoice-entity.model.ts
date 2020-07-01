@@ -114,9 +114,8 @@ export interface InvoiceEntityConnectedInvoices {
 }
 
 export interface InvoiceEntityConnectedLeads {
-	services: any[];
-	invoiceNumber: Date;
-	professional: string[];
-	leadStatusId: number;
-	status: string;
+	serviceRequested: string;
+	created: string;
+	lastChanged: string;
+	professional: string;
 }

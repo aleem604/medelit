@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator, MatSort, MatSnackBar } from '@angular/material';
 import { debounceTime, distinctUntilChanged, tap, skip, take, delay } from 'rxjs/operators';
-import { fromEvent, merge,of, Subscription } from 'rxjs';
+import { fromEvent, merge, of, Subscription } from 'rxjs';
 import { each, find } from 'lodash';
 import { Store, select } from '@ngrx/store';
 import { AppState } from '../../../../../core/reducers';
@@ -13,8 +13,8 @@ import {
 	UsersDataSource,
 	UserDeleted,
 	UsersPageRequested,
-    currentUserRoleIds,
-    currentUser
+	currentUserRoleIds,
+	currentUser
 } from '../../../../../core/auth';
 import { SubheaderService } from '../../../../../core/_base/layout';
 
@@ -27,11 +27,11 @@ import { SubheaderService } from '../../../../../core/_base/layout';
 export class UsersListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: UsersDataSource;
-	displayedColumns = ['select', 'id', 'email', 'firstName','lastName', '_roles', 'actions'];
-	@ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-	@ViewChild('sort1', {static: true}) sort: MatSort;
+	displayedColumns = ['id', 'email', 'firstName', 'lastName', '_roles', 'actions'];
+	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields
-	@ViewChild('searchInput', {static: true}) searchInput: ElementRef;
+	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
 	lastQuery: QueryParamsModel;
 	// Selection
 	selection = new SelectionModel<User>(true, []);
@@ -49,7 +49,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
 		private router: Router,
 		private layoutUtilsService: LayoutUtilsService,
 		private subheaderService: SubheaderService,
-		private cdr: ChangeDetectorRef) {}
+		private cdr: ChangeDetectorRef) { }
 
 	ngOnInit() {
 		// load roles list
@@ -70,7 +70,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
 				this.loadUsersList();
 			})
 		)
-		.subscribe();
+			.subscribe();
 		this.subscriptions.push(paginatorSubscriptions);
 
 
@@ -84,7 +84,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
 				this.loadUsersList();
 			})
 		)
-		.subscribe();
+			.subscribe();
 		this.subscriptions.push(searchSubscription);
 
 		// Set title to page breadCrumbs

@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
 	// tslint:disable-next-line:component-selector
@@ -8,23 +7,13 @@ import { FormControl } from '@angular/forms';
 	styleUrls: ['search-list.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchListComponent implements OnInit, OnDestroy {
+export class SearchListComponent {
 
-	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
-
-	filterControl = new FormControl('0', []);
+	searchText: string;
 	constructor() { }
 
-
-	ngOnInit() {
-
+	triggerSearch(value: string) {
+		this.searchText = value;
 	}
-
-	ngOnDestroy() {
-	}
-
-	/* csv file upload */
-
-
 	
 }

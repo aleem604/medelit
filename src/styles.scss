@@ -7,6 +7,7 @@
 .kt-header-base-light {
 	@import "sass/global/layout/header/skins/base/light.scss";
 }
+
 .kt-header-base-dark {
 	@import "sass/global/layout/header/skins/base/dark.scss";
 }
@@ -15,6 +16,7 @@
 .kt-header-menu-light {
 	@import "sass/global/layout/header/skins/menu/light.scss";
 }
+
 .kt-header-menu-dark {
 	@import "sass/global/layout/header/skins/menu/dark.scss";
 }
@@ -23,6 +25,7 @@
 .kt-brand-dark {
 	@import "sass/global/layout/brand/skins/dark.scss";
 }
+
 .kt-brand-light {
 	@import "sass/global/layout/brand/skins/light.scss";
 }
@@ -31,6 +34,7 @@
 .kt-aside-dark {
 	@import "sass/global/layout/aside/skins/dark.scss";
 }
+
 .kt-aside-light {
 	@import "sass/global/layout/aside/skins/light.scss";
 }
@@ -50,36 +54,37 @@
 	position: static;
 }
 
-.display-none{
-	display:none;
+.display-none {
+	display: none;
 }
 
-.pull-right{
-	float:right;
+.pull-right {
+	float: right;
 }
-.text-right{
-	text-align:right;
+
+.text-right {
+	text-align: right;
 }
 
 .ngx-timepicker {
 	height: 65% !important;
-	
 }
 
 .time-picker {
 	.mat-hint, .mat-error {
 		font-size: 75%;
 	}
-	
-}
-.font-500{
-	font-weight:500 !important;
-}
-.cursor-pointer{
-	cursor:pointer;
 }
 
-.mat-form-field-subscript-wrapper{
+.font-500 {
+	font-weight: 500 !important;
+}
+
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.mat-form-field-subscript-wrapper {
 	font-size: 90% !important;
 }
 
@@ -91,8 +96,8 @@ strong.required-star::after {
 	font-size: 13px;
 }
 
-.top-8{
-	position:relative !important;
+.top-8 {
+	position: relative !important;
 	top: 8px;
 }
 
@@ -104,12 +109,13 @@ strong.required-star::after {
 	font-size: 15px;
 }
 
-.font-16{
+.font-16 {
 	font-size: 16px;
 }
-.view-link{
-	position:absolute;
-	top:1.5em;
+
+.view-link {
+	position: absolute;
+	top: 1.5em;
 }
 
 ::ng-deep .theme-dark-blue {
@@ -123,11 +129,35 @@ strong.required-star::after {
 		}
 	}
 }
+
 .bg-calendar-current {
 	background-color: #afd2f9;
 
 	&:hover, &:focus {
 		background-color: #337ab7;
-		color:darkslateblue;
+		color: darkslateblue;
+	}
+}
+
+.custom-table thead th,
+.custom-table thead td {
+	font-weight: 100;
+	border-bottom-width: 1px;
+	padding-top: 0.1rem;
+	padding-bottom: 0.1rem;
+}
+
+.custom-table {
+	thead {
+		width: 450px;
+
+		td {
+			width: 75px !important;
+		}
+
+		td:first-child {
+			width: 200px !important;
+			min-width: 200px !important;
+		}
 	}
 }

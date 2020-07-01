@@ -28,7 +28,6 @@
               "src/.htaccess"
             ],
 			"styles": [
-				"src/styles.scss",
 				"node_modules/bootstrap/dist/css/bootstrap.css",
 				"node_modules/perfect-scrollbar/css/perfect-scrollbar.css",
 				"node_modules/socicon/css/socicon.css",
@@ -38,7 +37,8 @@
 				"src/assets/plugins/flaticon/flaticon.css",
 				"src/assets/plugins/flaticon2/flaticon.css",
 				"node_modules/ngx-toastr/toastr.css",
-				"src/assets/sass/style.angular.scss"
+				"src/assets/sass/style.angular.scss",
+				"src/styles.scss"
 			],
 			"scripts": [
 				"node_modules/jquery/dist/jquery.js",

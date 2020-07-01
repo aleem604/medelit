@@ -400,6 +400,8 @@ export class CustomerEditComponent extends MedelitBaseComponent implements OnIni
 		_customer.blacklistId = +controls.blacklistId.value;
 		_customer.insuranceCoverId = +controls.insuranceCoverId.value;
 		_customer.haveDifferentIEId = +controls.haveDifferentIEId.value;
+		_customer.createDtae = new Date();
+		_customer.updateDate = new Date();
 
 		return _customer;
 	}
@@ -450,7 +452,9 @@ export class CustomerEditComponent extends MedelitBaseComponent implements OnIni
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
 				const _customer = resp.data as unknown as CustomerModel;
-				this.loadCustomer(_customer, true);
+				//this.loadCustomer(_customer, true);
+				this.customer.updateDate = _customer.updateDate;
+				this.cdr.markForCheck();
 
 				const message = `Customer successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);

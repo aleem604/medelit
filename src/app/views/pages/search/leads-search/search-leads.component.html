@@ -1,5 +1,5 @@
 <kt-portlet>
-	<kt-portlet-header [sticky]="true" [title]="'Leads list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+	<kt-portlet-header [sticky]="true" [title]="'Leads List'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
 	</kt-portlet-header>
 	<kt-portlet-body>
 		<div class="mat-table__wrapper">
@@ -64,9 +64,9 @@
 					</mat-header-cell>
 					<mat-cell *matCellDef="let lead">
 
-						<button type="button" (click)="editLead(lead.id)" mat-icon-button color="primary" matTooltip="Edit lead">
+						<a [routerLink]="['/lead-management/leads/edit', lead.id]" mat-icon-button color="primary" matTooltip="Edit lead">
 							<mat-icon>create</mat-icon>
-						</button>&nbsp;
+						</a>&nbsp;
 					</mat-cell>
 				</ng-container>
 

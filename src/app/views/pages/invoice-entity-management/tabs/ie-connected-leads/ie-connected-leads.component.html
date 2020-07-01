@@ -8,27 +8,28 @@
 	</div>
 	<table mat-table [dataSource]="dataSource" matSort>
 
-		<ng-container matColumnDef="service">
+		<ng-container matColumnDef="serviceRequested">
 			<th mat-header-cell *matHeaderCellDef mat-sort-header> Service Requested </th>
-			<td mat-cell *matCellDef="let element"> {{element.service}} </td>
+			<td mat-cell *matCellDef="let element" class="text-capitalize"><span [innerHtml]="element.serviceRequested"></span></td>
 		</ng-container>
 
-		<ng-container matColumnDef="createDate">
+		<ng-container matColumnDef="created">
 			<th mat-header-cell *matHeaderCellDef mat-sort-header> Created </th>
-			<td mat-cell *matCellDef="let element"> {{element.createDate | date: 'dd/MM/yyyy'}} </td>
+			<td mat-cell *matCellDef="let element">{{element.created | date: 'dd/MM/yyyy'}}	</td>
 		</ng-container>
-		<ng-container matColumnDef="updateDate">
+
+		<ng-container matColumnDef="lastChanged">
 			<th mat-header-cell *matHeaderCellDef mat-sort-header> Last Changed </th>
-			<td mat-cell *matCellDef="let element"> {{element.updateDate | date: 'dd/MM/yyyy'}} </td>
+			<td mat-cell *matCellDef="let element" class="text-capitalize"> {{element.lastChanged | date: 'dd/MM/yyyy'}} </td>
 		</ng-container>
 
 		<ng-container matColumnDef="professional">
 			<th mat-header-cell *matHeaderCellDef mat-sort-header> Professional </th>
-			<td mat-cell *matCellDef="let element"> {{element.professional}} </td>
+			<td mat-cell *matCellDef="let element"><span [innerHtml]="element.professional"></span> </td>
 		</ng-container>
 
 		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-		<tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.make-green]="row.leadStatusId === 1" [class.make-blue]="row.leadStatusId === 3"
+		<tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.make-green]="row.leadStatusId === 1" [class.make-blue]="row.leadStatusId !== 1"
 			(click)="selection.toggle(row)"></tr>
 	</table>
 	<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

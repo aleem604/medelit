@@ -1,11 +1,10 @@
 <kt-portlet>
 
-	<kt-portlet-header [sticky]="true" [title]="'Customers List'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
-		<!--<ng-container ktPortletTools>
-			<button (click)="createCustomer()" mat-raised-button color="primary" matTooltip="Create new customer">New customer</button>
-		</ng-container>-->
+	<kt-portlet-header [sticky]="true"
+					   [title]="'Customers List'"
+					   [class]="'kt-portlet__head--lg'"
+					   [viewLoading$]="dataSource.loading$">
 	</kt-portlet-header>
-	<!-- end::Header -->
 
 	<kt-portlet-body>
 
@@ -53,7 +52,7 @@
 					<mat-header-cell *matHeaderCellDef mat-sort-header class="m-auto">Invoice Entity</mat-header-cell>
 					<mat-cell *matCellDef="let customer" class="m-auto">
 						<!--<a class="cursor-pointer" [routerLink]="['/invoice-entity-management/invoice-entities/edit', customer.invoiceEntityId]">-->
-							{{customer.invoiceEntity}}
+						{{customer.invoiceEntity}}
 						<!--</a>-->
 					</mat-cell>
 				</ng-container>
@@ -86,6 +85,17 @@
 				<ng-container matColumnDef="assignedTo">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Assigned To</mat-header-cell>
 					<mat-cell *matCellDef="let lead" class="text-capitalize">{{lead.assignedTo}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>
+						Actions
+					</mat-header-cell>
+					<mat-cell *matCellDef="let customer">
+						<a [routerLink]="['/customer-management/customers/edit/', customer.id]" mat-icon-button color="primary" matTooltip="Edit customer">
+							<mat-icon>create</mat-icon>
+						</a>
+					</mat-cell>
 				</ng-container>
 
 				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

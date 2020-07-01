@@ -1,6 +1,6 @@
 <kt-portlet>
 	<kt-portlet-body>
-		<kt-portlet-header [sticky]="true" [title]="'Invocie Entities List'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+		<kt-portlet-header [sticky]="true" [title]="'Invoice Entities List'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
 		</kt-portlet-header>
 		<div class="mat-table__wrapper">
 			<mat-table class="lmat-elevation-z8"
@@ -16,7 +16,7 @@
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
 					<mat-cell *matCellDef="let invoiceEntity">
 						<!--<a class="cursor-pointer" [routerLink]="['/invoice-entity-management/invoice-entities/edit', invoiceEntity.id]">-->
-							{{invoiceEntity.name}}
+						{{invoiceEntity.name}}
 						<!--</a>-->
 					</mat-cell>
 				</ng-container>
@@ -58,7 +58,18 @@
 
 				<ng-container matColumnDef="assignedTo">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Assigned To</mat-header-cell>
-					<mat-cell *matCellDef="let lead" class="text-capitalize">{{lead.assignedTo}}</mat-cell>
+					<mat-cell *matCellDef="let invoiceEntity" class="text-capitalize">{{invoiceEntity.assignedTo}}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>
+						Actions
+					</mat-header-cell>
+					<mat-cell *matCellDef="let invoiceEntity">
+						<a [routerLink]="['/invoice-entity-management/invoice-entities/edit/',invoiceEntity.id]" mat-icon-button color="primary" matTooltip="Edit Invoice Entity">
+							<mat-icon>create</mat-icon>
+						</a>
+					</mat-cell>
 				</ng-container>
 
 				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

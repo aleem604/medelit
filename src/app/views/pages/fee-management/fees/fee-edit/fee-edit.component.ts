@@ -240,6 +240,8 @@ export class FeeEditComponent implements OnInit, OnDestroy {
 		if (this.tagsArray.length > 0)
 			_fee.tags = this.tagsArray.join(',');
 		_fee.feeTypeId = +controls.feeTypeId.value;
+		_fee.createDate = new Date();
+		_fee.updateDate = new Date();
 		return _fee;
 	}
 

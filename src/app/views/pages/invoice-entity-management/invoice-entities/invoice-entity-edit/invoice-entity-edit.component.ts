@@ -367,7 +367,8 @@ export class InvoiceEntityEditComponent extends MedelitBaseComponent implements 
 		_invoiceEntity.blackListId = controls.blackListId.value;
 		_invoiceEntity.contractedId = controls.contractedId.value;
 		_invoiceEntity.discountPercent = controls.discountPercent.value;
-
+		_invoiceEntity.updateDate = new Date();
+		_invoiceEntity.createDate = new Date();
 		return _invoiceEntity;
 	}
 
@@ -415,7 +416,9 @@ export class InvoiceEntityEditComponent extends MedelitBaseComponent implements 
 			const resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
 				const _invoiceEntity = resp.data as unknown as InvoiceEntityModel;
-				this.loadInvoiceEntity(_invoiceEntity, true);
+				//this.loadInvoiceEntity(_invoiceEntity, true);
+				this.invoiceEntity.updateDate = _invoiceEntity.updateDate;
+				this.cdr.markForCheck();
 
 				const message = `InvoiceEntity successfully has been saved.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);

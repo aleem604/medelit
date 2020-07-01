@@ -20,7 +20,7 @@ import { selectCustomersPageLastQuery } from '../../../../core/medelit/_selector
 })
 export class SearchCustomersComponent implements OnInit, OnDestroy, OnChanges {
 	dataSource: CustomersDataSource;
-	displayedColumns = ['surName', 'name', 'invoiceEntity', 'mainPhone', 'email', 'city', 'country', 'updateDate','assignedTo'];
+	displayedColumns = ['surName', 'name', 'invoiceEntity', 'mainPhone', 'email', 'city', 'country', 'updateDate','assignedTo', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	lastQuery: QueryParamsModel;
@@ -90,7 +90,8 @@ export class SearchCustomersComponent implements OnInit, OnDestroy, OnChanges {
 			this.sort.direction,
 			this.sort.active,
 			this.paginator.pageIndex,
-			this.paginator.pageSize
+			this.paginator.pageSize,
+			true
 		);
 		this.store.dispatch(new CustomersPageRequested({ page: queryParams }));
 		this.selection.clear();

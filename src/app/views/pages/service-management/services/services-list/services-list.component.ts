@@ -22,11 +22,8 @@ import {
 	OneServiceDeleted,
 	ManyServicesDeleted,
 	ServicesStatusUpdated,
-	selectServicesPageLastQuery,
-
-	FilterModel
+	selectServicesPageLastQuery
 } from '../../../../../core/medelit';
-import { FormControl } from '@angular/forms';
 import { StaticDataService } from '../../../../../core/medelit/_services';
 
 @Component({
@@ -40,7 +37,7 @@ export class ServicesListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: ServiceDataSource;
 	
-	displayedColumns = ['select', 'id', 'name', 'professionals', 'ptFeesA1', 'ptFeesA2', 'proFeesA1', 'proFeesA2', 'covermap', 'actions'];
+	displayedColumns = ['id', 'name', 'field', 'subCategory', 'pros', 'covermap', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields

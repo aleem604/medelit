@@ -5,24 +5,24 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { fromEvent, merge, Observable, of, BehaviorSubject } from 'rxjs';
-import { ApiResponse, InvoiceEntitiesService, InvoiceEntityConnectedBookings } from '../../../../../core/medelit';
+import { ApiResponse, InvoiceEntitiesService, InvoiceEntityConnectedLeads } from '../../../../../core/medelit';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
 	// tslint:disable-next-line:component-selector
-	selector: 'invoice-entity-connected-bookings',
-	templateUrl: './ie-connected-bookings.component.html',
-	styleUrls: ['./ie-connected-bookings.component.scss'],
+	selector: 'invoice-entity-connected-leads',
+	templateUrl: './ie-connected-leads.component.html',
+	styleUrls: ['./ie-connected-leads.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InvoieEntityConnectedBookingsComponent implements OnInit, OnDestroy {
+export class InvoieEntityConnectedLeadsComponent implements OnInit, OnDestroy {
 	@Input("ieId") ieId: number;
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-	displayedColumns: string[] = ['bookingName', 'services', 'professional', 'visitDate'];
-	dataSource = new MatTableDataSource<InvoiceEntityConnectedBookings>();
-	selection = new SelectionModel<InvoiceEntityConnectedBookings>(true, []);
+	displayedColumns: string[] = ['serviceRequested', 'created', 'lastChanged', 'professional'];
+	dataSource = new MatTableDataSource<InvoiceEntityConnectedLeads>();
+	selection = new SelectionModel<InvoiceEntityConnectedLeads>(true, []);
 	loadingSubject = new BehaviorSubject<boolean>(true);
 	loading$: Observable<boolean>;
 
@@ -34,10 +34,10 @@ export class InvoieEntityConnectedBookingsComponent implements OnInit, OnDestroy
 	ngOnInit(): void {
 		
 		this.spinner.show();
-		this.ieService.getInvoiceEntityConnectedBookings(this.ieId).toPromise().then((resp) => {
+		this.ieService.getInvoiceEntityConnectedLeads(this.ieId).toPromise().then((resp) => {
 			var res = resp as unknown as ApiResponse;
 			if (res.success) {
-				this.dataSource = new MatTableDataSource<InvoiceEntityConnectedBookings>(res.data);
+				this.dataSource = new MatTableDataSource<InvoiceEntityConnectedLeads>(res.data);
 				this.dataSource.paginator = this.paginator;
 				this.dataSource.sort = this.sort;
 			}

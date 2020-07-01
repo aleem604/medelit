@@ -48,15 +48,15 @@
 										</div>
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
 											<label class="font-500">Created : </label>
-											{{service.createDate | date:'dd/MM/yyyy'}}
+											{{service.createDate | date:'dd/MM/yyyy HH:mm:ss'}}
 										</div>
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
 											<label class="font-500">Starting Date : </label>
-											{{service.createDate | date:'dd/MM/yyyy'}}
+											{{service.createDate | date:'dd/MM/yyyy HH:mm:ss'}}
 										</div>
 										<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
 											<label class="font-500">Last Modified : </label>
-											{{service.updateDate | date:'dd/MM/yyyy'}}
+											{{service.updateDate | date:'dd/MM/yyyy HH:mm:ss'}}
 										</div>
 									</div>
 
@@ -121,8 +121,7 @@
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<input type="text" placeholder="Field" aria-label="Number" matInput
-													[matAutocomplete]="fieldAuto" [formControlName]="'fieldId'"
-													(focusout)="controlFocusout('fieldId')">
+													[matAutocomplete]="fieldAuto" [formControlName]="'fieldId'">
 												<mat-autocomplete autoActiveFirstOption #fieldAuto="matAutocomplete"
 													(optionSelected)="loadCategoriesForFilter()"
 													[displayWith]="displayFn">
@@ -143,8 +142,7 @@
 											<mat-form-field class="example-full-width">
 												<input type="text" placeholder="Subcategory" aria-label="Number"
 													matInput [matAutocomplete]="catAuto"
-													[formControlName]="'subcategoryId'"
-													(focusout)="controlFocusout('subcategoryId')">
+													[formControlName]="'subcategoryId'">
 												<mat-autocomplete autoActiveFirstOption #catAuto="matAutocomplete"
 													[displayWith]="displayFn">
 													<mat-option *ngFor="let cat of filteredCategories | async"
@@ -199,8 +197,7 @@
 											<mat-form-field class="example-full-width">
 												<input type="text" #durationId placeholder="Duration"
 													aria-label="Number" matInput [matAutocomplete]="dAuto"
-													[formControlName]="'durationId'"
-													(focusout)="controlFocusout('durationId')">
+													[formControlName]="'durationId'">
 
 												<button mat-button *ngIf="durationId.value" matSuffix mat-icon-button
 													aria-label="Clear"
@@ -226,8 +223,7 @@
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<input type="text" placeholder="Vat" aria-label="Number" matInput
-													[matAutocomplete]="vatAuto" [formControlName]="'vatId'"
-													(focusout)="controlFocusout('vatId')">
+													[matAutocomplete]="vatAuto" [formControlName]="'vatId'">
 												<mat-autocomplete autoActiveFirstOption #vatAuto="matAutocomplete"
 													[displayWith]="displayFn">
 													<mat-option *ngFor="let elem of filteredVats | async"

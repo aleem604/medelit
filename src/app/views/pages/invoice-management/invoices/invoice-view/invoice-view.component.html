@@ -91,7 +91,7 @@
 										<span class="font-500">Invoice N°: </span> <span [innerText]="invoice?.invoiceNumber"></span>
 									</p>
 									<p class="font-13 pb-0">
-										<span class="font-500">Date : </span> <span [innerText]="invoice?.dueDate | date: 'MM/dd/yyyy'"></span>
+										<span class="font-500">Date : </span> <span [innerText]="invoice?.dueDate | date: 'dd/MM/yyyy'"></span>
 									</p>
 									<p class="font-13 pb-0">
 										<span class="font-500">Method of payment : </span> <span [innerText]="invoice?.paymentMethod"></span>

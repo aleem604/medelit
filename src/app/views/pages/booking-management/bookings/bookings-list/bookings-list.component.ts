@@ -229,7 +229,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 		this.layoutUtilsService.fetchElements(messages);
 	}
 
-
 	updateStatusForBookings() {
 		const _title = 'Update status for selected bookings';
 		const _updateMessage = 'Status has been updated for selected bookings';

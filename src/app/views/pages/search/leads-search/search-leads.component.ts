@@ -22,7 +22,7 @@ import { selectLeadsPageLastQuery } from '../../../../core/medelit/_selectors/le
 export class SearchLeadsComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() searchInput: string;
 	dataSource: LeadDataSource;
-	displayedColumns = ['surName', 'name', 'mainPhone', 'city', 'country', 'createDate', 'updateDate', 'assignedTo'];
+	displayedColumns = ['surName', 'name', 'mainPhone', 'city', 'country', 'createDate', 'updateDate', 'assignedTo', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	lastQuery: QueryParamsModel;
@@ -31,7 +31,9 @@ export class SearchLeadsComponent implements OnInit, OnDestroy, OnChanges {
 	customersResult: LeadModel[] = [];
 	private subscriptions: Subscription[] = [];
 
-	constructor(public dialog: MatDialog,
+	constructor(
+		public router: Router,
+		public dialog: MatDialog,
 		private store: Store<AppState>,
 		private activatedRoute: ActivatedRoute,
 		private cdr: ChangeDetectorRef,
@@ -53,7 +55,10 @@ export class SearchLeadsComponent implements OnInit, OnDestroy, OnChanges {
 			skip(1),
 			distinctUntilChanged()
 		).subscribe(res => {
-			this.customersResult = res;
+			if (this.searchInput)
+				this.customersResult = res;
+			else
+				this.customersResult = [];
 		});
 		this.subscriptions.push(entitiesSubscription);
 		const lastQuerySubscription = this.store.pipe(select(selectLeadsPageLastQuery)).subscribe(res => this.lastQuery = res);
@@ -68,7 +73,7 @@ export class SearchLeadsComponent implements OnInit, OnDestroy, OnChanges {
 
 			// First load
 			of(undefined).pipe(delay(1000)).subscribe(() => { // Remove this line, just loading imitation
-				this.loadCustomersList();
+			//	this.loadCustomersList();
 			}); // Remove this line, just loading imitation
 		});
 		this.subscriptions.push(routeSubscription);
@@ -91,7 +96,8 @@ export class SearchLeadsComponent implements OnInit, OnDestroy, OnChanges {
 			this.sort.direction,
 			this.sort.active,
 			this.paginator.pageIndex,
-			this.paginator.pageSize
+			this.paginator.pageSize,
+			true
 		);
 		this.store.dispatch(new LeadsPageRequested({ page: queryParams }));
 		this.selection.clear();
@@ -121,50 +127,9 @@ export class SearchLeadsComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 
-	getItemStatusString(status: number = 0): string {
-		switch (status) {
-			case 0:
-				return 'Pending';
-			case 1:
-				return 'Active';
-			case 2:
-				return 'Suspended';
-		}
-		return '';
+	editLead(id) {
+		this.router.navigate(['./lead-management/leads/edit/', id], { relativeTo: this.activatedRoute });
 	}
-
-	getItemCssClassByStatus(status: number = 0): string {
-		switch (status) {
-			case 0:
-				return 'metal';
-			case 1:
-				return 'success';
-			case 2:
-				return 'danger';
-		}
-		return '';
-	}
-
-	getItemConditionString(condition: number = 0): string {
-		switch (condition) {
-			case 0:
-				return 'New';
-			case 1:
-				return 'Used';
-		}
-		return '';
-	}
-
-	getItemCssClassByCondition(condition: number = 0): string {
-		switch (condition) {
-			case 0:
-				return 'accent';
-			case 1:
-				return 'primary';
-		}
-		return '';
-	}
-
 	detectChanges() {
 		try {
 			this.cdr.detectChanges();

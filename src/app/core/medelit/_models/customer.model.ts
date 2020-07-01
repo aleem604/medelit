@@ -58,7 +58,7 @@ export class CustomerModel extends BaseModel {
 
 
 	status: eRecordStatus;
-	crateDtae: Date;
+	createDtae: Date;
 	createdBy: string;
 	updateDate: Date;
 	updatedBy: string;

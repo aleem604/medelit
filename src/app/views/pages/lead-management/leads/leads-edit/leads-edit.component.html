@@ -1,7 +1,9 @@
 <kt-portlet>
-	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
+	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'"
+		[viewLoading$]="loading$">
 		<ng-container ktPortletTools>
-			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the products list">
+			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button
+				matTooltip="Back to the products list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
@@ -9,11 +11,13 @@
 				<i class="la la-cog"></i>
 				<span class="kt-hidden-mobile">Reset</span>
 			</a>-->
-			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
+			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)"
+				mat-raised-button matTooltip="Save & Continue">
 				<i class="la la-save"></i>
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
-			<button *ngIf="leadId && leadId >0" class="btn kt-margin-r-10" (click)="onSumbit(false, true)" mat-raised-button matTooltip="Convert to Booking">
+			<button *ngIf="leadId && leadId >0" class="btn kt-margin-r-10" (click)="onSumbit(false, true)"
+				mat-raised-button matTooltip="Convert to Booking">
 				<i class="la la-mail-forward"></i>
 				<span class="kt-hidden-mobile">Convert to Booking</span>
 			</button>
@@ -32,7 +36,8 @@
 
 			<form [formGroup]="leadForm" class="kt-form kt-form--group-seperator-dashed">
 
-				<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+				<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000"
+					(close)="onAlertClose($event)">
 					Oh snap! Change a few things up and try submitting again.
 				</kt-alert>
 
@@ -40,13 +45,14 @@
 					<div class="kt-form__group pt-1">
 						<div class="form-group kt-form__group row" *ngIf="lead.id">
 							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-								<label class="font-500">Created : </label> {{lead.createDate | date:'dd/MM/yyyy'}}
+								<label class="font-500">Created : </label> {{lead.createDate | date:'dd/MM/yyyy HH:mm:ss'}}
 							</div>
 							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-								<label class="font-500">Last Changed : </label> {{lead.updateDate | date:'dd/MM/yyyy'}}
+								<label class="font-500">Last Changed : </label> {{lead.updateDate | date:'dd/MM/yyyy HH:mm:ss'}}
 							</div>
 							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-								<label class="pr-2">Assigned To : </label> <span class="text-capitalize">{{lead.assignedTo}}</span>
+								<label class="pr-2">Assigned To : </label> <span
+									class="text-capitalize">{{lead.assignedTo}}</span>
 							</div>
 							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
 								<label class="pr-2 font-500">Associated to existing Customer: </label>
@@ -61,12 +67,15 @@
 
 							<div class="col-md-6 kt-margin-bottom-20-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Look up for a existing customer" aria-label="Number" matInput [matAutocomplete]="fromCutomerAuto" #fromCustomerId [formControlName]="'fromCustomerId'">
-									<button mat-button *ngIf="fromCustomerId.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('fromCustomerId').setValue('')">
+									<input type="text" placeholder="Look up for a existing customer" aria-label="Number"
+										matInput [matAutocomplete]="fromCutomerAuto" #fromCustomerId
+										[formControlName]="'fromCustomerId'">
+									<button mat-button *ngIf="fromCustomerId.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('fromCustomerId').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-autocomplete autoActiveFirstOption #fromCutomerAuto="matAutocomplete"
-													  [displayWith]="displayFn">
+										[displayWith]="displayFn">
 										<mat-option *ngFor="let t of filteredCustomers | async" [value]="t">
 											{{t.value}}
 										</mat-option>
@@ -75,12 +84,15 @@
 										Select a <strong>Customer </strong>
 									</mat-hint>
 									<mat-hint align="start" *ngIf="lead.fromCustomerId">
-										<p>Customer selected: <strong>{{lead.customer}}</strong><strong class="clear-customer"><a (click)="clearCustomer()"><i class="la la-remove"></i> Clear</a></strong></p>
+										<p>Customer selected: <strong>{{lead.customer}}</strong><strong
+												class="clear-customer"><a (click)="clearCustomer()"><i
+														class="la la-remove"></i> Clear</a></strong></p>
 									</mat-hint>
 								</mat-form-field>
 							</div>
 							<div class="col-md-2 kt-margin-bottom-20-mobile pt-3">
-								<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="importFromCustomer()" mat-raised-button matTooltip="Import">
+								<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary"
+									(click)="importFromCustomer()" mat-raised-button matTooltip="Import">
 									<span class="kt-hidden-mobile">Select</span>
 								</a>
 							</div>
@@ -112,7 +124,8 @@
 							<div class="col-md-3 col-sm-4 col-xs-12 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput placeholder="Surname" formControlName="surName" #surName>
-									<button mat-button *ngIf="surName.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('surName').setValue('')">
+									<button mat-button *ngIf="surName.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('surName').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -127,7 +140,8 @@
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput placeholder="Name" formControlName="name" #name>
-									<button mat-button *ngIf="name.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('name').setValue('')">
+									<button mat-button *ngIf="name.value" matSuffix mat-icon-button aria-label="Clear"
+										(click)="leadForm.get('name').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -141,12 +155,15 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Language" aria-label="Number" matInput #languageId [matAutocomplete]="languageAuto" [formControlName]="'languageId'" (focusout)="controlFocusout('languageId')">
-									<button mat-button *ngIf="languageId.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('languageId').setValue('')">
+									<input type="text" placeholder="Language" aria-label="Number" matInput #languageId
+										[matAutocomplete]="languageAuto" [formControlName]="'languageId'"
+										(focusout)="controlFocusout('languageId')">
+									<button mat-button *ngIf="languageId.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('languageId').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-autocomplete autoActiveFirstOption #languageAuto="matAutocomplete"
-													  [displayWith]="displayFn">
+										[displayWith]="displayFn">
 										<mat-option *ngFor="let t of filteredLanguages | async" [value]="t">
 											{{t.value}}
 										</mat-option>
@@ -163,7 +180,8 @@
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput placeholder="Main phone" #mainPhone formControlName="mainPhone">
-									<button mat-button *ngIf="mainPhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('mainPhone').setValue('')">
+									<button mat-button *ngIf="mainPhone.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('mainPhone').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-hint align="start">
@@ -177,8 +195,10 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Main phone owner" #mainPhoneOwner formControlName="mainPhoneOwner">
-									<button mat-button *ngIf="mainPhoneOwner.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('mainPhoneOwner').setValue('')">
+									<input matInput placeholder="Main phone owner" #mainPhoneOwner
+										formControlName="mainPhoneOwner">
+									<button mat-button *ngIf="mainPhoneOwner.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('mainPhoneOwner').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -192,15 +212,17 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Contact phone" #contactPhone formControlName="contactPhone">
-									<button mat-button *ngIf="contactPhone.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('contactPhone').setValue('')">
+									<input matInput placeholder="Contact phone" #contactPhone
+										formControlName="contactPhone">
+									<button mat-button *ngIf="contactPhone.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('contactPhone').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-hint align="start">
 										<strong>Contact Phone</strong>
 									</mat-hint>
 									<mat-error *ngIf="leadForm.get('mainPhone').errors?.pattern">
-										Contact phone  should contain
+										Contact phone should contain
 										<strong><i class="la la-plus"></i> sign or numbers only </strong>
 									</mat-error>
 								</mat-form-field>
@@ -210,22 +232,25 @@
 									<div class="col kt-margin-bottom-10-mobile">
 										<mat-form-field class="mat-form-field-fluid">
 											<input matInput placeholder="Phone 2" #phone2 formControlName="phone2">
-											<button mat-button *ngIf="phone2.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('phone2').setValue('')">
+											<button mat-button *ngIf="phone2.value" matSuffix mat-icon-button
+												aria-label="Clear" (click)="leadForm.get('phone2').setValue('')">
 												<mat-icon>close</mat-icon>
 											</button>
 											<mat-hint align="start">
 												<strong>Phone 2</strong>
 											</mat-hint>
 											<mat-error *ngIf="leadForm.get('phone2').errors?.pattern">
-												Phone 2 should  should contain
+												Phone 2 should should contain
 												<strong><i class="la la-plus"></i> sign or numbers only </strong>
 											</mat-error>
 										</mat-form-field>
 									</div>
 									<div class="col kt-margin-bottom-10-mobile">
 										<mat-form-field class="mat-form-field-fluid">
-											<input matInput placeholder="Phone 2 owner" #phone2Owner formControlName="phone2Owner">
-											<button mat-button *ngIf="phone2Owner.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('phone2Owner').setValue('')">
+											<input matInput placeholder="Phone 2 owner" #phone2Owner
+												formControlName="phone2Owner">
+											<button mat-button *ngIf="phone2Owner.value" matSuffix mat-icon-button
+												aria-label="Clear" (click)="leadForm.get('phone2Owner').setValue('')">
 												<mat-icon>close</mat-icon>
 											</button>
 											<mat-error>
@@ -244,7 +269,8 @@
 									<div class="col kt-margin-bottom-10-mobile">
 										<mat-form-field class="mat-form-field-fluid">
 											<input matInput placeholder="Phone 3" #phone3 formControlName="phone3">
-											<button mat-button *ngIf="phone3.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('phone3').setValue('')">
+											<button mat-button *ngIf="phone3.value" matSuffix mat-icon-button
+												aria-label="Clear" (click)="leadForm.get('phone3').setValue('')">
 												<mat-icon>close</mat-icon>
 											</button>
 											<mat-hint align="start">
@@ -258,8 +284,10 @@
 									</div>
 									<div class="col kt-margin-bottom-10-mobile">
 										<mat-form-field class="mat-form-field-fluid">
-											<input matInput placeholder="Phone 3 owner" #phone3Owner formControlName="phone3Owner">
-											<button mat-button *ngIf="phone3Owner.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('phone3Owner').setValue('')">
+											<input matInput placeholder="Phone 3 owner" #phone3Owner
+												formControlName="phone3Owner">
+											<button mat-button *ngIf="phone3Owner.value" matSuffix mat-icon-button
+												aria-label="Clear" (click)="leadForm.get('phone3Owner').setValue('')">
 												<mat-icon>close</mat-icon>
 											</button>
 											<mat-error>
@@ -279,7 +307,8 @@
 									<div class="col-md-8">
 										<mat-form-field class="mat-form-field-fluid">
 											<input matInput placeholder="Email" #email formControlName="email">
-											<button mat-button *ngIf="email.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('email').setValue('')">
+											<button mat-button *ngIf="email.value" matSuffix mat-icon-button
+												aria-label="Clear" (click)="leadForm.get('email').setValue('')">
 												<mat-icon>close</mat-icon>
 											</button>
 											<mat-error *ngIf="leadForm.get('email').errors?.required">
@@ -305,7 +334,8 @@
 									<div class="col-md-8">
 										<mat-form-field class="mat-form-field-fluid">
 											<input matInput placeholder="Email 2" #email2 formControlName="email2">
-											<button mat-button *ngIf="email2.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('email2').setValue('')">
+											<button mat-button *ngIf="email2.value" matSuffix mat-icon-button
+												aria-label="Clear" (click)="leadForm.get('email2').setValue('')">
 												<mat-icon>close</mat-icon>
 											</button>
 											<mat-error *ngIf="leadForm.get('email2').errors?.required">
@@ -329,7 +359,8 @@
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput placeholder="Fax" #fax formControlName="fax">
-									<button mat-button *ngIf="fax.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('fax').setValue('')">
+									<button mat-button *ngIf="fax.value" matSuffix mat-icon-button aria-label="Clear"
+										(click)="leadForm.get('fax').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -344,8 +375,10 @@
 
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput #dateOfBirth placeholder="Date of birth" [formControlName]="'dateOfBirth'" bsDatepicker [bsConfig]="datePickerConfig">
-									<button mat-button *ngIf="dateOfBirth.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('dateOfBirth').setValue('')">
+									<input matInput #dateOfBirth placeholder="Date of birth"
+										[formControlName]="'dateOfBirth'" bsDatepicker [bsConfig]="datePickerConfig">
+									<button mat-button *ngIf="dateOfBirth.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('dateOfBirth').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -360,20 +393,17 @@
 
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text"
-										   placeholder="Country of birth"
-										   aria-label="Number"
-										   matInput
-										   #countryOfBirthId
-										   [matAutocomplete]="countryOfBirthAuto"
-										   [formControlName]="'countryOfBirthId'"
-										   (focusout)="controlFocusout('countryOfBirthId')">
-									<button mat-button *ngIf="countryOfBirthId.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('countryOfBirthId').setValue('')">
+									<input type="text" placeholder="Country of birth" aria-label="Number" matInput
+										#countryOfBirthId [matAutocomplete]="countryOfBirthAuto"
+										[formControlName]="'countryOfBirthId'">
+									<button mat-button *ngIf="countryOfBirthId.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('countryOfBirthId').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-autocomplete autoActiveFirstOption #countryOfBirthAuto="matAutocomplete"
-													  [displayWith]="displayFn">
-										<mat-option *ngFor="let t of filteredCountriesForCountryOfBirth | async" [value]="t">
+										[displayWith]="displayFn">
+										<mat-option *ngFor="let t of filteredCountriesForCountryOfBirth | async"
+											[value]="t">
 											{{t.value}}
 										</mat-option>
 									</mat-autocomplete>
@@ -388,8 +418,10 @@
 							</div>
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Name of person requesting visit" #visitRequestingPerson formControlName="visitRequestingPerson">
-									<button mat-button *ngIf="visitRequestingPerson.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('visitRequestingPerson').setValue('')">
+									<input matInput placeholder="Name of person requesting visit" #visitRequestingPerson
+										formControlName="visitRequestingPerson">
+									<button mat-button *ngIf="visitRequestingPerson.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('visitRequestingPerson').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -422,7 +454,8 @@
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput placeholder="GP" #gpCode formControlName="gpCode">
-									<button mat-button *ngIf="gpCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('gpCode').setValue('')">
+									<button mat-button *ngIf="gpCode.value" matSuffix mat-icon-button aria-label="Clear"
+										(click)="leadForm.get('gpCode').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -448,7 +481,8 @@
 								<div class="title-wrapper">
 									<h5>
 										Services Requested
-										<a href="javascript:;" class="btn pull-right" (click)="addService()" mat-raised-button matTooltip="Add New Service Row">
+										<a href="javascript:;" class="btn pull-right" (click)="addService()"
+											mat-raised-button matTooltip="Add New Service Row">
 											<span class="kt-hidden-mobile">Add Service</span>
 										</a>
 
@@ -456,7 +490,7 @@
 								</div>
 							</div>
 							<div class="col-12">
-								
+
 							</div>
 
 							<div class="table-wrapper" formArrayName="services">
@@ -475,22 +509,21 @@
 											<td style="width:20%;">
 
 												<mat-form-field class="example-full-width">
-													<input type="text"
-														   placeholder="Service"
-														   aria-label="Number"
-														   #serviceId matInput
-														   [matAutocomplete]="serviceIdAuto"
-														   [formControlName]="'serviceId'"
-														   (focusout)="serviceControlFocusout($event, serviceId, i)">
-													<button mat-button *ngIf="serviceId.value"
-															matSuffix mat-icon-button aria-label="Clear"
-															(click)="leadForm.get('services').controls[i].get('serviceId').setValue('')">
+													<input type="text" placeholder="Service" aria-label="Number"
+														#serviceId matInput [matAutocomplete]="serviceIdAuto"
+														[formControlName]="'serviceId'"
+														(focusout)="serviceControlFocusout($event, serviceId, i)">
+													<button mat-button *ngIf="serviceId.value" matSuffix mat-icon-button
+														aria-label="Clear"
+														(click)="leadForm.get('services').controls[i].get('serviceId').setValue('')">
 														<mat-icon>close</mat-icon>
 													</button>
-													<mat-autocomplete autoActiveFirstOption #serviceIdAuto="matAutocomplete"
-																	  (optionSelected)="serviceSelected($event, i)"
-																	  [displayWith]="displayFn">
-														<mat-option *ngFor="let t of getFilteredServices(i)" [value]="t">
+													<mat-autocomplete autoActiveFirstOption
+														#serviceIdAuto="matAutocomplete"
+														(optionSelected)="serviceSelected($event, i)"
+														[displayWith]="displayFn">
+														<mat-option *ngFor="let t of getFilteredServices(i)"
+															[value]="t">
 															{{t.value}}
 														</mat-option>
 													</mat-autocomplete>
@@ -503,12 +536,14 @@
 														<strong>required</strong>
 													</mat-error>
 												</mat-form-field>
-												
+
 											</td>
 											<td style="width:20%;">
 												<mat-form-field class="example-full-width">
-													<mat-select [formControlName]="'professionalId'" (selectionChange)="setFees(i)">
-														<mat-option *ngFor="let val of getProfessionals(i)" [value]="val.id">
+													<mat-select [formControlName]="'professionalId'"
+														(selectionChange)="setFees(i)">
+														<mat-option *ngFor="let val of getProfessionals(i)"
+															[value]="val.id">
 															{{ val.value }}
 														</mat-option>
 													</mat-select>
@@ -530,14 +565,19 @@
 														</div>
 													</div>
 													<div class="col-md-4">
-														<mat-radio-group class="example-radio-group" formControlName="isPtFeeA1">
-															<mat-radio-button class="example-radio-button" value="1">A1</mat-radio-button>
-															<mat-radio-button class="example-radio-button" value="0">A2</mat-radio-button>
+														<mat-radio-group class="example-radio-group"
+															formControlName="isPtFeeA1">
+															<mat-radio-button class="example-radio-button" value="1">A1
+															</mat-radio-button>
+															<mat-radio-button class="example-radio-button" value="0">A2
+															</mat-radio-button>
 														</mat-radio-group>
 													</div>
-													<div class="col-md-8 pt-0" *ngIf="this.leadForm.get('services').controls[i].get('isPtFeeA1').value === '1'">
+													<div class="col-md-8 pt-0"
+														*ngIf="this.leadForm.get('services').controls[i].get('isPtFeeA1').value === '1'">
 														<mat-form-field>
-															<input type="number" matInput placeholder="PT Fee A1" formControlName="ptFeeA1" min="0">
+															<input type="number" matInput placeholder="PT Fee A1"
+																formControlName="ptFeeA1" min="0">
 															<mat-hint align="start">
 																PT Fee <strong>A1 </strong>
 															</mat-hint>
@@ -548,9 +588,11 @@
 														</mat-form-field>
 													</div>
 
-													<div class="col-md-8 pt-0" *ngIf="this.leadForm.get('services').controls[i].get('isPtFeeA1').value === '0'">
+													<div class="col-md-8 pt-0"
+														*ngIf="this.leadForm.get('services').controls[i].get('isPtFeeA1').value === '0'">
 														<mat-form-field>
-															<input type="number" matInput placeholder="PT Fee A2" formControlName="ptFeeA2" min="0">
+															<input type="number" matInput placeholder="PT Fee A2"
+																formControlName="ptFeeA2" min="0">
 															<mat-hint align="start">
 																PT Fee <strong>A2 </strong>
 															</mat-hint>
@@ -571,14 +613,19 @@
 													</div>
 
 													<div class="col-md-4">
-														<mat-radio-group class="example-radio-group" formControlName="isProFeeA1">
-															<mat-radio-button class="example-radio-button" value="1">A1</mat-radio-button>
-															<mat-radio-button class="example-radio-button" value="0">A2</mat-radio-button>
+														<mat-radio-group class="example-radio-group"
+															formControlName="isProFeeA1">
+															<mat-radio-button class="example-radio-button" value="1">A1
+															</mat-radio-button>
+															<mat-radio-button class="example-radio-button" value="0">A2
+															</mat-radio-button>
 														</mat-radio-group>
 													</div>
-													<div class="col-md-8 pt-0" [hidden]="this.leadForm.get('services').controls[i].get('isProFeeA1').value === '0'">
+													<div class="col-md-8 pt-0"
+														[hidden]="this.leadForm.get('services').controls[i].get('isProFeeA1').value === '0'">
 														<mat-form-field>
-															<input type="number" matInput placeholder="PRO Fee A1" formControlName="proFeeA1" min="0">
+															<input type="number" matInput placeholder="PRO Fee A1"
+																formControlName="proFeeA1" min="0">
 															<mat-hint align="start">
 																PRO Fee <strong>A1 </strong>
 															</mat-hint>
@@ -589,9 +636,11 @@
 														</mat-form-field>
 													</div>
 
-													<div class="col-md-8 pt-0" [hidden]="this.leadForm.get('services').controls[i].get('isProFeeA1').value === '1'">
+													<div class="col-md-8 pt-0"
+														[hidden]="this.leadForm.get('services').controls[i].get('isProFeeA1').value === '1'">
 														<mat-form-field>
-															<input type="number" matInput placeholder="PRO Fee A2" formControlName="proFeeA2" min="0">
+															<input type="number" matInput placeholder="PRO Fee A2"
+																formControlName="proFeeA2" min="0">
 															<mat-hint align="start">
 																PRO Fee <strong>A2 </strong>
 															</mat-hint>
@@ -646,7 +695,8 @@
 
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field>
-									<mat-select class="mat-form-field mat-form-field-fluid" [formControlName]="'insuranceCoverId'">
+									<mat-select class="mat-form-field mat-form-field-fluid"
+										[formControlName]="'insuranceCoverId'">
 										<mat-option value="0">No</mat-option>
 										<mat-option value="1">Yes</mat-option>
 									</mat-select>
@@ -677,8 +727,10 @@
 							</div>
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input type="number" matInput placeholder="Discount (%)" #discount formControlName="discount">
-									<button mat-button *ngIf="discount.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('discount').setValue('')">
+									<input type="number" matInput placeholder="Discount (%)" #discount
+										formControlName="discount">
+									<button mat-button *ngIf="discount.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('discount').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -700,31 +752,39 @@
 							</div>
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Invoice entity" aria-label="Number" #invoiceEntityId matInput [matAutocomplete]="ieAuto" [formControlName]="'invoiceEntityId'" (focusout)="controlFocusout('invoiceEntityId')">
-									<button mat-button *ngIf="invoiceEntityId.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('invoiceEntityId').setValue('')">
+									<input type="text" placeholder="Invoice entity" aria-label="Number" #invoiceEntityId
+										matInput [matAutocomplete]="ieAuto" [formControlName]="'invoiceEntityId'"
+										(focusout)="controlFocusout('invoiceEntityId')">
+									<button mat-button *ngIf="invoiceEntityId.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('invoiceEntityId').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-autocomplete autoActiveFirstOption #ieAuto="matAutocomplete"
-													  [displayWith]="displayFn">
+										[displayWith]="displayFn">
 										<mat-option *ngFor="let t of filteredInvoiceEntities | async" [value]="t">
 											{{t.value}}
 										</mat-option>
 									</mat-autocomplete>
 									<mat-hint align="start">
-										<strong>Invoice Entity </strong> <strong class="new-ie" *ngIf="leadForm.get('haveDifferentIEId').value === '1'"> <a (click)="createNewIE()">Create New</a></strong>
+										<strong>Invoice Entity </strong> <strong class="new-ie"
+											*ngIf="leadForm.get('haveDifferentIEId').value === '1'"> <a
+												(click)="createNewIE()">Create New</a></strong>
 									</mat-hint>
 									<mat-error>
 										Inovice Entity is
 										<strong>required</strong>
-										<strong class="new-ie" *ngIf="leadForm.get('haveDifferentIEId').value === '1'"> <a (click)="createNewIE()">Create New</a></strong>
+										<strong class="new-ie" *ngIf="leadForm.get('haveDifferentIEId').value === '1'">
+											<a (click)="createNewIE()">Create New</a></strong>
 									</mat-error>
 								</mat-form-field>
 							</div>
 
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<textarea matInput rows="2" placeholder="Invoice Notes" #invoicingNotes formControlName="invoicingNotes"></textarea>
-									<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('invoicingNotes').setValue('')">
+									<textarea matInput rows="2" placeholder="Invoice Notes" #invoicingNotes
+										formControlName="invoicingNotes"></textarea>
+									<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('invoicingNotes').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -746,8 +806,10 @@
 							</div>
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Street Address" #addressStreetName formControlName="addressStreetName">
-									<button mat-button *ngIf="addressStreetName.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('addressStreetName').setValue('')">
+									<input matInput placeholder="Street Address" #addressStreetName
+										formControlName="addressStreetName">
+									<button mat-button *ngIf="addressStreetName.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('addressStreetName').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -762,7 +824,8 @@
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput placeholder="Postal Code" #postalCode formControlName="postalCode">
-									<button mat-button *ngIf="postalCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('postalCode').setValue('')">
+									<button mat-button *ngIf="postalCode.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('postalCode').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -777,7 +840,8 @@
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput placeholder="City" #city formControlName="city">
-									<button mat-button *ngIf="city.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('city').setValue('')">
+									<button mat-button *ngIf="city.value" matSuffix mat-icon-button aria-label="Clear"
+										(click)="leadForm.get('city').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -792,12 +856,14 @@
 
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
-									<input type="text" placeholder="Country" aria-label="Number" matInput #countryId [matAutocomplete]="countryIdAuto" [formControlName]="'countryId'" (focusout)="controlFocusout('countryId')">
-									<button mat-button *ngIf="countryId.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('countryId').setValue('')">
+									<input type="text" placeholder="Country" aria-label="Number" matInput #countryId
+										[matAutocomplete]="countryIdAuto" [formControlName]="'countryId'">
+									<button mat-button *ngIf="countryId.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('countryId').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-autocomplete autoActiveFirstOption #countryIdAuto="matAutocomplete"
-													  [displayWith]="displayFn">
+										[displayWith]="displayFn">
 										<mat-option *ngFor="let t of filteredCountries | async" [value]="t">
 											{{t.value}}
 										</mat-option>
@@ -831,7 +897,8 @@
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput placeholder="Buzzer info" #buzzer formControlName="buzzer">
-									<button mat-button *ngIf="buzzer.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('buzzer').setValue('')">
+									<button mat-button *ngIf="buzzer.value" matSuffix mat-icon-button aria-label="Clear"
+										(click)="leadForm.get('buzzer').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -845,8 +912,10 @@
 							</div>
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput type="number" placeholder="Flat Nº" #flatNumber formControlName="flatNumber">
-									<button mat-button *ngIf="flatNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('flatNumber').setValue('')">
+									<input matInput type="number" placeholder="Flat Nº" #flatNumber
+										formControlName="flatNumber">
+									<button mat-button *ngIf="flatNumber.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('flatNumber').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -861,7 +930,8 @@
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput type="number" placeholder="Floor Nº" #floor formControlName="floor">
-									<button mat-button *ngIf="floor.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('floor').setValue('')">
+									<button mat-button *ngIf="floor.value" matSuffix mat-icon-button aria-label="Clear"
+										(click)="leadForm.get('floor').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -893,8 +963,10 @@
 
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<textarea matInput rows="2" placeholder="Address Notes" #addressNotes formControlName="addressNotes"></textarea>
-									<button mat-button *ngIf="addressNotes.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('addressNotes').setValue('')">
+									<textarea matInput rows="2" placeholder="Address Notes" #addressNotes
+										formControlName="addressNotes"></textarea>
+									<button mat-button *ngIf="addressNotes.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('addressNotes').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -909,8 +981,10 @@
 
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<textarea matInput rows="2" placeholder="Visit Venue Details" #visitVenueDetail formControlName="visitVenueDetail"></textarea>
-									<button mat-button *ngIf="visitVenueDetail.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('visitVenueDetail').setValue('')">
+									<textarea matInput rows="2" placeholder="Visit Venue Details" #visitVenueDetail
+										formControlName="visitVenueDetail"></textarea>
+									<button mat-button *ngIf="visitVenueDetail.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('visitVenueDetail').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -996,8 +1070,10 @@
 							</div>
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<textarea matInput rows="2" placeholder="Lead Description" #leadDescription formControlName="leadDescription"></textarea>
-									<button mat-button *ngIf="leadDescription.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('leadDescription').setValue('')">
+									<textarea matInput rows="2" placeholder="Lead Description" #leadDescription
+										formControlName="leadDescription"></textarea>
+									<button mat-button *ngIf="leadDescription.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('leadDescription').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -1020,7 +1096,8 @@
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput placeholder="Bank Name" #bankName formControlName="bankName">
-									<button mat-button *ngIf="bankName.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('bankName').setValue('')">
+									<button mat-button *ngIf="bankName.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('bankName').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -1034,8 +1111,10 @@
 							</div>
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Account Number" #accountNumber formControlName="accountNumber">
-									<button mat-button *ngIf="accountNumber.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('accountNumber').setValue('')">
+									<input matInput placeholder="Account Number" #accountNumber
+										formControlName="accountNumber">
+									<button mat-button *ngIf="accountNumber.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('accountNumber').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -1050,8 +1129,10 @@
 
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
-									<input matInput placeholder="Sort Code" #sortCode formControlName="sortCode" mask="00-00-00">
-									<button mat-button *ngIf="sortCode.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('sortCode').setValue('')">
+									<input matInput placeholder="Sort Code" #sortCode formControlName="sortCode"
+										mask="00-00-00">
+									<button mat-button *ngIf="sortCode.value" matSuffix mat-icon-button
+										aria-label="Clear" (click)="leadForm.get('sortCode').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -1066,7 +1147,8 @@
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="mat-form-field-fluid">
 									<input matInput placeholder="IBAN" #iban formControlName="iban">
-									<button mat-button *ngIf="iban.value" matSuffix mat-icon-button aria-label="Clear" (click)="leadForm.get('iban').setValue('')">
+									<button mat-button *ngIf="iban.value" matSuffix mat-icon-button aria-label="Clear"
+										(click)="leadForm.get('iban').setValue('')">
 										<mat-icon>close</mat-icon>
 									</button>
 									<mat-error>
@@ -1078,7 +1160,7 @@
 									</mat-hint>
 								</mat-form-field>
 							</div>
-							
+
 						</div>
 					</div>
 				</div>

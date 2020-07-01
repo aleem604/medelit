@@ -307,6 +307,8 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		_service.covermap = controls.covermap.value;
 		_service.invoicingNotes = controls.invoicingNotes.value;
 		_service.refundNotes = controls.refundNotes.value;
+		_service.createDate = new Date();
+		_service.updateDate = new Date();
 
 		return _service;
 	}
@@ -364,7 +366,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.serviceService.createService(_service).toPromise().then((res) => {
 			var resp = res as unknown as ApiResponse;
 			if (resp.success && resp.data.id > 0) {
-				const message = `New service successfully has been added.`;
+				const message = `Service updated successfully.`;
 				this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
 				const updateService: Update<ServiceModel> = {
 					id: _service.id,
@@ -375,6 +377,8 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 					partialService: updateService,
 					service: _service
 				}));
+				this.service.updateDate = new Date();
+				this.cdr.markForCheck();
 				this.refreshService(false);
 			} else {
 				const message = `An error occured while processing your reques. Please try again later.`;
@@ -384,30 +388,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 			this.spinner.hide();
 		}).finally(() => {
 			this.spinner.hide();
-		});;
-
-
-		//this.loadingSubject.next(true);
-
-		//const updateService: Update<ServiceModel> = {
-		//	id: _service.id,
-		//	changes: _service
-		//};
-
-		//this.store.dispatch(new ServiceUpdated({
-		//	partialService: updateService,
-		//	service: _service
-		//}));
-
-		//of(undefined).pipe(delay(3000)).subscribe(() => { // Remove this line
-		//	if (withBack) {
-		//		this.goBack(_service.id);
-		//	} else {
-		//		const message = `Service successfully has been saved.`;
-		//		this.layoutUtilsService.showActionNotification(message, MessageType.Update, 10000, true, true);
-		//		this.refreshService(false);
-		//	}
-		//});
+		});
 	}
 
 	getComponentTitle() {

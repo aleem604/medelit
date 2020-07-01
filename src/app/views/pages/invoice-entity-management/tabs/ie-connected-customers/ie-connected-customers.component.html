@@ -26,9 +26,7 @@
 		<ng-container matColumnDef="services">
 			<th mat-header-cell *matHeaderCellDef mat-sort-header> Services + fees </th>
 			<td mat-cell *matCellDef="let element">
-				<div *ngFor="let s of element.services">
-					<p><span class="font-500">Services</span> {{element.name}}</p>
-				</div>
+					<p><span class="font-500">Services</span><span [innerHtml]="element.services"></span></p>
 			</td>
 		</ng-container>
 
