@@ -1,15 +1,18 @@
 <kt-portlet>
 	<kt-portlet-header [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'" [viewLoading$]="loading$">
 		<ng-container ktPortletTools>
-			<a [routerLink]="['/user-management/users']" class="btn btn-secondary kt-margin-r-10" mat-raised-button matTooltip="Back to the users list">
+			<a [routerLink]="['/user-management/users']" class="btn btn-secondary kt-margin-r-10" mat-raised-button
+				matTooltip="Back to the users list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
-			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()" [disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
+			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()"
+				[disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
 				<i class="la la-cog"></i>
 				<span class="kt-hidden-mobile">Reset</span>
 			</a>
-			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)" mat-raised-button matTooltip="Save & Continue">
+			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)"
+				mat-raised-button matTooltip="Save & Continue">
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
 			<!--<button mat-icon-button [matMenuTriggerFor]="menu" color="primary">
@@ -27,7 +30,8 @@
 		<div *ngIf="user">
 			<form [formGroup]="userForm" class="kt-form kt-form--group-seperator-dashed">
 
-				<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000" (close)="onAlertClose($event)">
+				<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000"
+					(close)="onAlertClose($event)">
 					Oh snap! Change a few things up and try submitting again.
 				</kt-alert>
 				<div class="kt-form__section kt-form__section--first">
@@ -92,7 +96,8 @@
 
 						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
 							<mat-form-field class="mat-form-field-fluid">
-								<input type="text" matInput placeholder="Temporary password" formControlName="password" maxlength="20" />
+								<input type="text" matInput placeholder="Temporary password" formControlName="password"
+									maxlength="20" />
 
 								<mat-error *ngIf="userForm.get('password').errors?.required">
 									Temporary Password is
@@ -111,7 +116,8 @@
 
 						<div class="col-lg-4 kt-margin-bottom-20-mobile mt-3">
 							<mat-form-field class="mat-form-field-fluid">
-								<input matInput placeholder="Phone" mask="+(00)-000-000-0000" formControlName="phoneNumber" maxlength="20" />
+								<input matInput placeholder="Phone" mask="+(00)-000-000-0000"
+									formControlName="phoneNumber" maxlength="20" />
 
 								<mat-error *ngIf="userForm.get('phoneNumber').errors?.minlength">
 									Please Enter a valid
@@ -139,27 +145,26 @@
 							<ng-container matColumnDef="select">
 								<th mat-header-cell *matHeaderCellDef>
 									<mat-checkbox (change)="$event ? masterToggle() : null"
-												  [checked]="selection.hasValue() && isAllSelected()"
-												  [indeterminate]="selection.hasValue() && !isAllSelected()"
-												  [aria-label]="checkboxLabel()">
+										[checked]="selection.hasValue() && isAllSelected()"
+										[indeterminate]="selection.hasValue() && !isAllSelected()"
+										[aria-label]="checkboxLabel()">
 									</mat-checkbox>
 								</th>
 								<td mat-cell *matCellDef="let row">
 									<mat-checkbox (click)="$event.stopPropagation()"
-												  (change)="$event ? selection.toggle(row) : null"
-												  [checked]="selection.isSelected(row)"
-												  [aria-label]="checkboxLabel(row)">
+										(change)="$event ? selection.toggle(row) : null"
+										[checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
 									</mat-checkbox>
 								</td>
 							</ng-container>
 
-							<ng-container matColumnDef="id">
-								<th mat-header-cell *matHeaderCellDef mat-sort-header>Id </th>
-								<td mat-cell *matCellDef="let element"> {{element.id}} </td>
+							<ng-container matColumnDef="text">
+								<th mat-header-cell *matHeaderCellDef mat-sort-header>Role Name </th>
+								<td mat-cell *matCellDef="let element"> {{element.text}} </td>
 							</ng-container>
 
 							<ng-container matColumnDef="name">
-								<th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+								<th mat-header-cell *matHeaderCellDef mat-sort-header>Role Id </th>
 								<td mat-cell *matCellDef="let element"> {{element.name}} </td>
 							</ng-container>
 

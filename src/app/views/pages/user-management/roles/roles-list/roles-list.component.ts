@@ -12,7 +12,7 @@ import { Store } from '@ngrx/store';
 // Services
 import { LayoutUtilsService, MessageType } from '../../../../../core/_base/crud';
 // Models
-import { Role, RolesDataSource, RoleDeleted, RolesPageRequested  } from '../../../../../core/auth';
+import { Role, RolesDataSource, RoleDeleted, RolesPageRequested } from '../../../../../core/auth';
 import { AppState } from '../../../../../core/reducers';
 import { QueryParamsModel } from '../../../../../core/_base/crud';
 
@@ -21,17 +21,17 @@ import { RoleEditDialogComponent } from '../role-edit/role-edit.dialog.component
 @Component({
 	selector: 'kt-roles-list',
 	templateUrl: './roles-list.component.html',
-	styleUrls:['./roles-list.component.scss'],
+	styleUrls: ['./roles-list.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RolesListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: RolesDataSource;
-	displayedColumns = ['select', 'id', 'name'];
-	@ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-	@ViewChild('sort1', {static: true}) sort: MatSort;
+	displayedColumns = ['text', 'name'];
+	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields
-	@ViewChild('searchInput', {static: true}) searchInput: ElementRef;
+	@ViewChild('searchInput', { static: true }) searchInput: ElementRef;
 	// Selection
 	selection = new SelectionModel<Role>(true, []);
 	rolesResult: Role[] = [];
@@ -44,7 +44,7 @@ export class RolesListComponent implements OnInit, OnDestroy {
 		private store: Store<AppState>,
 		public dialog: MatDialog,
 		public snackBar: MatSnackBar,
-		private layoutUtilsService: LayoutUtilsService) {}
+		private layoutUtilsService: LayoutUtilsService) { }
 
 	ngOnInit() {
 		// If the user changes the sort order, reset back to the first page.
@@ -56,7 +56,7 @@ export class RolesListComponent implements OnInit, OnDestroy {
 				this.loadRolesList();
 			})
 		)
-		.subscribe();
+			.subscribe();
 		this.subscriptions.push(paginatorSubscriptions);
 
 		// Filtration, bind to searchInput
@@ -69,7 +69,7 @@ export class RolesListComponent implements OnInit, OnDestroy {
 				this.loadRolesList();
 			})
 		)
-		.subscribe();
+			.subscribe();
 		this.subscriptions.push(searchSubscription);
 
 		// Init DataSource
@@ -140,7 +140,7 @@ export class RolesListComponent implements OnInit, OnDestroy {
 				return;
 			}
 
-			this.store.dispatch(new RoleDeleted({ id: _item.id}));
+			this.store.dispatch(new RoleDeleted({ id: _item.id }));
 			this.layoutUtilsService.showActionNotification(_deleteMessage, MessageType.Delete);
 			this.loadRolesList();
 		});

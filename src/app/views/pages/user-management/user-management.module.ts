@@ -11,9 +11,9 @@ import { EffectsModule } from '@ngrx/effects';
 import { TranslateModule } from '@ngx-translate/core';
 import { PartialsModule } from '../../partials/partials.module';
 // Services
-import { HttpUtilsService, TypesUtilsService, InterceptService, LayoutUtilsService} from '../../../core/_base/crud';
+import { HttpUtilsService, TypesUtilsService, InterceptService, LayoutUtilsService } from '../../../core/_base/crud';
 // Shared
-import { ActionNotificationComponent } from '../../partials/content/crud';
+import { ActionNotificationComponent, DeleteEntityDialogComponent } from '../../partials/content/crud';
 // Components
 import { UserManagementComponent } from './user-management.component';
 import { UsersListComponent } from './users/users-list/users-list.component';
@@ -54,8 +54,8 @@ import {
 	usersReducer,
 	UserEffects,
 
-    rolesReducer,
-    RoleEffects
+	rolesReducer,
+	RoleEffects
 } from '../../../core/auth';
 import { NgxMaskModule } from 'ngx-mask';
 
@@ -117,7 +117,7 @@ const routes: Routes = [
 		MatButtonModule,
 		MatMenuModule,
 		MatSelectModule,
-        MatInputModule,
+		MatInputModule,
 		MatTableModule,
 		MatAutocompleteModule,
 		MatRadioModule,
@@ -135,13 +135,14 @@ const routes: Routes = [
 		MatTabsModule,
 		MatTooltipModule,
 		MatDialogModule,
-		NgxMaskModule.forRoot()
+		NgxMaskModule.forRoot(),
+		PartialsModule
 	],
 	providers: [
 		InterceptService,
 		{
-        	provide: HTTP_INTERCEPTORS,
-       	 	useClass: InterceptService,
+			provide: HTTP_INTERCEPTORS,
+			useClass: InterceptService,
 			multi: true
 		},
 		{
@@ -159,6 +160,7 @@ const routes: Routes = [
 	],
 	entryComponents: [
 		ActionNotificationComponent,
+		DeleteEntityDialogComponent,
 		RoleEditDialogComponent
 	],
 	declarations: [
@@ -173,4 +175,4 @@ const routes: Routes = [
 		SocialNetworksComponent
 	]
 })
-export class UserManagementModule {}
+export class UserManagementModule { }

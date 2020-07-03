@@ -45,10 +45,12 @@
 					<div class="kt-form__group pt-1">
 						<div class="form-group kt-form__group row" *ngIf="lead.id">
 							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-								<label class="font-500">Created : </label> {{lead.createDate | date:'dd/MM/yyyy HH:mm:ss'}}
+								<label class="font-500">Created : </label>
+								{{lead.createDate | date:'dd/MM/yyyy HH:mm:ss'}}
 							</div>
 							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
-								<label class="font-500">Last Changed : </label> {{lead.updateDate | date:'dd/MM/yyyy HH:mm:ss'}}
+								<label class="font-500">Last Changed : </label>
+								{{lead.updateDate | date:'dd/MM/yyyy HH:mm:ss'}}
 							</div>
 							<div class="col-md-3 kt-margin-bottom-20-mobile pt-3">
 								<label class="pr-2">Assigned To : </label> <span
@@ -511,8 +513,7 @@
 												<mat-form-field class="example-full-width">
 													<input type="text" placeholder="Service" aria-label="Number"
 														#serviceId matInput [matAutocomplete]="serviceIdAuto"
-														[formControlName]="'serviceId'"
-														(focusout)="serviceControlFocusout($event, serviceId, i)">
+														[formControlName]="'serviceId'">
 													<button mat-button *ngIf="serviceId.value" matSuffix mat-icon-button
 														aria-label="Clear"
 														(click)="leadForm.get('services').controls[i].get('serviceId').setValue('')">
@@ -753,8 +754,7 @@
 							<div class="col-md-4 col kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
 									<input type="text" placeholder="Invoice entity" aria-label="Number" #invoiceEntityId
-										matInput [matAutocomplete]="ieAuto" [formControlName]="'invoiceEntityId'"
-										(focusout)="controlFocusout('invoiceEntityId')">
+										matInput [matAutocomplete]="ieAuto" [formControlName]="'invoiceEntityId'">
 									<button mat-button *ngIf="invoiceEntityId.value" matSuffix mat-icon-button
 										aria-label="Clear" (click)="leadForm.get('invoiceEntityId').setValue('')">
 										<mat-icon>close</mat-icon>

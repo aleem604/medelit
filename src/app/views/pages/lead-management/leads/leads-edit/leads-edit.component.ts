@@ -585,8 +585,8 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 		_lead.iban = controls.iban.value;
 		_lead.blacklistId = +controls.blacklistId.value;
 		_lead.updateDate = new Date(),
-		_lead.createDate = new Date(),
-		_lead.services = [];
+			_lead.createDate = new Date(),
+			_lead.services = [];
 
 		const control = <FormArray>this.leadForm.controls['services'];
 		for (let i = 0; i < control.length; i++) {
@@ -619,7 +619,7 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 				s.proFeeA1 = control.controls[i].get('proFeeA1').value;
 
 			if (!isNaN(control.controls[i].get('proFeeA2').value))
-			s.proFeeA2 = control.controls[i].get('proFeeA2').value;
+				s.proFeeA2 = control.controls[i].get('proFeeA2').value;
 
 			_lead.services.push(s);
 		}

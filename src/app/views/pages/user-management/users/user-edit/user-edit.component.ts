@@ -23,7 +23,8 @@ import {
 	selectLastCreatedUserId,
 	selectUsersActionLoading,
 
-	AuthService,
+	AuthService,
+
 	Role
 } from '../../../../../core/auth';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -46,7 +47,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
 	@ViewChild(MatSort, { static: true }) sort: MatSort;
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-	displayedColumns: string[] = ['select', 'id', 'name'];
+	displayedColumns: string[] = ['select', 'text', 'name'];
 	rolesDataSource = new MatTableDataSource<Role>();
 	selection = new SelectionModel<Role>(true, []);
 	userForm: FormGroup;
