@@ -1,14 +1,14 @@
 <kt-portlet>
 	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'"
-					   [viewLoading$]="loading$">
+		[viewLoading$]="loading$">
 		<ng-container ktPortletTools>
 			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button
-			   matTooltip="Back to the products list">
+				matTooltip="Back to the products list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
 			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="dowonloadPdf()" mat-raised-button
-			   matTooltip="Invoice to PDF">
+				matTooltip="Invoice to PDF">
 				<i class="la la-file-pdf-o"></i>
 				<span class="kt-hidden-mobile">Generate PDF</span>
 			</a>
@@ -39,16 +39,24 @@
 							</div>
 						</div>
 						<div class="col-6">
-							<p class="text-right font-14 font-500 mb-0 text-capitalize"><strong [innerHtml]="invoice.accountInfo.title">Medelit srl.</strong></p>
+							<p class="text-right font-14 font-500 mb-0 text-capitalize"><strong
+									[innerHtml]="invoice.accountInfo.title">Medelit srl.</strong></p>
 							<p class="text-right font-13 font-500 mb-0">
-								<strong [innerHtml]="invoice.accountInfo.address">Via Privata Grado 5, 20125, Milano</strong>
+								<strong [innerHtml]="invoice.accountInfo.address">Via Privata Grado 5, 20125,
+									Milano</strong>
 							</p>
-							<p class="text-right font-13 font-500 mb-0"><strong>{{invoice.accountInfo.city}}</strong></p>
-							<p class="text-right font-13 font-500 mb-0"><strong>{{invoice.accountInfo.country}}</strong></p>
-							<p class="text-right font-13 font-500 mb-0"><strong>Tel: </strong> {{invoice.accountInfo.telephone}}</p>
-							<p class="text-right font-13 font-500 mb-0" *ngIf="invoice.accountInfo.fax"><strong>Fax: </strong>{{invoice.accountInfo.fax}}</p>
-							<p class="text-right font-13 font-500 mb-0"><strong>Email: </strong>{{invoice.accountInfo.email}}</p>
-							<p class="text-right font-13 font-500 mb-0"><strong>Web: </strong>{{invoice.accountInfo.website}}</p>
+							<p class="text-right font-13 font-500 mb-0"><strong>{{invoice.accountInfo.city}}</strong>
+							</p>
+							<p class="text-right font-13 font-500 mb-0"><strong>{{invoice.accountInfo.country}}</strong>
+							</p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Tel: </strong>
+								{{invoice.accountInfo.telephone}}</p>
+							<p class="text-right font-13 font-500 mb-0" *ngIf="invoice.accountInfo.fax"><strong>Fax:
+								</strong>{{invoice.accountInfo.fax}}</p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Email:
+								</strong>{{invoice.accountInfo.email}}</p>
+							<p class="text-right font-13 font-500 mb-0"><strong>Web:
+								</strong>{{invoice.accountInfo.website}}</p>
 
 						</div>
 					</div>
@@ -80,21 +88,26 @@
 							<div class="row">
 								<div class="col pt-2 border-bottom">
 									<p class="font-13">
-										<span class="font-500">Date of Birth: </span><span [innerHtml]="invoice?.dateOfBirth | date: 'dd/MM/yyyy'"></span>
+										<span class="font-500">Date of Birth: </span><span
+											[innerHtml]="invoice?.dateOfBirth | date: 'dd/MM/yyyy'"></span>
 									</p>
 									<p class="font-13" *ngIf="invoice?.vatNumber">
-										<span class="font-500">VAT Number: </span><span [innerHtml]="invoice?.vatNumber"></span>
+										<span class="font-500">VAT Number: </span><span
+											[innerHtml]="invoice?.vatNumber"></span>
 									</p>
 								</div>
 								<div class="col border-left border-bottom pt-2">
 									<p class="font-13 pb-0">
-										<span class="font-500">Invoice N°: </span> <span [innerText]="invoice?.invoiceNumber"></span>
+										<span class="font-500">Invoice N°: </span> <span
+											[innerText]="invoice?.invoiceNumber"></span>
 									</p>
 									<p class="font-13 pb-0">
-										<span class="font-500">Date : </span> <span [innerText]="invoice?.dueDate | date: 'dd/MM/yyyy'"></span>
+										<span class="font-500">Date : </span> <span
+											[innerText]="invoice?.invoiceDate | date: 'dd/MM/yyyy'"></span>
 									</p>
 									<p class="font-13 pb-0">
-										<span class="font-500">Method of payment : </span> <span [innerText]="invoice?.paymentMethod"></span>
+										<span class="font-500">Method of payment : </span> <span
+											[innerText]="invoice?.paymentMethod"></span>
 									</p>
 									<!--<p><strong>Date of payment : </strong> <span [innerText]="invoice.paymentDue | date: 'MM/dd/yyyy'"></span></p>-->
 								</div>
@@ -141,7 +154,8 @@
 												<td colspan="5" class="text-right font-500">
 													Total (<i class="la la-gbp"></i>)
 												</td>
-												<td class="text-left font-500">{{invoice.totalInvoice | number: '1.2-2'}}</td>
+												<td class="text-left font-500">
+													{{invoice.totalInvoice | number: '1.2-2'}}</td>
 											</tr>
 										</tbody>
 
@@ -172,9 +186,12 @@
 					</div>
 					<div class="row mt-2">
 						<div class="col-12 mt-1">
-							<p class="font-500 font-16 text-capitalize mb-0" [innerHtml]="invoice.accountInfo.title">medelit ltd</p>							
-							<p class="text-capitalize mb-0"><span class="font-500">Sort Code : </span><span [innerHtml]="invoice.accountInfo.sortCode"></span></p>
-							<p class="text-capitalize mb-0"><span class="font-500">Account N° : </span><span [innerHtml]="invoice.accountInfo.accountNumber"></span></p>
+							<p class="font-500 font-16 text-capitalize mb-0" [innerHtml]="invoice.accountInfo.title">
+								medelit ltd</p>
+							<p class="text-capitalize mb-0"><span class="font-500">Sort Code : </span><span
+									[innerHtml]="invoice.accountInfo.sortCode"></span></p>
+							<p class="text-capitalize mb-0"><span class="font-500">Account N° : </span><span
+									[innerHtml]="invoice.accountInfo.accountNumber"></span></p>
 						</div>
 					</div>
 				</div>

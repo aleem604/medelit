@@ -38,7 +38,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class ProfessionalsListComponent implements OnInit, OnDestroy {
 	// Table fields
 	dataSource: ProfessionalDataSource;
-	displayedColumns = ['select', 'name', 'telephone', 'email','coverMap', 'fields', 'subCategories', 'services', 'city','contractDate','contractEndDate', 'actions'];
+	displayedColumns = ['select', 'name', 'telephone', 'email','coverMap', 'fields', 'subCategories', 'services', 'languages', 'city','contractDate','contractEndDate', 'actions'];
 	@ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 	@ViewChild('sort1', { static: true }) sort: MatSort;
 	// Filter fields

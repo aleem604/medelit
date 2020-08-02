@@ -261,7 +261,7 @@ export class ProfessionalEditComponent extends MedelitBaseComponent implements O
 			activeCollaborationId: [this.professional.activeCollaborationId, Validators.required],
 			contractDate: [this.formatDate(this.professional.contractDate)],
 			contractEndDate: [this.formatDate(this.professional.contractEndDate)],
-			clinicAgreement: [this.professional.clinicAgreement.toString(), Validators.required],
+			clinicAgreement: [this.professional.clinicAgreement, Validators.required],
 			firstContactDate: [this.formatDate(this.professional.firstContactDate), Validators.required],
 			lastContactDate: [this.formatDate(this.professional.lastContactDate)],
 
@@ -273,9 +273,9 @@ export class ProfessionalEditComponent extends MedelitBaseComponent implements O
 			// HR Status
 			workPlace: [this.professional.workPlace],
 			insuranceExpiryDate: [this.formatDate(this.professional.insuranceExpiryDate)],
-			contractStatusId: [this.professional.contractStatusId],
+			contractStatusId: [this.professional.contractStatusId, Validators.required],
 			documentListSentId: [this.professional.documentListSentId, Validators.required],
-			calendarActivation: [this.professional.calendarActivation.toString(), Validators.required],
+			calendarActivation: [this.professional.calendarActivation, Validators.required],
 			protaxCodeId: [this.professional.protaxCodeId]
 		});
 	}
@@ -861,17 +861,6 @@ export class ProfessionalEditComponent extends MedelitBaseComponent implements O
 	getControl = controlName => {
 		return this.professionalForm.get(controlName);
 	}
-
-	/*Start closed events */
-
-	controlFocusout(control) {
-		const val = this.professionalForm.get(control).value;
-		if (val && val.id) return;
-		this.professionalForm.get(control).setValue('');
-		this.cdr.markForCheck();
-	}
-
-	/*End Closed events */
 
 	goToLink(url: string) {
 		window.open(`//${url}`, "_blank");

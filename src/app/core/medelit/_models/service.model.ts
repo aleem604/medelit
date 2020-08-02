@@ -128,6 +128,7 @@ export interface AttachProfessionalToServiceDialogModel {
 
 
 export interface ServiceConnectedPtFeeModel {
+	id: number;
 	ptFeeId: number;
 	professionals: string[];
 	ptFeeName: string;

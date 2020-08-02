@@ -4,7 +4,7 @@
 	"description": "Packages used by Angular",
 	"scripts": {
 		"ng": "ng",
-		"start": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve",
+		"start": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng serve --open --port 4000",
 		"build": "ng build --prod",
 		"prod": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --prod",
 		"prod-build": "ng build --prod --aot=false --build-optimizer=false",

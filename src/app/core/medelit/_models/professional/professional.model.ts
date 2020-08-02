@@ -43,16 +43,16 @@ export class ProfessionalModel extends BaseModel {
 	workPlace: string;
 	colleagueReferring: string;
 	insuranceExpiryDate: string;
-	activeCollaborationId: number;
-	clinicAgreement: number;
-	applicationMethodId: number;
-	applicationMeansId: number;
+	activeCollaborationId: any;
+	clinicAgreement: any;
+	applicationMethodId: any;
+	applicationMeansId: any;
 	firstContactDate: string;
 	lastContactDate: string;
 	contractStatusId: number;
 	contractStatus: string;
-	documentListSentId: number;
-	calendarActivation: number;
+	documentListSentId: any;
+	calendarActivation: any;
 	proOnlineCV: string;
 	protaxCodeId: number;
 
@@ -69,13 +69,10 @@ export class ProfessionalModel extends BaseModel {
 	assignedToId: number;
 	assignedTo: string;
 	professionalServices: ServiceProfessionals[];
+	languages: string[];
 
 	clear() {
-		this.clinicAgreement = 0;
-		this.applicationMethodId = 0;
-		this.calendarActivation = 0;
 		this.name = '';
 		this.email = '';
-
 	}
 }

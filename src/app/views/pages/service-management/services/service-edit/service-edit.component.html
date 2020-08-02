@@ -1,19 +1,19 @@
 <kt-portlet>
 	<kt-portlet-header [sticky]="true" [title]="getComponentTitle()" [class]="'kt-portlet__head--lg'"
-		[viewLoading$]="loading$">
+					   [viewLoading$]="loading$">
 		<ng-container ktPortletTools>
 			<a (click)="goBackWithoutId()" class="btn btn-secondary kt-margin-r-10" mat-raised-button
-				matTooltip="Back to the services list">
+			   matTooltip="Back to the services list">
 				<i class="la la-arrow-left"></i>
 				<span class="kt-hidden-mobile">Back</span>
 			</a>
 			<a href="javascript:;" class="btn btn-secondary kt-margin-r-10" (click)="reset()"
-				[disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
+			   [disabled]="selectedTab !== 0" mat-raised-button matTooltip="Reset changes">
 				<i class="la la-cog"></i>
 				<span class="kt-hidden-mobile">Reset</span>
 			</a>
 			<a href="javascript:;" class="btn btn-primary kt-margin-r-10" color="primary" (click)="onSumbit(false)"
-				*ngIf="selectedTab == 0" mat-raised-button matTooltip="Save & Continue">
+			   *ngIf="selectedTab == 0" mat-raised-button matTooltip="Save & Continue">
 				<i class="la la-save"></i>
 				<span class="kt-hidden-mobile">Save</span>
 			</a>
@@ -36,7 +36,7 @@
 						<form [formGroup]="serviceForm" class="kt-form kt-form--group-seperator-dashed">
 
 							<kt-alert *ngIf="hasFormErrors" type="warn" [showCloseButton]="true" [duration]="10000"
-								(close)="onAlertClose($event)">
+									  (close)="onAlertClose($event)">
 								Oh snap! Change a few things up and try submitting again.
 							</kt-alert>
 
@@ -63,7 +63,11 @@
 									<div class="row">
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<input matInput placeholder="Name" formControlName="name">
+												<input matInput placeholder="Name" formControlName="name" #name>
+												<button mat-button *ngIf="name.value" matSuffix mat-icon-button
+														aria-label="Clear" (click)="serviceForm.get('name').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
 												<mat-error>
 													Name is
 													<strong>required</strong>
@@ -76,55 +80,70 @@
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div>Cycle:</div>
 											<mat-radio-group formControlName="cycleId">
-												<mat-radio-button class="example-radio-button" value="0">No
+												<mat-radio-button class="example-radio-button" value="0">
+													No
 												</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Yes
+												<mat-radio-button class="example-radio-button" value="1">
+													Yes
 												</mat-radio-button>
 											</mat-radio-group>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div>Active Service:</div>
 											<mat-radio-group formControlName="activeServiceId">
-												<mat-radio-button class="example-radio-button" value="0">No
+												<mat-radio-button class="example-radio-button" value="0">
+													No
 												</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Yes
+												<mat-radio-button class="example-radio-button" value="1">
+													Yes
 												</mat-radio-button>
 											</mat-radio-group>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div>Timed Service:</div>
 											<mat-radio-group formControlName="timedServiceId">
-												<mat-radio-button class="example-radio-button" value="0">No
+												<mat-radio-button class="example-radio-button" value="0">
+													No
 												</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Yes
+												<mat-radio-button class="example-radio-button" value="1">
+													Yes
 												</mat-radio-button>
 											</mat-radio-group>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div>Contracted Service:</div>
 											<mat-radio-group formControlName="contractedServiceId">
-												<mat-radio-button class="example-radio-button" value="0">No
+												<mat-radio-button class="example-radio-button" value="0">
+													No
 												</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Yes
+												<mat-radio-button class="example-radio-button" value="1">
+													Yes
 												</mat-radio-button>
 											</mat-radio-group>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<div>Informed Consent:</div>
 											<mat-radio-group formControlName="informedConsentId">
-												<mat-radio-button class="example-radio-button" value="0">No
+												<mat-radio-button class="example-radio-button" value="0">
+													No
 												</mat-radio-button>
-												<mat-radio-button class="example-radio-button" value="1">Yes
+												<mat-radio-button class="example-radio-button" value="1">
+													Yes
 												</mat-radio-button>
 											</mat-radio-group>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<input type="text" placeholder="Field" aria-label="Number" matInput
-													[matAutocomplete]="fieldAuto" [formControlName]="'fieldId'">
+													   [matAutocomplete]="fieldAuto" [formControlName]="'fieldId'" #fieldId>
+												<button mat-button *ngIf="fieldId.value" matSuffix mat-icon-button
+														aria-label="Clear" (click)="serviceForm.get('fieldId').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
+
 												<mat-autocomplete autoActiveFirstOption #fieldAuto="matAutocomplete"
-													(optionSelected)="loadCategoriesForFilter()"
-													[displayWith]="displayFn">
+																  (optionSelected)="loadCategoriesForFilter()"
+																  [displayWith]="displayFn">
 													<mat-option *ngFor="let f of filteredFields | async" [value]="f">
 														{{f.value}}
 													</mat-option>
@@ -140,13 +159,17 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Subcategory" aria-label="Number"
-													matInput [matAutocomplete]="catAuto"
-													[formControlName]="'subcategoryId'">
+												<input type="text" placeholder="Subcategory" aria-label="Number" #subcategoryId
+													   matInput [matAutocomplete]="catAuto"
+													   [formControlName]="'subcategoryId'">
+												<button mat-button *ngIf="subcategoryId.value" matSuffix mat-icon-button
+														aria-label="Clear" (click)="serviceForm.get('subcategoryId').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
 												<mat-autocomplete autoActiveFirstOption #catAuto="matAutocomplete"
-													[displayWith]="displayFn">
+																  [displayWith]="displayFn">
 													<mat-option *ngFor="let cat of filteredCategories | async"
-														[value]="cat">
+																[value]="cat">
 														{{cat.value}}
 													</mat-option>
 												</mat-autocomplete>
@@ -160,7 +183,7 @@
 											</mat-form-field>
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
-											<mat-form-field class="example-chip-list">
+											<!--<mat-form-field class="example-chip-list">
 												<mat-chip-list #chipList aria-label="Tag selection">
 													<mat-chip *ngFor="let tag of tagsArray" [selectable]="selectable"
 															  [removable]="removable" (removed)="remove(tag)">
@@ -188,7 +211,40 @@
 													Tag(s) are
 													<strong>required</strong>
 												</mat-error>
+											</mat-form-field>-->
+
+											<mat-form-field class="example-chip-list">
+												<mat-chip-list #chipList aria-label="Tag selection">
+													<mat-chip *ngFor="let tag of tagsArray" [selectable]="selectable"
+															  [removable]="removable" (removed)="remove(tag)">
+														{{tag}}
+														<mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+													</mat-chip>
+													<input placeholder="Insert tags"
+														   #tagsInput
+														   [formControlName]="'tags'"
+														   [matAutocomplete]="auto"
+														   [matChipInputFor]="chipList"
+														   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+														   (matChipInputTokenEnd)="add($event)">
+												</mat-chip-list>
+												<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+													<mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+														{{tag}}
+													</mat-option>
+												</mat-autocomplete>
+												<mat-hint align="start">
+													Create <strong>Tags </strong> by hitting enter or separated by comma
+												</mat-hint>
+												<mat-error>
+													Tag(s) are
+													<strong>required</strong>
+												</mat-error>
 											</mat-form-field>
+
+
+
+
 										</div>
 
 
@@ -196,18 +252,18 @@
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
 												<input type="text" #durationId placeholder="Duration"
-													aria-label="Number" matInput [matAutocomplete]="dAuto"
-													[formControlName]="'durationId'">
+													   aria-label="Number" matInput [matAutocomplete]="dAuto"
+													   [formControlName]="'durationId'">
 
 												<button mat-button *ngIf="durationId.value" matSuffix mat-icon-button
-													aria-label="Clear"
-													(click)="serviceForm.get('durationId').setValue('')">
+														aria-label="Clear"
+														(click)="serviceForm.get('durationId').setValue('')">
 													<mat-icon>close</mat-icon>
 												</button>
 												<mat-autocomplete autoActiveFirstOption #dAuto="matAutocomplete"
-													[displayWith]="displayFn">
+																  [displayWith]="displayFn">
 													<mat-option *ngFor="let elem of filteredDurations | async"
-														[value]="elem">
+																[value]="elem">
 														{{elem.value}}
 													</mat-option>
 												</mat-autocomplete>
@@ -222,12 +278,17 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="example-full-width">
-												<input type="text" placeholder="Vat" aria-label="Number" matInput
-													[matAutocomplete]="vatAuto" [formControlName]="'vatId'">
+												<input type="text" placeholder="Vat" aria-label="Number" matInput #vatId
+													   [matAutocomplete]="vatAuto" [formControlName]="'vatId'">
+												<button mat-button *ngIf="vatId.value" matSuffix mat-icon-button
+														aria-label="Clear" (click)="serviceForm.get('vatId').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
+
 												<mat-autocomplete autoActiveFirstOption #vatAuto="matAutocomplete"
-													[displayWith]="displayFn">
+																  [displayWith]="displayFn">
 													<mat-option *ngFor="let elem of filteredVats | async"
-														[value]="elem">
+																[value]="elem">
 														{{elem.value}}
 													</mat-option>
 												</mat-autocomplete>
@@ -274,8 +335,13 @@
 
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="2" placeholder="Invoicing notes"
-													formControlName="invoicingNotes"></textarea>
+												<textarea matInput rows="2" placeholder="Invoicing notes" #invoicingNotes
+														  formControlName="invoicingNotes"></textarea>
+												<button mat-button *ngIf="invoicingNotes.value" matSuffix mat-icon-button
+														aria-label="Clear" (click)="serviceForm.get('invoicingNotes').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
+
 												<mat-error>
 													Invoicing Notes is
 													<strong>required</strong>
@@ -288,8 +354,12 @@
 										</div>
 										<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 											<mat-form-field class="mat-form-field-fluid">
-												<textarea matInput rows="2" placeholder="Refund notes"
-													formControlName="refundNotes"></textarea>
+												<textarea matInput rows="2" placeholder="Refund notes" #refundNotes
+														  formControlName="refundNotes"></textarea>
+												<button mat-button *ngIf="refundNotes.value" matSuffix mat-icon-button
+														aria-label="Clear" (click)="serviceForm.get('refundNotes').setValue('')">
+													<mat-icon>close</mat-icon>
+												</button>
 												<mat-error>
 													Refund Notes is
 													<strong>required</strong>
@@ -303,27 +373,27 @@
 									</div>
 									<div class="row">
 										<div class="col-md-12 kt-margin-bottom-10-mobile mt-4 pl-0 pr-0"
-											*ngIf="service && service.id">
+											 *ngIf="service && service.id">
 											<service-professional-connect-listing [serviceId]="service.id"
-												(reloadData)="reloadAllData()" [changing]="changingValue">
+																				  (reloadData)="reloadAllData()" [changing]="changingValue">
 											</service-professional-connect-listing>
 										</div>
 
 									</div>
 									<div class="row">
 										<div class="col-md-12 kt-margin-bottom-10-mobile mt-4 pl-0 pr-0"
-											*ngIf="service && service.id">
+											 *ngIf="service && service.id">
 											<service-connected-pt-fee-listing [serviceId]="service.id"
-												(reloadData)="reloadAllData()" [changing]="changingValue">
+																			  (reloadData)="reloadAllData()" [changing]="changingValue">
 											</service-connected-pt-fee-listing>
 										</div>
 									</div>
 
 									<div class="row">
 										<div class="col-md-12 kt-margin-bottom-10-mobile mt-4 pl-0 pr-0"
-											*ngIf="service && service.id">
+											 *ngIf="service && service.id">
 											<service-connected-pro-fee-listing [serviceId]="service.id"
-												(reloadData)="reloadAllData()" [changing]="changingValue">
+																			   (reloadData)="reloadAllData()" [changing]="changingValue">
 											</service-connected-pro-fee-listing>
 										</div>
 									</div>
@@ -342,7 +412,7 @@
 		</mat-tab>
 
 		<mat-tab label="Connected Customer & Invoicing Entities" [disabled]='!(service && service.id)'
-			title="Connected Customer & Invoicing Entities">
+				 title="Connected Customer & Invoicing Entities">
 			<ng-template matTabContent>
 				<connected-customers-invoicing-entities [serviceId]="serviceId">
 				</connected-customers-invoicing-entities>
@@ -356,7 +426,7 @@
 		</mat-tab>
 
 		<mat-tab label="Connected Customer Invoices" [disabled]='!(service && service.id)'
-			title="Connected Customer Invoices">
+				 title="Connected Customer Invoices">
 			<ng-template matTabContent>
 				<service-connected-invoices [serviceId]="serviceId"></service-connected-invoices>
 			</ng-template>

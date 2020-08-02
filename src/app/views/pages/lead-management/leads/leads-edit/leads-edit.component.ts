@@ -436,6 +436,7 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 		}
 		if (withBooking) {
 			let name = this.leadForm.get('name').value;
+			let mainPhone = this.leadForm.get('mainPhone').value;
 			let email = this.leadForm.get('email').value;
 			let leadSource = this.leadForm.get('leadSourceId').value;
 			let dateOfBirth = this.leadForm.get('dateOfBirth').value;
@@ -451,6 +452,8 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 			let message = '';
 			if (!name)
 				message += '<span class="font-500">Name</span> is required. <br/>';
+			if (!mainPhone)
+				message += '<span class="font-500">Main Phone</span> is required. <br/>';
 			if (!email)
 				message += '<span class="font-500">Email</span> is required. <br/>';
 			if (!leadSource)
@@ -1270,26 +1273,6 @@ export class LeadEditComponent extends MedelitBaseComponent implements OnInit, O
 	}
 
 	/*End Filters Section*/
-
-	/*Start closed events */
-	controlFocusout(control) {
-		const val = this.leadForm.get(control).value;
-		if (!(val && val.id)) {
-			this.leadForm.get(control).setValue('');
-			this.cdr.markForCheck();
-		}
-	}
-
-	//serviceControlFocusout(event, control, index) {
-	//	// @ts-ignore
-	//	var serviceControls = this.leadForm.get('services').controls[index];
-	//	const val = serviceControls.get('serviceId').value;
-
-	//	if (val && val.id) return val;
-	//	//serviceControls.get('serviceId').setValue('');
-	//	//this.cdr.markForCheck();
-
-	//}
 
 	/*End Closed events */
 

@@ -158,8 +158,7 @@
 							<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 								<mat-form-field class="example-full-width">
 									<input type="text" placeholder="Language" aria-label="Number" matInput #languageId
-										[matAutocomplete]="languageAuto" [formControlName]="'languageId'"
-										(focusout)="controlFocusout('languageId')">
+										[matAutocomplete]="languageAuto" [formControlName]="'languageId'">
 									<button mat-button *ngIf="languageId.value" matSuffix mat-icon-button
 										aria-label="Clear" (click)="leadForm.get('languageId').setValue('')">
 										<mat-icon>close</mat-icon>

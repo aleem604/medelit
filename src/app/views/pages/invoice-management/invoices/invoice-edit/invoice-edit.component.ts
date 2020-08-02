@@ -606,16 +606,6 @@ export class InvoiceEditComponent extends MedelitBaseComponent implements OnInit
 		this.tabTitle = event.tab.textLabel;
 	}
 
-	/*Start closed events */
-
-	controlFocusout(control) {
-		const val = this.invoiceForm.get(control).value;
-		if (val && val.id) return;
-		this.invoiceForm.get(control).setValue('');
-		this.cdr.markForCheck();
-	}
-
-	/*End Closed events */
 
 	detectChanges() {
 		try {

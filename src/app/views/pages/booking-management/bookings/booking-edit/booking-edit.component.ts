@@ -140,7 +140,6 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 		this.activatedRoute.params.subscribe(params => {
 			const id = parseInt(params.id);
 			if (id && id > 0) {
-
 				//this.store.pipe(
 				//	select(selectBookingById(id))
 				//).subscribe(result => {
@@ -1390,19 +1389,6 @@ export class BookingEditComponent extends MedelitBaseComponent implements OnInit
 	}
 
 	/*End Filters Section*/
-
-	/*Start closed events */
-
-	controlFocusout(control) {
-		const val = this.bookingForm.get(control).value;
-		if (val && val.id) return;
-		this.bookingForm.get(control).setValue('');
-		this.cdr.markForCheck();
-	}
-
-	/*End Closed events */
-
-
 
 	detectChanges() {
 		try {

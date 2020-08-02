@@ -86,7 +86,7 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 
 	tagsArray: string[];
 
-	@ViewChild('serviceTagsInput', { static: false }) serviceTagsInput;
+	@ViewChild('tagsInput', { static: false }) tagsInput;
 
 	constructor(
 		private store: Store<AppState>,
@@ -489,18 +489,57 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		return tempTags.filter(elem => this._normalizeValue(elem).includes(filterValue));
 	}
 
+	// add(event: MatChipInputEvent): void {
+	// 	const input = event.input;
+	// 	const value = event.value;
+
+	// 	if ((value || '').trim()) {
+	// 		this.tagsArray.push(value.trim());
+	// 	}
+
+	// 	// Reset the input value
+	// 	if (input) {
+	// 		input.value = '';
+	// 	}
+	// }
+
+	// remove(tag: string): void {
+	// 	const index = this.tagsArray.indexOf(tag);
+
+	// 	if (index >= 0) {
+	// 		this.tagsArray.splice(index, 1);
+	// 	}
+	// }
+
+	// selected(event: MatAutocompleteSelectedEvent): void {
+	// 	const val = event.option.value;
+
+	// 	if (this.tagsArray.indexOf(val) === -1)
+	// 		this.tagsArray.push(event.option.value);
+	// 	this.serviceTagsInput.nativeElement.value = '';
+	// }
+
 	add(event: MatChipInputEvent): void {
 		const input = event.input;
 		const value = event.value;
-		
+
 		if ((value || '').trim()) {
 			this.tagsArray.push(value.trim());
+			this.cdr.markForCheck();
 		}
 
-		// Reset the input value
 		if (input) {
 			input.value = '';
 		}
+		this.tagsInput.nativeElement.value = '';
+	}
+
+	selected(event: MatAutocompleteSelectedEvent): void {
+		const val = event.option.value;
+		if (this.tagsArray.indexOf(val) === -1)
+			this.tagsArray.push(event.option.value);
+		this.tagsInput.nativeElement.value = '';
+		this.cdr.markForCheck();
 	}
 
 	remove(tag: string): void {
@@ -511,13 +550,9 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	selected(event: MatAutocompleteSelectedEvent): void {
-		const val = event.option.value;
 
-		if (this.tagsArray.indexOf(val) === -1)
-			this.tagsArray.push(event.option.value);
-		this.serviceTagsInput.nativeElement.value = '';
-	}
+
+
 
 
 	// End Tags
@@ -596,14 +631,4 @@ export class ServiceEditComponent implements OnInit, OnDestroy {
 		this.changingValue.next(true);
 	}
 
-	/*Start closed events */
-
-	controlFocusout(control) {
-		const val = this.serviceForm.get(control).value;
-		if (val && val.id) return;
-		this.serviceForm.get(control).setValue('');
-		this.cdr.markForCheck();
-	}
-
-	/*End Closed events */
 }

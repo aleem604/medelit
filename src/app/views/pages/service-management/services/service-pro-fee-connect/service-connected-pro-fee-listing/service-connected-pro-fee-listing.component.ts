@@ -109,7 +109,7 @@ export class ServiceConnectedProFeeListingComponent implements OnInit, OnDestroy
 			if (!res) {
 				return;
 			}
-			var fees = this.selection.selected.map(m=>m.id);
+			var fees = this.selection.selected.map(m=>m.proFeeId);
 			this.spinner.show();
 			this.servicesService.detachServiceConnectedProFees(this.serviceId, fees).toPromise()
 				.then((res) => {

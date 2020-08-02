@@ -605,12 +605,6 @@ export class InvoiceEntityEditComponent extends MedelitBaseComponent implements 
 
 	/*Start closed events */
 
-	controlFocusout(control) {
-		const val = this.invoiceEntityForm.get(control).value;
-		if (val && val.id) return;
-		this.invoiceEntityForm.get(control).setValue('');
-		this.cdr.markForCheck();
-	}
 
 	/*End Closed events */
 

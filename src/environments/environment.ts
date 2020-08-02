@@ -7,7 +7,7 @@ export const environment = {
 	isMockEnabled: true, // You have to switch this, when your real back-end is done
 	authTokenKey: 'authce9d77b308c149d5992a80073637e4d5',
 	apiEndpoint: 'https://localhost:44350/api/v1',
-	//apiEndpoint: 'https://ryng0porq0.execute-api.us-east-1.amazonaws.com/Prod/api/v1'
+	//apiEndpoint: 'http://54.211.139.80/api/v1'
 };
 
 /*

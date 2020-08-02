@@ -1,6 +1,7 @@
 <kt-portlet>
 
-	<kt-portlet-header [sticky]="true" [title]="'Bookings list'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+	<kt-portlet-header [sticky]="true" [title]="'Bookings list'" [class]="'kt-portlet__head--lg'"
+		[viewLoading$]="dataSource.loading$">
 		<ng-container ktPortletTools>
 			<!--<button (click)="createBooking()" mat-raised-button color="primary" matTooltip="Create new booking">New Booking</button>-->
 		</ng-container>
@@ -13,7 +14,7 @@
 			<!-- start::FILTERS -->
 			<div class="kt-form__filtration">
 				<div class="row align-items-center">
-					<div class="col-md-5 kt-margin-bottom-10-mobile">
+					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field class="example-full-width">
 							<mat-select [formControl]="statusControl">
 								<mat-option [value]="'0'">All</mat-option>
@@ -22,8 +23,8 @@
 								<mat-option [value]="'3'">Today's Visits</mat-option>
 								<mat-option [value]="'4'">Future Visits</mat-option>
 								<mat-option [value]="'5'">Delivered</mat-option>
-								<mat-option [value]="'6'">To Be Invoiced (payment status paid, payment method not insurance, empty invoice number )</mat-option>
-								<mat-option [value]="'7'">To Be Invoiced (payment status not paid, payment method insurance, empty invoice number )</mat-option>
+								<mat-option [value]="'6'">To Be Invoiced (Paid)</mat-option>
+								<mat-option [value]="'7'">To Be Invoiced (Not Paid)</mat-option>
 							</mat-select>
 							<mat-hint align="start">
 								Select an
@@ -32,9 +33,10 @@
 						</mat-form-field>
 					</div>
 
-					<div class="col-md-4 kt-margin-bottom-10-mobile">
+					<div class="col-md-3 kt-margin-bottom-10-mobile">
 						<mat-form-field>
-							<input matInput #searchInput placeholder="Search" class="mat-form-field mat-form-field-fluid">
+							<input matInput #searchInput placeholder="Search"
+								class="mat-form-field mat-form-field-fluid">
 							<mat-hint align="start">
 								Search in all <strong>fields</strong>
 							</mat-hint>
@@ -42,22 +44,27 @@
 					</div>
 				</div>
 			</div>
-			<div class="row align-items-center collapse kt-form__group-actions kt-margin-top-20 kt-margin-bottom-20" [ngClass]="{'show' : selection.selected.length > 0}">
+			<div class="row align-items-center collapse kt-form__group-actions kt-margin-top-20 kt-margin-bottom-20"
+				[ngClass]="{'show' : selection.selected.length > 0}">
 				<div class="col-xl-12">
 					<div class="kt-form__group kt-form__group--inline">
 						<div class="kt-form__label kt-form__label-no-wrap">
-							<label class="kt--font-bold kt-font-danger-">Selected records count: {{ selection.selected.length }}</label>
+							<label class="kt--font-bold kt-font-danger-">Selected records count:
+								{{ selection.selected.length }}</label>
 						</div>
 						<div class="kt-form__control kt-form__group--inline">
-							<button mat-raised-button color="accent" (click)="deleteBookings()" matTooltip="Delete selected bookings" class="mat-button-mt-4">
+							<button mat-raised-button color="accent" (click)="deleteBookings()"
+								matTooltip="Delete selected bookings" class="mat-button-mt-4">
 								<mat-icon>delete</mat-icon>
 								Delete All
 							</button>&nbsp;
-							<button mat-raised-button (click)="fetchBookings()" matTooltip="Fetch selected bookings" class="mat-button-mt-4">
+							<button mat-raised-button (click)="fetchBookings()" matTooltip="Fetch selected bookings"
+								class="mat-button-mt-4">
 								<mat-icon>clear_all</mat-icon>
 								Fetch Selected Records
 							</button>&nbsp;
-							<button mat-raised-button (click)="updateStatusForBookings()" matTooltip="Update status for selected bookings" class="mat-button-mt-4">
+							<button mat-raised-button (click)="updateStatusForBookings()"
+								matTooltip="Update status for selected bookings" class="mat-button-mt-4">
 								<mat-icon>update</mat-icon>
 								Update Status
 							</button>
@@ -69,39 +76,31 @@
 		</div>
 
 		<div class="mat-table__wrapper">
-			<mat-table class="lmat-elevation-z8"
-					   #table
-					   [dataSource]="dataSource"
-					   matSort
-					   #sort1="matSort"
-					   matSortActive="bookingDate"
-					   matSortDirection="desc"
-					   matSortDisableClear>
+			<mat-table class="lmat-elevation-z8" #table [dataSource]="dataSource" matSort #sort1="matSort"
+				matSortActive="bookingDate" matSortDirection="desc" matSortDisableClear>
 				<!-- Checkbox Column -->
 				<ng-container matColumnDef="select">
 					<mat-header-cell *matHeaderCellDef class="mat-column-checkbox">
 						<mat-checkbox (change)="$event ? masterToggle() : null"
-									  [checked]="selection.hasValue() && isAllSelected()"
-									  [indeterminate]="selection.hasValue() && !isAllSelected()"
-									  [color]="'primary'">
+							[checked]="selection.hasValue() && isAllSelected()"
+							[indeterminate]="selection.hasValue() && !isAllSelected()" [color]="'primary'">
 						</mat-checkbox>
 					</mat-header-cell>
 					<mat-cell *matCellDef="let row" class="mat-column-checkbox">
 						<mat-checkbox (click)="$event.stopPropagation()"
-									  (change)="$event ? selection.toggle(row) : null"
-									  [checked]="selection.isSelected(row)"
-									  [color]="'primary'">
+							(change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
+							[color]="'primary'">
 						</mat-checkbox>
 					</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="name">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Booking <br/> Name</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Booking <br /> Name</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.name}}</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="customer">
-					<mat-header-cell *matHeaderCellDef mat-sort-header>Customer <br/> Name</mat-header-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header>Customer <br /> Name</mat-header-cell>
 					<mat-cell *matCellDef="let booking">{{booking.customer}}</mat-cell>
 				</ng-container>
 
@@ -151,10 +150,12 @@
 					</mat-header-cell>
 					<mat-cell *matCellDef="let booking">
 
-						<button type="button" (click)="editBooking(booking.id)" mat-icon-button color="primary" matTooltip="Edit booking">
+						<button type="button" (click)="editBooking(booking.id)" mat-icon-button color="primary"
+							matTooltip="Edit booking">
 							<mat-icon>create</mat-icon>
 						</button>&nbsp;
-						<button mat-icon-button color="warn" type="button" (click)="deleteBooking(booking)" matTooltip="Delete booking">
+						<button mat-icon-button color="warn" type="button" (click)="deleteBooking(booking)"
+							matTooltip="Delete booking">
 							<mat-icon>delete</mat-icon>
 						</button>&nbsp;
 						<!--<button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="More actions">
@@ -185,7 +186,8 @@
 		<!-- start: BOTTOM -->
 		<div class="mat-table__bottom">
 			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
-			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async"
+				[showFirstLastButtons]="true"></mat-paginator>
 		</div>
 		<!-- end: BOTTOM -->
 	</kt-portlet-body>

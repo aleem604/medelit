@@ -375,8 +375,8 @@ export class CustomerEditComponent extends MedelitBaseComponent implements OnIni
 		_customer.homeStreetName = controls.homeStreetName.value;
 		_customer.visitPostCode = controls.visitPostCode.value;
 		_customer.homePostCode = controls.homePostCode.value;
-			_customer.visitCity = controls.visitCity.value.id;
-			_customer.homeCity = controls.homeCity.value.id;
+		_customer.visitCity = controls.visitCity.value.id;
+		_customer.homeCity = controls.homeCity.value.id;
 
 		if (controls.visitCountryId.value)
 			_customer.visitCountryId = controls.visitCountryId.value.id;
@@ -755,7 +755,7 @@ export class CustomerEditComponent extends MedelitBaseComponent implements OnIni
 		ieModel.mailingPostCode = controls.postalCode.value;
 		if (controls.city.value)
 			ieModel.billingCity = controls.city.value;
-			ieModel.mailingCity = controls.city.value;
+		ieModel.mailingCity = controls.city.value;
 		if (controls.countryId.value)
 			ieModel.billingCountryId = controls.countryId.value.id;
 		if (controls.countryId.value)
@@ -894,16 +894,6 @@ export class CustomerEditComponent extends MedelitBaseComponent implements OnIni
 
 	/*End Filters Section*/
 
-	/*Start closed events */
-
-	controlFocusout(control) {
-		const val = this.customerForm.get(control).value;
-		if (val && val.id) return;
-		this.customerForm.get(control).setValue('');
-		this.cdr.markForCheck();
-	}
-
-	/*End Closed events */
 
 	detectChanges() {
 		try {
