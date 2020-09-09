@@ -1,5 +1,6 @@
 <kt-portlet>
-	<kt-portlet-header [sticky]="true" [title]="'Fees List'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+	<kt-portlet-header [sticky]="true" [title]="'Fees List'" [class]="'kt-portlet__head--lg'"
+		[viewLoading$]="dataSource.loading$">
 	</kt-portlet-header>
 	<!-- end::Header -->
 
@@ -10,14 +11,8 @@
 		</div>
 
 		<div class="mat-table__wrapper">
-			<mat-table class="lmat-elevation-z8"
-					   #table
-					   [dataSource]="dataSource"
-					   matSort
-					   #sort1="matSort"
-					   matSortActive="feeName"
-					   matSortDirection="desc"
-					   matSortDisableClear>
+			<mat-table class="lmat-elevation-z8" #table [dataSource]="dataSource" matSort #sort1="matSort"
+				matSortActive="feeName" matSortDirection="desc" matSortDisableClear>
 
 				<ng-container matColumnDef="feeCode">
 					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Fee Code</mat-header-cell>
@@ -36,22 +31,31 @@
 
 				<ng-container matColumnDef="services">
 					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Services</mat-header-cell>
-					<mat-cell *matCellDef="let fee" class="email-cell"><div [innerHtml]="fee.services"></div></mat-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">
+						<div [innerHtml]="fee.services"></div>
+					</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="field">
 					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Field</mat-header-cell>
-					<mat-cell *matCellDef="let fee" class="email-cell"><div [innerHtml]="fee.field"></div></mat-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">
+						<div [innerHtml]="fee.field"></div>
+					</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="subCategory">
 					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Subcategory</mat-header-cell>
-					<mat-cell *matCellDef="let fee" class="email-cell"><div [innerHtml]="fee.subCategory"></div></mat-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">
+						<div [innerHtml]="fee.subCategory"></div>
+					</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="professionals">
-					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Professionals</mat-header-cell>
-					<mat-cell *matCellDef="let fee" class="email-cell"><div [innerHtml]="fee.professionals"></div></mat-cell>
+					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Professionals
+					</mat-header-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">
+						<div [innerHtml]="fee.professionals"></div>
+					</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="a1">
@@ -65,13 +69,16 @@
 
 				<ng-container matColumnDef="tags">
 					<mat-header-cell *matHeaderCellDef mat-sort-header class="email-cell">Tags</mat-header-cell>
-					<mat-cell *matCellDef="let fee" class="email-cell"><div [innerHtml]="fee.tags"></div></mat-cell>
+					<mat-cell *matCellDef="let fee" class="email-cell">
+						<div [innerHtml]="fee.tags"></div>
+					</mat-cell>
 				</ng-container>
 
 				<ng-container matColumnDef="actions">
 					<mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
 					<mat-cell *matCellDef="let fee">
-						<a mat-icon-button color="primary" matTooltip="Edit fee" [routerLink]="['/fee-management/fees/edit/',fee.id, fee.feeTypeId]">
+						<a mat-icon-button color="primary" matTooltip="Edit fee"
+							[routerLink]="['/fee-management/fees/edit/',fee.id, fee.feeTypeId]">
 							<mat-icon>create</mat-icon>
 						</a>
 					</mat-cell>
@@ -88,7 +95,8 @@
 
 		<div class="mat-table__bottom">
 			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
-			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+			<mat-paginator [pageSize]="20" [pageSizeOptions]="[3, 5, 10, 20]"
+				[length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
 		</div>
 	</kt-portlet-body>
 

@@ -58,17 +58,17 @@
 
 					<ng-container matColumnDef="professionals">
 						<th mat-header-cell *matHeaderCellDef mat-sort-header> Associated Professionals </th>
-						<td mat-cell *matCellDef="let element"> {{element.professionals}} </td>
+						<td mat-cell *matCellDef="let element"><span [innerHtml]="element.professionals"></span></td>
 					</ng-container>
 
 					<ng-container matColumnDef="services">
 						<th mat-header-cell *matHeaderCellDef mat-sort-header> Associated <br /> Services </th>
-						<td mat-cell *matCellDef="let element"> {{element.services}} </td>
+						<td mat-cell *matCellDef="let element"><span [innerHtml]="element.services"></span></td>
 					</ng-container>
 
 					<ng-container matColumnDef="tags">
 						<th mat-header-cell *matHeaderCellDef mat-sort-header> Tags </th>
-						<td mat-cell *matCellDef="let element"> {{element.tags}} </td>
+						<td mat-cell *matCellDef="let element"> <span [innerHtml]="element.tags"></span> </td>
 					</ng-container>
 
 					<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -1,16 +1,11 @@
 <kt-portlet>
-	<kt-portlet-header [sticky]="true" [title]="'Leads List'" [class]="'kt-portlet__head--lg'" [viewLoading$]="dataSource.loading$">
+	<kt-portlet-header [sticky]="true" [title]="'Leads List'" [class]="'kt-portlet__head--lg'"
+		[viewLoading$]="dataSource.loading$">
 	</kt-portlet-header>
 	<kt-portlet-body>
 		<div class="mat-table__wrapper">
-			<mat-table class="lmat-elevation-z8"
-					   #table
-					   [dataSource]="dataSource"
-					   matSort
-					   #sort1="matSort"
-					   matSortActive="createDate"
-					   matSortDirection="desc"
-					   matSortDisableClear>
+			<mat-table class="lmat-elevation-z8" #table [dataSource]="dataSource" matSort #sort1="matSort"
+				matSortActive="createDate" matSortDirection="desc" matSortDisableClear>
 
 				<ng-container matColumnDef="surName">
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Surname</mat-header-cell>
@@ -21,7 +16,7 @@
 					<mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
 					<mat-cell *matCellDef="let lead" class="text-capitalize">
 						<!--<a class="cursor-pointer" [routerLink]="['/lead-management/leads/edit', lead.id]">-->
-							{{lead.name}}
+						{{lead.name}}
 						<!--</a>-->
 					</mat-cell>
 				</ng-container>
@@ -64,7 +59,8 @@
 					</mat-header-cell>
 					<mat-cell *matCellDef="let lead">
 
-						<a [routerLink]="['/lead-management/leads/edit', lead.id]" mat-icon-button color="primary" matTooltip="Edit lead">
+						<a [routerLink]="['/lead-management/leads/edit', lead.id]" mat-icon-button color="primary"
+							matTooltip="Edit lead">
 							<mat-icon>create</mat-icon>
 						</a>&nbsp;
 					</mat-cell>
@@ -80,7 +76,8 @@
 		<!-- start: BOTTOM -->
 		<div class="mat-table__bottom">
 			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
-			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+			<mat-paginator [pageSize]="20" [pageSizeOptions]="[3, 5, 10, 20]"
+				[length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
 		</div>
 		<!-- end: BOTTOM -->
 	</kt-portlet-body>

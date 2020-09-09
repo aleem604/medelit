@@ -204,7 +204,7 @@
 
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<div class="row">
-													<div class="col-md-9 pl-0">
+													<div class="col-md-8 pl-0">
 														<mat-form-field class="mat-form-field-fluid">
 															<input matInput placeholder="Email" #email
 																formControlName="email">
@@ -228,15 +228,18 @@
 															</mat-error>
 														</mat-form-field>
 													</div>
-													<div class="col-md-3 p-0">
-														<button class="btn btn-primary btn-sm">Send Email</button>
+													<div class="col-md-4 px-0">
+														<button class="btn btn-primary btn-sm">
+															<i class="la la-envelope-o" aria-hidden="true"></i>
+															Send Email
+														</button>
 													</div>
 												</div>
 
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<div class="row">
-													<div class="col-md-9 pl-0">
+													<div class="col-md-8 pl-0">
 														<mat-form-field class="mat-form-field-fluid">
 															<input matInput placeholder="Email 2" #email2
 																formControlName="email2">
@@ -261,8 +264,11 @@
 															</mat-error>
 														</mat-form-field>
 													</div>
-													<div class="col-md-3 p-0">
-														<button class="btn btn-primary btn-sm">Send Email</button>
+													<div class="col-md-4 px-0">
+														<button class="btn btn-primary btn-sm">
+															<i class="la la-envelope-o" aria-hidden="true"></i>
+															Send Email
+														</button>
 													</div>
 												</div>
 											</div>
@@ -903,7 +909,8 @@
 											</div>
 											<div class="col-md-4 kt-margin-bottom-10-mobile pt-3">
 												<mat-form-field>
-													<mat-select class="mat-form-field mat-form-field-fluid"	[formControlName]="'clinicAgreement'">
+													<mat-select class="mat-form-field mat-form-field-fluid"
+														[formControlName]="'clinicAgreement'">
 														<mat-option></mat-option>
 														<mat-option value="0">No</mat-option>
 														<mat-option value="1">Yes</mat-option>
@@ -985,7 +992,7 @@
 													<mat-select [formControlName]="'applicationMeansId'">
 														<mat-option></mat-option>
 														<mat-option *ngFor="let val of applicationMeansForFilter"
-																	[value]="val.id">
+															[value]="val.id">
 															{{ val.value }}
 														</mat-option>
 													</mat-select>

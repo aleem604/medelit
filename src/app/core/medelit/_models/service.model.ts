@@ -123,6 +123,8 @@ export interface AttachProfessionalToServiceDialogModel {
 	proFeeName: string;
 	proFeeA1: number;
 	proFeeA2: number;
+	filds: string;
+	subcategories: string;
 
 }
 

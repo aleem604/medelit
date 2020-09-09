@@ -21,7 +21,7 @@
 								<mat-option [value]="'2'">Closed Professionals</mat-option>
 								<mat-option [value]="'3'">Doctors</mat-option>
 								<mat-option [value]="'4'">Physiotherapists </mat-option>
-								<mat-option [value]="'5'">Nurses</mat-option>
+								<mat-option [value]="'5'">Nursing</mat-option>
 								<mat-option [value]="'6'">Speech & Language</mat-option>
 								<mat-option [value]="'7'">Psychologists</mat-option>
 								<mat-option [value]="'8'">Podiatrists</mat-option>
@@ -189,7 +189,8 @@
 		<!-- start: BOTTOM -->
 		<div class="mat-table__bottom">
 			<mat-spinner [diameter]="20" *ngIf="dataSource.loading$ | async"></mat-spinner>
-			<mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true"></mat-paginator>
+			<mat-paginator [pageSize]="20" [pageSizeOptions]="[3, 5, 10, 20]" [length]="dataSource.paginatorTotal$ | async"
+						   [showFirstLastButtons]="true"></mat-paginator>
 		</div>
 		<!-- end: BOTTOM -->
 	</kt-portlet-body>

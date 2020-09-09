@@ -4,8 +4,6 @@ import { Update } from '@ngrx/entity';
 import { QueryParamsModel } from '../../_base/crud';
 import { BookingModel } from '../_models/booking.model';
 
-
-
 export enum BookingActionTypes {
     BookingOnServerCreated = '[Edit Booking Dialog] Booking On Server Created',
     BookingCreated = '[Edit Booking Dialog] Booking Created',
@@ -22,38 +20,38 @@ export enum BookingActionTypes {
 
 export class BookingOnServerCreated implements Action {
     readonly type = BookingActionTypes.BookingOnServerCreated;
-	constructor(public payload: { booking: BookingModel }) { }
+    constructor(public payload: { booking: BookingModel }) { }
 }
 
 export class BookingCreated implements Action {
     readonly type = BookingActionTypes.BookingCreated;
-	constructor(public payload: { booking: BookingModel }) { }
+    constructor(public payload: { booking: BookingModel }) { }
 }
 
 export class BookingUpdated implements Action {
     readonly type = BookingActionTypes.BookingUpdated;
     constructor(public payload: {
-		partialBooking: Update<BookingModel>, // For State update
-		booking: BookingModel // For Server update (through service)
+        partialBooking: Update<BookingModel>, // For State update
+        booking: BookingModel // For Server update (through service)
     }) { }
 }
 
 export class BookingsStatusUpdated implements Action {
     readonly type = BookingActionTypes.BookingsStatusUpdated;
     constructor(public payload: {
-		bookings: BookingModel[],
+        bookings: BookingModel[],
         status: number
     }) { }
 }
 
 export class OneBookingDeleted implements Action {
     readonly type = BookingActionTypes.OneBookingDeleted;
-    constructor(public payload: { id: number }) {}
+    constructor(public payload: { id: number }) { }
 }
 
 export class ManyBookingsDeleted implements Action {
     readonly type = BookingActionTypes.ManyBookingsDeleted;
-    constructor(public payload: { ids: number[] }) {}
+    constructor(public payload: { ids: number[] }) { }
 }
 
 export class BookingsPageRequested implements Action {
@@ -63,7 +61,7 @@ export class BookingsPageRequested implements Action {
 
 export class BookingsPageLoaded implements Action {
     readonly type = BookingActionTypes.BookingsPageLoaded;
-	constructor(public payload: { bookings: BookingModel[], totalCount: number, page: QueryParamsModel }) { }
+    constructor(public payload: { bookings: BookingModel[], totalCount: number, page: QueryParamsModel }) { }
 }
 
 export class BookingsPageCancelled implements Action {
@@ -81,13 +79,13 @@ export class BookingActionToggleLoading implements Action {
 }
 
 export type BookingActions = BookingOnServerCreated
-| BookingCreated
-| BookingUpdated
-| BookingsStatusUpdated
-| OneBookingDeleted
-| ManyBookingsDeleted
-| BookingsPageRequested
-| BookingsPageLoaded
-| BookingsPageCancelled
-| BookingsPageToggleLoading
-| BookingActionToggleLoading;
+    | BookingCreated
+    | BookingUpdated
+    | BookingsStatusUpdated
+    | OneBookingDeleted
+    | ManyBookingsDeleted
+    | BookingsPageRequested
+    | BookingsPageLoaded
+    | BookingsPageCancelled
+    | BookingsPageToggleLoading
+    | BookingActionToggleLoading;
