@@ -1,6 +1,6 @@
-# Metronic Angular
+Virtual Medic Booking system (Frontend)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.7.
+Application built on Metronic Angular theme with ngrx-store, ngx-permissions using .net core apis
 
 ## Development server
 
